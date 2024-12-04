@@ -6,6 +6,7 @@ import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
 import Navbar from "@/components/navbar";
 import Footbar from "@/components/footbar";
+import { FormProvider } from "react-hook-form";
 
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });

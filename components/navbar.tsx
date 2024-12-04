@@ -1,9 +1,25 @@
+"use client"
+
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
 import { Menu, Search } from 'lucide-react'
+import useStore from '@/context/store'
+import { useRouter } from 'next/navigation'
 
 const Navbar = () => {
+
+    const router = useRouter()
+    const { currentUser, logout } = useStore()
+
+    const handleLogin = () => {
+        router.push("/logIn")
+    }
+    const handleLogout = () => {
+        logout(); 
+        router.push("/logIn"); 
+      };
+
     return (
         <div className='w-full flex items-center justify-center'>
             <div className='max-w-[1280px] px-5 w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px]'>
@@ -16,6 +32,11 @@ const Navbar = () => {
                         <Link className='flex h-[40px] px-3 py-2 gap-2' href={""}>EUROPE</Link>
                         <Link className='flex h-[40px] px-3 py-2 gap-2' href={""}>HANDBALL</Link>
                     </div>
+                    {
+                        !currentUser ?
+                            <Button>{"Se Connecter"}</Button> :
+                            <Button onClick={handleLogout}> {"Se déconnecter"}</Button>
+                    }
                     <Button variant={'ghost'} className='flex flex-row gap-2'>
                         <Menu className='h-6 w-6' />
                         <p>{"MENU"}</p>

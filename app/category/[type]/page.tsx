@@ -4,6 +4,7 @@ import GridInfo from '@/components/Accueil/GridInfo';
 import PubsComp from '@/components/PubsComp';
 import useStore from '@/context/store';
 import { Article, Pubs } from '@/data/temps';
+import withAuth from '@/lib/withAuth';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 
@@ -42,4 +43,4 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     )
 }
 
-export default page
+export default withAuth(page);

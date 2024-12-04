@@ -19,7 +19,7 @@ const Hero = ({ gridAff }: Aff) => {
     };
 
     return (
-        <Link className='w-full min-h-[480px] h-full' href={""}>
+        <div className='w-full min-h-[480px] h-full'>
             <Carousel
                 plugins={[
                     Autoplay({
@@ -79,7 +79,7 @@ const Hero = ({ gridAff }: Aff) => {
                     ))}
                 </CarouselContent>
             </Carousel>
-        </Link>
+        </div>
     );
 };
 

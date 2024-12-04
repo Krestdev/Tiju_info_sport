@@ -1,11 +1,10 @@
 import React from 'react'
-import LoginPage from './loginPage'
-
+import SignupPage from './signupPage'
 
 const page = () => {
   return (
     <div>
-      <LoginPage />
+      <SignupPage />
     </div>
   )
 }

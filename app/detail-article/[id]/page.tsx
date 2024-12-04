@@ -4,6 +4,7 @@ import Detail from '@/components/DetailArticle/Detail';
 import PubsComp from '@/components/PubsComp';
 import useStore from '@/context/store';
 import { Article, Pubs } from '@/data/temps';
+import withAuth from '@/lib/withAuth'
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useEffect, useState, use } from 'react';
@@ -59,4 +60,4 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   );
 };
 
-export default Page;
+export default withAuth(Page);

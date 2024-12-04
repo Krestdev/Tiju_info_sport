@@ -4,6 +4,7 @@ import CategoryComp from '@/components/Category/CategoriesComp'
 import PubsComp from '@/components/PubsComp'
 import useStore from '@/context/store'
 import { Article, Pubs } from '@/data/temps'
+import withAuth from '@/lib/withAuth'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 
@@ -68,4 +69,4 @@ const page = () => {
   )
 }
 
-export default page
+export default withAuth(page)

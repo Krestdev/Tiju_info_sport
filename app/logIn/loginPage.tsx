@@ -1,103 +1,131 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { AlertCircle } from "lucide-react"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import useStore from "@/context/store"
+import { z } from "zod";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { Users } from "@/data/temps"
+import { useRouter } from "next/navigation"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+
+
+const formSchema = z
+  .object({
+    email: z.string().email({ message: "Adresse e-mail invalide." }),
+    password: z
+      .string()
+      .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
+      .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une lettre majuscule." })
+      .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
+  });
+
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    loginUser()
+  const { dataUsers, login } = useStore();
+  const [user, setUser] = useState<Users[]>()
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const userData = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => dataUsers,
+  });
+
+  useEffect(() => {
+    if (userData.isSuccess) {
+      setUser(userData.data)
+    }
+  }, [userData.data])
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    },
+  });
+
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const foundUser = login(values.email, values.password);
+
+      if (!foundUser) {
+        throw new Error("Email ou mot de passe incorrect.");
+      }
+      
+      router.push("/");
+    } catch (error: any) {
+      form.setError("email", {
+        type: "manual",
+        message: error.message || "Une erreur est survenue.",
+      });
+    }
   }
 
-  const loginUser = async () => {
 
-    const url = "http://localhost:5000/api/users/login"
-    const data = {
-      username: email,
-      password: password
-    }
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }
-    try {
-      const response = await fetch(url, options);
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des identifiants');
-      }
 
-      const result = await response.json();
-      console.log('Utilisateur connecté avec succès:', result);
-      window.location.href = "/"
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('Une erreur inconnue est survenue');
-      }
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Connexion</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">{"Connexion"}</CardTitle>
           <CardDescription className="text-center">
-            Connectez-vous à votre compte
+            {"Connectez-vous à votre compte"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4 flex flex-col gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Adresse e-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="vous@exemple.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 flex flex-col gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{"Adresse e-mail"}</FormLabel>
+                    <FormControl>
+                      <Input placeholder="vous@exemple.com" {...field} className="w-full" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{"Mot de passe"}</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="********" {...field} className="w-full" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {error && (
-              <div className="text-red-500 text-sm flex items-center">
-                <AlertCircle className="mr-2 h-4 w-4" />
-                {error}
-              </div>
-            )}
-            <Button type="submit" className="w-full">Se connecter</Button>
-          </form>
+              <Button type="submit" className="w-full">{"Se connecter"}</Button>
+            </form>
+          </Form>
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <Link href="#" className="text-sm text-blue-600 hover:underline">
-            Mot de passe oublié ?
+            {"Mot de passe oublié ?"}
           </Link>
           <p className="text-sm text-gray-600">
-            Pas encore de compte ?{" "}
-            <Link href="/signup" className="text-blue-600 hover:underline">
-              Inscrivez-vous
+            {"Vous n'avez pas de compte ? "}
+            <Link href="/signUp" className="text-blue-600 hover:underline">
+              {"Inscrivez-vous"}
             </Link>
           </p>
         </CardFooter>

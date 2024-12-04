@@ -15,6 +15,14 @@ export interface Pubs {
     image: string
 }
 
+export interface Users {
+    id: number,
+    nom: string,
+    email: string,
+    phone: string,
+    password: string
+}
+
 
 export const articles: Article[] = [
     {
@@ -113,5 +121,22 @@ export const publicites: Pubs[] = [
         id: 2,
         lien: "",
         image: "/images/pub.jpg"
+    },
+]
+
+export const users: Users[] = [
+    {
+        id: 1,
+        nom: "Etarcos Tech",
+        email: "etarcos@gmail.com",
+        phone: "654455225",
+        password: "Etarcos123"
+    },
+    {
+        id: 2,
+        nom: "Dev Tech",
+        email: "devTech@gmail.com",
+        phone: "656633225",
+        password: "DevTech123"
     },
 ]
