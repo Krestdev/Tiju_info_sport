@@ -3,7 +3,7 @@
 import GridInfo from '@/components/Accueil/GridInfo';
 import PubsComp from '@/components/PubsComp';
 import useStore from '@/context/store';
-import { Article, Pubs } from '@/data/temps';
+import { Article, Categorie, Pubs } from '@/data/temps';
 import withAuth from '@/lib/withAuth';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
@@ -26,7 +26,8 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     useEffect(()=>{
         if (articleData.isSuccess) {
-            setArticle(articleData.data.filter(x=> x.type === decodeURIComponent(param.type)))
+            
+            setArticle(articleData.data.find(x => x.nom === decodeURIComponent(param.type))?.donnees)
         }
     }, [articleData.data, param.type, param.id]);
     useEffect(() => {

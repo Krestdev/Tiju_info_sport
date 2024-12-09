@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react'
 
 interface Result {
-    type: string;
+    nom: string;
     media: string | undefined;
 }
 
@@ -24,13 +24,13 @@ const CategoryComp = ({ category }: Display) => {
         <div className='containerBloc grid grid-cols-1 md:grid-cols-2 gap-12'>
             {
                 category?.map((x, i) => (
-                    <Link href={`/category/${x.type}`} key={i} className='flex flex-col py-7 gap-7'>
+                    <Link href={`/category/${x.nom}`} key={i} className='flex flex-col py-7 gap-7'>
                         {x.media && (
                             isImage(x.media) ? (
                                 <img
                                     className='w-[560px] h-[260px] object-cover rounded-lg'
                                     src={x.media}
-                                    alt={x.type}
+                                    alt={x.nom}
                                 />
                             ) : (
                                 <video
@@ -45,7 +45,7 @@ const CategoryComp = ({ category }: Display) => {
                                 </video>
                             )
                         )}
-                        <h3>{x.type}</h3>
+                        <h3>{x.nom}</h3>
                     </Link>
                 ))
             }

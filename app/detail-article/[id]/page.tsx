@@ -42,9 +42,10 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      const foundArticle = articleData.data.find(x => x.id === Number(param.id));
+      const articles = articleData.data.flatMap(cate => cate.donnees)
+      const foundArticle = articles.find(x => x.id === Number(param.id));
       setArticle(foundArticle);
-      setSimilaire(articleData.data.filter(x => x.type === foundArticle?.type && x.id !== foundArticle.id).slice(0,2))
+      setSimilaire(articles.filter(x => x.type === foundArticle?.type && x.id !== foundArticle.id).slice(0,2))
     }
   }, [articleData.data, param.id]);
 

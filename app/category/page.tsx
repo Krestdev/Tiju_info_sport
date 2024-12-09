@@ -3,14 +3,13 @@
 import CategoryComp from '@/components/Category/CategoriesComp'
 import PubsComp from '@/components/PubsComp'
 import useStore from '@/context/store'
-import { Article, Pubs } from '@/data/temps'
+import { Article, Categorie, Pubs } from '@/data/temps'
 import withAuth from '@/lib/withAuth'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 
 interface Result {
-  id: number;
-  type: string;
+  nom: string;
   media: string | undefined;
 }
 
@@ -32,26 +31,23 @@ const page = () => {
 
 
 
-  function getLastArticlesByType(articles: Article[]): Result[] {
-    const map = new Map<string, Article>();
+  function getLastImagesByCategory(categories: Categorie[]): Result[] {
+    return categories.map(categorie => {
+        const lastArticleWithMedia = [...categorie.donnees]
+            .reverse() 
+            .find(article => article.media !== undefined);
 
-    for (let i = articles.length - 1; i >= 0; i--) {
-      const article = articles[i];
-      if (!map.has(article.type)) {
-        map.set(article.type, article);
-      }
-    }
+        return {
+            nom: categorie.nom,
+            media: lastArticleWithMedia?.media
+        };
+    });
+}
 
-    return Array.from(map.values()).map((article) => ({
-      id: article.id,
-      type: article.type,
-      media: article.media,
-    }));
-  }
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      setCategory(getLastArticlesByType(articleData.data))
+      setCategory(getLastImagesByCategory(articleData.data))
     }
   }, [articleData.data]);
 

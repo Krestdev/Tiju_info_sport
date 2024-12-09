@@ -41,11 +41,13 @@ export default function Home() {
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      setBlog1(articleData.data[articleData.data.length - 2])
-      setBlog2(articleData.data[articleData.data.length - 1])
-      setGrid1(articleData.data.slice(1, 7))
-      setGrid2(articleData.data.slice(1, 7))
-      setCarrHero(articleData.data.slice(0, 4))
+      const articles = articleData.data.flatMap(cate => cate.donnees)
+      setBlog1(articles[articles.length - 2])
+      setBlog2(articles[articles.length - 1])
+      setGrid1(articles.slice(1, 7))
+      setGrid2(articles.slice(1, 7))
+      setCarrHero(articles.slice(0, 4))
+      
     }
   }, [articleData.data])
 

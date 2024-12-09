@@ -1,14 +1,20 @@
-import { articles, publicites, users, Users } from "@/data/temps";
+import { articles, comment, publicites, users, Users } from "@/data/temps";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface Article {
-  id: number;
-  titre: string;
-  type: string;
-  description: string;
-  image?: string;
-  ajouteLe: string;
+export interface Article {
+  id: number,
+  type: string,
+  titre: string,
+  description: string,
+  media?: string,
+  ajouteLe: string,
+  commentaire: comment[],
+  like: Omit<Users, "password">[];
+}
+export interface Categorie {
+  nom: string;
+  donnees: Article[];
 }
 
 interface Pubs {
@@ -21,17 +27,19 @@ interface Pubs {
 
 interface store {
   settings: any;
-  dataArticles: Article[];
+  dataArticles: Categorie[];
   dataPubs: Pubs[];
   dataUsers: Users[];
-  currentUser: Users | null; // Ajout de l'utilisateur connecté
+  currentUser: Users | null;
 }
 
 interface actions {
-  addArticle: (article: Article) => void;
+  addArticle: (article: Categorie) => void;
   registerUser: (user: Users) => void;
-  login: (email: string, password: string) => Users | null; // Action pour la connexion
-  logout: () => void; // Action pour la déconnexion
+  login: (email: string, password: string) => Users | null;
+  logout: () => void;
+  addLike: (id: number, nom: Omit<Users, "password">) => void;
+  addComment: (com: comment, id: number) => void;
 }
 
 const initialData: store = {
@@ -46,7 +54,7 @@ const initialData: store = {
   dataArticles: articles,
   dataPubs: publicites,
   dataUsers: users,
-  currentUser: null, // Initialisation de l'utilisateur connecté à null
+  currentUser: null,
 };
 
 const useStore = create<store & actions>()(
@@ -58,6 +66,21 @@ const useStore = create<store & actions>()(
         set((state) => ({
           dataArticles: [...state.dataArticles, article],
         })),
+      addComment: (com: comment, id: number) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) => ({
+            ...categorie,
+            donnees: categorie.donnees.map((article) =>
+              article.id === id
+                ? {
+                  ...article,
+                  commentaire: [...article.commentaire, com],
+                }
+                : article
+            ),
+          })),
+        })),
+
       registerUser: (user) =>
         set((state) => ({
           dataUsers: [...state.dataUsers, user],
@@ -69,9 +92,25 @@ const useStore = create<store & actions>()(
         if (foundUser) {
           set({ currentUser: foundUser });
         }
-        return foundUser || null; 
+        return foundUser || null;
       },
       logout: () => set({ currentUser: null }),
+      addLike: (id: number, user: Omit<Users, "password">) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) => ({
+            ...categorie,
+            donnees: categorie.donnees.map((article) =>
+              article.id === id
+                ? {
+                    ...article,
+                    like: article.like.some((u) => u.id === user.id)
+                      ? article.like.filter((u) => u.id !== user.id) 
+                      : [...article.like, user], 
+                  }
+                : article
+            ),
+          })),
+        })),      
     }),
     { name: "Tyju" }
   )

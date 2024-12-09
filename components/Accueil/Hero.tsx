@@ -42,7 +42,7 @@ const Hero = ({ gridAff }: Aff) => {
                                 <div
                                     className={`items-center justify-center bg-gradient-to-b from-[#012BAE]/70 to-[#182067]/100  md:${x.media ? 'bg-[#182067]' : 'bg-gradient-to-b from-[#012BAE]/60 to-[#182067]/100'}`}
                                 >
-                                    <div className='containerBloc min-h-[480px] w-screen md:w-full flex flex-row items-center gap-5 justify-center'>
+                                    <div className={`containerBloc min-h-[480px] w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center' } flex flex-row gap-5 justify-center`}>
                                         {x.media && (
 
                                             isImage(x.media) ? (
@@ -66,10 +66,10 @@ const Hero = ({ gridAff }: Aff) => {
 
                                         )}
                                         <div
-                                            className={`h-full flex flex-col md:${x.media ? 'items-start text-start' : 'items-center text-center'} justify-center text-white gap-1`}
+                                            className={`h-full flex flex-col items-center text-center ${x.media ? 'md:items-start md:text-start' : 'md:items-center md:text-center'} text-white gap-1`}
                                         >
                                             <p className='uppercase text-[#80CEFF]'>{x.type}</p>
-                                            <h1>{x.titre}</h1>
+                                            <h1 className='line-clamp-2'>{x.titre}</h1>
                                             <p>{x.ajouteLe}</p>
                                         </div>
                                     </div>
