@@ -12,6 +12,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from '../ui/form';
 import { useForm } from 'react-hook-form';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { BsThreeDots } from "react-icons/bs";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 
 const formSchema = z
@@ -27,9 +31,10 @@ interface Details {
 
 const Detail = ({ details, similaire }: Details) => {
 
-    const { addLike, addComment, currentUser } = useStore()
+    const { addLike, addComment, currentUser, deleteComment } = useStore()
     const [like, setLike] = useState(details.like.some(u => u.id === currentUser?.id))
-    const [repondre, setRepondre] = useState(false)
+    const [response, setResponse] = useState('');
+    const [modifie, setModifie] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -45,6 +50,7 @@ const Detail = ({ details, similaire }: Details) => {
                 id: Date.now(),
                 user: currentUser,
                 message: values.message,
+                reponse: undefined
             };
 
             // Appelle la fonction addComment pour ajouter le commentaire
@@ -81,6 +87,59 @@ const Detail = ({ details, similaire }: Details) => {
         const userLike: Omit<Users, "password"> | null = currentUser && (({ password, ...rest }) => rest)(currentUser);
         setLike(!like)
         addLike(details.id, userLike!)
+    }
+
+
+
+    const handleResponseClick = (comment: comment) => {
+        console.log('Réponse :', response);
+        try {
+            // Crée un nouveau commentaire
+            const newComment: comment = {
+                id: Date.now(),
+                user: currentUser,
+                message: response,
+                reponse: comment
+            };
+
+            console.log(newComment);
+
+
+            // Appelle la fonction addComment pour ajouter le commentaire
+            addComment(newComment, details.id);
+        } catch (error) {
+
+        }
+    };
+
+    const handleModifierClick = (comment: comment) => {
+        console.log('Réponse :', response);
+        try {
+            // Crée un nouveau commentaire
+            const newComment: comment = {
+                id: Date.now(),
+                user: currentUser,
+                message: response,
+                reponse: comment
+            };
+
+            console.log(newComment);
+
+
+            // Appelle la fonction addComment pour ajouter le commentaire
+            addComment(newComment, details.id);
+        } catch (error) {
+
+        }
+    };
+
+    async function handleDeleteComment(id: number) {
+        try {
+            deleteComment(id);
+        } catch (error) {
+            console.log("Une erreur est survenue: ", error);
+            
+        }
     }
 
     return (
@@ -165,19 +224,98 @@ const Detail = ({ details, similaire }: Details) => {
                         details.commentaire.map(x => {
                             return (
                                 <div key={x.id} className='flex flex-col gap-0 w-fit'>
-                                    <div className='bg-gray-100 flex flex-col gap-3 p-5 rounded-xl w-fit'>
-                                        <div className='flex flex-row gap-2'>
-                                            <User />
-                                            <h3>{x.user?.nom}</h3>
+                                    {x.reponse &&
+                                        <div className=' relative w-full bg-gray-300 -left-4 -bottom-3 pt-2 pb-5 px-2 rounded-xl'>
+                                            <h3>{x.reponse.user?.nom}</h3>
+                                            <p className='line-clamp-1'>{x.reponse.message}</p>
+                                        </div>
+                                    }
+                                    <div className='bg-gray-100 flex flex-col p-5 rounded-xl z-10 w-fit gap-5'>
+                                        <div className='flex flex-row items-center justify-between'>
+                                            <div className='flex flex-row gap-2'>
+                                                <User />
+                                                <h3>{x.user?.nom}</h3>
+                                            </div>
+
+                                            {
+                                                x.user?.id === currentUser?.id &&
+                                                <Popover>
+                                                    <PopoverTrigger>
+                                                        <BsThreeDots className='ml-10' />
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className='flex flex-col gap-2 w-full'>
+                                                        <Popover>
+                                                            <PopoverTrigger asChild>
+                                                                <button className='hover:text-blue-500'>{"Modifier"}</button>
+                                                            </PopoverTrigger>
+                                                            <PopoverContent className="w-80 flex flex-col z-50 gap-2">
+                                                                <div className="space-y-2 bg-gray-100 rounded-full">
+                                                                    <h3 className='line-clamp-1'>{x.message}</h3>
+                                                                </div>
+                                                                <div className='flex flex-col gap-2'>
+                                                                    <Textarea
+                                                                        placeholder='Modifier votre commentaire'
+                                                                        rows={2}
+                                                                        defaultValue={x.message}
+                                                                        onChange={(e) => setModifie(e.target.value)}
+                                                                    />
+                                                                    <Button onClick={() => handleModifierClick(x)}>{"Modifier"}</Button>
+                                                                </div>
+                                                            </PopoverContent>
+                                                        </Popover>
+                                                        <Dialog>
+                                                            <DialogTrigger>
+                                                                <button className='hover:text-red-500'>{"Supprimer"}</button>
+                                                            </DialogTrigger>
+                                                            <DialogContent>
+                                                                <DialogHeader>
+                                                                    <DialogTitle>{"Supprimer"}</DialogTitle>
+                                                                    <DialogDescription>{"Voulez-vous vraiment supprimer ce commentaire?"}</DialogDescription>
+                                                                </DialogHeader>
+
+                                                                <DialogFooter className="sm:justify-end">
+                                                                    <DialogClose asChild>
+                                                                        <Button onClick={()=>handleDeleteComment(x.id)} type="button">
+                                                                            {"Supprimer"}
+                                                                        </Button>
+                                                                    </DialogClose>
+                                                                </DialogFooter>
+                                                            </DialogContent>
+                                                        </Dialog>
+                                                    </PopoverContent>
+                                                </Popover>
+
+                                            }
+
                                         </div>
                                         <p>{x.message}</p>
                                     </div>
+
                                     <div className='w-full flex justify-end text-[12px]'>
-                                        <div className='relative bg-white rounded-full w-fit px-2 flex flex-row gap-2 -top-2 '>
-                                            <button onClick={()=>setRepondre(true)} className='hover:text-blue-500'>{"Répondre"}</button>
+                                        <div className='relative bg-white rounded-full w-fit px-2 flex flex-row z-20 gap-2 -top-2 '>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <button className='hover:text-blue-500'>{"Répondre"}</button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-80 flex flex-col gap-2">
+                                                    <div className="space-y-2 bg-gray-100 rounded-full">
+                                                        <h3 className='line-clamp-1'>{x.message}</h3>
+                                                    </div>
+                                                    <div className='flex flex-col gap-2'>
+                                                        <Textarea
+                                                            placeholder='Répondre au commentaire'
+                                                            rows={2}
+                                                            value={response}
+                                                            onChange={(e) => setResponse(e.target.value)}
+                                                        />
+                                                        <Button onClick={() => handleResponseClick(x)}>{"Répondre"}</Button>
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+
                                             <button className='hover:text-blue-500'>{"Signaler"}</button>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             )

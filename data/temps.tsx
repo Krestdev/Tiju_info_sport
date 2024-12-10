@@ -1,7 +1,8 @@
 export interface comment {
     id: number
     user: Users | null,
-    message: string
+    message: string,
+    reponse: comment | undefined
 }
 
 export interface Article {
@@ -55,7 +56,7 @@ export const articles: Categorie[] = [
                     phone: "654477445"
                 },
                 {
-                    id: 0,
+                    id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
                     phone: "654477445"
@@ -82,7 +83,6 @@ export const articles: Categorie[] = [
             commentaire: [
                 {
                     id: 0,
-
                     message: "J'aime bien comment il s'entensent",
                     user: {
                         id: 0,
@@ -90,19 +90,21 @@ export const articles: Categorie[] = [
                         email: "etarcos@tyju.com",
                         phone: "654455455",
                         password: ""
-                    }
+                    },
+                    reponse: undefined
                 },
                 {
                     id: 1,
 
                     message: "Vive le foot africain",
                     user: {
-                        id: 1,
+                        id: 3,
                         nom: "Etarcos Dev",
                         email: "etarcos@tyju.com",
                         phone: "654455455",
                         password: ""
-                    }
+                    },
+                    reponse: undefined
                 },
                 {
                     id: 2,
@@ -114,7 +116,8 @@ export const articles: Categorie[] = [
                         email: "etarcos@tyju.com",
                         phone: "654455455",
                         password: ""
-                    }
+                    },
+                    reponse: undefined
                 },
             ],
             like: []
