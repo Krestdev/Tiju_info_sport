@@ -27,8 +27,9 @@ interface Details {
 
 const Detail = ({ details, similaire }: Details) => {
 
-    const [like, setLike] = useState(false)
     const { addLike, addComment, currentUser } = useStore()
+    const [like, setLike] = useState(details.like.some(u => u.id === currentUser?.id))
+    const [repondre, setRepondre] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -80,7 +81,6 @@ const Detail = ({ details, similaire }: Details) => {
         const userLike: Omit<Users, "password"> | null = currentUser && (({ password, ...rest }) => rest)(currentUser);
         setLike(!like)
         addLike(details.id, userLike!)
-        
     }
 
     return (
@@ -145,7 +145,7 @@ const Detail = ({ details, similaire }: Details) => {
                                     <FormLabel>{"Commenter"}</FormLabel>
                                     <FormControl className="grid max-w-[320px] w-full gap-2">
                                         <Textarea
-                                            {...field} 
+                                            {...field}
                                             rows={3}
                                             placeholder="Entrez votre commentaire ici..."
                                         />
@@ -159,17 +159,26 @@ const Detail = ({ details, similaire }: Details) => {
                 </Form>
 
 
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-6'>
                     {details.commentaire.length > 0 && <h2> Commentaires:</h2>}
                     {
                         details.commentaire.map(x => {
                             return (
-                                <div key={x.id} className='bg-gray-100 flex flex-col gap-3 p-5 rounded-xl w-fit'>
-                                    <div className='flex flex-row gap-2'>
-                                        <User />
-                                        <h3>{x.user?.nom}</h3>
+                                <div key={x.id} className='flex flex-col gap-0 w-fit'>
+                                    <div className='bg-gray-100 flex flex-col gap-3 p-5 rounded-xl w-fit'>
+                                        <div className='flex flex-row gap-2'>
+                                            <User />
+                                            <h3>{x.user?.nom}</h3>
+                                        </div>
+                                        <p>{x.message}</p>
                                     </div>
-                                    <p>{x.message}</p>
+                                    <div className='w-full flex justify-end text-[12px]'>
+                                        <div className='relative bg-white rounded-full w-fit px-2 flex flex-row gap-2 -top-2 '>
+                                            <button onClick={()=>setRepondre(true)} className='hover:text-blue-500'>{"Répondre"}</button>
+                                            <button className='hover:text-blue-500'>{"Signaler"}</button>
+                                        </div>
+                                        
+                                    </div>
                                 </div>
                             )
                         })

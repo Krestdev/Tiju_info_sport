@@ -8,7 +8,7 @@ import {
     SheetClose
 } from "./ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { Article, Users } from "@/data/temps";
 import {
     Accordion,
@@ -59,8 +59,11 @@ function MenuBar({ article, currentUser }: Donnee) {
             </SheetTrigger>
             <SheetContent className="flex flex-col gap-8">
                 <SheetHeader>
-                    <SheetTitle>
-                        {`Bonjour ${currentUser && currentUser.nom}`}
+                    <SheetTitle className="flex flex-row gap-1 items-center">
+                        <Link onClick={() => setIsOpen(false)} href={''} className="rounded-full bg-gray-100 border border-black w-fit p-1">
+                            <User />
+                        </Link>
+                        {`${currentUser && currentUser.nom}`}
                     </SheetTitle>
                 </SheetHeader>
                 <Accordion type="single" collapsible className="w-full flex flex-col gap-3">
