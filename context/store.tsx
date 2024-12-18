@@ -41,6 +41,7 @@ interface actions {
   addLike: (id: number, nom: Omit<Users, "password">) => void;
   addComment: (com: comment, id: number) => void;
   deleteComment: (id: number) => void;
+  editComment: (id: number, message: string) => void;
 }
 
 const initialData: store = {
@@ -92,6 +93,22 @@ const useStore = create<store & actions>()(
               })),
             })),
           })),
+
+          editComment: (id: number, message: string) =>
+            set((state) => ({
+              dataArticles: state.dataArticles.map((categorie) => ({
+                ...categorie,
+                donnees: categorie.donnees.map((article) => ({
+                  ...article,
+                  commentaire: article.commentaire.map((com) =>
+                    com.id === id
+                      ? { ...com, message: message } 
+                      : com
+                  ),
+                })),
+              })),
+            })),
+          
         
       registerUser: (user) =>
         set((state) => ({

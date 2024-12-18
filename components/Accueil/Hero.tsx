@@ -32,46 +32,39 @@ const Hero = ({ gridAff }: Aff) => {
                         <CarouselItem
                             key={x.id}
                             className='h-full'
-                            style={{
-                                backgroundImage: `url(${x.media})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                            }}
                         >
                             <Link href={`/detail-article/${x.id}`}>
-                                <div
-                                    className={`items-center justify-center bg-gradient-to-b from-[#012BAE]/70 to-[#182067]/100  md:${x.media ? 'bg-[#182067]' : 'bg-gradient-to-b from-[#012BAE]/60 to-[#182067]/100'}`}
-                                >
-                                    <div className={`containerBloc min-h-[480px] w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center' } flex flex-row gap-5 justify-center`}>
-                                        {x.media && (
+                                <div className={`containerBloc min-h-[480px] w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-row gap-5 justify-center`}>
+                                    {x.media && (
 
-                                            isImage(x.media) ? (
-                                                <img
-                                                    className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
-                                                    src={x.media}
-                                                    alt={x.type}
-                                                />
-                                            ) : (
-                                                <video
-                                                    className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
-                                                    controls
-                                                    autoPlay
-                                                    muted
-                                                    loop
-                                                    src={x.media}
-                                                >
-                                                    Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                                </video>
-                                            )
+                                        isImage(x.media) ? (
+                                            <img
+                                                className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                src={x.media}
+                                                alt={x.type}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={x.media}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )
 
-                                        )}
-                                        <div
-                                            className={`h-full flex flex-col items-center text-center ${x.media ? 'md:items-start md:text-start' : 'md:items-center md:text-center'} text-white gap-1`}
-                                        >
-                                            <p className='uppercase text-[#80CEFF]'>{x.type}</p>
-                                            <h1 className='line-clamp-2'>{x.titre}</h1>
-                                            <p>{x.ajouteLe}</p>
+                                    )}
+                                    <div
+                                        className=" flex flex-col gap-5 justify-center "
+                                    >
+                                        <div className='px-3 py-2 bg-[#0C73BD] w-fit'>
+                                            <p className='uppercase text-white'>{x.type}</p>
                                         </div>
+                                        <h1 className='line-clamp-2'>{x.titre}</h1>
+                                        <p className='line-clamp-3'>{x.description}</p>
                                     </div>
                                 </div>
                             </Link>

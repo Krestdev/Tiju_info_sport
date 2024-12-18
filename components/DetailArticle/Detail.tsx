@@ -31,10 +31,12 @@ interface Details {
 
 const Detail = ({ details, similaire }: Details) => {
 
-    const { addLike, addComment, currentUser, deleteComment } = useStore()
+    const { addLike, addComment, currentUser, deleteComment, editComment } = useStore()
     const [like, setLike] = useState(details.like.some(u => u.id === currentUser?.id))
     const [response, setResponse] = useState('');
     const [modifie, setModifie] = useState('');
+    const [openRepondre, setOpenRepondre] = useState(false);
+    const [openModifier, setOpenModifier] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -42,6 +44,7 @@ const Detail = ({ details, similaire }: Details) => {
             message: "",
         },
     });
+
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
@@ -89,6 +92,17 @@ const Detail = ({ details, similaire }: Details) => {
         addLike(details.id, userLike!)
     }
 
+    const handleOpenRepondre = (id: number) => {
+        setOpenRepondre(!openRepondre);
+        console.log(openRepondre);
+        
+    };
+    
+    // useEffect(()=>{
+    //     setOpenRepondre
+    //     console.log(openRepondre);
+        
+    // }, [openRepondre])
 
 
     const handleResponseClick = (comment: comment) => {
@@ -102,34 +116,22 @@ const Detail = ({ details, similaire }: Details) => {
                 reponse: comment
             };
 
-            console.log(newComment);
-
-
             // Appelle la fonction addComment pour ajouter le commentaire
             addComment(newComment, details.id);
+            setOpenRepondre(false)
         } catch (error) {
-
+            console.error("Une erreur est survenue: ", error)
         }
     };
 
-    const handleModifierClick = (comment: comment) => {
-        console.log('Réponse :', response);
+    const handleModifierClick = (id: number) => {
+        console.log('Réponse :', modifie);
         try {
-            // Crée un nouveau commentaire
-            const newComment: comment = {
-                id: Date.now(),
-                user: currentUser,
-                message: response,
-                reponse: comment
-            };
-
-            console.log(newComment);
-
-
             // Appelle la fonction addComment pour ajouter le commentaire
-            addComment(newComment, details.id);
+            editComment(id, modifie);
+            setOpenModifier(false)
         } catch (error) {
-
+            console.error("Une erreur est survenue: ", error)
         }
     };
 
@@ -137,8 +139,7 @@ const Detail = ({ details, similaire }: Details) => {
         try {
             deleteComment(id);
         } catch (error) {
-            console.log("Une erreur est survenue: ", error);
-            
+            console.error("Une erreur est survenue: ", error)
         }
     }
 
@@ -244,9 +245,9 @@ const Detail = ({ details, similaire }: Details) => {
                                                         <BsThreeDots className='ml-10' />
                                                     </PopoverTrigger>
                                                     <PopoverContent className='flex flex-col gap-2 w-full'>
-                                                        <Popover>
+                                                        <Popover open={openModifier} onOpenChange={setOpenModifier}>
                                                             <PopoverTrigger asChild>
-                                                                <button className='hover:text-blue-500'>{"Modifier"}</button>
+                                                                <button onClick={() => setOpenModifier(true)} className='hover:text-blue-500'>{"Modifier"}</button>
                                                             </PopoverTrigger>
                                                             <PopoverContent className="w-80 flex flex-col z-50 gap-2">
                                                                 <div className="space-y-2 bg-gray-100 rounded-full">
@@ -256,10 +257,10 @@ const Detail = ({ details, similaire }: Details) => {
                                                                     <Textarea
                                                                         placeholder='Modifier votre commentaire'
                                                                         rows={2}
-                                                                        defaultValue={x.message}
+                                                                        value={modifie}
                                                                         onChange={(e) => setModifie(e.target.value)}
                                                                     />
-                                                                    <Button onClick={() => handleModifierClick(x)}>{"Modifier"}</Button>
+                                                                    <Button onClick={() => handleModifierClick(x.id)}>{"Modifier"}</Button>
                                                                 </div>
                                                             </PopoverContent>
                                                         </Popover>
@@ -275,7 +276,7 @@ const Detail = ({ details, similaire }: Details) => {
 
                                                                 <DialogFooter className="sm:justify-end">
                                                                     <DialogClose asChild>
-                                                                        <Button onClick={()=>handleDeleteComment(x.id)} type="button">
+                                                                        <Button onClick={() => handleDeleteComment(x.id)} type="button">
                                                                             {"Supprimer"}
                                                                         </Button>
                                                                     </DialogClose>
@@ -293,17 +294,17 @@ const Detail = ({ details, similaire }: Details) => {
 
                                     <div className='w-full flex justify-end text-[12px]'>
                                         <div className='relative bg-white rounded-full w-fit px-2 flex flex-row z-20 gap-2 -top-2 '>
-                                            <Popover>
+                                            <Popover open={openRepondre} onOpenChange={setOpenRepondre}>
                                                 <PopoverTrigger asChild>
-                                                    <button className='hover:text-blue-500'>{"Répondre"}</button>
+                                                    <button onClick={() => handleOpenRepondre(x.id)} className='hover:text-blue-500'>{"Repondre"}</button>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-80 flex flex-col gap-2">
                                                     <div className="space-y-2 bg-gray-100 rounded-full">
-                                                        <h3 className='line-clamp-1'>{x.message}</h3>
+                                                        <h3 className="line-clamp-1">{x.message}</h3>
                                                     </div>
-                                                    <div className='flex flex-col gap-2'>
+                                                    <div className="flex flex-col gap-2">
                                                         <Textarea
-                                                            placeholder='Répondre au commentaire'
+                                                            placeholder="Répondre au commentaire"
                                                             rows={2}
                                                             value={response}
                                                             onChange={(e) => setResponse(e.target.value)}
@@ -312,7 +313,6 @@ const Detail = ({ details, similaire }: Details) => {
                                                     </div>
                                                 </PopoverContent>
                                             </Popover>
-
                                             <button className='hover:text-blue-500'>{"Signaler"}</button>
                                         </div>
 

@@ -51,7 +51,7 @@ function MenuBar({ article, currentUser }: Donnee) {
 
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
+            <SheetTrigger className="flex md:hidden" asChild>
                 <Button variant="ghost" className="flex flex-row gap-2">
                     <Menu className="h-6 w-6" />
                     <p>{"Menu"}</p>
@@ -95,7 +95,7 @@ function MenuBar({ article, currentUser }: Donnee) {
                         <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/about'}>{"À Propos de nous"}</Link>
                         {
                             currentUser ?
-                                <Button variant={'link'} onClick={handleLogout} className="uppercase !p-0 flex !justify-start"> {"Se déconnecter"}</Button> :
+                                <div onClick={handleLogout} className="uppercase !p-0 flex !justify-start mt-2 cursor-pointer"> {"Se déconnecter"}</div> :
                                 <>
                                     <Link onClick={() => setIsOpen(false)} href={'/logIn'} className="uppercase hover:underline py-2 border-b flex !justify-start">{"Se connecter"}</Link>
                                     <Link onClick={() => setIsOpen(false)} href={'/signUp'} className="uppercase hover:underline py-2 border-b flex !justify-start">{"S'inscrire"}</Link>

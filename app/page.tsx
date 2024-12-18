@@ -1,11 +1,12 @@
 "use client"
 
 import Blog from "@/components/Accueil/Blog";
+import Grid from "@/components/Accueil/Grid";
 import GridInfo from "@/components/Accueil/GridInfo";
 import Hero from "@/components/Accueil/Hero";
 import PubsComp from "@/components/PubsComp";
 import useStore from "@/context/store";
-import { Article, Pubs } from "@/data/temps";
+import { Article, Categorie, Pubs } from "@/data/temps";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
 
   const { dataPubs, dataArticles } = useStore();
+  const [art, setArt] = useState<Categorie[]>()
   const [pub1, setPu1] = useState<Pubs>()
   const [pub2, setPu2] = useState<Pubs>()
   const [blog1, setBlog1] = useState<Article>()
@@ -47,15 +49,16 @@ export default function Home() {
       setGrid1(articles.slice(1, 7))
       setGrid2(articles.slice(1, 7))
       setCarrHero(articles.slice(0, 4))
-      
+      setArt(articleData.data.slice())
     }
   }, [articleData.data])
-
+  
 
 
   return (
     <div>
       {carrHero && <Hero gridAff={carrHero} />}
+      {grid1 && <Grid gridAff={art} />}
       {grid1 && <GridInfo gridAff={grid1} />}
       {pub1 && <PubsComp {...pub1} />}
       {blog1 && <Blog {...blog1} />}

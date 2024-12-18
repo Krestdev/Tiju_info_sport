@@ -128,6 +128,6 @@
     @apply bg-background text-foreground;
   }
   .containerBloc {
-    @apply container py-10 sm:py-12 md:py-[16px] lg:py-[60px] px-5 sm:px-8 md:px-12 lg:px-20;
+    @apply container py-[8px] sm:py-[10px] md:py-[16px] lg:py-[30px] px-5 sm:px-8 md:px-12 lg:px-20;
   }
 }

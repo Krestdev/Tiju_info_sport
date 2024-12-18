@@ -11,6 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -32,12 +34,12 @@ const formSchema = z
   })
   .refine((data) => data.password === data.cfpassword, {
     message: "Les mots de passe ne correspondent pas.",
-    path: ["password","cfpassword"],
+    path: ["password", "cfpassword"],
   });
 
 
 export default function SignupPage() {
-  
+
   const { registerUser, dataUsers } = useStore();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -163,13 +165,22 @@ export default function SignupPage() {
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center flex flex-col">
           <p className="text-sm text-gray-600">
             {"Déjà un compte ? "}
             <Link href="/logIn" className="text-blue-600 hover:underline">
               {"Connectez-vous"}
             </Link>
           </p>
+          <GoogleLogin
+            onSuccess={credentialResponse => {
+              const decoded = jwtDecode(credentialResponse.credential!);
+              console.log(decoded);
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
         </CardFooter>
       </Card>
       <ToastContainer />
