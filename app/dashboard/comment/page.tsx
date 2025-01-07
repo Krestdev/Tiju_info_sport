@@ -3,7 +3,7 @@ import React from 'react'
 const page = () => {
   return (
     <div className='containerBloc'>
-      <h1>Notification</h1>
+      <h1>Commentaires</h1>
     </div>
   )
 }

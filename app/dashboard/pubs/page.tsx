@@ -2,8 +2,8 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      
+    <div className='containerBloc'>
+      <h1>Publicité</h1>
     </div>
   )
 }

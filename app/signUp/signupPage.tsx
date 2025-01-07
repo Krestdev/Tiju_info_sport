@@ -59,11 +59,18 @@ export default function SignupPage() {
     try {
       // Inscription de l'utilisateur
       registerUser({
-        id: 3,
+        id: Date.now(),
         nom: values.nom,
         email: values.email,
         phone: values.phone,
         password: values.password,
+        createdAt: new Date(Date.now()).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        role: "user",
+        abonnement: "normal"
       });
 
       console.log("Utilisateur inscrit :", values);

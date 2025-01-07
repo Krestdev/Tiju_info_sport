@@ -39,7 +39,6 @@ const Navbar = () => {
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                     <img src="/logo.png" alt="Logo" className='h-[60.66px] w-[60px] ' />
                     <h2 className='font-semibold hidden md:flex'>{"TYJU INFO SPORT"}</h2>
-
                 </Link>
                 <div className='flex flex-row items-center gap-5'>
                     <div className='hidden md:flex'>

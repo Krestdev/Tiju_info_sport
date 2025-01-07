@@ -23,7 +23,7 @@ const Blog = ({ id, type, titre, media, ajouteLe }: Blog) => {
     };
 
     return (
-        <Link href={`/detail-article/${id}`} className="containerBloc py-10 flex items-center md:items-start flex-col lg:flex-row gap-5 lg:gap-12">
+        <Link href={`/user/detail-article/${id}`} className="containerBloc py-10 flex items-center md:items-start flex-col lg:flex-row gap-5 lg:gap-12">
             {media && (
                 isImage(media) ? (
                     <img

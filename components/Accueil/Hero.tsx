@@ -1,11 +1,11 @@
 "use client";
-import useStore from '@/context/store';
-import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
+
 import React, { useEffect, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Article } from '@/data/temps';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 
 interface Aff {
@@ -18,8 +18,11 @@ const Hero = ({ gridAff }: Aff) => {
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
 
+    const router = useRouter();
+  const currentLocale = router
+
     return (
-        <div className='w-full min-h-[480px] h-full'>
+        <div className='w-full'>
             <Carousel
                 plugins={[
                     Autoplay({
@@ -33,8 +36,8 @@ const Hero = ({ gridAff }: Aff) => {
                             key={x.id}
                             className='h-full'
                         >
-                            <Link href={`/detail-article/${x.id}`}>
-                                <div className={`containerBloc min-h-[480px] w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-row gap-5 justify-center`}>
+                            <Link href={`/user/detail-article/${x.id}`}>
+                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-row gap-5 justify-center`}>
                                     {x.media && (
 
                                         isImage(x.media) ? (

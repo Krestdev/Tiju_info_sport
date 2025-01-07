@@ -1,17 +1,19 @@
 "use client"
 
 import React from 'react'
-import { Categorie } from '@/data/temps';
+import { Categorie, Pubs } from '@/data/temps';
 import Link from 'next/link';
 import { BiFootball } from 'react-icons/bi';
 import IconeComp from '../IconeComp';
+import UnePub from '../UnePub';
 
 
 interface Aff {
-    gridAff: Categorie[] | undefined
+    gridAff: Categorie[] | undefined,
+    pubAff: Pubs[] | undefined
 }
 
-const Grid = ({ gridAff }: Aff) => {
+const Grid = ({ gridAff, pubAff }: Aff) => {
 
     const isImage = (media: string | undefined): boolean => {
         if (!media) return false;
@@ -21,50 +23,55 @@ const Grid = ({ gridAff }: Aff) => {
     return (
         <div className='containerBloc flex flex-col md:flex-row gap-10'>
             <div className='flex flex-col md:flex-row gap-12'>
-                {/* <span className='px-3 py-4 flex flex-row gap-3'> */}
-                <div className='flex flex-col gap-2 w-full'>
-                    <h3>{"Tous les Sports"}</h3>
-                    {gridAff &&
-                        gridAff.map(x => {
-                            return (
-                                <Link key={x.nom} href={`/category/${x.nom}`}>
-                                    <div className='border-b pl-2 pb-2 max-w-[360px] w-full flex gap-[10px] items-center'>{x.nom} <IconeComp nom={x.nom} /></div>
+                <div className='flex flex-col gap-10'>
+                    <div className='flex flex-col justify-between md:flex-row'>
+                        <div className='flex flex-col gap-5 px-7 py-5 w-full'>
+                            <h3>{"Tous les Sports"}</h3>
+                            <div className='flex flex-col gap-2'>
+                                {gridAff &&
+                                    gridAff.map(x => {
+                                        return (
+                                            <Link key={x.nom} href={`/user/category/${x.nom}`}>
+                                                <div className='border-b pl-2 pb-2 max-w-[360px] w-full flex gap-[10px] items-center'>{x.nom} <IconeComp nom={x.nom} /></div>
+                                            </Link>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
+                        <div className='flex flex-row items-center p-7 gap-7'>
+                            {
+                                gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 2).map(x => (
+                                    <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
+                                        <img src={x.media} alt="" className='object-cover max-w-[464px] w-full h-[236.25px] rounded-lg' />
+                                        <div>
+                                            <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
+                                            <h2 className='line-clamp-2 font-bold mr-7 text-[28px]'>{x.titre}</h2>
+                                        </div>
+                                    </Link>
+                                )))
+                            }
+
+                        </div>
+                    </div>
+                    <div className='flex p-7 gap-7'>
+                        {
+                            gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 2).map(x => (
+                                <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
+                                    <img src={x.media} alt="" className='object-cover max-w-[824px] w-full h-[263.25px] md:h-[463.5px]' />
+                                    <div>
+                                        <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
+                                        <h2 className='line-clamp-1 font-bold mr-7 text-[28px]'>{x.titre}</h2>
+                                        <p className='text-[#545454] line-clamp-2'>{x.description}</p>
+                                    </div>
                                 </Link>
-                            )
-                        })
-                    }
+                            )))
+                        }
+                    </div>
                 </div>
-                <div className='flex flex-row'>
-                    {
-                        gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 2).map(x => (
-                            <Link href={`/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-2'>
-                                <img src={x.media} alt="" className='object-cover max-w-[464px] w-full h-[236.25px] rounded-lg' />
-                                {<h2 className='line-clamp-1 pl-3 pr-5'>{x.titre}</h2>}
-                            </Link>
-                        )))
-                    }
-
-                </div>
-                {/* </span> */}
-
             </div>
-            <div className='max-w-[360px] w-full flex flex-col gap-7 px-7 py-5'>
-                <p className='text-[20px] font-semibold'>{"À la une"}</p>
-                <div className='flex flex-col'>
-                    {
-                        gridAff?.slice(0, 3).map(x => x.donnees.slice(1, 3).map(x => {
-                            return (
-                                <Link key={x.id} href={`/detail-article/${x.id}`} className='flex flex-row items-center gap-4 p-4'>
-                                    <img src={x.media} alt={x.type} className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-lg' />
-                                    <p className='line-clamp-3 font-medium'>{x.titre}</p>
-                                </Link>
-                            )
-                        })
-                        )
-                    }
-                </div>
 
-            </div>
+            <UnePub gridAff={gridAff} pubAff={pubAff} />
         </div>
     )
 }

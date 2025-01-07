@@ -3,7 +3,6 @@ import LoginPage from './loginPage'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
-
 const page = () => {
   return (
     <div>

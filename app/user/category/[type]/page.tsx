@@ -39,7 +39,7 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     return (
         <div>
             {pub && <PubsComp {...pub} />}
-            {article && <GridInfo gridAff={article} />}
+            {/* {article && <GridInfo gridAff={article} />} */}
         </div>
     )
 }

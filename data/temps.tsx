@@ -2,23 +2,39 @@ export interface comment {
     id: number
     user: Users | null,
     message: string,
-    reponse: comment | undefined
-}
+    reponse: comment[]
+};
 
 export interface Article {
     id: number,
     type: string,
     titre: string,
+    extrait: string,
     description: string,
     media?: string,
     ajouteLe: string,
     commentaire: comment [],
     like: Omit<Users, "password">[];
-}
+    signals: Omit<Users, "password">[];
+    user: Users
+};
+
 export interface Categorie {
     nom: string; 
     donnees: Article[]; 
-}
+};
+
+export interface Users {
+    id: number,
+    nom: string,
+    email: string,
+    phone?: string,
+    photo?: string,
+    password?: string,
+    createdAt: string,
+    role: string,
+    abonnement: string
+};
 
 export interface Pubs {
     id: number,
@@ -26,16 +42,7 @@ export interface Pubs {
     description?: string,
     prix?: number,
     image: string
-}
-
-export interface Users {
-    id: number,
-    nom: string,
-    email: string,
-    phone: string,
-    password: string
-}
-
+};
 
 export const articles: Categorie[] = [
     {
@@ -53,15 +60,56 @@ export const articles: Categorie[] = [
                     id: 0,
                     nom: "Etarcos",
                     email: "etarcos@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 },
                 {
                     id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 }
-            ]
+            ],
+            signals: [
+                {
+                    id: 3,
+                    nom: "Etarcos",
+                    email: "etarcos@gmail.com",
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
+                },
+                {
+                    id: 4,
+                    nom: "socrate",
+                    email: "socrate@gmail.com",
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
+                }
+            ],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         },
         {
             id: 2,
@@ -71,7 +119,19 @@ export const articles: Categorie[] = [
             media: "/images/lions.jpg",
             ajouteLe: "il y'a 2h",
             commentaire: [],
-            like: []
+            like: [],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         },
         {
             id: 5,
@@ -89,22 +149,47 @@ export const articles: Categorie[] = [
                         nom: "Etarcos Tech",
                         email: "etarcos@tyju.com",
                         phone: "654455455",
-                        password: ""
+                        password: "",
+                        createdAt: "",
+                        role: "",
+                        abonnement: "",
+                        photo: "/images/profil.jpg"
                     },
-                    reponse: undefined
+                    reponse: [
+                        {
+                            id: 1,
+
+                            message: "Vive le foot africain",
+                            user: {
+                                id: 3,
+                                nom: "Etarcos Dev",
+                                email: "etarcos@tyju.com",
+                                phone: "654455455",
+                                password: "",
+                                createdAt: "",
+                                role: "",
+                                abonnement: "",
+                                photo: "/images/profil.jpg"
+                            },
+                            reponse: []
+                        },
+                    ]
                 },
                 {
                     id: 1,
-
                     message: "Vive le foot africain",
                     user: {
                         id: 3,
                         nom: "Etarcos Dev",
                         email: "etarcos@tyju.com",
                         phone: "654455455",
-                        password: ""
+                        password: "",
+                        createdAt: "",
+                        role: "",
+                        abonnement: "",
+                        photo: "/images/profil.jpg"
                     },
-                    reponse: undefined
+                    reponse: []
                 },
                 {
                     id: 2,
@@ -115,12 +200,28 @@ export const articles: Categorie[] = [
                         nom: "Etarcos Dev Tech",
                         email: "etarcos@tyju.com",
                         phone: "654455455",
-                        password: ""
+                        password: "",
+                        createdAt: "",
+                        role: "",
+                        abonnement: "",
+                        photo: "/images/profil.jpg"
                     },
-                    reponse: undefined
+                    reponse: []
                 },
             ],
-            like: []
+            like: [],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         }
       ]
     },
@@ -140,15 +241,35 @@ export const articles: Categorie[] = [
                     id: 0,
                     nom: "Etarcos",
                     email: "etarcos@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 },
                 {
                     id: 0,
                     nom: "socrate",
                     email: "socrate@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 }
-            ]
+            ],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         },
         {
             id: 9,
@@ -163,15 +284,35 @@ export const articles: Categorie[] = [
                     id: 0,
                     nom: "Etarcos",
                     email: "etarcos@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 },
                 {
                     id: 0,
                     nom: "socrate",
                     email: "socrate@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 }
-            ]
+            ],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         }
       ]
     },
@@ -186,7 +327,19 @@ export const articles: Categorie[] = [
             media: "/images/basket.jpg",
             ajouteLe: "il y'a 1j",
             commentaire: [],
-            like: []
+            like: [],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         }
       ]
     },
@@ -206,15 +359,35 @@ export const articles: Categorie[] = [
                     id: 0,
                     nom: "Etarcos",
                     email: "etarcos@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 },
                 {
                     id: 0,
                     nom: "socrate",
                     email: "socrate@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 }
-            ]
+            ],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         },
         {
             id: 7,
@@ -229,15 +402,35 @@ export const articles: Categorie[] = [
                     id: 0,
                     nom: "Etarcos",
                     email: "etarcos@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 },
                 {
                     id: 0,
                     nom: "socrate",
                     email: "socrate@gmail.com",
-                    phone: "654477445"
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: "",
+                    photo: "/images/profil.jpg"
                 }
-            ]
+            ],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         },
         {
             id: 8,
@@ -248,17 +441,37 @@ export const articles: Categorie[] = [
             ajouteLe: "il y'a 4j",
             commentaire: [],
             like: [{
-                    id: 0,
-                    nom: "Etarcos",
-                    email: "etarcos@gmail.com",
-                    phone: "654477445"
-                },
-                {
-                    id: 0,
-                    nom: "socrate",
-                    email: "socrate@gmail.com",
-                    phone: "654477445"
-                }]
+                id: 0,
+                nom: "Etarcos",
+                email: "etarcos@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            }],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         }
       ]
     },
@@ -270,29 +483,46 @@ export const articles: Categorie[] = [
             type: "Lion indomptable",
             titre: "FECAFOOT met en place un programme d'accompagnement pour les arbitres de football",
             description: "Dans le cadre de son engagement pour le développement du football...",
-            media: "/images/video.mp4",
+            media: "/images/etoo.jpg",
             ajouteLe: "25/10/2024",
             commentaire: [],
             like: [{
-                    id: 0,
-                    nom: "Etarcos",
-                    email: "etarcos@gmail.com",
-                    phone: "654477445"
-                },
-                {
-                    id: 0,
-                    nom: "socrate",
-                    email: "socrate@gmail.com",
-                    phone: "654477445"
-                }]
+                id: 0,
+                nom: "Etarcos",
+                email: "etarcos@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            }],
+            signals: [],
+            user: {
+                id: 0,
+                nom: "socrate",
+                email: "socrate@gmail.com",
+                phone: "654477445",
+                createdAt: "",
+                role: "",
+                abonnement: "",
+                photo: "/images/profil.jpg"
+            },
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
         }
       ]
     }
-  ];
+];
   
-  
-
-
 export const publicites: Pubs[] = [
     {
         id: 1,
@@ -306,7 +536,7 @@ export const publicites: Pubs[] = [
         lien: "",
         image: "/images/pub.jpg"
     },
-]
+];
 
 export const users: Users[] = [
     {
@@ -314,13 +544,21 @@ export const users: Users[] = [
         nom: "Etarcos Tech",
         email: "etarcos@gmail.com",
         phone: "654455225",
-        password: "Etarcos123"
+        password: "Etarcos123",
+        createdAt: "2024-12-31",
+        role: "admin",
+        abonnement: "premium",
+        photo: ""
     },
     {
         id: 2,
         nom: "Dev Tech",
         email: "devTech@gmail.com",
         phone: "656633225",
-        password: "DevTech123"
+        password: "DevTech123",
+        createdAt: "2024-12-31",
+        role: "user",
+        abonnement: "normal",
+        photo: ""
     },
-]
+];

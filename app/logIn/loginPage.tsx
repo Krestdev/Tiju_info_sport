@@ -15,6 +15,7 @@ import { Users } from "@/data/temps"
 import { useRouter } from "next/navigation"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { GoogleLogin } from '@react-oauth/google';
+
 import { jwtDecode } from "jwt-decode";
 
 const formSchema = z
@@ -79,20 +80,16 @@ export default function LoginPage() {
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     try {
-      // Vérifier si le token est présent
       if (!credentialResponse.credential) {
         throw new Error("Token JWT manquant !");
       }
 
-      // Décoder le token JWT
       const decoded: GoogleUser = jwtDecode(credentialResponse.credential);
 
       console.log("Utilisateur connecté avec succès : ", decoded);
       console.log("Nom : ", decoded.name);
       console.log("Email : ", decoded.email);
-      
 
-      // Rediriger l'utilisateur
       router.push("/");
     } catch (error: any) {
       console.error("Erreur lors de la connexion Google :", error.message);
