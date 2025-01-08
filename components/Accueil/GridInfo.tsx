@@ -29,7 +29,7 @@ const GridInfo = ({ gridAff }: Aff) => {
                                 <h2 className='font-bold'>{x.nom}</h2>
                                 <Link href={`/user/category/${x.nom}`}><h3 className='font-bold'>Tout Voir</h3></Link>
                             </div>
-                            <div className='flex flex-row gap-7'>
+                            <div className='flex flex-col md:flex-row gap-7'>
                                 <Link href={`/user/detail-article/${donne[0].id}`} className='flex flex-col gap-[10px] px-5 py-4'>
                                     <img src={donne[0].media} alt={donne[0].type} className='max-w-[600px] w-full h-[338px] object-cover rounded-lg' />
                                     <div className='flex flex-col'>
@@ -40,7 +40,7 @@ const GridInfo = ({ gridAff }: Aff) => {
                                 <div className='flex flex-col gap-3'>
                                     {
                                         donne.slice(1, 3).map(a => (
-                                            <Link href={`/user/detail-article/${a.id}`} key={a.id} className='flex flex-row gap-7 px-5 py-4'>
+                                            <Link href={`/user/detail-article/${a.id}`} key={a.id} className='flex flex-col md:flex-row gap-7 px-5 py-4'>
                                                 <img src={a.media} alt={a.type} className='max-w-[320px] w-full h-[180px] object-cover rounded-lg' />
                                                 <div className='flex flex-col'>
                                                     <p className='text-[#A1A1A1]'>{donne[0].type}</p>

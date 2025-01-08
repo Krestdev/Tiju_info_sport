@@ -93,13 +93,13 @@
     @apply bg-background text-foreground font-sans tracking-normal;
   }
   h1 {
-    @apply text-[28px] md:text-[40px] font-semibold tracking-tight first-letter:uppercase;
+    @apply text-[28px] md:text-[40px] font-bold tracking-tight first-letter:uppercase;
   }
   h2 {
-    @apply font-medium  text-[18px] md:text-[28px];
+    @apply font-bold  text-[18px] md:text-[28px];
   }
   h3 { 
-    @apply font-medium text-lg;
+    @apply font-bold text-lg;
   }
 }
 

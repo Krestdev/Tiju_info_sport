@@ -3,6 +3,8 @@ export interface comment {
     user: Users | null,
     message: string,
     reponse: comment[]
+    like: Omit<Users, "password">[];
+    signals: Omit<Users, "password">[];
 };
 
 export interface Article {
@@ -15,7 +17,6 @@ export interface Article {
     ajouteLe: string,
     commentaire: comment [],
     like: Omit<Users, "password">[];
-    signals: Omit<Users, "password">[];
     user: Users
 };
 
@@ -39,8 +40,6 @@ export interface Users {
 export interface Pubs {
     id: number,
     lien: string,
-    description?: string,
-    prix?: number,
     image: string
 };
 
@@ -77,28 +76,6 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 }
             ],
-            signals: [
-                {
-                    id: 3,
-                    nom: "Etarcos",
-                    email: "etarcos@gmail.com",
-                    phone: "654477445",
-                    createdAt: "",
-                    role: "",
-                    abonnement: "",
-                    photo: "/images/profil.jpg"
-                },
-                {
-                    id: 4,
-                    nom: "socrate",
-                    email: "socrate@gmail.com",
-                    phone: "654477445",
-                    createdAt: "",
-                    role: "",
-                    abonnement: "",
-                    photo: "/images/profil.jpg"
-                }
-            ],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -120,7 +97,6 @@ export const articles: Categorie[] = [
             ajouteLe: "il y'a 2h",
             commentaire: [],
             like: [],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -157,11 +133,10 @@ export const articles: Categorie[] = [
                     },
                     reponse: [
                         {
-                            id: 1,
-
+                            id: 20,
                             message: "Vive le foot africain",
                             user: {
-                                id: 3,
+                                id: 20,
                                 nom: "Etarcos Dev",
                                 email: "etarcos@tyju.com",
                                 phone: "654455455",
@@ -171,9 +146,13 @@ export const articles: Categorie[] = [
                                 abonnement: "",
                                 photo: "/images/profil.jpg"
                             },
-                            reponse: []
+                            reponse: [],
+                            like: [],
+                            signals: []
                         },
-                    ]
+                    ],
+                    like: [],
+                    signals: []
                 },
                 {
                     id: 1,
@@ -189,11 +168,12 @@ export const articles: Categorie[] = [
                         abonnement: "",
                         photo: "/images/profil.jpg"
                     },
-                    reponse: []
+                    reponse: [],
+                    like: [],
+                    signals: []
                 },
                 {
                     id: 2,
-
                     message: "Courage aux filles",
                     user: {
                         id: 2,
@@ -206,11 +186,12 @@ export const articles: Categorie[] = [
                         abonnement: "",
                         photo: "/images/profil.jpg"
                     },
-                    reponse: []
+                    reponse: [],
+                    like: [],
+                    signals: []
                 },
             ],
             like: [],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -248,7 +229,7 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 },
                 {
-                    id: 0,
+                    id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
                     phone: "654477445",
@@ -258,7 +239,6 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 }
             ],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -291,7 +271,7 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 },
                 {
-                    id: 0,
+                    id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
                     phone: "654477445",
@@ -301,7 +281,6 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 }
             ],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -328,7 +307,6 @@ export const articles: Categorie[] = [
             ajouteLe: "il y'a 1j",
             commentaire: [],
             like: [],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -366,7 +344,7 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 },
                 {
-                    id: 0,
+                    id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
                     phone: "654477445",
@@ -376,7 +354,6 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 }
             ],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -409,7 +386,7 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 },
                 {
-                    id: 0,
+                    id: 1,
                     nom: "socrate",
                     email: "socrate@gmail.com",
                     phone: "654477445",
@@ -419,7 +396,6 @@ export const articles: Categorie[] = [
                     photo: "/images/profil.jpg"
                 }
             ],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -451,7 +427,7 @@ export const articles: Categorie[] = [
                 photo: "/images/profil.jpg"
             },
             {
-                id: 0,
+                id: 1,
                 nom: "socrate",
                 email: "socrate@gmail.com",
                 phone: "654477445",
@@ -460,7 +436,6 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             }],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -497,7 +472,7 @@ export const articles: Categorie[] = [
                 photo: "/images/profil.jpg"
             },
             {
-                id: 0,
+                id: 1,
                 nom: "socrate",
                 email: "socrate@gmail.com",
                 phone: "654477445",
@@ -506,7 +481,6 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             }],
-            signals: [],
             user: {
                 id: 0,
                 nom: "socrate",
@@ -527,8 +501,6 @@ export const publicites: Pubs[] = [
     {
         id: 1,
         lien: "https://google.com",
-        description: "Suivez le meilleur de l’actualité en vous abonnant dès maintenant à partir de ",
-        prix: 1000,
         image: "/images/pub1.jpeg"
     },
     {

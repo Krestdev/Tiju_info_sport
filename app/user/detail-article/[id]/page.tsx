@@ -19,7 +19,7 @@ import { useEffect, useState, use } from 'react';
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const param = React.use(params);
 
-  const { dataArticles, dataPubs } = useStore();
+  const { dataArticles, dataPubs, favorite } = useStore();
   const [article, setArticle] = useState<Article | undefined>();
   const [pub, setPub] = useState<Pubs>();
   const [similaire, setSimilaire] = useState<Article[] | undefined>();
@@ -58,7 +58,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <div className='containerBloc gap-3'>
       {/* {pub && <PubsComp {...pub} />} */}
-      <Detail details={article} similaire={similaire} />
+      <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
     </div>
   );
 };

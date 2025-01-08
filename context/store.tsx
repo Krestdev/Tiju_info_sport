@@ -12,7 +12,6 @@ export interface Article {
   ajouteLe: string,
   commentaire: comment[],
   like: Omit<Users, "password">[];
-  signals: Omit<Users, "password">[];
   user: Users
 }
 export interface Categorie {
@@ -35,7 +34,7 @@ interface store {
   dataUsers: Users[];
   currentUser: Users | null;
   isFull: boolean | undefined
-  favorite: Categorie[] | undefined
+  favorite: Categorie[] 
 }
 
 interface actions {
@@ -44,7 +43,8 @@ interface actions {
   login: (email: string, password: string) => Users | null;
   logout: () => void;
   addLike: (id: number, nom: Omit<Users, "password">) => void;
-  addSignals: (id: number, nom: Omit<Users, "password">) => void;
+  addSignals: (commentId: number, user: Omit<Users, "password">) => void;
+  likeComment: (commentId: number, user: Omit<Users, "password">) => void;
   addComment: (com: comment, idA: number) => void;
   addResponse: (res: comment, id: number, idC: number) => void;
   deleteComment: (id: number) => void;
@@ -54,7 +54,7 @@ interface actions {
   editComment: (id: number, message: string) => void;
   editReponse: (idC: number, idR: number, message: string) => void;
   setIsFull: () => void;
-  setFavorite: (cate: Categorie[] | []) => void;
+  setFavorite: (cate: Categorie[] | undefined) => void;
 }
 
 const initialData: store = {
@@ -81,9 +81,10 @@ const useStore = create<store & actions>()(
 
       setFavorite: (cate: Categorie[] | undefined) =>
         set((state) => ({
-          favorite: cate,
+          ...state,
+          favorite: cate || state.favorite, 
         })),
-
+      
       setIsFull: () =>
         set((state) => ({
           isFull: !state.isFull,
@@ -225,30 +226,65 @@ const useStore = create<store & actions>()(
                   like: article.like.some((u) => u.id === user.id)
                     ? article.like.filter((u) => u.id !== user.id)
                     : [...article.like, user],
-                  signals: article.signals.filter((u) => u.id !== user.id),
                 }
                 : article
             ),
           })),
         })),
 
-      addSignals: (id: number, user: Omit<Users, "password">) =>
+      addSignals: (commentId: number, user: Omit<Users, "password">) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
             ...categorie,
-            donnees: categorie.donnees.map((article) =>
-              article.id === id
-                ? {
-                  ...article,
-                  signals: article.signals.some((u) => u.id === user.id)
-                    ? article.signals.filter((u) => u.id !== user.id)
-                    : [...article.signals, user],
-                  like: article.like.filter((u) => u.id !== user.id),
+            donnees: categorie.donnees.map((article) => ({
+              ...article,
+              commentaire: article.commentaire.map(function updateSignals(comment): comment {
+                if (comment.id === commentId) {
+                  const alreadySignaled = comment.signals.some((u) => u.id === user.id);
+                  return {
+                    ...comment,
+                    signals: alreadySignaled
+                      ? comment.signals.filter((u) => u.id !== user.id) 
+                      : [...comment.signals, user], 
+                    like: comment.like.filter((u) => u.id !== user.id), 
+                  };
                 }
-                : article
-            ),
+                return {
+                  ...comment,
+                  reponse: comment.reponse.map(updateSignals),
+                };
+              }),
+            })),
           })),
         })),
+
+        likeComment: (commentId: number, user: Omit<Users, "password">) =>
+          set((state) => ({
+            dataArticles: state.dataArticles.map((categorie) => ({
+              ...categorie,
+              donnees: categorie.donnees.map((article) => ({
+                ...article,
+                commentaire: article.commentaire.map(function updateLike(comment): comment {
+                  if (comment.id === commentId) {
+                    const alreadyLiked = comment.like.some((u) => u.id === user.id);
+                    return {
+                      ...comment,
+                      like: alreadyLiked
+                        ? comment.like.filter((u) => u.id !== user.id) 
+                        : [...comment.like, user], 
+                      signals: comment.signals.filter((u) => u.id !== user.id), 
+                    };
+                  }
+        
+                  return {
+                    ...comment,
+                    reponse: comment.reponse.map(updateLike),
+                  };
+                }),
+              })),
+            })),
+          })),
+        
 
 
     }),

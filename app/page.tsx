@@ -9,7 +9,6 @@ import Navbar from "@/components/navbar";
 import PubsComp from "@/components/PubsComp";
 import useStore from "@/context/store";
 import { Article, Categorie, Pubs } from "@/data/temps";
-import { getUserFavoriteCategories } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -26,6 +25,35 @@ export default function HomePage() {
   const [grid1, setGrid1] = useState<Categorie[]>();
   const [grid2, setGrid2] = useState<Categorie[]>();
   const [carrHero, setCarrHero] = useState<Article[]>();
+
+
+
+  const getUserFavoriteCategories = (
+    categories: Categorie[],
+    userId: number
+  ): Categorie[] | undefined => {
+
+    const hasLikes = categories.some(categorie =>
+      categorie.donnees.some(article => article.like.length > 0)
+    );
+
+    const userFavoriteCategories = categories.filter(categorie =>
+      categorie.donnees.some(article =>
+        article.like.some(user => user.id === userId)
+      )
+    );
+
+    const sortedCategories = userFavoriteCategories.sort((a, b) => {
+      const totalLikesA = a.donnees.reduce((sum, article) => sum + article.like.length, 0);
+      const totalLikesB = b.donnees.reduce((sum, article) => sum + article.like.length, 0);
+      return totalLikesB - totalLikesA;
+    });
+
+    return sortedCategories;
+  };
+
+
+
 
   const pubData = useQuery({
     queryKey: ["pubs"],
@@ -56,14 +84,14 @@ export default function HomePage() {
       setCarrHero(articles.slice(0, 4))
       setArt(articleData.data)
     };
-    
-    if (currentUser && articleData.data){
+    if (currentUser && articleData.data) {
       setFavorite(getUserFavoriteCategories(articleData.data, currentUser.id))
-    } 
+    }
+    console.log(favorite);
   }, [articleData.data])
 
 
-  
+
 
 
   return (
