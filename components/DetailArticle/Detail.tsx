@@ -60,11 +60,11 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
     const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
     const [openModifier, setOpenModifier] = useState<number | null>(null);
     const [openRepondre, setOpenRepondre] = useState<number | null>(null);
-
-    console.log(favorite);
     
 
-    const second = favorite?.filter(x => x.donnees.find(a => a === details)).flatMap(x => x.donnees).filter(x => x === details)[1]
+    const second = favorite?.filter(category => !category.donnees.some(article => article === details))
+
+    console.log(second);    
     
     const toggleComment = (id: number) => {
         setOpenModifier((prev) => (prev === id ? null : id));
@@ -452,7 +452,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             <div className='max-w-[360px] w-full flex flex-col gap-7 px-7 py-5'>
                 <Similaire tous={dataArticle} similaire={details} />
                 <PubsComp id={pub!.id} lien={pub!.lien} image={pub!.image} />
-                <Similaire tous={dataArticle} similaire={second} />
+                {/* <Similaire tous={dataArticle} similaire={second} /> */}
             </div>
         </div>
 

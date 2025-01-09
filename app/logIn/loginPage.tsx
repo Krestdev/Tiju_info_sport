@@ -69,7 +69,7 @@ export default function LoginPage() {
         throw new Error("Email ou mot de passe incorrect.");
       }
 
-      router.push("/");
+      router.back();
     } catch (error: any) {
       form.setError("email", {
         type: "manual",

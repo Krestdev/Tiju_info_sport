@@ -1,3 +1,4 @@
+import useStore from '@/context/store'
 import { Article, Categorie } from '@/data/temps'
 import Link from 'next/link'
 import React from 'react'
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const Similaire = ({ similaire, tous }: Props) => {
-
+    
     const sim = tous?.find(x => x.donnees.find(a => a === similaire))
 
     return (

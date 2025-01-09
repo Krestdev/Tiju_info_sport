@@ -31,25 +31,29 @@ export default function HomePage() {
   const getUserFavoriteCategories = (
     categories: Categorie[],
     userId: number
-  ): Categorie[] | undefined => {
-
-    const hasLikes = categories.some(categorie =>
-      categorie.donnees.some(article => article.like.length > 0)
-    );
-
+  ): Categorie[] => {
+    // Étape 1 : Filtrer les catégories où l'utilisateur a liké au moins un article
     const userFavoriteCategories = categories.filter(categorie =>
       categorie.donnees.some(article =>
         article.like.some(user => user.id === userId)
       )
     );
-
-    const sortedCategories = userFavoriteCategories.sort((a, b) => {
-      const totalLikesA = a.donnees.reduce((sum, article) => sum + article.like.length, 0);
-      const totalLikesB = b.donnees.reduce((sum, article) => sum + article.like.length, 0);
-      return totalLikesB - totalLikesA;
+    // Étape 2 : Trier les catégories par popularité (total des likes de tous les articles)
+    const sortedCategories = userFavoriteCategories.map(categorie => {
+      const sortedDonnees = categorie.donnees.sort((a, b) => {
+        // Articles likés par l'utilisateur en tête
+        const aLikedByUser = a.like.some(user => user.id === userId) ? 1 : 0;
+        const bLikedByUser = b.like.some(user => user.id === userId) ? 1 : 0;
+        // Si les deux articles sont ou ne sont pas likés, trier par nombre de likes total
+        if (aLikedByUser === bLikedByUser) {
+          return b.like.length - a.like.length; // Articles avec plus de likes en premier
+        }
+        return bLikedByUser - aLikedByUser; // Articles likés par l'utilisateur en premier
+      });
+      return { ...categorie, donnees: sortedDonnees };
     });
-
-    return sortedCategories;
+    // Étape 3 : Retourner les catégories favorites
+    return sortedCategories
   };
 
 
