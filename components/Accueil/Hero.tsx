@@ -37,18 +37,18 @@ const Hero = ({ gridAff }: Aff) => {
                             className='h-full'
                         >
                             <Link href={`/user/detail-article/${x.id}`}>
-                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-row gap-5 justify-center`}>
+                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-col md:flex-row gap-5 justify-center`}>
                                     {x.media && (
 
                                         isImage(x.media) ? (
                                             <img
-                                                className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                className='md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
                                                 src={x.media}
                                                 alt={x.type}
                                             />
                                         ) : (
                                             <video
-                                                className='hidden md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                className='md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
                                                 controls
                                                 autoPlay
                                                 muted

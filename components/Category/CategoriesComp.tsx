@@ -2,53 +2,41 @@ import { Article } from '@/data/temps';
 import Link from 'next/link';
 import React from 'react'
 
-interface Result {
-    nom: string;
-    media: string | undefined;
+interface Props {
+    article: Article[] | undefined
 }
 
-interface Display {
-    category: Result[] | undefined
-}
-
-
-const CategoryComp = ({ category }: Display) => {
+const CategoryComp = ({ article }: Props) => {
 
     const isImage = (media: string | undefined): boolean => {
         if (!media) return false;
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
+    const premier = article && article[0]
 
 
     return (
-        <div className='containerBloc grid grid-cols-1 md:grid-cols-2 gap-12'>
-            {
-                category?.map((x, i) => (
-                    <Link href={`/category/${x.nom}`} key={i} className='flex flex-col py-7 gap-7'>
-                        {x.media && (
-                            isImage(x.media) ? (
-                                <img
-                                    className='w-[560px] h-[260px] object-cover rounded-lg'
-                                    src={x.media}
-                                    alt={x.nom}
-                                />
-                            ) : (
-                                <video
-                                    className='w-[560px] h-[260px] object-cover rounded-lg'
-                                    controls
-                                    autoPlay
-                                    muted
-                                    loop
-                                    src={x.media}
-                                >
-                                    Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                </video>
-                            )
-                        )}
-                        <h3>{x.nom}</h3>
-                    </Link>
-                ))
-            }
+        <div className='containerBloc flex flex-col gap-7'>
+            <div className='flex flex-col gap-7 px-7'>
+                <div key={premier?.id} className='flex flex-col gap-4 py-4'>
+                    <p className='text-[#A1A1A1]'>{premier?.type}</p>
+                    <h3>{premier?.titre}</h3>
+                    <img src={premier?.media} alt={premier?.type} className='max-w-[836px] w-full h-[420px] object-cover' />
+                </div>
+            </div>
+            <div className='flex flex-col gap-7'>
+                {
+                    article?.filter(x => x.id !== premier?.id).map(x => (
+                        <div className='flex flex-row gap-7 px-5 py-4'>
+                            <img src={x.media} alt={x.type} className='max-w-[384px] w-full h-[203px] rounded-lg object-cover' />
+                            <div className='flex flex-col'>
+                                <p className='text-[#A1A1A1]'>{x.type}</p>
+                                <h3 className='line-clamp-3'>{x.titre}</h3>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     )
 }

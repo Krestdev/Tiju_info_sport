@@ -28,10 +28,10 @@ const formSchema = z
       .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
   });
 
-  interface GoogleUser {
-    name: string;
-    email: string;
-  }
+interface GoogleUser {
+  name: string;
+  email: string;
+}
 
 
 export default function LoginPage() {
@@ -104,64 +104,59 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">{"Connexion"}</CardTitle>
-            <CardDescription className="text-center">
-              {"Connectez-vous à votre compte"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 flex flex-col gap-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{"Adresse e-mail"}</FormLabel>
-                      <FormControl>
-                        <Input placeholder="vous@exemple.com" {...field} className="w-full" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{"Mot de passe"}</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="********" {...field} className="w-full" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">{"Se connecter"}</Button>
-              </form>
-            </Form>
-          </CardContent>
-          <CardFooter className="flex flex-col items-center space-y-2">
-            <Link href="#" className="text-sm text-blue-600 hover:underline">
-              {"Mot de passe oublié ?"}
-            </Link>
-            <p className="text-sm text-gray-600">
-              {"Vous n'avez pas de compte ? "}
-              <Link href="/signUp" className="text-blue-600 hover:underline">
-                {"Inscrivez-vous"}
-              </Link>
-            </p>
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">{"Connexion"}</CardTitle>
+          <CardDescription className="flex flex-col items-center gap-4 text-center">
+            ou
             <GoogleLogin
-               onSuccess={handleGoogleSuccess}
-               onError={handleGoogleError}
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
             />
-          </CardFooter>
-        </Card>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 flex flex-col gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Adresse mail" {...field} className="w-full rounded-none" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input type="password" placeholder="Mot de passe" {...field} className="w-full rounded-none" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full rounded-none">{"Se connecter"}</Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex flex-row justify-between items-center space-y-2">
+          <Link href="#" className="text-sm text-[#012BAE] font-medium hover:underline">
+            {"Mot De Passe Oublié ?"}
+          </Link>
+          <Link href="/signUp" className="text-[#012BAE] font-medium hover:underline">
+            {"Creer Un Compte"}
+          </Link>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

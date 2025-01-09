@@ -1,6 +1,7 @@
 "use client"
 
 import GridInfo from '@/components/Accueil/GridInfo';
+import CategoryComp from '@/components/Category/CategoriesComp';
 import PubsComp from '@/components/PubsComp';
 import useStore from '@/context/store';
 import { Article, Categorie, Pubs } from '@/data/temps';
@@ -26,7 +27,6 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     useEffect(()=>{
         if (articleData.isSuccess) {
-            
             setArticle(articleData.data.find(x => x.nom === decodeURIComponent(param.type))?.donnees)
         }
     }, [articleData.data, param.type, param.id]);
@@ -36,9 +36,10 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
         }
       }, [pubData.data])
 
+
     return (
         <div>
-            {pub && <PubsComp {...pub} />}
+            <CategoryComp article={article} />
             {/* {article && <GridInfo gridAff={article} />} */}
         </div>
     )

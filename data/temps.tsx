@@ -17,7 +17,8 @@ export interface Article {
     ajouteLe: string,
     commentaire: comment [],
     like: Omit<Users, "password">[];
-    user: Users
+    user: Users,
+    abonArticle: string
 };
 
 export interface Categorie {
@@ -86,7 +87,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         },
         {
             id: 2,
@@ -107,13 +109,14 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         },
         {
             id: 5,
             type: "football feminin",
             titre: "Les nouvelles ambitions des équipes féminines en Afrique",
-            description: "Les équipes féminines de football en Afrique connaissent une transformation...",
+            description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
             media: "/images/Hero.jpg",
             ajouteLe: "il y'a 3j",
             commentaire: [
@@ -202,7 +205,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "premium"
         }
       ]
     },
@@ -249,7 +253,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         },
         {
             id: 9,
@@ -291,7 +296,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         }
       ]
     },
@@ -317,7 +323,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         }
       ]
     },
@@ -364,7 +371,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         },
         {
             id: 7,
@@ -406,7 +414,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         },
         {
             id: 8,
@@ -446,7 +455,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         }
       ]
     },
@@ -491,7 +501,8 @@ export const articles: Categorie[] = [
                 abonnement: "",
                 photo: "/images/profil.jpg"
             },
-            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas."
+            extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+            abonArticle: "normal"
         }
       ]
     }

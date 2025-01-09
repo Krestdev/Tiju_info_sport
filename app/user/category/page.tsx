@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 
 interface Result {
+  id: number | undefined;
+  titre: string | undefined;
   nom: string;
   media: string | undefined;
 }
@@ -33,16 +35,18 @@ const page = () => {
 
   function getLastImagesByCategory(categories: Categorie[]): Result[] {
     return categories.map(categorie => {
-        const lastArticleWithMedia = [...categorie.donnees]
-            .reverse() 
-            .find(article => article.media !== undefined);
+      const lastArticleWithMedia = [...categorie.donnees]
+        .reverse()
+        .find(article => article.media !== undefined);
 
-        return {
-            nom: categorie.nom,
-            media: lastArticleWithMedia?.media
-        };
+      return {
+        id: lastArticleWithMedia?.id,
+        titre: lastArticleWithMedia?.titre,
+        nom: categorie.nom,
+        media: lastArticleWithMedia?.media
+      };
     });
-}
+  }
 
 
   useEffect(() => {
@@ -60,7 +64,7 @@ const page = () => {
   return (
     <div>
       {pub && <PubsComp {...pub} />}
-      <CategoryComp category={category} />
+      {/* <CategoryComp category={category} /> */}
     </div>
   )
 }

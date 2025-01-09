@@ -5,13 +5,12 @@ import React from 'react'
 
 
 interface Props {
-    tous: Categorie[] | undefined,
     similaire: Article | undefined
+    sim: Categorie | undefined,
 }
 
-const Similaire = ({ similaire, tous }: Props) => {
+const Similaire = ({ sim, similaire }: Props) => {
     
-    const sim = tous?.find(x => x.donnees.find(a => a === similaire))
 
     return (
         <div className='flex flex-col gap-4 w-full'>

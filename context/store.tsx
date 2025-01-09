@@ -13,6 +13,7 @@ export interface Article {
   commentaire: comment[],
   like: Omit<Users, "password">[];
   user: Users
+  abonArticle: string
 }
 export interface Categorie {
   nom: string;
@@ -65,6 +66,7 @@ const initialData: store = {
     phone: "",
     address: "",
     pub: "Tyju Publicité",
+    noPhoto: "/images/no-user.jpg"
   },
   dataArticles: articles,
   dataPubs: publicites,

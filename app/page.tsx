@@ -33,11 +33,22 @@ export default function HomePage() {
     userId: number
   ): Categorie[] => {
     // Étape 1 : Filtrer les catégories où l'utilisateur a liké au moins un article
-    const userFavoriteCategories = categories.filter(categorie =>
-      categorie.donnees.some(article =>
+    const userFavoriteCategories = categories.sort((a, b) => {
+      const aHasLikedArticle = a.donnees.some(article =>
         article.like.some(user => user.id === userId)
-      )
-    );
+      );
+      const bHasLikedArticle = b.donnees.some(article =>
+        article.like.some(user => user.id === userId)
+      );
+    
+      // Place les catégories avec des articles likés en tête
+      if (aHasLikedArticle && !bHasLikedArticle) return -1;
+      if (!aHasLikedArticle && bHasLikedArticle) return 1;
+    
+      // Conserve l'ordre initial si elles sont identiques
+      return 0;
+    });
+    
     // Étape 2 : Trier les catégories par popularité (total des likes de tous les articles)
     const sortedCategories = userFavoriteCategories.map(categorie => {
       const sortedDonnees = categorie.donnees.sort((a, b) => {
@@ -91,7 +102,6 @@ export default function HomePage() {
     if (currentUser && articleData.data) {
       setFavorite(getUserFavoriteCategories(articleData.data, currentUser.id))
     }
-    console.log(favorite);
   }, [articleData.data])
 
 
