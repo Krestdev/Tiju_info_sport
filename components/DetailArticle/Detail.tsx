@@ -469,7 +469,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                 }
                 <GridSport liste={sim?.donnees} />
             </div>
-            <div className='max-w-[360px] w-full flex flex-col gap-7 px-7 py-5'>
+            <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
                 <Similaire similaire={details} sim={sim} />
                 <PubsComp id={pub?.id} lien={pub?.lien} image={pub?.image} />
                 <Similaire sim={second} similaire={sec} />

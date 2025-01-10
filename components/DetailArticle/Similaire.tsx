@@ -13,7 +13,7 @@ const Similaire = ({ sim, similaire }: Props) => {
     
 
     return (
-        <div className='flex flex-col gap-4 w-full'>
+        <div className='max-w-[360px] w-full flex flex-col gap-4'>
             <div className='w-full'>
                 <h2 className='flex flex-row justify-start'>{`Dans ${sim?.nom}`}</h2>
                 {

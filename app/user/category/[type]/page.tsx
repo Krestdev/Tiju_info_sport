@@ -9,11 +9,18 @@ import withAuth from '@/lib/withAuth';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 
+interface Result {
+    id: number | undefined;
+    titre: string | undefined;
+    nom: string;
+    media: string | undefined;
+  }
+
 const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => {
     const param = React.use(params);
 
     const { dataArticles, dataPubs } = useStore();
-    const [article, setArticle] = useState<Article[] | undefined>();
+    const [article, setArticle] = useState<Result[] | undefined>();
     const [pub, setPub] = useState<Pubs>();
 
     const articleData = useQuery({
@@ -27,7 +34,16 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     useEffect(()=>{
         if (articleData.isSuccess) {
-            setArticle(articleData.data.find(x => x.nom === decodeURIComponent(param.type))?.donnees)
+            setArticle(articleData.data.find(x => x.nom === decodeURIComponent(param.type))?.donnees.map(
+                x => (
+                    {
+                        id: x.id,
+                        nom: x.type,
+                        titre: x.titre,
+                        media: x.media
+                    }
+                )
+            ))
         }
     }, [articleData.data, param.type, param.id]);
     useEffect(() => {
@@ -40,7 +56,6 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     return (
         <div>
             <CategoryComp article={article} />
-            {/* {article && <GridInfo gridAff={article} />} */}
         </div>
     )
 }

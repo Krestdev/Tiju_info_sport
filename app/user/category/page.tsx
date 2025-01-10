@@ -29,9 +29,7 @@ const page = () => {
   const pubData = useQuery({
     queryKey: ["pubs"],
     queryFn: async () => dataPubs,
-  });
-
-
+  });  
 
   function getLastImagesByCategory(categories: Categorie[]): Result[] {
     return categories.map(categorie => {
@@ -55,16 +53,15 @@ const page = () => {
     }
   }, [articleData.data]);
 
+
   useEffect(() => {
     if (pubData.isSuccess) {
       setPub(pubData.data[0])
     }
   }, [pubData.data])
-
   return (
     <div>
-      {pub && <PubsComp {...pub} />}
-      {/* <CategoryComp category={category} /> */}
+      <CategoryComp article={category} />
     </div>
   )
 }
