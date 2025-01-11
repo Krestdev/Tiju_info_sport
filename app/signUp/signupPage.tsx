@@ -93,16 +93,26 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+      <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">{"Inscription"}</CardTitle>
-          <CardDescription className="text-center">
-            {"Créez votre compte pour commencer"}
+          <CardDescription className="flex flex-col items-center gap-4 text-center">
+            ou
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                const decoded = jwtDecode(credentialResponse.credential!);
+                console.log(decoded);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex flex-col gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} 
+            className="space-y-4 flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="nom"
@@ -110,7 +120,7 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>{"Nom"}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Entrez votre nom" {...field} className="w-full" />
+                      <Input placeholder="Entrez votre nom" {...field} className="w-full rounded-none" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,7 +133,7 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>{"Adresse e-mail"}</FormLabel>
                     <FormControl>
-                      <Input placeholder="vous@exemple.com" {...field} className="w-full" />
+                      <Input placeholder="vous@exemple.com" {...field} className="w-full rounded-none" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,26 +178,17 @@ export default function SignupPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">{"S'inscrire"}</Button>
+              <Button type="submit" className="w-full rounded-none">{"S'inscrire"}</Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="justify-center flex flex-col">
           <p className="text-sm text-gray-600">
             {"Déjà un compte ? "}
-            <Link href="/logIn" className="text-blue-600 hover:underline">
+            <Link href="/logIn" className="text-[#012BAE] hover:underline">
               {"Connectez-vous"}
             </Link>
           </p>
-          <GoogleLogin
-            onSuccess={credentialResponse => {
-              const decoded = jwtDecode(credentialResponse.credential!);
-              console.log(decoded);
-            }}
-            onError={() => {
-              console.log('Login Failed');
-            }}
-          />
         </CardFooter>
       </Card>
       <ToastContainer />

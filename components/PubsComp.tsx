@@ -21,7 +21,7 @@ const PubsComp = ({
   return (
     <Link href={lien!} target="_blank">
       <div className='w-full flex items-center justify-center py-0 relative'>
-        <img src={image} alt={settings?.pub || "Publicité"} className='object-cover h-[200px] md:h-[300px]' />
+        <img src={image} alt={settings?.pub || "Publicité"} className='object-cover h-[200px] md:h-[240px]' />
       </div>
     </Link>
   );

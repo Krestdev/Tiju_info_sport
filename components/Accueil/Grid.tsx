@@ -43,7 +43,7 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                             {
                                 gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 2).map(x => (
                                     <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
-                                        <img src={x.media} alt="" className='object-cover max-w-[464px] w-full h-[236.25px] rounded-lg' />
+                                        <img src={x.media} alt="" className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-lg' />
                                         <div>
                                             <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
                                             <h2 className='line-clamp-2 font-bold mr-7 text-[28px]'>{x.titre}</h2>
@@ -58,7 +58,7 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                         {
                             gridAff?.slice(2).map(x => x.donnees.slice(1, 2).map(x => (
                                 <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
-                                    <img src={x.media} alt={x.description} className='object-cover max-w-[824px] w-full h-[263.25px] md:h-[463.5px]' />
+                                    <img src={x.media} alt={x.description} className='object-cover max-w-[824px] w-full h-auto aspect-video' />
                                     <div>
                                         <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
                                         <h2 className='line-clamp-1 font-bold mr-7 text-[28px]'>{x.titre}</h2>

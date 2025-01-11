@@ -57,7 +57,6 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className='containerBloc gap-3'>
-      {/* {pub && <PubsComp {...pub} />} */}
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
     </div>
   );

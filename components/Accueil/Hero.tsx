@@ -42,13 +42,13 @@ const Hero = ({ gridAff }: Aff) => {
 
                                         isImage(x.media) ? (
                                             <img
-                                                className='md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                className='md:flex max-w-[640px] w-full h-auto aspect-video  object-cover rounded-xl'
                                                 src={x.media}
                                                 alt={x.type}
                                             />
                                         ) : (
                                             <video
-                                                className='md:flex max-h-[360px] max-w-[640px] w-full object-cover rounded-xl'
+                                                className='md:flex max-w-[640px] w-full h-auto aspect-video object-cover rounded-xl'
                                                 controls
                                                 autoPlay
                                                 muted

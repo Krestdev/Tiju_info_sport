@@ -27,13 +27,13 @@ const Blog = ({ id, type, titre, media, ajouteLe }: Blog) => {
             {media && (
                 isImage(media) ? (
                     <img
-                        className="h-[200px] md:h-[360px] w-screen md:max-w-[640px] md:w-full rounded-xl object-cover"
+                        className="max-w-[640px] w-full h-auto aspect-video rounded-xl object-cover"
                         src={media}
                         alt={`${type} - ${titre}`}
                     />
                 ) : (
                     <video
-                        className="h-[200px] md:h-[360px] w-screen md:max-w-[640px] md:w-full rounded-xl object-cover"
+                        className="max-w-[640px] w-full h-auto aspect-video rounded-xl object-cover"
                         controls
                         autoPlay
                         muted

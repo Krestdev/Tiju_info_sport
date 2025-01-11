@@ -58,10 +58,11 @@ const page = () => {
     if (pubData.isSuccess) {
       setPub(pubData.data[0])
     }
-  }, [pubData.data])
+  }, [pubData.data])  
+
   return (
-    <div>
-      <CategoryComp article={category} />
+    <div className='containerBloc '>
+      <CategoryComp article={category} ad={pub} categorie={articleData.data} />
     </div>
   )
 }

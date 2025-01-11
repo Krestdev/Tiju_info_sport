@@ -19,7 +19,7 @@ const Similaire = ({ sim, similaire }: Props) => {
                 {
                     sim?.donnees.filter(x => x !== similaire).slice(0, 2).map(item => (
                         <Link href={`/user/detail-article/${item.id}`} key={item.id} className='flex flex-col gap-7 px-5 py-4'>
-                            <img src={item.media} alt={item.type} className='max-w-[264px] w-full h-[140px] rounded-lg object-cover' />
+                            <img src={item.media} alt={item.type} className='max-w-[264px] w-full h-auto aspect-video rounded-lg object-cover' />
                             <div className='flex flex-col'>
                                 <p className='text-[#A1A1A1]'>{item.type}</p>
                                 <h2 className='line-clamp-2'>{item.titre}</h2>

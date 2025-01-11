@@ -20,7 +20,7 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     const param = React.use(params);
 
     const { dataArticles, dataPubs } = useStore();
-    const [article, setArticle] = useState<Result[] | undefined>();
+    const [article, setArticle] = useState<Result[]>();
     const [pub, setPub] = useState<Pubs>();
 
     const articleData = useQuery({
@@ -54,8 +54,8 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
 
     return (
-        <div>
-            <CategoryComp article={article} />
+        <div className='containerBloc'>
+            <CategoryComp article={article} ad={pub} categorie={articleData.data} />
         </div>
     )
 }

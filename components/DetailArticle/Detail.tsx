@@ -221,7 +221,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                         <p className='text-[#A1A1A1]'>{details.type}</p>
                         <h2 className='font-bold'>{details.titre}</h2>
                     </div>
-                    {details.media && <img src={details.media} alt="" className='max-w-[836px] w-full h-[250px] md:h-[420px] rounded-lg object-cover' />}
+                    {details.media && <img src={details.media} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />}
                 </div>
                 <div className='flex flex-col py-7 gap-4'>
                     <p className='text-[#545454]'>{details.extrait}</p>
@@ -472,7 +472,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
                 <Similaire similaire={details} sim={sim} />
                 <PubsComp id={pub?.id} lien={pub?.lien} image={pub?.image} />
-                <Similaire sim={second} similaire={sec} />
+                <Similaire similaire={sec} sim={second} />
             </div>
         </div>
     )
