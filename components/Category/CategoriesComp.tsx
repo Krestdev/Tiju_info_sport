@@ -89,7 +89,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             </div>
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
                 <Similaire similaire={sec1} sim={ sim1 } />
-                {/* <PubsComp id={ad?.id} lien={ad?.lien} image={ad?.image} /> */}
+                <PubsComp id={ad?.id} lien={ad ? ad?.lien : "#"} image={ad?.image} />
                 <Similaire similaire={sec1} sim={ sim2 } />
             </div>
 

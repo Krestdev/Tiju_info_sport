@@ -41,6 +41,7 @@ const formSchema = z
         nom: z.string().min(4, {
             message: "Le nom doit avoir au moins 4 caractères ",
         }),
+        pseudo: z.string(),
         email: z.string().email(),
         phone: z.string().regex(/^\d{9}$/, "Le numero de telephone doit avoir au moins 8 caractères"),
         password: z
@@ -71,6 +72,7 @@ function EditUserForm({ children, selectedUser }: Props) {
             phone: selectedUser.phone,
             password: selectedUser.password,
             role: selectedUser.role,
+            pseudo: selectedUser.pseudo
         },
     });
 
@@ -120,6 +122,19 @@ function EditUserForm({ children, selectedUser }: Props) {
                                     <FormLabel>{"Nom"}</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Nom" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="pseudo"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Pseudonyme"}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Pseudonyme" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

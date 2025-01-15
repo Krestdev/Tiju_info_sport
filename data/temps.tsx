@@ -30,7 +30,11 @@ export interface Users {
     id: number,
     nom: string,
     email: string,
+    pseudo: string,
     phone?: string,
+    sexe?: string,
+    ville?: string,
+    pays?: string,
     photo?: string,
     password?: string,
     createdAt: string,
@@ -64,7 +68,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 },
                 {
                     id: 1,
@@ -74,7 +82,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 }
             ],
             user: {
@@ -85,7 +97,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -107,7 +123,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -132,7 +152,11 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: "",
-                        photo: "/images/profil.jpg"
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
                     },
                     reponse: [
                         {
@@ -147,7 +171,11 @@ export const articles: Categorie[] = [
                                 createdAt: "",
                                 role: "",
                                 abonnement: "",
-                                photo: "/images/profil.jpg"
+                                photo: "/images/profil.jpg",
+                                pseudo: "",
+                                sexe: "",
+                                ville: "",
+                                pays: ""
                             },
                             reponse: [],
                             like: [],
@@ -169,7 +197,11 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: "",
-                        photo: "/images/profil.jpg"
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
                     },
                     reponse: [],
                     like: [],
@@ -187,7 +219,11 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: "",
-                        photo: "/images/profil.jpg"
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
                     },
                     reponse: [],
                     like: [],
@@ -203,7 +239,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "premium"
@@ -230,7 +270,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 },
                 {
                     id: 1,
@@ -240,7 +284,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 }
             ],
             user: {
@@ -251,7 +299,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -273,7 +325,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 },
                 {
                     id: 1,
@@ -283,7 +339,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 }
             ],
             user: {
@@ -294,7 +354,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -321,7 +385,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -348,7 +416,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 },
                 {
                     id: 1,
@@ -358,7 +430,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 }
             ],
             user: {
@@ -369,7 +445,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -391,7 +471,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 },
                 {
                     id: 1,
@@ -401,7 +485,11 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: "",
-                    photo: "/images/profil.jpg"
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
                 }
             ],
             user: {
@@ -412,7 +500,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -433,7 +525,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             {
                 id: 1,
@@ -443,7 +539,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             }],
             user: {
                 id: 0,
@@ -453,7 +553,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -479,7 +583,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             {
                 id: 1,
@@ -489,7 +597,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             }],
             user: {
                 id: 0,
@@ -499,7 +611,11 @@ export const articles: Categorie[] = [
                 createdAt: "",
                 role: "",
                 abonnement: "",
-                photo: "/images/profil.jpg"
+                photo: "/images/profil.jpg",
+                pseudo: "",
+                sexe: "",
+                ville: "",
+                pays: ""
             },
             extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
             abonArticle: "normal"
@@ -531,7 +647,11 @@ export const users: Users[] = [
         createdAt: "2024-12-31",
         role: "admin",
         abonnement: "premium",
-        photo: ""
+        photo: "",
+        pseudo: "Etarcos",
+        sexe: "Homme",
+        ville: "Yaoundé",
+        pays: "Cameroun"
     },
     {
         id: 2,
@@ -542,6 +662,10 @@ export const users: Users[] = [
         createdAt: "2024-12-31",
         role: "user",
         abonnement: "normal",
-        photo: ""
+        photo: "",
+        pseudo: "DevTech",
+        sexe: "Femme",
+        ville: "Douala",
+        pays: "Cameroun"
     },
 ];

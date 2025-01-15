@@ -44,7 +44,7 @@ const Navbar = () => {
                         <img src="/logo.png" alt="Logo" className='size-[50px]' />
                         <p className='font-semibold text-[18px] hidden md:flex'>{"TYJU INFO SPORT"}</p>
                     </Link>
-                    <div className='flex flex-row items-center gap-3'>
+                    <div className='hidden md:flex md:flex-row items-center gap-3'>
                         {
                             fav?.slice(0, 3).map(x => (
                                 <Link key={x} href={`/user/category/${x}`} className='px-3 py-2 hover:bg-gray-100'><h3 className='font-medium'>{x}</h3></Link>

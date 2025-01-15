@@ -106,6 +106,7 @@ function UsersTable() {
               <TableRow className="text-[18px]">
                 <TableHead>{"ID"}</TableHead>
                 <TableHead>{"Nom"}</TableHead>
+                <TableHead>{"Pseudo"}</TableHead>
                 <TableHead>{"Email"}</TableHead>
                 <TableHead>{"Phone"}</TableHead>
                 <TableHead>{"Inscrit le"}</TableHead>
@@ -121,6 +122,7 @@ function UsersTable() {
                   <TableRow className="text-[16px]" key={id}>
                     <TableCell>{item.id}</TableCell>
                     <TableCell>{item.nom}</TableCell>
+                    <TableCell>{item.pseudo}</TableCell>
                     <TableCell>{item.email}</TableCell>
                     <TableCell>{item.phone}</TableCell>
                     <TableCell>{item.createdAt}</TableCell>

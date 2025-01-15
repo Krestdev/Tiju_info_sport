@@ -272,7 +272,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                         <h2 className='font-bold'> {details.commentaire.length <= 9 && '0'}{details.commentaire.length} Commentaire{details.commentaire.length > 1 && 's'}</h2>
                     </div>: ""
                 }
-                {details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") &&
+                {details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ?
                     <div className='flex flex-col pt-8'>
                         {
                             details.commentaire.map(x => {
@@ -465,8 +465,8 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                             }
                             )
                         }
-                    </div>
-                }
+                    </div>: ""
+                } 
                 <GridSport liste={sim?.donnees} />
             </div>
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>

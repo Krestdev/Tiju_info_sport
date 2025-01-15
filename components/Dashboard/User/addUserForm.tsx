@@ -34,6 +34,7 @@ const formSchema = z
         nom: z.string().min(4, {
             message: "Name must be at least 4 characters.",
         }),
+        pseudo: z.string(),
         email: z.string().email(),
         password: z
             .string()
@@ -74,7 +75,8 @@ function AddUserForm({ addButton }: { addButton: string }) {
                 year: "numeric",
             }),
             password: values.password,
-            abonnement: values.abonnement
+            abonnement: values.abonnement,
+            pseudo: ""
         });
         queryClient.invalidateQueries({ queryKey: ["articles"] })
         setDialogOpen(false);
@@ -113,6 +115,19 @@ function AddUserForm({ addButton }: { addButton: string }) {
                                     <FormLabel>{"Nom"}</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Nom" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="pseudo"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Pseudonyme"}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Pseudonyme" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
