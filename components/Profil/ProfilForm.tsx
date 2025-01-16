@@ -219,8 +219,9 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                         <h2>{"Informations personnelles"}</h2>
                         <Form {...form}>
                             <form
-                                onSubmit={form1.handleSubmit(onSubmit1)}
-                                className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[836px]"
+                                onSubmit={form.handleSubmit(onSubmit2)}
+                                className="grid grid-cols-1 md:grid-cols-2 ga
+                                p-10 w-full max-w-[836px]"
                             >
                                 <FormField
                                     control={form.control}
@@ -261,7 +262,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     name="sexe"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{"Role"}</FormLabel>
+                                            <FormLabel>{"Sexe"}</FormLabel>
                                             <FormControl>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <SelectTrigger>
@@ -285,12 +286,29 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     name="ville"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{"ville"}</FormLabel>
+                                            <FormLabel>{"Ville"}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
                                                     className="w-full max-w-lg rounded-none"
                                                     placeholder="Ville"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="phone"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{"Phone"}</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="w-full max-w-lg rounded-none"
+                                                    placeholder="Phone"
                                                 />
                                             </FormControl>
                                             <FormMessage />
