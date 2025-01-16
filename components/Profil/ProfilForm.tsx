@@ -12,6 +12,7 @@ import { Button } from '../ui/button';
 import { useQueryClient } from '@tanstack/react-query';
 import { Phone } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { BiRadioCircleMarked } from "react-icons/bi";
 
 const formSchema1 = z.object({
     email: z.string(),
@@ -78,7 +79,6 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
             email: values.email,
         });
         queryClient.invalidateQueries({ queryKey: ['users'] });
-        console.log(currentUser);
     }
 
     function onSubmit2(values: z.infer<typeof formSchema>) {
@@ -90,8 +90,9 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
             pays: values.pays,
             phone: values.phone,
         });
+        console.log("Updated");
+
         queryClient.invalidateQueries({ queryKey: ['users'] });
-        console.log(currentUser);
     }
 
     return (
@@ -220,106 +221,137 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                         <Form {...form}>
                             <form
                                 onSubmit={form.handleSubmit(onSubmit2)}
-                                className="grid grid-cols-1 md:grid-cols-2 ga
-                                p-10 w-full max-w-[836px]"
+                                className="flex flex-col gap-4"
                             >
-                                <FormField
-                                    control={form.control}
-                                    name="nom"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{"Nom"}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="w-full max-w-lg rounded-none"
-                                                    placeholder="Nom"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="pays"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{"Pays"}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="w-full max-w-lg rounded-none"
-                                                    placeholder="Pays"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="sexe"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{"Sexe"}</FormLabel>
-                                            <FormControl>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Déffinissez un role" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className='rounded-none'>
-                                                        {sexe.map((sexe, index) => (
-                                                            <SelectItem key={index} value={sexe}>
-                                                                {sexe}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="ville"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{"Ville"}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="w-full max-w-lg rounded-none"
-                                                    placeholder="Ville"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{"Phone"}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="w-full max-w-lg rounded-none"
-                                                    placeholder="Phone"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[836px]">
+                                    <FormField
+                                        control={form.control}
+                                        name="nom"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{"Nom"}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="w-full max-w-lg rounded-none"
+                                                        placeholder="Nom"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="pays"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{"Pays"}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="w-full max-w-lg rounded-none"
+                                                        placeholder="Pays"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="sexe"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{"Sexe"}</FormLabel>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Déffinissez un role" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className='rounded-none'>
+                                                            {sexe.map((sexe, index) => (
+                                                                <SelectItem key={index} value={sexe}>
+                                                                    {sexe}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="ville"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{"Ville"}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="w-full max-w-lg rounded-none"
+                                                        placeholder="Ville"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="phone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{"Phone"}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="w-full max-w-lg rounded-none"
+                                                        placeholder="Phone"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <Button
+                                    onClick={() => {
+                                        console.log(form.getValues());
+
+                                    }}
+                                    type='submit' className='max-w-[360px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
                             </form>
-                            <Button type='submit' className='max-w-[360px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
                         </Form>
                     </div>
+
+                    <div className='flex flex-col gap-4'>
+                        <h2>{"Mon abonnement"}</h2>
+                        {
+                            currentUser?.abonnement === "normal" ?
+                                <div className='flex flex-col md:flex-row gap-10'>
+                                    <div className='flex flex-row items-center gap-4 px-4 py-2'>
+                                        <p className='text-[16px]'>{"Aucun Abonnement actif"}</p>
+                                    </div>
+                                    <Button className='rounded-none'>{"S'abonner"}</Button>
+                                </div> :
+                                <div className='flex flex-col md:flex-row gap-10'>
+                                    <div className='flex flex-row items-center gap-4 px-4 py-2 text-[#012BAE]'>
+                                        <BiRadioCircleMarked className='h-10 w-10' />
+                                        <div className='flex flex-col'>
+                                            <p className='text-[16px]'>{currentUser?.abonnement}</p>
+                                            <p className='text-[#545454] text-[12px]'>{"11 mois restant"}</p>
+                                        </div>
+                                    </div>
+                                    <Button className='rounded-none'>{"Changer d'abonnement"}</Button>
+                                </div>
+                        }
+
+                    </div>
                 </div>
+
             </div>
             <div className="max-w-[360px] flex flex-col gap-7 px-7 py-5">
                 <Similaire similaire={sec1} sim={sim1} />

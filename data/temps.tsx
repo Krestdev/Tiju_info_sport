@@ -251,7 +251,7 @@ export const articles: Categorie[] = [
       ]
     },
     {
-      nom: "Fecafoot",
+      nom: "Hockey",
       donnees: [
         {
             id: 3,
@@ -565,7 +565,7 @@ export const articles: Categorie[] = [
       ]
     },
     {
-      nom: "Lion indomptable",
+      nom: "Volleyball",
       donnees: [
         {
             id: 10,

@@ -57,6 +57,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className='containerBloc gap-3'>
+      {<PubsComp id={pub?.id} lien={pub?.lien} image={pub?.image} />}
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
     </div>
   );
