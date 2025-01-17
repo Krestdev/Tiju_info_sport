@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import React from "react"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/Dashboard/Sidebar"
-import useStore from "@/context/store"
+import React from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/Dashboard/Sidebar";
+import useStore from "@/context/store";
+import withAdminAuth from "@/lib/whithAdminAuth";
 
+function Layout({ children }: { children: React.ReactNode }) {
+  const { isFull, setIsFull } = useStore();
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-
-  const {isFull, setIsFull} = useStore()
   return (
     <SidebarProvider open={isFull} onOpenChange={setIsFull}>
       <AppSidebar />
@@ -16,6 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
     </SidebarProvider>
-  )
+  );
 }
 
+export default withAdminAuth(Layout); // Application du HOC

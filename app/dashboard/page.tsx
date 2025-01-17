@@ -1,3 +1,6 @@
+"use client"
+
+import withAdminAuth from '@/lib/whithAdminAuth'
 import React from 'react'
 
 const DashbordPage = () => {
@@ -8,4 +11,4 @@ const DashbordPage = () => {
   )
 }
 
-export default DashbordPage
+export default withAdminAuth(DashbordPage)

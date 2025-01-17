@@ -3,6 +3,7 @@
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
@@ -25,6 +26,8 @@ import { Button } from "../ui/button";
 import { FaChevronLeft } from "react-icons/fa";
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Menu items.
 const items = [
@@ -66,8 +69,13 @@ const items = [
 ];
 
 export function AppSidebar() {
-    const { settings, isFull, setIsFull } = useStore();
+    const { settings, isFull, setIsFull, logoutAdmin } = useStore();
     const currentPath = usePathname();
+
+    const handleLogout = () => {
+        logoutAdmin()
+        toast.success("Deconnecté avec succès");
+    }
 
     return (
         <Sidebar variant="floating" collapsible="icon">
@@ -92,8 +100,8 @@ export function AppSidebar() {
                                         <SidebarMenuItem
                                             key={item.title}
                                             className={`${isActive
-                                                    ? "bg-blue-500 text-white"
-                                                    : "text-gray-700"
+                                                ? "bg-[#012BAE] text-white"
+                                                : "text-gray-700"
                                                 } rounded-md`}
                                         >
                                             <SidebarMenuButton className={`${isActive ? 'hover:bg-blue-400 hover:text-white' : "hover:bg-blue-50"} h-14`} asChild>
@@ -110,8 +118,8 @@ export function AppSidebar() {
                                     variant={"ghost"}
                                     size={!isFull ? "icon" : "default"}
                                     className={`h-14 mt-4 ${isFull
-                                            ? "w-full justify-start gap-4 rounded-md hover:bg-blue-50"
-                                            : "justify-start pl-2 w-14"
+                                        ? "w-full justify-start gap-4 rounded-md hover:bg-blue-50"
+                                        : "justify-start pl-2 w-14"
                                         }`}
                                 >
                                     <ChevronRight
@@ -124,7 +132,11 @@ export function AppSidebar() {
                         </SidebarGroupContent>
                     </SidebarGroup>
                 </SidebarContent>
+                <SidebarFooter className="pb-20">
+                    <Button onClick={() => handleLogout()} className="bg-red-500">{"Déconnexion"}</Button>
+                </SidebarFooter>
             </SidebarInset>
-        </Sidebar>
+         </Sidebar>
+
     );
 }

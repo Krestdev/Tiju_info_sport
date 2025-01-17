@@ -15,6 +15,7 @@ export interface Article {
   user: Users
   abonArticle: string
 }
+
 export interface Categorie {
   nom: string;
   donnees: Article[];
@@ -34,8 +35,9 @@ interface store {
   dataPubs: Pubs[];
   dataUsers: Users[];
   currentUser: Users | null;
+  currentAdmin: Users | null;
   isFull: boolean | undefined
-  favorite: Categorie[] 
+  favorite: Categorie[]
 }
 
 interface actions {
@@ -43,6 +45,8 @@ interface actions {
   registerUser: (user: Users) => void;
   login: (email: string, password: string) => Users | null;
   logout: () => void;
+  loginAdmin: (email: string, password: string) => Users | null;
+  logoutAdmin: () => void;
   addLike: (id: number, nom: Omit<Users, "password">) => void;
   addSignals: (commentId: number, user: Omit<Users, "password">) => void;
   likeComment: (commentId: number, user: Omit<Users, "password">) => void;
@@ -56,6 +60,8 @@ interface actions {
   editReponse: (idC: number, idR: number, message: string) => void;
   setIsFull: () => void;
   setFavorite: (cate: Categorie[] | undefined) => void;
+  addResponseLike: (idC: number, idR: number, user: Omit<Users, "password">) => void;
+  addResponseSignals: (idC: number, idR: number, user: Omit<Users, "password">) => void;
 }
 
 const initialData: store = {
@@ -72,8 +78,9 @@ const initialData: store = {
   dataPubs: publicites,
   dataUsers: users,
   currentUser: null,
+  currentAdmin: null,
   isFull: true,
-  favorite: articles
+  favorite: articles,
 };
 
 const useStore = create<store & actions>()(
@@ -84,9 +91,9 @@ const useStore = create<store & actions>()(
       setFavorite: (cate: Categorie[] | undefined) =>
         set((state) => ({
           ...state,
-          favorite: cate || state.favorite, 
+          favorite: cate || state.favorite,
         })),
-      
+
       setIsFull: () =>
         set((state) => ({
           isFull: !state.isFull,
@@ -200,7 +207,6 @@ const useStore = create<store & actions>()(
           })),
         })),
 
-
       registerUser: (user) =>
         set((state) => ({
           dataUsers: [...state.dataUsers, user],
@@ -217,6 +223,16 @@ const useStore = create<store & actions>()(
         return foundUser || null;
       },
       logout: () => set({ currentUser: null }),
+      loginAdmin: (email, password) => {
+        const foundUser = get().dataUsers.find(
+          (user) => user.email === email && user.password === password && user.role === "admin"
+        );
+        if (foundUser) {
+          set({ currentAdmin: foundUser });
+        }
+        return foundUser || null;
+      },
+      logoutAdmin: () => set({ currentAdmin: null }),
       addLike: (id: number, user: Omit<Users, "password">) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
@@ -246,9 +262,9 @@ const useStore = create<store & actions>()(
                   return {
                     ...comment,
                     signals: alreadySignaled
-                      ? comment.signals.filter((u) => u.id !== user.id) 
-                      : [...comment.signals, user], 
-                    like: comment.like.filter((u) => u.id !== user.id), 
+                      ? comment.signals.filter((u) => u.id !== user.id)
+                      : [...comment.signals, user],
+                    like: comment.like.filter((u) => u.id !== user.id),
                   };
                 }
                 return {
@@ -260,35 +276,91 @@ const useStore = create<store & actions>()(
           })),
         })),
 
-        likeComment: (commentId: number, user: Omit<Users, "password">) =>
+        addResponseLike: (idC: number, idR: number, user: Omit<Users, "password">) =>
           set((state) => ({
             dataArticles: state.dataArticles.map((categorie) => ({
               ...categorie,
               donnees: categorie.donnees.map((article) => ({
                 ...article,
-                commentaire: article.commentaire.map(function updateLike(comment): comment {
-                  if (comment.id === commentId) {
-                    const alreadyLiked = comment.like.some((u) => u.id === user.id);
-                    return {
-                      ...comment,
-                      like: alreadyLiked
-                        ? comment.like.filter((u) => u.id !== user.id) 
-                        : [...comment.like, user], 
-                      signals: comment.signals.filter((u) => u.id !== user.id), 
-                    };
-                  }
-        
-                  return {
-                    ...comment,
-                    reponse: comment.reponse.map(updateLike),
-                  };
-                }),
+                commentaire: article.commentaire.map((comment) =>
+                  comment.id === idC
+                    ? {
+                        ...comment,
+                        reponse: comment.reponse.map((response) =>
+                          response.id === idR
+                            ? {
+                                ...response,
+                                like: response.like.some((u) => u.id === user.id)
+                                  ? response.like.filter((u) => u.id !== user.id) 
+                                  : [...response.like, user],
+                                  signals: response.signals.filter((u) => u.id !== user.id), 
+                              }
+                            : response
+                        ),
+                      }
+                    : comment
+                ),
               })),
             })),
           })),
         
+  
+          addResponseSignals: (idC: number, idR: number, user: Omit<Users, "password">) =>
+            set((state) => ({
+              dataArticles: state.dataArticles.map((categorie) => ({
+                ...categorie,
+                donnees: categorie.donnees.map((article) => ({
+                  ...article,
+                  commentaire: article.commentaire.map(function updateSignals(comment): comment {
+                    if (comment.id === idC) {
+                      return {
+                        ...comment,
+                        reponse: comment.reponse.map((response) =>
+                          response.id === idR
+                            ? {
+                                ...response,
+                                signals: response.signals.some((u) => u.id === user.id)
+                                  ? response.signals.filter((u) => u.id !== user.id) 
+                                  : [...response.signals, user],
+                                like: response.like.filter((u) => u.id !== user.id),
+                              }
+                            : response
+                        ),
+                      };
+                    }
+                    return comment;
+                  }),
+                })),
+              })),
+            })),
+          
 
+      likeComment: (commentId: number, user: Omit<Users, "password">) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) => ({
+            ...categorie,
+            donnees: categorie.donnees.map((article) => ({
+              ...article,
+              commentaire: article.commentaire.map(function updateLike(comment): comment {
+                if (comment.id === commentId) {
+                  const alreadyLiked = comment.like.some((u) => u.id === user.id);
+                  return {
+                    ...comment,
+                    like: alreadyLiked
+                      ? comment.like.filter((u) => u.id !== user.id)
+                      : [...comment.like, user],
+                    signals: comment.signals.filter((u) => u.id !== user.id),
+                  };
+                }
 
+                return {
+                  ...comment,
+                  reponse: comment.reponse.map(updateLike),
+                };
+              }),
+            })),
+          })),
+        })),
     }),
     { name: "Tyju" }
   )

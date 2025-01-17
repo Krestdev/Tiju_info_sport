@@ -59,10 +59,13 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         deleteReponse,
         addSignals,
         likeComment,
-        favorite
+        favorite,
+        addResponseLike,
+        addResponseSignals
     } = useStore()
     const [like, setLike] = useState(details.like.some(u => u.id === currentUser?.id))
     const [signal, setSignal] = useState<number[]>([])
+
 
     const [response, setResponse] = useState('');
     const [modifie, setModifie] = useState('');
@@ -156,6 +159,16 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         likeComment(id, userLike!)
     }
 
+    const handleLikeR = (idC: number, idR: number) => {
+        const userLike: Omit<Users, "password"> | null = currentUser && (({ password, ...rest }) => rest)(currentUser);
+        addResponseLike(idC, idR, userLike!)
+    }
+
+    const handleSignalR = (idC: number, idR: number) => {
+        const userSignal: Omit<Users, "password"> | null = currentUser && (({ password, ...rest }) => rest)(currentUser);
+        addResponseSignals(idC, idR, userSignal!)
+    }
+
 
 
     const handleResponseClick = (comment: comment) => {
@@ -216,7 +229,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
     }
 
     const handleShare = async (image: File[], text: string) => {
-        if(navigator.canShare({files:image})){
+        if (navigator.canShare({ files: image })) {
             await navigator.share({
                 title: "Partage",
                 text: text,
@@ -224,7 +237,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             })
         } else {
             console.log("erreur");
-            
+
         }
     }
 
@@ -419,8 +432,18 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                                                                     <h3 className='font-semibold'>{a.user?.nom}</h3>
                                                                     <p>{a.message}</p>
                                                                     <div className='flex flex-row items-center gap-4'>
-                                                                        <Button variant={'ghost'} className='flex gap-1 px-1'>
-                                                                            <ThumbsUp className='size-5 text-[#012BAE]' />
+                                                                        <Button onClick={() => handleLikeR(x.id, a.id)}
+                                                                            style={{
+                                                                                color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                cursor: "pointer",
+                                                                            }}
+                                                                            variant={'ghost'} className='flex gap-1 px-1'>
+                                                                            <ThumbsUp
+                                                                                style={{
+                                                                                    color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                    cursor: "pointer",
+                                                                                }}
+                                                                                className='size-5 text-[#012BAE]' />
                                                                             <p className='font-bold'>{a.like ? a.like.length : '0'} </p>
                                                                         </Button>
                                                                         {a.user?.id !== currentUser?.id ?
@@ -444,7 +467,12 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                                                                                         </div>
                                                                                     </PopoverContent>
                                                                                 </Popover>
-                                                                                <Button className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
+                                                                                <Button onClick={() => handleSignalR(x.id, a.id)}
+                                                                                    style={{
+                                                                                        color: a.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                        cursor: "pointer",
+                                                                                    }}
+                                                                                    className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
                                                                             </div> :
                                                                             <div>
                                                                                 <Popover open={openModifier === a.id} onOpenChange={() => toggleComment(a.id)}>
