@@ -212,6 +212,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         }
     };
 
+
     async function handleDeleteComment(id: number) {
         try {
             deleteComment(id);
@@ -506,7 +507,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
 
                                                                                         <DialogFooter className="sm:justify-end">
                                                                                             <DialogClose asChild>
-                                                                                                <Button onClick={() => handleDeleteComment(a.id)} type="button">
+                                                                                                <Button onClick={() => handleDeleteRep(x.id ,a.id)} type="button">
                                                                                                     {"Supprimer"}
                                                                                                 </Button>
                                                                                             </DialogClose>

@@ -26,6 +26,7 @@ import { Button } from "../ui/button";
 import { FaChevronLeft } from "react-icons/fa";
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
+import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -133,7 +134,7 @@ export function AppSidebar() {
                     </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter className="pb-20">
-                    <Button onClick={() => handleLogout()} className="bg-red-500">{"Déconnexion"}</Button>
+                    <Button onClick={() => handleLogout()} className="bg-red-500 font-bold">{isFull ? "Déconnexion" : <AiOutlineLogout />}</Button>
                 </SidebarFooter>
             </SidebarInset>
          </Sidebar>

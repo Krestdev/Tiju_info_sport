@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from './ui/button'
 import { Menu, Search, User } from 'lucide-react'
 import useStore from '@/context/store'
@@ -9,13 +9,18 @@ import { useRouter } from 'next/navigation'
 import MenuBar from './menuBar'
 import { Article, Categorie } from '@/data/temps'
 import { useQuery } from '@tanstack/react-query'
+import { Input } from './ui/input'
 
 
 const Navbar = () => {
 
     const router = useRouter()
-    const { currentUser, dataArticles, logout } = useStore()
+    const { currentUser, dataArticles, logout, setSearch } = useStore()
     const [article, setArticle] = useState<Categorie[]>()
+    const [showSearch, SetShowSearch] = useState(false);
+    const [searchEntry, setSearchEntry] = useState("");
+
+
     const articleData = useQuery({
         queryKey: ["articles"],
         queryFn: async () => dataArticles,
@@ -33,6 +38,27 @@ const Navbar = () => {
         logout();
         router.push("/logIn");
     };
+    function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setSearchEntry(event.target.value);
+    }
+
+    const filterData = useMemo(() => {
+        if (articleData.isSuccess) {
+            if (searchEntry === "") return articleData.data.flatMap(x=> x.donnees);
+            return articleData.data.flatMap(x => x.donnees).filter((el) =>
+                Object.values(el).some((value) =>
+                    String(value)
+                        .toLocaleLowerCase()
+                        .includes(searchEntry.toLocaleLowerCase())
+                )
+            );
+        }
+        //to do: complete this code
+    }, [searchEntry, articleData.data]);
+
+    useEffect(() => {
+        setSearch(filterData)
+    }, [searchEntry, articleData.data])
 
     const fav = articleData.data?.flatMap(x => x.nom)
 
@@ -46,13 +72,23 @@ const Navbar = () => {
                     </Link>
                     <div className='hidden md:flex md:flex-row items-center gap-3'>
                         {
+                            !showSearch &&
                             fav?.slice(0, 3).map(x => (
                                 <Link key={x} href={`/user/category/${x}`} className='px-3 py-2 hover:bg-gray-100'><h3 className='font-medium'>{x}</h3></Link>
                             ))
                         }
-                        <Button variant={'ghost'}><Search className='size-[60px]' /></Button>
+                        <Link href={"/user/all-articles"}><Button onClick={() => SetShowSearch(!showSearch)} variant={'ghost'}><Search className='size-[60px]' /></Button></Link>
                     </div>
                 </div>
+                {
+                    showSearch && <Input
+                        type="search"
+                        onChange={handleInputChange}
+                        value={searchEntry}
+                        placeholder="Rechercher un article"
+                        className="max-w-[350px] w-full pr-3"
+                    />
+                }
                 <div className='flex flex-row items-center gap-5'>
                     <div className='hidden md:flex'>
                         {
