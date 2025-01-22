@@ -1,9 +1,10 @@
+import CommentsTable from '@/components/Dashboard/Comments/table'
 import React from 'react'
 
 const page = () => {
   return (
-    <div className='containerBloc'>
-      <h1>Commentaires</h1>
+    <div>
+      <CommentsTable />
     </div>
   )
 }

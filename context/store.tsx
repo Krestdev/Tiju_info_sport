@@ -23,9 +23,9 @@ export interface Categorie {
 
 interface Pubs {
   id: number;
+  nom: string;
   lien: string;
-  description?: string;
-  prix?: number;
+  date: string;
   image: string;
 }
 
@@ -56,6 +56,7 @@ interface actions {
   deleteComment: (id: number) => void;
   deleteReponse: (idC: number, idR: number) => void;
   deleteUser: (id: number) => void;
+  deletePub: (id: number) => void;
   editUser: (user: any) => void;
   editComment: (id: number, message: string) => void;
   editReponse: (idC: number, idR: number, message: string) => void;
@@ -64,6 +65,9 @@ interface actions {
   addResponseLike: (idC: number, idR: number, user: Omit<Users, "password">) => void;
   addResponseSignals: (idC: number, idR: number, user: Omit<Users, "password">) => void;
   setSearch: (art: Article[] | undefined) => void
+
+  addPub: (pub: Pubs) => void
+  editPub: (pub: any) => void
 }
 
 const initialData: store = {
@@ -369,6 +373,13 @@ const useStore = create<store & actions>()(
             })),
           })),
         })),
+
+      addPub: (pub) =>
+        set((state) => ({
+          dataPubs: [...state.dataPubs, pub],
+        })),
+      editPub: (pub) => set((state) => ({ dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el)) })),
+      deletePub: (id) => set((state) => ({ dataPubs: state.dataPubs.filter((item) => item.id != id) })),
     }),
     { name: "Tyju" }
   )

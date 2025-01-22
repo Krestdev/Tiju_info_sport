@@ -26,9 +26,6 @@ export default async function RootLayout({
           fontSans.variable
         )}
       >
-        <header>
-          <title>{"Tyju Info Sprot"}</title>
-        </header>
         <main>
           <Providers>
             <HydrationZustand>

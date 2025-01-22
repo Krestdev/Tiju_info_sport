@@ -5,6 +5,7 @@ export interface comment {
     reponse: comment[]
     like: Omit<Users, "password">[];
     signals: Omit<Users, "password">[];
+    date: string
 };
 
 export interface Article {
@@ -44,8 +45,10 @@ export interface Users {
 
 export interface Pubs {
     id: number,
+    nom: string,
     lien: string,
-    image: string
+    image: string,
+    date: string,
 };
 
 export const articles: Categorie[] = [
@@ -179,11 +182,13 @@ export const articles: Categorie[] = [
                                 },
                                 reponse: [],
                                 like: [],
-                                signals: []
+                                signals: [],
+                                date: "12-01-2024"
                             },
                         ],
                         like: [],
-                        signals: []
+                        signals: [],
+                        date: "12-01-2024"
                     },
                     {
                         id: 1,
@@ -205,7 +210,8 @@ export const articles: Categorie[] = [
                         },
                         reponse: [],
                         like: [],
-                        signals: []
+                        signals: [],
+                        date: "12-01-2024"
                     },
                     {
                         id: 2,
@@ -227,7 +233,8 @@ export const articles: Categorie[] = [
                         },
                         reponse: [],
                         like: [],
-                        signals: []
+                        signals: [],
+                        date: "12-01-2024"
                     },
                 ],
                 like: [],
@@ -628,12 +635,16 @@ export const publicites: Pubs[] = [
     {
         id: 1,
         lien: "https://google.com",
-        image: "/images/pub1.jpeg"
+        image: "/images/pub1.jpeg",
+        date: "2024-12-12",
+        nom: "Orange CM"
     },
     {
         id: 2,
-        lien: "",
-        image: "/images/pub.jpg"
+        lien: "https://google.com",
+        image: "/images/pub.jpg",
+        date: "2025-01-12",
+        nom: "Boutique Socrate"
     },
 ];
 

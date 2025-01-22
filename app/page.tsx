@@ -117,7 +117,7 @@ export default function HomePage() {
       {pub1 && <PubsComp {...pub1} />}
       {/* {blog1 && <Blog {...blog1} />} */}
       {grid2 && <GridInfo gridAff={grid2} />}
-      {pub2 && <PubsComp id={pub2.id} lien={pub2.lien} image={pub2.image} />}
+      {pub2 && <PubsComp {...pub2} />}
       {/* {blog2 && <Blog {...blog2} />} */}
       <Footbar />
     </div>
