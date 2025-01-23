@@ -44,12 +44,13 @@ export interface Users {
 };
 
 export interface Pubs {
-    id: number,
-    nom: string,
-    lien: string,
-    image: string,
-    date: string,
-};
+    id: number;
+    nom: string;
+    lien: string;
+    image: File | undefined; 
+    date: string;
+}
+
 
 export const articles: Categorie[] = [
     {
@@ -635,18 +636,19 @@ export const publicites: Pubs[] = [
     {
         id: 1,
         lien: "https://google.com",
-        image: "/images/pub1.jpeg",
+        image: new File([""], "/images/pub1.jpeg", { type: "image/jpeg" }), 
         date: "2024-12-12",
-        nom: "Orange CM"
+        nom: "Orange CM",
     },
     {
         id: 2,
         lien: "https://google.com",
-        image: "/images/pub.jpg",
+        image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }), 
         date: "2025-01-12",
-        nom: "Boutique Socrate"
+        nom: "Boutique Socrate",
     },
 ];
+
 
 export const users: Users[] = [
     {

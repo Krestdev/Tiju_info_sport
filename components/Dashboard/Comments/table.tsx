@@ -23,17 +23,17 @@ import 'react-toastify/dist/ReactToastify.css';
 // import EditUserForm from "./editUserForm";
 // import AddPubsForm from "./addPubsForm";
 // import EditPubsForm from "./editPubsForm";
-import { comment } from "@/data/temps";
+import { Categorie, comment } from "@/data/temps";
 
 
 function CommentsTable() {
-    const { dataArticles, deletePub } = useStore();
+    const { dataArticles, deleteComment } = useStore();
     const queryClient = useQueryClient();
 
-    const [commentsData, setCommentsData] = useState<comment[]>()
+    const [commentsData, setCommentsData] = useState<comment[]>([])
 
     const articleData = useQuery({
-        queryKey: ["users"],
+        queryKey: ["articles"],
         queryFn: async () => dataArticles,
     });
 
@@ -46,27 +46,10 @@ function CommentsTable() {
                 .flatMap(x => x.reponse)
                 .filter(x => x.signals.length > 0)
 
-
-            // const commentSignal = articleData.data
-            //     ?.map(x => x.donnees)
-            //     .reduce((acc, curr) => acc.concat(curr))
-            //     .map(y => y.commentaire)
-            //     .reduce((acc, curr) => acc.concat(curr || []), [])
-            //     .filter(x => x.signals.length > 0);
-            // const respenseSignal = articleData.data
-            //     ?.map(x => x.donnees) 
-            //     .reduce((acc, curr) => acc.concat(curr || []), []) 
-            //     .map(x => x.commentaire) 
-            //     .reduce((acc, curr) => acc.concat(curr || []), []) 
-            //     .filter(x => x.reponse?.length > 0)
-            //     .map(x => x.reponse) 
-            //     .reduce((acc, curr) => acc.concat(curr || []), []) 
-            //     .filter(x => x.signals?.length > 0); 
-
-
             setCommentsData([...commentSignal, ...respenseSignal])
         }
     }, [articleData.data])
+
 
     //Search value
     const [searchEntry, setSearchEntry] = useState("");
@@ -94,8 +77,8 @@ function CommentsTable() {
     }, [searchEntry, commentsData]);
 
     //Delete function
-    function onDeletePub(id: number) {
-        deletePub(id)
+    function onDeleteComment(id: number) {
+        deleteComment(id)
         queryClient.invalidateQueries({ queryKey: ["users"] })
         toast.success("Supprimé avec succès");
     }
@@ -144,11 +127,11 @@ function CommentsTable() {
                                     <TableRow className="text-[16px]" key={id}>
                                         <TableCell>{item.id}</TableCell>
                                         <TableCell>{item.user?.nom}</TableCell>
-                                        <TableCell>{item.message}</TableCell>
+                                        <TableCell className="line-clamp-1">{item.message}</TableCell>
                                         <TableCell>{item.signals.length}</TableCell>
                                         <TableCell>{item.date}</TableCell>
                                         <TableCell className="flex gap-2 items-center">
-                                            <ModalWarning id={item.id} action={onDeletePub} name={item.id.toString()}>
+                                            <ModalWarning id={item.id} action={onDeleteComment} name={item.id.toString()}>
                                                 <Button
                                                     variant={"destructive"}
                                                     size={"icon"}

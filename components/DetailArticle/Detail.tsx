@@ -9,7 +9,7 @@ import useStore from '@/context/store';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Share2, ThumbsUp, User } from 'lucide-react';
-import { z } from 'zod';
+import { date, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from '../ui/form';
 import { useForm } from 'react-hook-form';
@@ -111,6 +111,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             const newComment = {
                 id: Date.now(),
                 user: currentUser,
+                date: Date.now().toString(),
                 message: commentaire,
                 reponse: [],
                 like: [],
@@ -176,6 +177,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             // Crée un nouveau commentaire
             const newComment: comment = {
                 id: Date.now(),
+                date: Date.now().toString(),
                 user: currentUser,
                 message: response,
                 reponse: [],
@@ -536,7 +538,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
             </div>
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
                 <Similaire similaire={details} sim={sim} />
-                <PubsComp id={pub?.id} lien={pub?.lien} image={pub?.image} />
+                {pub && <PubsComp {...pub} />}
                 <Similaire similaire={sec} sim={second} />
             </div>
         </div>

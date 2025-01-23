@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 
 type Props = {
     children: React.ReactNode;
-    image: string
+    image: string | undefined
 };
 
 

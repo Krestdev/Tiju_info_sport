@@ -10,12 +10,6 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useEffect, useState, use } from 'react';
 
-// interface ArticleDetail {
-//   params: {
-//     id: string;
-//   };
-// }
-
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const param = React.use(params);
 
@@ -57,7 +51,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className='containerBloc gap-3'>
-      {<PubsComp id={pub?.id} lien={pub?.lien} image={pub?.image} />}
+      {pub && <PubsComp {...pub} />}
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
     </div>
   );

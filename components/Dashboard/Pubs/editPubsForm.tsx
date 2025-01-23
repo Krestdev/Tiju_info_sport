@@ -25,17 +25,24 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Pubs} from "@/data/temps";
+import { Pubs } from "@/data/temps";
+import FullScreen from "../FullScreen";
 
-const formSchema = z
-    .object({
-        nom: z.string().min(4, {
-            message: "Name must be at least 4 characters.",
-        }),
-        lien: z.string(),
-        image: z.string().email(),
-        date: z.string(),
-    });
+const formSchema = z.object({
+    nom: z.string().min(4, {
+        message: "Name must be at least 4 characters.",
+    }),
+    lien: z.string({
+        message: "Lien must be a valid URL.",
+    }),
+    image: z
+    .any()
+    .refine(
+        (file) => !file || file instanceof File,
+        { message: "Image must be a file." }
+    )
+});
+
 
 type Props = {
     children: ReactNode;
@@ -53,7 +60,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
         defaultValues: {
             nom: selectedPubs.nom,
             lien: selectedPubs.lien,
-            image: selectedPubs.image,
+            image: selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image,
         },
     });
 
@@ -64,7 +71,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
         editPub({
             nom: values.nom,
             lien: values.lien,
-            image: values.image,
+            image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }),
         });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });
@@ -114,21 +121,34 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="image"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{"Email"}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="email@exemple.com" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="flex flex-row gap-2">
+                            <FullScreen image={selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image} >
+                                <img src={selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image} alt="" className="size-16 object-cover cursor-pointer" />
+                            </FullScreen>
+                            <FormField
+                                control={form.control}
+                                name="image"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        field.onChange(e.target.files[0]);
+                                                    }
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                         <span className="flex items-center gap-3 flex-wrap">
-                            <Button type="submit" className="w-fit">
+                            <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
                                 {"Modifier la Pub"}
                             </Button>
                             <DialogClose asChild>

@@ -26,7 +26,7 @@ interface Pubs {
   nom: string;
   lien: string;
   date: string;
-  image: string;
+  image: File | undefined;
 }
 
 interface store {
@@ -57,6 +57,7 @@ interface actions {
   deleteReponse: (idC: number, idR: number) => void;
   deleteUser: (id: number) => void;
   deletePub: (id: number) => void;
+  deleteArticle: (id: number) => void;
   editUser: (user: any) => void;
   editComment: (id: number, message: string) => void;
   editReponse: (idC: number, idR: number, message: string) => void;
@@ -162,6 +163,15 @@ const useStore = create<store & actions>()(
               ...article,
               commentaire: article.commentaire.filter((com) => com.id !== id),
             })),
+          })),
+        })),
+
+      deleteArticle: (id: number) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.flatMap((article) =>
+          ({
+            ...article,
+            donnees: article.donnees.filter((art) => art.id !== id)
           })),
         })),
 

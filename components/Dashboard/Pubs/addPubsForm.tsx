@@ -28,15 +28,21 @@ import { TbUserPlus } from "react-icons/tb";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const formSchema = z
-    .object({
-        nom: z.string().min(4, {
-            message: "Name must be at least 4 characters.",
-        }),
-        lien: z.string(),
-        image: z.string().email(),
-        date: z.string(),
-    });
+const formSchema = z.object({
+    nom: z.string().min(4, {
+        message: "Name must be at least 4 characters.",
+    }),
+    lien: z.string({
+        message: "Lien must be a valid URL.",
+    }),
+    image: z
+    .any()
+    .refine(
+        (file) => !file || file instanceof File,
+        { message: "Image must be a file." }
+    )
+});
+
 
 function AddPubsForm({ addButton }: { addButton: string }) {
 
@@ -49,11 +55,15 @@ function AddPubsForm({ addButton }: { addButton: string }) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
+            lien: "",
+            // image: undefined
         },
     });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("Hello");
+        
         addPub({
             id: Date.now(),
             nom: values.nom,
@@ -65,7 +75,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                 year: "numeric",
             }),
         });
-        queryClient.invalidateQueries({ queryKey: ["articles"] })
+        queryClient.invalidateQueries({ queryKey: ["pubs"] })
         setDialogOpen(false);
         toast.success("Ajouté avec succès");
         form.reset();
@@ -104,6 +114,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="lien"
@@ -117,21 +128,31 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="image"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Image"}</FormLabel>
+                                    <FormLabel>Image</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Image" />
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    field.onChange(e.target.files[0]);
+                                                }
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
                         <span className="flex items-center gap-3 flex-wrap">
-                            <Button type="submit" className="w-fit" onClick={() => { console.log(form.getValues()); console.log(form.formState) }}>
+                            <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
                                 {"Ajouter une nouvele Publicité"}
                             </Button>
                             <DialogClose asChild>

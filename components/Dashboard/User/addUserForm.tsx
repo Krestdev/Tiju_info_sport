@@ -221,7 +221,7 @@ function AddUserForm({ addButton }: { addButton: string }) {
                             )}
                         />
                         <span className="flex items-center gap-3 flex-wrap">
-                            <Button type="submit" className="w-fit" onClick={() => { console.log(form.getValues()); console.log(form.formState) }}>
+                            <Button type="submit" className="w-fit">
                                 {"Ajouter un nouvel utilisateur"}
                             </Button>
                             <DialogClose asChild>

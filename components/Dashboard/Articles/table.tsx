@@ -10,29 +10,26 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Ellipsis, Search, SquarePen, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-// import AddUserForm from "./addUserForm";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BiSolidEdit } from "react-icons/bi";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import EditUserForm from "./editUserForm";
-import { FiEdit } from "react-icons/fi";
-import AddPubsForm from "./addPubsForm";
-import EditPubsForm from "./editPubsForm";
+// import AddPubsForm from "./addPubsForm";
+// import EditPubsForm from "./editPubsForm";
 import FullScreen from "../FullScreen";
+import { Article } from "@/data/temps";
 
 
-function PubsTable() {
-    const { dataPubs, deletePub } = useStore();
+function ArticleTable() {
+    const { dataArticles, deleteArticle } = useStore();
     const queryClient = useQueryClient();
-    const pubsData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataPubs,
+    const articleData = useQuery({
+        queryKey: ["articles"],
+        queryFn: async () => dataArticles,
     });
 
     //Search value
@@ -40,8 +37,15 @@ function PubsTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
+    const [sport, setSport] = useState<Article[]>()
     const [full, setFull] = useState(false)
     const itemsPerPage = 10;
+
+    useEffect(() =>{
+        if (articleData.isSuccess) {
+            setSport(articleData.data.flatMap(x => x.donnees))
+        }
+    }, [articleData.data])
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -51,9 +55,9 @@ function PubsTable() {
     //Updated data with search implemented
     //to do: change data articles for data
     const filterData = useMemo(() => {
-        if (!pubsData.data) return [];
-        if (searchEntry === "") return pubsData.data;
-        return pubsData.data.filter((el) =>
+        if (!sport) return [];
+        if (searchEntry === "") return sport;
+        return sport.filter((el) =>
             Object.values(el).some((value) =>
                 String(value)
                     .toLocaleLowerCase()
@@ -61,24 +65,15 @@ function PubsTable() {
             )
         );
         //to do: complete this code
-    }, [searchEntry, pubsData.data]);
+    }, [searchEntry, sport]);
 
-
-    useEffect(() => {
-        if (pubsData.isSuccess) {
-            //console.log(data);
-            //console.log(filterData);
-        }
-    }, [pubsData.isSuccess]);
 
     //Delete function
-    function onDeletePub(id: number) {
-        deletePub(id)
+    function onDeleteArticle(id: number) {
+        deleteArticle(id)
         queryClient.invalidateQueries({ queryKey: ["users"] })
         toast.success("Supprimé avec succès");
     }
-
-    
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -102,44 +97,45 @@ function PubsTable() {
                             }`}
                     />
                 </span>
-                <AddPubsForm addButton={"Ajouter une publicité"} />
+                {/* <AddPubsForm addButton={"Ajouter une publicité"} /> */}
             </span>
-            {pubsData.isLoading && "Loading"}
-            {pubsData.isSuccess && filterData.length > 0 ? (
+            {articleData.isLoading && "Loading"}
+            {articleData.isSuccess && filterData.length > 0 ? (
                 <div className="min-h-[70vh] overflow-y-auto w-full">
                     <Table>
                         <TableHeader>
                             <TableRow className="text-[18px]">
                                 <TableHead>{"ID"}</TableHead>
-                                <TableHead>{"Nom"}</TableHead>
-                                <TableHead>{"Lien"}</TableHead>
-                                <TableHead>{"Ajouté le"}</TableHead>
+                                <TableHead>{"type"}</TableHead>
+                                <TableHead>{"titre"}</TableHead>
                                 <TableHead>{"Image"}</TableHead>
-                                <TableHead>{"Action"}</TableHead>
+                                <TableHead>{"Nbr Likes"}</TableHead>
+                                <TableHead>{"Nbr Commentaires"}</TableHead>
+                                <TableHead>{"Ajouté le"}</TableHead>
+                                <TableHead>{"Type d'abonnement"}</TableHead>
+                                <TableHead>{"Actions"}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {currentItems.map((item, id) => {
-                                console.log(item.image instanceof File ? URL.createObjectURL(item.image) : item.image);
-                                
                                 return (
                                     <TableRow className="text-[16px]" key={id}>
                                         <TableCell>{item.id}</TableCell>
-                                        <TableCell>{item.nom}</TableCell>
-                                        <TableCell>{item.lien}</TableCell>
-                                        <TableCell>{item.date}</TableCell>
+                                        <TableCell>{item.type}</TableCell>
+                                        <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
                                         <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
-                                            <FullScreen image={item.image instanceof File ? URL.createObjectURL(item.image) : item.image}>
-                                                <img
-                                                    src={item.image instanceof File ? URL.createObjectURL(item.image) : item.image}
-                                                    alt={item.nom}
-                                                    className="size-12 object-cover"
-                                                />
-                                            </FullScreen>
+                                            {item.media && 
+                                            <FullScreen image={item.media}>
+                                                <img src={item.media} alt={item.type} className="size-12 object-cover" />
+                                            </FullScreen>}
                                         </TableCell>
 
+                                        <TableCell>{item.like.length}</TableCell>
+                                        <TableCell>{item.commentaire.length}</TableCell>
+                                        <TableCell>{item.ajouteLe}</TableCell>
+                                        <TableCell>{item.abonArticle}</TableCell>
                                         <TableCell className="flex gap-2 items-center">
-                                            <ModalWarning id={item.id} action={onDeletePub} name={item.nom}>
+                                            <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
                                                 <Button
                                                     variant={"destructive"}
                                                     size={"icon"}
@@ -147,13 +143,13 @@ function PubsTable() {
                                                     <Trash2 size={20} />
                                                 </Button>
                                             </ModalWarning>
-                                            <EditPubsForm selectedPubs={item}>
+                                            {/* <EditPubsForm selectedPubs={item}>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm">
                                                     <FiEdit size={"20px"} />
                                                 </Button>
-                                            </EditPubsForm>
+                                            </EditPubsForm> */}
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -162,12 +158,12 @@ function PubsTable() {
                         </TableBody>
                     </Table>
                 </div>
-            ) : pubsData.isSuccess && filterData.length < 1 && pubsData.data.length > 0 ? (
+            ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
                 "No result"
-            ) : pubsData.isSuccess && pubsData.data.length === 0 ? (
+            ) : articleData.isSuccess && articleData.data.length === 0 ? (
                 "Empty table"
             ) : (
-                pubsData.isError && (
+                articleData.isError && (
                     "Some error occured"
                 )
             )}
@@ -176,4 +172,4 @@ function PubsTable() {
     );
 }
 
-export default PubsTable;
+export default ArticleTable;
