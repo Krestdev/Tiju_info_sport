@@ -24,10 +24,10 @@ function FullScreen({ children, image }: Props) {
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="!max-w-screen-md !w-full">
+            <DialogContent className="!max-w-screen-lg !w-full">
                 <DialogHeader className="!border-b-gray-400 border-b px-7 pb-7 flex flex-col gap-3">
                     <DialogTitle>
-                        <img src={image} alt="" className="w-full h-full"/>
+                        <img src={image} alt="" className="w-full h-auto aspect-video object-cover"/>
                     </DialogTitle>
                 </DialogHeader>
             </DialogContent>

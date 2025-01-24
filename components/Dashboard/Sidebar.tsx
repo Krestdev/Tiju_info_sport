@@ -118,9 +118,9 @@ export function AppSidebar() {
                                     onClick={setIsFull}
                                     variant={"ghost"}
                                     size={!isFull ? "icon" : "default"}
-                                    className={`h-14 mt-4 ${isFull
-                                        ? "w-full justify-start gap-4 rounded-md hover:bg-blue-50"
-                                        : "justify-start pl-2 w-14"
+                                    className={`h-14 mt-4 hover:!bg-blue-50 ${isFull
+                                        ? "w-full justify-start gap-4 rounded-md"
+                                        : "justify-start  size-[30px] pl-2"
                                         }`}
                                 >
                                     <ChevronRight

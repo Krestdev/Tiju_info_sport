@@ -3,7 +3,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div className='px-10 py-36'>
+    <div>
       <UsersTable />
     </div>
   )
