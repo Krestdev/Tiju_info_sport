@@ -55,7 +55,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 // Ajouter une publicité après chaque groupe (sauf le dernier)
                 if (i + groupSize < article!.length) {
                     result.push(
-                        <PubsComp key={`ad-${i}`} id={ad?.id} lien={ad?.lien} image={ad?.image} />
+                        ad && <PubsComp key={`ad-${i}`} {...ad} />
                     );
                 }
             }
@@ -63,7 +63,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             // Ajouter une publicité après tous les éléments si la liste est <= 4
             if (article?.length <= groupSize) {
                 result.push(
-                    <PubsComp key={'final'} id={ad?.id} lien={ad?.lien} image={ad?.image} />
+                    ad && <PubsComp key={'final'} {...ad} />
                 );
             }
             return result;

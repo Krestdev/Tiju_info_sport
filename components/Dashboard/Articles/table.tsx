@@ -22,6 +22,9 @@ import 'react-toastify/dist/ReactToastify.css';
 // import EditPubsForm from "./editPubsForm";
 import FullScreen from "../FullScreen";
 import { Article } from "@/data/temps";
+import AddArticleForm from "./addArticleForm";
+import EditArticleForm from "./editArticleForm";
+import { FiEdit } from "react-icons/fi";
 
 
 function ArticleTable() {
@@ -39,7 +42,7 @@ function ArticleTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Article[]>()
     const [full, setFull] = useState(false)
-    const itemsPerPage = 10;
+    const itemsPerPage = 20;
 
     useEffect(() =>{
         if (articleData.isSuccess) {
@@ -97,7 +100,7 @@ function ArticleTable() {
                             }`}
                     />
                 </span>
-                {/* <AddPubsForm addButton={"Ajouter une publicité"} /> */}
+                <AddArticleForm addButton={"Ajouter une publicité"} />
             </span>
             {articleData.isLoading && "Loading"}
             {articleData.isSuccess && filterData.length > 0 ? (
@@ -125,8 +128,8 @@ function ArticleTable() {
                                         <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
                                         <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
                                             {item.media && 
-                                            <FullScreen image={item.media}>
-                                                <img src={item.media} alt={item.type} className="size-12 object-cover" />
+                                            <FullScreen image={item.media[0]}>
+                                                <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
                                             </FullScreen>}
                                         </TableCell>
 
@@ -143,13 +146,13 @@ function ArticleTable() {
                                                     <Trash2 size={20} />
                                                 </Button>
                                             </ModalWarning>
-                                            {/* <EditPubsForm selectedPubs={item}>
+                                            <EditArticleForm donnee={item} nom="">
                                                 <Button
                                                     variant="ghost"
                                                     size="sm">
                                                     <FiEdit size={"20px"} />
                                                 </Button>
-                                            </EditPubsForm> */}
+                                            </EditArticleForm>
                                         </TableCell>
                                     </TableRow>
                                 )

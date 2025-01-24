@@ -120,7 +120,7 @@ function PubsTable() {
                         </TableHeader>
                         <TableBody>
                             {currentItems.map((item, id) => {
-                                console.log(item.image instanceof File ? URL.createObjectURL(item.image) : item.image);
+                                console.log(item.image);
                                 
                                 return (
                                     <TableRow className="text-[16px]" key={id}>
@@ -129,9 +129,9 @@ function PubsTable() {
                                         <TableCell>{item.lien}</TableCell>
                                         <TableCell>{item.date}</TableCell>
                                         <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
-                                            <FullScreen image={item.image instanceof File ? URL.createObjectURL(item.image) : item.image}>
+                                            <FullScreen image={item.image}>
                                                 <img
-                                                    src={item.image instanceof File ? URL.createObjectURL(item.image) : item.image}
+                                                    src={item.image}
                                                     alt={item.nom}
                                                     className="size-12 object-cover"
                                                 />

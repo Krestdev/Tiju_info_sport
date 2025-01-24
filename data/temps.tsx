@@ -14,7 +14,7 @@ export interface Article {
     titre: string,
     extrait: string,
     description: string,
-    media?: string,
+    media?: string[],
     ajouteLe: string,
     commentaire: comment[],
     like: Omit<Users, "password">[];
@@ -47,7 +47,7 @@ export interface Pubs {
     id: number;
     nom: string;
     lien: string;
-    image: File | undefined; 
+    image: string; 
     date: string;
 }
 
@@ -115,7 +115,7 @@ export const articles: Categorie[] = [
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: "/images/lions.jpg",
+                media: ["/images/lions.jpg"],
                 ajouteLe: "il y'a 2h",
                 commentaire: [],
                 like: [],
@@ -141,7 +141,7 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Les nouvelles ambitions des équipes féminines en Afrique",
                 description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
-                media: "/images/Hero.jpg",
+                media: ["/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg"],
                 ajouteLe: "il y'a 3j",
                 commentaire: [
                     {
@@ -266,7 +266,7 @@ export const articles: Categorie[] = [
                 type: "Fecafoot",
                 titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
                 description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
-                media: "/images/etoo.jpg",
+                media: ["/images/etoo.jpg"],
                 ajouteLe: "il y'a 1j",
                 commentaire: [],
                 like: [
@@ -321,7 +321,7 @@ export const articles: Categorie[] = [
                 type: "Fecafoot",
                 titre: "Samuel Eto'o, élu président de la Fédération Camerounaise de Football (FECAFOOT) en décembre 2021",
                 description: "Depuis son élection à la présidence de la FECAFOOT en décembre 2021...",
-                media: "/images/fecafoot.jpeg",
+                media: ["/images/fecafoot.jpeg"],
                 ajouteLe: "il y'a 4j",
                 commentaire: [],
                 like: [
@@ -381,7 +381,7 @@ export const articles: Categorie[] = [
                 type: "basketball",
                 titre: "L’équipe nationale camerounaise de basketball se prépare pour les qualifications de la Coupe du Monde",
                 description: "L'équipe nationale de basketball du Cameroun se prépare activement...",
-                media: "/images/basket.jpg",
+                media: ["/images/basket.jpg"],
                 ajouteLe: "il y'a 1j",
                 commentaire: [],
                 like: [],
@@ -412,7 +412,7 @@ export const articles: Categorie[] = [
                 type: "Handball",
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
-                media: "/images/hand.jpg",
+                media: ["/images/hand.jpg"],
                 ajouteLe: "il y'a 4j",
                 commentaire: [],
                 like: [
@@ -467,7 +467,7 @@ export const articles: Categorie[] = [
                 type: "Handball",
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
-                media: "/images/handball1.jpeg",
+                media: ["/images/handball1.jpeg"],
                 ajouteLe: "il y'a 4j",
                 commentaire: [],
                 like: [
@@ -522,7 +522,7 @@ export const articles: Categorie[] = [
                 type: "Handball",
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
-                media: "/images/handball2.jpg",
+                media: ["/images/handball2.jpg"],
                 ajouteLe: "il y'a 4j",
                 commentaire: [],
                 like: [{
@@ -580,7 +580,7 @@ export const articles: Categorie[] = [
                 type: "Lion indomptable",
                 titre: "FECAFOOT met en place un programme d'accompagnement pour les arbitres de football",
                 description: "Dans le cadre de son engagement pour le développement du football...",
-                media: "/images/etoo.jpg",
+                media: ["/images/etoo.jpg"],
                 ajouteLe: "25/10/2024",
                 commentaire: [],
                 like: [{
@@ -636,14 +636,14 @@ export const publicites: Pubs[] = [
     {
         id: 1,
         lien: "https://google.com",
-        image: new File([""], "/images/pub1.jpeg", { type: "image/jpeg" }), 
+        image: "/images/pub1.jpeg", 
         date: "2024-12-12",
         nom: "Orange CM",
     },
     {
         id: 2,
         lien: "https://google.com",
-        image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }), 
+        image: "/images/pub.jpg", 
         date: "2025-01-12",
         nom: "Boutique Socrate",
     },

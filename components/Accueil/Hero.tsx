@@ -37,13 +37,13 @@ const Hero = ({ gridAff }: Aff) => {
                             className='h-full'
                         >
                             <Link href={`/user/detail-article/${x.id}`}>
-                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-col md:flex-row gap-5 justify-center`}>
+                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-col md:flex-row gap-5`}>
                                     {x.media && (
 
-                                        isImage(x.media) ? (
+                                        isImage(x.media[0]) ? (
                                             <img
                                                 className='md:flex max-w-[640px] w-full h-auto aspect-video  object-cover rounded-xl'
-                                                src={x.media}
+                                                src={x.media[0]}
                                                 alt={x.type}
                                             />
                                         ) : (
@@ -53,7 +53,7 @@ const Hero = ({ gridAff }: Aff) => {
                                                 autoPlay
                                                 muted
                                                 loop
-                                                src={x.media}
+                                                src={x.media[0]}
                                             >
                                                 Votre navigateur ne supporte pas la lecture de cette vidéo.
                                             </video>

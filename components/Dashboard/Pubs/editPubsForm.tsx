@@ -60,7 +60,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
         defaultValues: {
             nom: selectedPubs.nom,
             lien: selectedPubs.lien,
-            image: selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image,
+            image: selectedPubs.image,
         },
     });
 
@@ -122,8 +122,8 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                             )}
                         />
                         <div className="flex flex-row gap-2">
-                            <FullScreen image={selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image} >
-                                <img src={selectedPubs.image instanceof File ? URL.createObjectURL(selectedPubs.image) : selectedPubs.image} alt="" className="size-16 object-cover cursor-pointer" />
+                            <FullScreen image={selectedPubs.image} >
+                                <img src={selectedPubs.image} alt="" className="size-16 object-cover cursor-pointer" />
                             </FullScreen>
                             <FormField
                                 control={form.control}

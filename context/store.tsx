@@ -8,7 +8,7 @@ export interface Article {
   titre: string,
   extrait: string,
   description: string,
-  media?: string,
+  media?: string[],
   ajouteLe: string,
   commentaire: comment[],
   like: Omit<Users, "password">[];
@@ -26,7 +26,7 @@ interface Pubs {
   nom: string;
   lien: string;
   date: string;
-  image: File | undefined;
+  image: string;
 }
 
 interface store {
@@ -42,33 +42,37 @@ interface store {
 }
 
 interface actions {
-  addArticle: (article: Categorie) => void;
+  setIsFull: () => void;
+  setSearch: (art: Article[] | undefined) => void
+  setFavorite: (cate: Categorie[] | undefined) => void;
+
+  addCategory: (category: Categorie) => void;
+  deleteArticle: (id: number) => void;
+
   registerUser: (user: Users) => void;
+  deleteUser: (id: number) => void;
+  editUser: (user: any) => void;
   login: (email: string, password: string) => Users | null;
   logout: () => void;
   loginAdmin: (email: string, password: string) => Users | null;
   logoutAdmin: () => void;
+
   addLike: (id: number, nom: Omit<Users, "password">) => void;
   addSignals: (commentId: number, user: Omit<Users, "password">) => void;
   likeComment: (commentId: number, user: Omit<Users, "password">) => void;
   addComment: (com: comment, idA: number) => void;
-  addResponse: (res: comment, id: number, idC: number) => void;
   deleteComment: (id: number) => void;
-  deleteReponse: (idC: number, idR: number) => void;
-  deleteUser: (id: number) => void;
-  deletePub: (id: number) => void;
-  deleteArticle: (id: number) => void;
-  editUser: (user: any) => void;
   editComment: (id: number, message: string) => void;
+
+  addResponse: (res: comment, id: number, idC: number) => void;
   editReponse: (idC: number, idR: number, message: string) => void;
-  setIsFull: () => void;
-  setFavorite: (cate: Categorie[] | undefined) => void;
+  deleteReponse: (idC: number, idR: number) => void;
   addResponseLike: (idC: number, idR: number, user: Omit<Users, "password">) => void;
   addResponseSignals: (idC: number, idR: number, user: Omit<Users, "password">) => void;
-  setSearch: (art: Article[] | undefined) => void
 
   addPub: (pub: Pubs) => void
   editPub: (pub: any) => void
+  deletePub: (id: number) => void;
 }
 
 const initialData: store = {
@@ -113,10 +117,29 @@ const useStore = create<store & actions>()(
           isFull: !state.isFull,
         })),
 
-      addArticle: (article) =>
-        set((state) => ({
-          dataArticles: [...state.dataArticles, article],
-        })),
+      addCategory: (category: Categorie) =>
+        set((state) => {
+          const existingCategory = state.dataArticles.find(
+            (cat: Categorie) => cat.nom.toLowerCase() === category.nom.toLowerCase()
+          );
+          if (existingCategory) {
+            return {
+              dataArticles: state.dataArticles.map((cat: Categorie) =>
+                cat.nom.toLowerCase() === category.nom.toLowerCase()
+                  ? {
+                    ...cat,
+                    donnees: [...cat.donnees, ...category.donnees],
+                  }
+                  : cat
+              ),
+            };
+          } else {
+            return {
+              dataArticles: [...state.dataArticles, category],
+            };
+          }
+        }),
+
       addComment: (com: comment, id: number) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({

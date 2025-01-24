@@ -76,6 +76,8 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
     const [openModifier, setOpenModifier] = useState<number | null>(null);
     const [openRepondre, setOpenRepondre] = useState<number | null>(null);
     const [masquerCom, setMasquerCom] = useState(true)
+    const [allPhoto, setAllPhoto] = useState(false)
+    const [photo, setPhoto] = useState<string[]>()
 
     const sec = dataArticle?.filter(x => x.donnees.filter(x => x === details)).flatMap(x => x.donnees)[0]
     const sim = dataArticle?.find(x => x.donnees.find(a => a === details))
@@ -128,6 +130,11 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         similaire;
     }, [details])
 
+    useEffect(()=>{
+        if (details.media) {
+            !allPhoto ? setPhoto(details.media?.slice(1,4)) : setPhoto(details.media.slice())
+        }
+    }, [allPhoto, details.media])
 
 
     const isImage = (media: string | undefined): boolean => {
@@ -244,6 +251,9 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         }
     }
 
+    console.log(details.media![0]);
+    
+
     return (
 
         <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7'>
@@ -253,7 +263,22 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                         <p className='text-[#A1A1A1]'>{details.type}</p>
                         <h2 className='font-bold'>{details.titre}</h2>
                     </div>
-                    {details.media && <img src={details.media} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />}
+                    {photo && <img src={photo[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />}
+                    {photo && details.media && details.media?.length > 2 &&
+                        <div className='grid grid-cols-4 gap-4'>
+                            {
+                                photo.map((x, i) => (
+                                    <img key={i} src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover overflow-hidden' />
+                                ))
+                            }
+                            {!allPhoto && <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
+                                <img src={photo[1]} alt="" className='absolute z-0 w-full' />
+                                <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
+                                    {`Tout Voir + ${details.media.length - 3}`}
+                                </div>
+                            </Button>}
+                        </div>
+                    }
                 </div>
                 <div className='flex flex-col py-7 gap-4'>
                     <p className='text-[#545454]'>{details.extrait}</p>
@@ -509,7 +534,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
 
                                                                                         <DialogFooter className="sm:justify-end">
                                                                                             <DialogClose asChild>
-                                                                                                <Button onClick={() => handleDeleteRep(x.id ,a.id)} type="button">
+                                                                                                <Button onClick={() => handleDeleteRep(x.id, a.id)} type="button">
                                                                                                     {"Supprimer"}
                                                                                                 </Button>
                                                                                             </DialogClose>
