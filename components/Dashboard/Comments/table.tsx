@@ -24,6 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import AddPubsForm from "./addPubsForm";
 // import EditPubsForm from "./editPubsForm";
 import { Categorie, comment } from "@/data/temps";
+import Pagination from "../Pagination";
 
 
 function CommentsTable() {
@@ -163,6 +164,7 @@ function CommentsTable() {
                     "Some error occured"
                 )
             )}
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
             <ToastContainer />
         </div>
     );

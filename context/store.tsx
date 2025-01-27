@@ -1,39 +1,13 @@
-import { articles, comment, publicites, users, Users } from "@/data/temps";
+import { Abonnement, Article, articles, Categorie, comment, publicites, Pubs, users, Users } from "@/data/temps";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-export interface Article {
-  id: number,
-  type: string,
-  titre: string,
-  extrait: string,
-  description: string,
-  media?: string[],
-  ajouteLe: string,
-  commentaire: comment[],
-  like: Omit<Users, "password">[];
-  user: Users
-  abonArticle: string
-}
-
-export interface Categorie {
-  nom: string;
-  donnees: Article[];
-}
-
-interface Pubs {
-  id: number;
-  nom: string;
-  lien: string;
-  date: string;
-  image: string;
-}
 
 interface store {
   settings: any;
   dataArticles: Categorie[];
   dataPubs: Pubs[];
   dataUsers: Users[];
+  dataSubscription: Abonnement[]
   currentUser: Users | null;
   currentAdmin: Users | null;
   isFull: boolean | undefined
@@ -73,6 +47,10 @@ interface actions {
   addPub: (pub: Pubs) => void
   editPub: (pub: any) => void
   deletePub: (id: number) => void;
+
+  addSubscription: (subscription: Abonnement) => void
+  editSubscription: (subscription: any) => void
+  deleteSubscription: (id: number) => void;
 }
 
 const initialData: store = {
@@ -88,6 +66,7 @@ const initialData: store = {
   dataArticles: articles,
   dataPubs: publicites,
   dataUsers: users,
+  dataSubscription: [],
   currentUser: null,
   currentAdmin: null,
   isFull: true,
@@ -413,6 +392,10 @@ const useStore = create<store & actions>()(
         })),
       editPub: (pub) => set((state) => ({ dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el)) })),
       deletePub: (id) => set((state) => ({ dataPubs: state.dataPubs.filter((item) => item.id != id) })),
+
+      addSubscription: (subscription) => set((state) =>({dataSubscription: [...state.dataSubscription, subscription]})), 
+      editSubscription: (subscription) => set((state) => ({ dataSubscription: state.dataSubscription.map((el) => (el.id === subscription.id ? subscription : el)) })),
+      deleteSubscription: (id) => set((state) => ({ dataSubscription: state.dataSubscription.filter((item) => item.id != id) })),
     }),
     { name: "Tyju" }
   )

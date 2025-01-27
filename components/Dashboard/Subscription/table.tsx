@@ -10,30 +10,38 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Ellipsis, Search, SquarePen, Trash2 } from "lucide-react";
+import { CalendarIcon, Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-// import AddUserForm from "./addUserForm";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BiSolidEdit } from "react-icons/bi";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import EditUserForm from "./editUserForm";
-import { FiEdit } from "react-icons/fi";
-import AddPubsForm from "./addPubsForm";
-import EditPubsForm from "./editPubsForm";
+// import AddPubsForm from "./addPubsForm";
+// import EditPubsForm from "./editPubsForm";
 import FullScreen from "../FullScreen";
+import { Article } from "@/data/temps";
+// import AddArticleForm from "./addArticleForm";
+// import EditArticleForm from "./editArticleForm";
+import { FiEdit } from "react-icons/fi";
+import { FaRegEye } from "react-icons/fa";
+import { DateRange } from "react-day-picker";
+import { DatePick } from "../DatePick";
+import { SlRefresh } from "react-icons/sl";
+import AddSubscriptionForm from "./addSubscriptionForm";
+import EditSubscriptionForm from "./editSubscriptionForm";
 import Pagination from "../Pagination";
 
 
-function PubsTable() {
-    const { dataPubs, deletePub } = useStore();
+
+function SubscritionTable() {
+    const { dataSubscription, deleteArticle } = useStore();
     const queryClient = useQueryClient();
-    const pubsData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataPubs,
+
+    const subscritionData = useQuery({
+        queryKey: ["subscriptions"],
+        queryFn: async () => dataSubscription,
     });
 
     //Search value
@@ -42,19 +50,52 @@ function PubsTable() {
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [full, setFull] = useState(false)
-    const itemsPerPage = 10;
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+    useEffect(() => {
+        if (dateRange) {
+            console.log("Date range updated:", dateRange);
+        }
+    }, [dateRange]);
+
+
+
+    const itemsPerPage = 20;
+
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setSearchEntry(event.target.value);
     }
 
-    //Updated data with search implemented
-    //to do: change data articles for data
+    const toNormalDate = (dateStr: string): Date => {
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return new Date(year, month - 1, day);
+    };
+
+    // const filterData = useMemo(() => {
+    //     if (!subscritionData.data) {
+    //         return []
+    //     };
+    //     return subscritionData.data.filter((item) => {
+    //         if (!dateRange?.from) return true;
+    //         const itemDate = toNormalDate(item.ajouteLe);
+    //         return (
+    //             itemDate >= dateRange.from &&
+    //             (dateRange.to ? itemDate <= dateRange.to : true)
+    //         );
+    //     });
+
+    // }, [subscritionData.data, dateRange]);
+
+
+    // Updated data with search implemented
+    // to do: change data articles for data
+
     const filterData = useMemo(() => {
-        if (!pubsData.data) return [];
-        if (searchEntry === "") return pubsData.data;
-        return pubsData.data.filter((el) =>
+        if (!subscritionData.data) return [];
+        if (searchEntry === "") return subscritionData.data;
+        return subscritionData.data.filter((el) =>
             Object.values(el).some((value) =>
                 String(value)
                     .toLocaleLowerCase()
@@ -62,24 +103,15 @@ function PubsTable() {
             )
         );
         //to do: complete this code
-    }, [searchEntry, pubsData.data]);
+    }, [searchEntry, subscritionData.data]);
 
-
-    useEffect(() => {
-        if (pubsData.isSuccess) {
-            //console.log(data);
-            //console.log(filterData);
-        }
-    }, [pubsData.isSuccess]);
 
     //Delete function
-    function onDeletePub(id: number) {
-        deletePub(id)
+    function onDeleteArticle(id: number) {
+        deleteArticle(id)
         queryClient.invalidateQueries({ queryKey: ["users"] })
         toast.success("Supprimé avec succès");
     }
-
-    
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -94,7 +126,7 @@ function PubsTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Rechercher un utilisateur"
+                        placeholder="Rechercher un abonnement"
                         className="max-w-lg pr-3"
                     />
                     <Search
@@ -103,44 +135,35 @@ function PubsTable() {
                             }`}
                     />
                 </span>
-                <AddPubsForm addButton={"Ajouter une publicité"} />
+                <AddSubscriptionForm addButton={"Ajouter un abonnement"} />
             </span>
-            {pubsData.isLoading && "Loading"}
-            {pubsData.isSuccess && filterData.length > 0 ? (
+            {subscritionData.isLoading && "Loading"}
+            {subscritionData.isSuccess && filterData.length > 0 ? (
                 <div className="min-h-[70vh] overflow-y-auto w-full">
                     <Table>
                         <TableHeader>
                             <TableRow className="text-[18px]">
                                 <TableHead>{"ID"}</TableHead>
-                                <TableHead>{"Nom"}</TableHead>
-                                <TableHead>{"Lien"}</TableHead>
+                                <TableHead>{"Nom de l'abonnement"}</TableHead>
                                 <TableHead>{"Ajouté le"}</TableHead>
-                                <TableHead>{"Image"}</TableHead>
-                                <TableHead>{"Action"}</TableHead>
+                                <TableHead>{"Coût de l'abonnement"}</TableHead>
+                                <TableHead>{"Validité de l'abonnement"}</TableHead>
+                                <TableHead>{"Nombre d'abonnés"}</TableHead>
+                                <TableHead>{"Actions"}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {currentItems.map((item, id) => {
-                                console.log(item.image);
-                                
                                 return (
                                     <TableRow className="text-[16px]" key={id}>
                                         <TableCell>{item.id}</TableCell>
                                         <TableCell>{item.nom}</TableCell>
-                                        <TableCell>{item.lien}</TableCell>
                                         <TableCell>{item.date}</TableCell>
-                                        <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
-                                            <FullScreen image={item.image}>
-                                                <img
-                                                    src={item.image}
-                                                    alt={item.nom}
-                                                    className="size-12 object-cover"
-                                                />
-                                            </FullScreen>
-                                        </TableCell>
-
+                                        <TableCell>{item.cout} FCFA</TableCell>
+                                        <TableCell>{item.validite} Mois</TableCell>
+                                        <TableCell>{"A compter"}</TableCell>
                                         <TableCell className="flex gap-2 items-center">
-                                            <ModalWarning id={item.id} action={onDeletePub} name={item.nom}>
+                                            <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
                                                 <Button
                                                     variant={"destructive"}
                                                     size={"icon"}
@@ -148,13 +171,14 @@ function PubsTable() {
                                                     <Trash2 size={20} />
                                                 </Button>
                                             </ModalWarning>
-                                            <EditPubsForm selectedPubs={item}>
+                                            <EditSubscriptionForm selectedPubs={item}>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm">
                                                     <FiEdit size={"20px"} />
                                                 </Button>
-                                            </EditPubsForm>
+                                            </EditSubscriptionForm>
+                                            <FaRegEye size={"20px"} />
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -163,12 +187,12 @@ function PubsTable() {
                         </TableBody>
                     </Table>
                 </div>
-            ) : pubsData.isSuccess && filterData.length < 1 && pubsData.data.length > 0 ? (
+            ) : subscritionData.isSuccess && filterData.length < 1 && subscritionData.data.length > 0 ? (
                 "No result"
-            ) : pubsData.isSuccess && pubsData.data.length === 0 ? (
+            ) : subscritionData.isSuccess && subscritionData.data.length === 0 ? (
                 "Empty table"
             ) : (
-                pubsData.isError && (
+                subscritionData.isError && (
                     "Some error occured"
                 )
             )}
@@ -178,4 +202,4 @@ function PubsTable() {
     );
 }
 
-export default PubsTable;
+export default SubscritionTable;

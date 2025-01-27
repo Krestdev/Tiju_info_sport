@@ -10,9 +10,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { Search, Trash2 } from "lucide-react";
+import { CalendarIcon, Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
@@ -25,6 +25,12 @@ import { Article } from "@/data/temps";
 import AddArticleForm from "./addArticleForm";
 import EditArticleForm from "./editArticleForm";
 import { FiEdit } from "react-icons/fi";
+import { FaRegEye } from "react-icons/fa";
+import { DateRange } from "react-day-picker";
+import { DatePick } from "../DatePick";
+import { SlRefresh } from "react-icons/sl";
+import Pagination from "../Pagination";
+
 
 
 function ArticleTable() {
@@ -42,9 +48,23 @@ function ArticleTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Article[]>()
     const [full, setFull] = useState(false)
-    const itemsPerPage = 20;
 
-    useEffect(() =>{
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
+    const [rein, setRein] = useState(false)
+
+    useEffect(() => {
+        if (dateRange) {
+            console.log("Date range updated:", dateRange);
+            console.log(rein);
+
+        }
+    }, [dateRange]);
+
+
+
+    const itemsPerPage = 10;
+
+    useEffect(() => {
         if (articleData.isSuccess) {
             setSport(articleData.data.flatMap(x => x.donnees))
         }
@@ -55,20 +75,48 @@ function ArticleTable() {
         setSearchEntry(event.target.value);
     }
 
+    const toNormalDate = (dateStr: string): Date => {
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return new Date(year, month - 1, day);
+    };
+
+    const filterData = useMemo(() => {
+        if (!sport) {
+            setRein(false)
+            return []
+        };
+
+        if (rein) {
+            setRein(false)
+            return sport
+        }
+        return sport.filter((item) => {
+            setRein(false)
+            if (!dateRange?.from) return true;
+            const itemDate = toNormalDate(item.ajouteLe);
+            return (
+                itemDate >= dateRange.from &&
+                (dateRange.to ? itemDate <= dateRange.to : true)
+            );
+        });
+
+    }, [rein, sport, dateRange]);
+
+
     //Updated data with search implemented
     //to do: change data articles for data
-    const filterData = useMemo(() => {
-        if (!sport) return [];
-        if (searchEntry === "") return sport;
-        return sport.filter((el) =>
-            Object.values(el).some((value) =>
-                String(value)
-                    .toLocaleLowerCase()
-                    .includes(searchEntry.toLocaleLowerCase())
-            )
-        );
-        //to do: complete this code
-    }, [searchEntry, sport]);
+    // const filterData = useMemo(() => {
+    //     if (!sport) return [];
+    //     if (searchEntry === "") return sport;
+    //     return sport.filter((el) =>
+    //         Object.values(el).some((value) =>
+    //             String(value)
+    //                 .toLocaleLowerCase()
+    //                 .includes(searchEntry.toLocaleLowerCase())
+    //         )
+    //     );
+    //     //to do: complete this code
+    // }, [searchEntry, sport]);
 
 
     //Delete function
@@ -86,7 +134,7 @@ function ArticleTable() {
     return (
         <div className="w-full">
             <span className="flex flex-wrap items-center justify-end gap-5 mb-10">
-                <span className="relative max-w-sm w-full">
+                {/* <span className="relative max-w-sm w-full">
                     <Input
                         type="search"
                         onChange={handleInputChange}
@@ -99,7 +147,15 @@ function ArticleTable() {
                         className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 ${searchEntry != "" && "hidden"
                             }`}
                     />
-                </span>
+                </span> */}
+                <div className="flex gap-2 items-center">
+                    <SlRefresh className="cursor-pointer size-5"
+                        onClick={() => {
+                            setDateRange(undefined);
+                            setRein(true);
+                        }} />
+                    <DatePick onChange={(range) => setDateRange(range)} />
+                </div>
                 <AddArticleForm addButton={"Ajouter une publicité"} />
             </span>
             {articleData.isLoading && "Loading"}
@@ -127,10 +183,10 @@ function ArticleTable() {
                                         <TableCell>{item.type}</TableCell>
                                         <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
                                         <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
-                                            {item.media && 
-                                            <FullScreen image={item.media[0]}>
-                                                <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
-                                            </FullScreen>}
+                                            {item.media &&
+                                                <FullScreen image={item.media[0]}>
+                                                    <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
+                                                </FullScreen>}
                                         </TableCell>
 
                                         <TableCell>{item.like.length}</TableCell>
@@ -153,6 +209,7 @@ function ArticleTable() {
                                                     <FiEdit size={"20px"} />
                                                 </Button>
                                             </EditArticleForm>
+                                            <FaRegEye size={"20px"} />
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -170,6 +227,9 @@ function ArticleTable() {
                     "Some error occured"
                 )
             )}
+
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
+
             <ToastContainer />
         </div>
     );

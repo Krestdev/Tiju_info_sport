@@ -12,7 +12,7 @@ interface Result {
   id: number | undefined;
   titre: string | undefined;
   nom: string;
-  media: string | undefined;
+  media: string[] | undefined;
 }
 
 const page = () => {

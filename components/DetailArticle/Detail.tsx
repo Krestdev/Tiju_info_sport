@@ -24,6 +24,7 @@ import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import { GiSpectreM4 } from 'react-icons/gi';
 import { title } from 'process';
+import FullScreen from '../Dashboard/FullScreen';
 
 
 const formSchema = z
@@ -130,9 +131,9 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         similaire;
     }, [details])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (details.media) {
-            !allPhoto ? setPhoto(details.media?.slice(1,4)) : setPhoto(details.media.slice())
+            !allPhoto ? setPhoto(details.media?.slice(1, 4)) : setPhoto(details.media.slice())
         }
     }, [allPhoto, details.media])
 
@@ -251,9 +252,6 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
         }
     }
 
-    console.log(details.media![0]);
-    
-
     return (
 
         <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7'>
@@ -263,22 +261,29 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                         <p className='text-[#A1A1A1]'>{details.type}</p>
                         <h2 className='font-bold'>{details.titre}</h2>
                     </div>
-                    {photo && <img src={photo[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />}
-                    {photo && details.media && details.media?.length > 2 &&
-                        <div className='grid grid-cols-4 gap-4'>
-                            {
-                                photo.map((x, i) => (
-                                    <img key={i} src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover overflow-hidden' />
-                                ))
-                            }
-                            {!allPhoto && <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
-                                <img src={photo[1]} alt="" className='absolute z-0 w-full' />
-                                <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
-                                    {`Tout Voir + ${details.media.length - 3}`}
-                                </div>
-                            </Button>}
-                        </div>
-                    }
+                    {details.media && <FullScreen image={details.media[0]}>
+                        <img src={details.media[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />
+                    </FullScreen>}
+                    <div className='grid grid-cols-4 gap-4'>
+
+                        {photo &&
+                            photo.map((x, i) => (
+                                <FullScreen image={x}>
+                                    <img key={i} src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-lg cursor-pointer object-cover overflow-hidden' />
+                                </FullScreen>
+                            ))
+                        }
+                        {photo && details.media && details.media?.length > 3 &&
+                            <div >
+                                {!allPhoto && <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
+                                    <img src={photo[1]} alt="" className='absolute z-0 w-full' />
+                                    <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
+                                        {`Tout Voir + ${details.media.length - 3}`}
+                                    </div>
+                                </Button>}
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div className='flex flex-col py-7 gap-4'>
                     <p className='text-[#545454]'>{details.extrait}</p>

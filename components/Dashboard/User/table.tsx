@@ -22,6 +22,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EditUserForm from "./editUserForm";
 import { FiEdit } from "react-icons/fi";
+import Pagination from "../Pagination";
 
 
 function UsersTable() {
@@ -167,6 +168,7 @@ function UsersTable() {
           "Some error occured"
         )
       )}
+      <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
       <ToastContainer />
     </div>
   );

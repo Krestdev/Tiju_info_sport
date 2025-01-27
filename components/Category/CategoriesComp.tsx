@@ -8,7 +8,7 @@ interface Result {
     id: number | undefined;
     titre: string | undefined;
     nom: string;
-    media: string | undefined;
+    media: string[] | undefined;
 }
 
 interface Props {
@@ -40,7 +40,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         {group.filter(x => x.id !== premier?.id).map((x) => {
                             return (
                                 <Link key={x.id} href={path === '/user/category' ? `/user/category/${x && x.nom}` : `/user/detail-article/${x?.id}`} className='flex flex-row gap-7 px-5 py-4'>
-                                    <img src={x.media} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />
+                                    <img src={x.media && x.media[0]} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />
                                     <div className='flex flex-col'>
                                         <p className='text-[#A1A1A1]'>{x.nom}</p>
                                         <h2 className='line-clamp-3'>{x.titre}</h2>
@@ -82,7 +82,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     <div key={premier?.id} className='flex flex-col gap-4 py-4'>
                         <p className='text-[#A1A1A1]'>{premier?.nom}</p>
                         <h2>{premier?.titre}</h2>
-                        <img src={premier?.media} alt={premier?.nom} className='max-w-[836px] w-full h-auto aspect-video object-cover' />
+                        <img src={premier?.media && premier?.media[0]} alt={premier?.nom} className='max-w-[836px] w-full h-auto aspect-video object-cover' />
                     </div>
                 </Link>
                 <div className='flex flex-col gap-7'>{renderList()}</div>

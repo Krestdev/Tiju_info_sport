@@ -8,6 +8,14 @@ export interface comment {
     date: string
 };
 
+export interface Abonnement {
+    id: number,
+    nom: string,
+    cout: number,
+    validite: number
+    date: string
+}
+
 export interface Article {
     id: number,
     type: string,
@@ -115,7 +123,7 @@ export const articles: Categorie[] = [
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/lions.jpg"],
+                media: ["/images/lions.jpg","/images/lions.jpg"],
                 ajouteLe: "il y'a 2h",
                 commentaire: [],
                 like: [],
