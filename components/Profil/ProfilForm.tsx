@@ -318,10 +318,6 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     />
                                 </div>
                                 <Button
-                                    onClick={() => {
-                                        console.log(form.getValues());
-
-                                    }}
                                     type='submit' className='max-w-[360px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
                             </form>
                         </Form>
@@ -330,7 +326,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                     <div className='flex flex-col gap-4'>
                         <h2>{"Mon abonnement"}</h2>
                         {
-                            currentUser?.abonnement === "normal" ?
+                            currentUser?.abonnement.nom === "Bouquet normal" ?
                                 <div className='flex flex-col md:flex-row gap-10'>
                                     <div className='flex flex-row items-center gap-4 px-4 py-2'>
                                         <p className='text-[16px]'>{"Aucun Abonnement actif"}</p>
@@ -341,7 +337,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     <div className='flex flex-row items-center gap-4 px-4 py-2 text-[#012BAE]'>
                                         <BiRadioCircleMarked className='h-10 w-10' />
                                         <div className='flex flex-col'>
-                                            <p className='text-[16px]'>{currentUser?.abonnement}</p>
+                                            <p className='text-[16px]'>{currentUser?.abonnement.nom}</p>
                                             <p className='text-[#545454] text-[12px]'>{"11 mois restant"}</p>
                                         </div>
                                     </div>

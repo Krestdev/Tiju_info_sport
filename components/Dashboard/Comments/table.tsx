@@ -1,5 +1,5 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -10,20 +10,14 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Ellipsis, Search, SquarePen, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-// import AddUserForm from "./addUserForm";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BiSolidEdit } from "react-icons/bi";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import EditUserForm from "./editUserForm";
-// import AddPubsForm from "./addPubsForm";
-// import EditPubsForm from "./editPubsForm";
-import { Categorie, comment } from "@/data/temps";
+import { comment } from "@/data/temps";
 import Pagination from "../Pagination";
 
 
@@ -57,7 +51,6 @@ function CommentsTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [full, setFull] = useState(false)
     const itemsPerPage = 10;
 
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -140,13 +133,6 @@ function CommentsTable() {
                                                     <Trash2 size={20} />
                                                 </Button>
                                             </ModalWarning>
-                                            {/* <EditPubsForm selectedPubs={item}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm">
-                                                    <FiEdit size={"20px"} />
-                                                </Button>
-                                            </EditPubsForm> */}
                                         </TableCell>
                                     </TableRow>
                                 )

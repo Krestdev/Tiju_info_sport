@@ -8,14 +8,6 @@ export interface comment {
     date: string
 };
 
-export interface Abonnement {
-    id: number,
-    nom: string,
-    cout: number,
-    validite: number
-    date: string
-}
-
 export interface Article {
     id: number,
     type: string,
@@ -27,7 +19,7 @@ export interface Article {
     commentaire: comment[],
     like: Omit<Users, "password">[];
     user: Users,
-    abonArticle: string
+    abonArticle: Abonnement
 };
 
 export interface Categorie {
@@ -48,16 +40,28 @@ export interface Users {
     password?: string,
     createdAt: string,
     role: string,
-    abonnement: string
+    abonnement: Abonnement
 };
 
 export interface Pubs {
     id: number;
     nom: string;
     lien: string;
-    image: string; 
+    image: string;
     date: string;
 }
+
+export interface Abonnement {
+    id: number,
+    nom: string,
+    cout: number,
+    validite: number
+    date: string
+}
+
+
+
+//Données temp
 
 
 export const articles: Categorie[] = [
@@ -79,7 +83,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -93,7 +103,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -108,7 +124,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -116,14 +138,20 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             },
             {
                 id: 2,
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/lions.jpg","/images/lions.jpg"],
+                media: ["/images/lions.jpg", "/images/lions.jpg"],
                 ajouteLe: "il y'a 2h",
                 commentaire: [],
                 like: [],
@@ -134,7 +162,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -142,14 +176,20 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             },
             {
                 id: 5,
                 type: "football feminin",
                 titre: "Les nouvelles ambitions des équipes féminines en Afrique",
                 description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
-                media: ["/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg","/images/Hero.jpg"],
+                media: ["/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg"],
                 ajouteLe: "il y'a 3j",
                 commentaire: [
                     {
@@ -163,7 +203,13 @@ export const articles: Categorie[] = [
                             password: "",
                             createdAt: "",
                             role: "",
-                            abonnement: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
                             photo: "/images/profil.jpg",
                             pseudo: "",
                             sexe: "",
@@ -182,7 +228,13 @@ export const articles: Categorie[] = [
                                     password: "",
                                     createdAt: "",
                                     role: "",
-                                    abonnement: "",
+                                    abonnement: {
+                                        id: 4,
+                                        nom: "Bouquet normal",
+                                        cout: 0,
+                                        validite: 12,
+                                        date: "28/01/2025"
+                                    },
                                     photo: "/images/profil.jpg",
                                     pseudo: "",
                                     sexe: "",
@@ -210,7 +262,13 @@ export const articles: Categorie[] = [
                             password: "",
                             createdAt: "",
                             role: "",
-                            abonnement: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
                             photo: "/images/profil.jpg",
                             pseudo: "",
                             sexe: "",
@@ -233,7 +291,13 @@ export const articles: Categorie[] = [
                             password: "",
                             createdAt: "",
                             role: "",
-                            abonnement: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
                             photo: "/images/profil.jpg",
                             pseudo: "",
                             sexe: "",
@@ -254,7 +318,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -262,7 +332,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "premium"
+                abonArticle: {
+                    id: 0,
+                    nom: "Bouquet Or",
+                    cout: 20000,
+                    validite: 12,
+                    date: "28/01/2025"
+                },
             }
         ]
     },
@@ -285,7 +361,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -299,7 +381,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -314,7 +402,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -322,7 +416,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             },
             {
                 id: 9,
@@ -340,7 +440,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -354,7 +460,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -369,7 +481,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -377,7 +495,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             }
         ]
     },
@@ -400,7 +524,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -408,7 +538,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             }
         ]
     },
@@ -431,7 +567,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -445,7 +587,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -460,7 +608,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -468,7 +622,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             },
             {
                 id: 7,
@@ -486,7 +646,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -500,7 +666,13 @@ export const articles: Categorie[] = [
                         phone: "654477445",
                         createdAt: "",
                         role: "",
-                        abonnement: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
                         photo: "/images/profil.jpg",
                         pseudo: "",
                         sexe: "",
@@ -515,7 +687,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -523,7 +701,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             },
             {
                 id: 8,
@@ -540,7 +724,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -554,7 +744,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -568,7 +764,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -576,7 +778,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             }
         ]
     },
@@ -598,7 +806,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -612,7 +826,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -626,7 +846,13 @@ export const articles: Categorie[] = [
                     phone: "654477445",
                     createdAt: "",
                     role: "",
-                    abonnement: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
                     photo: "/images/profil.jpg",
                     pseudo: "",
                     sexe: "",
@@ -634,7 +860,13 @@ export const articles: Categorie[] = [
                     pays: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
-                abonArticle: "normal"
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
             }
         ]
     }
@@ -644,14 +876,14 @@ export const publicites: Pubs[] = [
     {
         id: 1,
         lien: "https://google.com",
-        image: "/images/pub1.jpeg", 
+        image: "/images/pub1.jpeg",
         date: "2024-12-12",
         nom: "Orange CM",
     },
     {
         id: 2,
         lien: "https://google.com",
-        image: "/images/pub.jpg", 
+        image: "/images/pub.jpg",
         date: "2025-01-12",
         nom: "Boutique Socrate",
     },
@@ -667,7 +899,13 @@ export const users: Users[] = [
         password: "Etarcos123",
         createdAt: "2024-12-31",
         role: "admin",
-        abonnement: "premium",
+        abonnement: {
+            id: 0,
+            nom: "Bouquet Or",
+            cout: 20000,
+            validite: 12,
+            date: "28/01/2025"
+        },
         photo: "",
         pseudo: "Etarcos",
         sexe: "Homme",
@@ -682,7 +920,13 @@ export const users: Users[] = [
         password: "DevTech123",
         createdAt: "2024-12-31",
         role: "user",
-        abonnement: "normal",
+        abonnement: {
+            id: 4,
+            nom: "Bouquet normal",
+            cout: 0,
+            validite: 12,
+            date: "28/01/2025"
+        },
         photo: "",
         pseudo: "DevTech",
         sexe: "Femme",
@@ -690,3 +934,41 @@ export const users: Users[] = [
         pays: "Cameroun"
     },
 ];
+
+export const abonnement: Abonnement[] = [
+    {
+        id: 0,
+        nom: "Bouquet Or",
+        cout: 20000,
+        validite: 12,
+        date: "28/01/2025"
+    },
+    {
+        id: 1,
+        nom: "Bouquet Diamant",
+        cout: 10000,
+        validite: 12,
+        date: "28/01/2025"
+    },
+    {
+        id: 2,
+        nom: "Bouquet Argent",
+        cout: 5000,
+        validite: 12,
+        date: "28/01/2025"
+    },
+    {
+        id: 3,
+        nom: "Bouquet Bronze",
+        cout: 2500,
+        validite: 12,
+        date: "28/01/2025"
+    },
+    {
+        id: 4,
+        nom: "Bouquet normal",
+        cout: 0,
+        validite: 12,
+        date: "28/01/2025"
+    }
+]

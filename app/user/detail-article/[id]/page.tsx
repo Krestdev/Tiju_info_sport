@@ -39,7 +39,6 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     if (articleData.isSuccess) {
       const articles = articleData.data.flatMap(cate => cate.donnees)
       const foundArticle = articles.find(x => x.id === Number(param.id));
-      console.log(foundArticle);
       setArticle(foundArticle);
       setSimilaire(articles.filter(x => x.type === foundArticle?.type && x.id !== foundArticle.id).slice(0, 2))
     }

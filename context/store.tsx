@@ -1,4 +1,4 @@
-import { Abonnement, Article, articles, Categorie, comment, publicites, Pubs, users, Users } from "@/data/temps";
+import { abonnement, Abonnement, Article, articles, Categorie, comment, publicites, Pubs, users, Users } from "@/data/temps";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -66,7 +66,7 @@ const initialData: store = {
   dataArticles: articles,
   dataPubs: publicites,
   dataUsers: users,
-  dataSubscription: [],
+  dataSubscription: abonnement,
   currentUser: null,
   currentAdmin: null,
   isFull: true,

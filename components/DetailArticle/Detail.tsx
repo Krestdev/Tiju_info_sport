@@ -264,42 +264,52 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                     {details.media && <FullScreen image={details.media[0]}>
                         <img src={details.media[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-lg object-cover' />
                     </FullScreen>}
-                    <div className='grid grid-cols-4 gap-4'>
-
-                        {photo &&
-                            photo.map((x, i) => (
-                                <FullScreen image={x}>
-                                    <img key={i} src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-lg cursor-pointer object-cover overflow-hidden' />
-                                </FullScreen>
-                            ))
-                        }
-                        {photo && details.media && details.media?.length > 3 &&
-                            <div >
-                                {!allPhoto && <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
-                                    <img src={photo[1]} alt="" className='absolute z-0 w-full' />
-                                    <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
-                                        {`Tout Voir + ${details.media.length - 3}`}
-                                    </div>
-                                </Button>}
-                            </div>
-                        }
-                    </div>
+                    {currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
+                        <div className='grid grid-cols-4 gap-4'>
+                            {photo &&
+                                photo.map((x, i) => (
+                                    <FullScreen key={i} image={x}>
+                                        <img src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-lg cursor-pointer object-cover overflow-hidden' />
+                                    </FullScreen>
+                                ))
+                            }
+                            {photo && details.media && details.media?.length > 3 &&
+                                <div >
+                                    {!allPhoto && <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
+                                        <img src={photo[1]} alt="" className='absolute z-0 w-full' />
+                                        <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
+                                            {`Tout Voir + ${details.media.length - 3}`}
+                                        </div>
+                                    </Button>}
+                                </div>
+                            }
+                        </div> : details.media &&
+                        <Link href={""} className='w-fit'>
+                            <Button className='max-w-[197px] w-full h-auto aspect-video rounded-lg object-cover relative overflow-hidden bg-transparent/50'>
+                                <img src={details.media[1]} alt="" className='absolute z-0 w-full' />
+                                <div className='z-20 w-[197px] h-[200px] aspect-video rounded-lg bg-[#012BAE]/80 flex flex-col gap-3 items-center justify-center text-center text-wrap'>
+                                    <p>{"Abonnez-vous pour voir toutes les photos"}</p>
+                                    {`Tout Voir + ${details.media.length - 1}`}
+                                </div>
+                            </Button>
+                        </Link>
+                    }
                 </div>
                 <div className='flex flex-col py-7 gap-4'>
                     <p className='text-[#545454]'>{details.extrait}</p>
-                    <div className={`${details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
+                    <div className={`${currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
                         <Link href={''} className='w-fit px-3 py-2 gap-2 bg-[#012BAE] text-white capitalize text-center'>{"Abonnez-vous pour avoir accès à cet article"}</Link>
                     </div>
                     <div>
                         <p className='font-bold'>{details.user.nom}</p>
                         <p className='text-[#A1A1A1]'>{details.ajouteLe}</p>
                     </div>
-                    <div className={`${details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
-                        <p className='text-[rgb(84,84,84)]'>{details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ? details.description : btoa(details.description).split(' ')}</p>
+                    <div className={`${currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
+                        <p className='text-[rgb(84,84,84)]'>{currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? details.description : btoa(details.description).split(' ')}</p>
                     </div>
                 </div>
 
-                {details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ?
+                {currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
                     <div className='flex flex-col md:flex-row md:items-center justify-between'>
                         <div className='flex items-center gap-4'>
                             <Button variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
@@ -352,7 +362,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                 </Button>
                 {masquerCom ?
                     <div>
-                        {details.abonArticle === "normal" || (details.abonArticle === "premium" && currentUser?.abonnement === "premium") ?
+                        {currentUser?.abonnement.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
                             <div className='flex flex-col pt-8'>
                                 {
                                     details.commentaire.map(x => {
