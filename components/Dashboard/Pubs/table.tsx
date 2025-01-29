@@ -79,8 +79,6 @@ function PubsTable() {
         toast.success("Supprimé avec succès");
     }
 
-    
-
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage);
@@ -121,8 +119,6 @@ function PubsTable() {
                         </TableHeader>
                         <TableBody>
                             {currentItems.map((item, id) => {
-                                console.log(item.image);
-                                
                                 return (
                                     <TableRow className="text-[16px]" key={id}>
                                         <TableCell>{item.id}</TableCell>

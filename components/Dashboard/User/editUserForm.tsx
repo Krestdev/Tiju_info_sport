@@ -28,13 +28,13 @@ import {
 } from "@/components/ui/select";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Users } from "@/data/temps";
+import { abonnement, Abonnement, Users } from "@/data/temps";
 
 const formSchema = z
     .object({
@@ -50,6 +50,7 @@ const formSchema = z
             .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une lettre majuscule." })
             .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
         role: z.string({ message: "Vous devez selectionner selectionner a role" }),
+        abonnement: z.string(),
     });
 
 
@@ -59,9 +60,21 @@ type Props = {
 };
 
 function EditUserForm({ children, selectedUser }: Props) {
-    const { editUser } = useStore();
+    const { editUser, dataSubscription } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [abon, setAbon] = useState<Abonnement[]>()
+
     const queryClient = useQueryClient();
+    const abonData = useQuery({
+        queryKey : ["abonnement"],
+        queryFn: async () => dataSubscription
+    })
+
+    useEffect(()=>{
+        if (abonData.isSuccess) {
+            setAbon(abonData.data)
+        }
+    }, [abonData.data])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -72,7 +85,8 @@ function EditUserForm({ children, selectedUser }: Props) {
             phone: selectedUser.phone,
             password: selectedUser.password,
             role: selectedUser.role,
-            pseudo: selectedUser.pseudo
+            pseudo: selectedUser.pseudo,
+            abonnement: selectedUser.abonnement?.nom
         },
     });
 
@@ -80,15 +94,18 @@ function EditUserForm({ children, selectedUser }: Props) {
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
         console.log("Hello");
 
         editUser({
+            id: selectedUser.id,
             nom: values.nom,
             email: values.email,
             phone: values.phone,
             password: values.password,
             role: values.role,
+            pseudo: values.pseudo,
+            abonnement: abon?.find(x => x.nom === values.abonnement),
+            createdAt: selectedUser.createdAt,
         });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });
@@ -184,7 +201,7 @@ function EditUserForm({ children, selectedUser }: Props) {
                             name="role"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Pays"}</FormLabel>
+                                    <FormLabel>{"Role"}</FormLabel>
                                     <FormControl>
                                         <Select
                                             onValueChange={field.onChange}
@@ -196,6 +213,30 @@ function EditUserForm({ children, selectedUser }: Props) {
                                                 {role.map((rol, index) => (
                                                     <SelectItem key={index} value={rol}>
                                                         {rol}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="abonnement"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Abonnement"}</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Déffinissez un abonnement" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {abon?.map((ab, index) => (
+                                                    <SelectItem key={index} value={ab.nom}>
+                                                        {ab.nom}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

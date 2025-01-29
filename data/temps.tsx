@@ -40,7 +40,7 @@ export interface Users {
     password?: string,
     createdAt: string,
     role: string,
-    abonnement: Abonnement
+    abonnement?: Abonnement
 };
 
 export interface Pubs {

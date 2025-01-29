@@ -69,9 +69,11 @@ function EditPubsForm({ children, selectedPubs }: Props) {
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
         editPub({
+            id: selectedPubs.id,
             nom: values.nom,
             lien: values.lien,
-            image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }),
+            image: values.image,
+            date: selectedPubs.date
         });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });

@@ -16,18 +16,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/context/store";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TbUserPlus } from "react-icons/tb";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Abonnement } from "@/data/temps";
 
 const formSchema = z
     .object({
@@ -48,16 +49,33 @@ const formSchema = z
 
 function AddUserForm({ addButton }: { addButton: string }) {
 
-    const { registerUser } = useStore();
+    const { registerUser, dataSubscription } = useStore();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [abon, setAbon] = useState<Abonnement[]>()
+
     const queryClient = useQueryClient();
+    const abonData = useQuery({
+        queryKey : ["abonnement"],
+        queryFn: async () => dataSubscription
+    })
+
+    useEffect(()=>{
+        if (abonData.isSuccess) {
+            setAbon(abonData.data)
+        }
+    }, [abonData.data])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
+            pseudo: "",
             email: "",
+            password: "",
+            phone: "",
+            role: "",
+            abonnement: ""
         },
     });
 
@@ -75,8 +93,8 @@ function AddUserForm({ addButton }: { addButton: string }) {
                 year: "numeric",
             }),
             password: values.password,
-            abonnement: values.abonnement,
-            pseudo: ""
+            pseudo: values.pseudo,
+            abonnement: abon?.find(x => x.nom === values.abonnement)
         });
         queryClient.invalidateQueries({ queryKey: ["articles"] })
         setDialogOpen(false);
@@ -85,7 +103,6 @@ function AddUserForm({ addButton }: { addButton: string }) {
     }
 
     const role = ["admin", "user"]
-    const abon = ["normal", "premium"]
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -208,9 +225,9 @@ function AddUserForm({ addButton }: { addButton: string }) {
                                                 <SelectValue placeholder="Déffinissez un abonnement" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {abon.map((ab, index) => (
-                                                    <SelectItem key={index} value={ab}>
-                                                        {ab}
+                                                {abon?.map((ab, index) => (
+                                                    <SelectItem key={index} value={ab.nom}>
+                                                        {ab.nom}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

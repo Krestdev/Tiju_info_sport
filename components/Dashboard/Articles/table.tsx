@@ -192,7 +192,7 @@ function ArticleTable() {
                                         <TableCell>{item.like.length}</TableCell>
                                         <TableCell>{item.commentaire.length}</TableCell>
                                         <TableCell>{item.ajouteLe}</TableCell>
-                                        <TableCell>{item.abonArticle}</TableCell>
+                                        <TableCell>{item.abonArticle.nom}</TableCell>
                                         <TableCell className="flex gap-2 items-center">
                                             <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
                                                 <Button

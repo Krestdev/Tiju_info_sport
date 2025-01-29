@@ -130,8 +130,8 @@ function UsersTable() {
                     <TableCell>{item.role}</TableCell>
                     <TableCell>{item.password}</TableCell>
                     <TableCell>
-                      <Badge className={`${item.abonnement.nom === 'normal' ? 'bg-gray-300 text-black' : 'bg-green-500 text-white'}`}>
-                        {item.abonnement.nom}
+                      <Badge className={`${item.abonnement?.nom === 'normal' ? 'bg-gray-300 text-black' : 'bg-green-500 text-white'}`}>
+                        {item.abonnement?.nom}
                       </Badge>
                     </TableCell>
 
