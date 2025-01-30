@@ -17,14 +17,21 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { mois: "Juillet", reactions: 186 },
-  { mois: "Août", reactions: 305 },
-  { mois: "Septembre", reactions: 237 },
-  { mois: "Octobre", reactions: 73 },
-  { mois: "Novembre", reactions: 209 },
-  { mois: "Décembre", reactions: 214 },
-]
+import useStore from "@/context/store"
+import { useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import { Article } from "@/data/temps"
+
+
+
+// const chartData = [
+//   { mois: "Juillet", reactions: 186 },
+//   { mois: "Août", reactions: 305 },
+//   { mois: "Septembre", reactions: 237 },
+//   { mois: "Octobre", reactions: 73 },
+//   { mois: "Novembre", reactions: 209 },
+//   { mois: "Décembre", reactions: 214 },
+// ]
 
 const chartConfig = {
   reactions: {
@@ -33,52 +40,126 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function BarChartComp() {
+interface Props {
+  getPreviousMonths: (count: number) => {
+    mois: string;
+    monthNumber: number;
+    year: number;
+  }[]
+}
+
+export function BarChartComp({getPreviousMonths}: Props) {
+
+  const { dataArticles } = useStore()
+  const [art, setArt] = useState<Article[]>([]);
+  
+  
+  // Générer les données du graphique avec le bon comptage des réactions
+  const generateChartData = (articles: Article[] | undefined, count: number) => {
+    const previousMonths = getPreviousMonths(count);
+  
+    return previousMonths.map(({ mois, monthNumber, year }) => {
+      const filteredArticles = articles?.filter(article => {
+        const [day, month, yearArticle] = article.ajouteLe.split("/").map(Number);
+        return month === monthNumber && yearArticle === year;
+      }) || [];
+  
+      const reactions = filteredArticles.reduce((total, article) => {
+        return (
+          total +
+          (article.like?.length || 0) +
+          (article.commentaire?.length || 0) +
+          (article.commentaire?.flatMap(y => y.reponse)?.length || 0)
+        );
+      }, 0);
+  
+      return { mois, reactions };
+    });
+  };
+
+  const calculatePercentageVariation = (data: { mois: string; reactions: number }[]) => {
+    if (data.length < 2) return null; // Pas assez de données
+  
+    const lastMonth = data[data.length - 1]; // Dernier mois
+    const previousMonth = data[data.length - 2]; // Avant-dernier mois
+  
+    if (previousMonth.reactions === 0) {
+      return lastMonth.reactions > 0 ? 100 : 0; // Évite la division par zéro
+    }
+  
+    const variation = ((lastMonth.reactions - previousMonth.reactions) / previousMonth.reactions) * 100;
+    return variation.toFixed(2); // Arrondi à 2 décimales
+  };
+  
+  // Récupération des articles avec react-query
+  const articleData = useQuery({
+    queryKey: ["articles"],
+    queryFn: async () => dataArticles,
+  });
+  
+  useEffect(() => {
+    if (articleData.isSuccess) {
+      const allArticles = articleData.data.flatMap(x => x.donnees);
+      setArt(allArticles);
+    }
+  }, [articleData.data]);
+  
+  
+  // Générer les données du graphique après mise à jour des articles
+  // const chartData = generateChartData(art, 6);
+  // useEffect(() => {
+  //   if (art) {
+  //     console.log(generateChartData(art, 6));
+  //   }
+  // }, [art])
+
+
+
   return (
-    <Card>
-        <CardHeader>
-          <CardTitle>{"Reaction sur Vos Publications"}</CardTitle>
-          <CardDescription>{"January - June 2024"}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig}>
-            <BarChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                top: 20,
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="mois"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>{"Reaction sur Vos Publications"}</CardTitle>
+        <CardDescription>{`${getPreviousMonths(5)[0].mois} ${getPreviousMonths(5)[0].year}- ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].mois} ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].year} `}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={generateChartData(art, 5)}
+            margin={{
+              top: 20,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="mois"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="reactions" fill="var(--color-reactions)" radius={8}>
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Bar dataKey="reactions" fill="var(--color-reactions)" radius={8}>
-                <LabelList
-                  position="top"
-                  offset={12}
-                  className="fill-foreground"
-                  fontSize={12}
-                />
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col items-start gap-2 text-sm">
-          <div className="flex gap-2 font-medium leading-none">
-            Les Reactions Ont Augmentés de 5.2% Ce Mois <TrendingUp className="h-4 w-4" />
-          </div>
-          <div className="leading-none text-muted-foreground">
-            {"Affichage du nombre total de Reaction au cours des 6 derniers mois"}
-          </div>
-        </CardFooter>
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          {`Les Reactions Ont Augmentés de ${calculatePercentageVariation(generateChartData(art, 5))}% Ce Mois`} <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          {"Affichage du nombre total de Reaction au cours des 5 derniers mois"}
+        </div>
+      </CardFooter>
     </Card>
   )
 }

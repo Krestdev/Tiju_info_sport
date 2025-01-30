@@ -73,8 +73,38 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Grande complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                ajouteLe: "il y'a 2h",
-                commentaire: [],
+                ajouteLe: "27/01/2025",
+                commentaire: [
+                    {
+                        id: 96,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [
                     {
                         id: 0,
@@ -152,8 +182,38 @@ export const articles: Categorie[] = [
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
                 media: ["/images/lions.jpg", "/images/lions.jpg"],
-                ajouteLe: "il y'a 2h",
-                commentaire: [],
+                ajouteLe: "27/12/2024",
+                commentaire: [
+                    {
+                        id: 60,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [],
                 user: {
                     id: 0,
@@ -190,7 +250,7 @@ export const articles: Categorie[] = [
                 titre: "Les nouvelles ambitions des équipes féminines en Afrique",
                 description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
                 media: ["/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg"],
-                ajouteLe: "il y'a 3j",
+                ajouteLe: "27/10/2024",
                 commentaire: [
                     {
                         id: 0,
@@ -351,8 +411,67 @@ export const articles: Categorie[] = [
                 titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
                 description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
                 media: ["/images/etoo.jpg"],
-                ajouteLe: "il y'a 1j",
-                commentaire: [],
+                ajouteLe: "28/10/2024",
+                commentaire: [
+                    {
+                        id: 68,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    },
+                    {
+                        id: 69,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [
                     {
                         id: 0,
@@ -430,8 +549,38 @@ export const articles: Categorie[] = [
                 titre: "Samuel Eto'o, élu président de la Fédération Camerounaise de Football (FECAFOOT) en décembre 2021",
                 description: "Depuis son élection à la présidence de la FECAFOOT en décembre 2021...",
                 media: ["/images/fecafoot.jpeg"],
-                ajouteLe: "il y'a 4j",
-                commentaire: [],
+                ajouteLe: "28/10/2024",
+                commentaire: [
+                    {
+                        id: 64,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [
                     {
                         id: 0,
@@ -514,8 +663,38 @@ export const articles: Categorie[] = [
                 titre: "L’équipe nationale camerounaise de basketball se prépare pour les qualifications de la Coupe du Monde",
                 description: "L'équipe nationale de basketball du Cameroun se prépare activement...",
                 media: ["/images/basket.jpg"],
-                ajouteLe: "il y'a 1j",
-                commentaire: [],
+                ajouteLe: "28/01/2025",
+                commentaire: [
+                    {
+                        id: 46,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [],
                 user: {
                     id: 0,
@@ -557,8 +736,38 @@ export const articles: Categorie[] = [
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
                 media: ["/images/hand.jpg"],
-                ajouteLe: "il y'a 4j",
-                commentaire: [],
+                ajouteLe: "28/01/2025",
+                commentaire: [
+                    {
+                        id: 42,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [
                     {
                         id: 0,
@@ -636,8 +845,38 @@ export const articles: Categorie[] = [
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
                 media: ["/images/handball1.jpeg"],
-                ajouteLe: "il y'a 4j",
-                commentaire: [],
+                ajouteLe: "28/12/2024",
+                commentaire: [
+                    {
+                        id: 38,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [
                     {
                         id: 0,
@@ -715,8 +954,38 @@ export const articles: Categorie[] = [
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
                 media: ["/images/handball2.jpg"],
-                ajouteLe: "il y'a 4j",
-                commentaire: [],
+                ajouteLe: "28/09/2024",
+                commentaire: [
+                    {
+                        id: 25,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [{
                     id: 0,
                     nom: "Etarcos",
@@ -797,8 +1066,38 @@ export const articles: Categorie[] = [
                 titre: "FECAFOOT met en place un programme d'accompagnement pour les arbitres de football",
                 description: "Dans le cadre de son engagement pour le développement du football...",
                 media: ["/images/etoo.jpg"],
-                ajouteLe: "25/10/2024",
-                commentaire: [],
+                ajouteLe: "25/11/2024",
+                commentaire: [
+                    {
+                        id: 54,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
                 like: [{
                     id: 0,
                     nom: "Etarcos",

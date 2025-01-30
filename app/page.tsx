@@ -11,9 +11,30 @@ import useStore from "@/context/store";
 import { Article, Categorie, Pubs } from "@/data/temps";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  
+  const { logoutAdmin,  } = useStore()
+  const router = useRouter();
+  const pathname = usePathname(); 
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (!window.location.pathname.startsWith("/dashboard")) {
+        // Déconnecter l'utilisateur
+        logoutAdmin();
+      }
+    };
+
+    // Ajouter un écouteur sur les changements de l'historique
+    window.addEventListener("popstate", handleRouteChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+    };
+  }, [pathname]);
 
   const { dataPubs, dataArticles, currentUser, favorite, setFavorite } = useStore();
   const [art, setArt] = useState<Categorie[]>();

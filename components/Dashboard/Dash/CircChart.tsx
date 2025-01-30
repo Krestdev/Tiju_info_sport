@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React, { useEffect, useState } from "react"
 import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
@@ -18,13 +18,18 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { bouquet: "Bouquet Or", visitors: 275, fill: "var(--color-chrome)" },
-  { bouquet: "Bouquet Diamant", visitors: 200, fill: "var(--color-safari)" },
-  { bouquet: "Bouquet Argent", visitors: 287, fill: "var(--color-firefox)" },
-  { bouquet: "Bouquet Bronze", visitors: 173, fill: "var(--color-edge)" },
-  { bouquet: "Bouquet Normal", visitors: 190, fill: "var(--color-other)" },
-]
+import useStore from "@/context/store"
+import { useQuery } from "@tanstack/react-query"
+import { Abonnement } from "@/data/temps"
+
+
+interface Props {
+  getPreviousMonths: (count: number) => {
+    mois: string;
+    monthNumber: number;
+    year: number;
+  }[]
+}
 
 const chartConfig = {
   visitors: {
@@ -52,21 +57,49 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function CircChart() {
+
+
+export function CircChart({getPreviousMonths}: Props) {
+
+  const chartData = [
+    { bouquet: "Bouquet Or", visitors: 1, fill: "var(--color-chrome)" },
+    { bouquet: "Bouquet Diamant", visitors: 5, fill: "var(--color-safari)" },
+    { bouquet: "Bouquet Argent", visitors: 2, fill: "var(--color-firefox)" },
+    { bouquet: "Bouquet Bronze", visitors: 10, fill: "var(--color-edge)" },
+    { bouquet: "Bouquet Normal", visitors: 25, fill: "var(--color-other)" },
+  ]
+
+  const { dataUsers } = useStore()
+  const [abon, setAbon] = useState<(Abonnement | undefined)[]>()
+
+  const subsData = useQuery({
+    queryKey: ["abonnement"],
+    queryFn: async () => dataUsers
+  })
+
+  useEffect(()=>{
+    if (subsData.isSuccess) {
+      setAbon(subsData.data.flatMap(x => x.abonnement))
+      console.log(abon);
+      
+    }
+  }, [subsData.data])
+
+
   const totalAbonnes = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
   }, [])
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col max-w-md w-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>{"Utilisateurs et Abonnés"}</CardTitle>
+        <CardDescription>{`${getPreviousMonths(5)[0].mois} ${getPreviousMonths(5)[0].year}- ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].mois} ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].year} `}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square"
         >
           <PieChart>
             <ChartTooltip
@@ -102,7 +135,7 @@ export function CircChart() {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          {"Utilisateurs"}
                         </tspan>
                       </text>
                     )
