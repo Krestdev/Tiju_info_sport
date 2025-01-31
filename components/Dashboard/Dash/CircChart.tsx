@@ -28,7 +28,13 @@ interface Props {
     mois: string;
     monthNumber: number;
     year: number;
-  }[]
+  }[],
+  chartData: {
+    bouquet: string;
+    visitors: number;
+    fill: string;
+  }[],
+  totalAbonne: number,
 }
 
 const chartConfig = {
@@ -53,42 +59,28 @@ const chartConfig = {
   },
   other: {
     label: "Bouquet Normal",
-    color: "hsl(var(--chart-5))",
+    color: "hsl(var(--chart-4))",
   },
 } satisfies ChartConfig
 
 
+export function CircChart({ getPreviousMonths, chartData, totalAbonne }: Props) {
 
-export function CircChart({getPreviousMonths}: Props) {
+  // const chartData = [
+  //   { bouquet: "Bouquet Or", visitors: 1, fill: "var(--color-chrome)" },
+  //   { bouquet: "Bouquet Diamant", visitors: 5, fill: "var(--color-safari)" },
+  //   { bouquet: "Bouquet Argent", visitors: 2, fill: "var(--color-firefox)" },
+  //   { bouquet: "Bouquet Bronze", visitors: 10, fill: "var(--color-edge)" },
+  //   { bouquet: "Bouquet Normal", visitors: 25, fill: "var(--color-other)" },
+  // ]
 
-  const chartData = [
-    { bouquet: "Bouquet Or", visitors: 1, fill: "var(--color-chrome)" },
-    { bouquet: "Bouquet Diamant", visitors: 5, fill: "var(--color-safari)" },
-    { bouquet: "Bouquet Argent", visitors: 2, fill: "var(--color-firefox)" },
-    { bouquet: "Bouquet Bronze", visitors: 10, fill: "var(--color-edge)" },
-    { bouquet: "Bouquet Normal", visitors: 25, fill: "var(--color-other)" },
-  ]
 
   const { dataUsers } = useStore()
-  const [abon, setAbon] = useState<(Abonnement | undefined)[]>()
 
   const subsData = useQuery({
     queryKey: ["abonnement"],
     queryFn: async () => dataUsers
   })
-
-  useEffect(()=>{
-    if (subsData.isSuccess) {
-      setAbon(subsData.data.flatMap(x => x.abonnement))
-      console.log(abon);
-      
-    }
-  }, [subsData.data])
-
-
-  const totalAbonnes = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
 
   return (
     <Card className="flex flex-col max-w-md w-full">
@@ -128,14 +120,14 @@ export function CircChart({getPreviousMonths}: Props) {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {totalAbonnes.toLocaleString()}
+                          {totalAbonne}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          {"Utilisateurs"}
+                          {"Utilisateur(s)"}
                         </tspan>
                       </text>
                     )

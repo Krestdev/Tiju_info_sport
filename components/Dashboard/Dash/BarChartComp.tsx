@@ -48,22 +48,28 @@ interface Props {
   }[]
 }
 
-export function BarChartComp({getPreviousMonths}: Props) {
+export function BarChartComp({ getPreviousMonths }: Props) {
 
   const { dataArticles } = useStore()
   const [art, setArt] = useState<Article[]>([]);
-  
-  
-  // Générer les données du graphique avec le bon comptage des réactions
+
+  // Récupération des articles avec react-query
+  const articleData = useQuery({
+    queryKey: ["articles"],
+    queryFn: async () => dataArticles,
+  });
+
+  // Fonction pour générer les données du graphique
   const generateChartData = (articles: Article[] | undefined, count: number) => {
     const previousMonths = getPreviousMonths(count);
-  
-    return previousMonths.map(({ mois, monthNumber, year }) => {
+
+    const data = previousMonths.map(({ mois, monthNumber, year }) => {
       const filteredArticles = articles?.filter(article => {
-        const [day, month, yearArticle] = article.ajouteLe.split("/").map(Number);
+        const [day, month, yearArticleRaw] = article.ajouteLe.split("/").map(Number);
+        const yearArticle = yearArticleRaw < 100 ? yearArticleRaw + 2000 : yearArticleRaw;
         return month === monthNumber && yearArticle === year;
       }) || [];
-  
+
       const reactions = filteredArticles.reduce((total, article) => {
         return (
           total +
@@ -72,47 +78,44 @@ export function BarChartComp({getPreviousMonths}: Props) {
           (article.commentaire?.flatMap(y => y.reponse)?.length || 0)
         );
       }, 0);
-  
+
       return { mois, reactions };
     });
+
+    // Fusion des doublons éventuels
+    const mergedData = data.reduce<{ mois: string; reactions: number }[]>((acc, curr) => {
+      const existing = acc.find(item => item.mois === curr.mois);
+      if (existing) {
+        existing.reactions += curr.reactions;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+    return mergedData;
   };
 
+  // Calcul de la variation en pourcentage
   const calculatePercentageVariation = (data: { mois: string; reactions: number }[]) => {
-    if (data.length < 2) return null; // Pas assez de données
-  
-    const lastMonth = data[data.length - 1]; // Dernier mois
-    const previousMonth = data[data.length - 2]; // Avant-dernier mois
-  
+    if (data.length < 2) return null;
+
+    const lastMonth = data[data.length - 1];
+    const previousMonth = data[data.length - 2];
+
     if (previousMonth.reactions === 0) {
-      return lastMonth.reactions > 0 ? 100 : 0; // Évite la division par zéro
+      return lastMonth.reactions > 0 ? 100 : 0;
     }
-  
+
     const variation = ((lastMonth.reactions - previousMonth.reactions) / previousMonth.reactions) * 100;
-    return variation.toFixed(2); // Arrondi à 2 décimales
+    return variation.toFixed(2);
   };
-  
-  // Récupération des articles avec react-query
-  const articleData = useQuery({
-    queryKey: ["articles"],
-    queryFn: async () => dataArticles,
-  });
-  
+
   useEffect(() => {
     if (articleData.isSuccess) {
       const allArticles = articleData.data.flatMap(x => x.donnees);
       setArt(allArticles);
     }
   }, [articleData.data]);
-  
-  
-  // Générer les données du graphique après mise à jour des articles
-  // const chartData = generateChartData(art, 6);
-  // useEffect(() => {
-  //   if (art) {
-  //     console.log(generateChartData(art, 6));
-  //   }
-  // }, [art])
-
 
 
   return (
@@ -153,8 +156,8 @@ export function BarChartComp({getPreviousMonths}: Props) {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          {`Les Reactions Ont Augmentés de ${calculatePercentageVariation(generateChartData(art, 5))}% Ce Mois`} <TrendingUp className="h-4 w-4" />
+        <div className="flex gap-2 font-medium leading-none capitalize">
+          {`Les Reactions ont variées de ${calculatePercentageVariation(generateChartData(art, 5))}% Ce Mois`} <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
           {"Affichage du nombre total de Reaction au cours des 5 derniers mois"}

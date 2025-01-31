@@ -845,7 +845,7 @@ export const articles: Categorie[] = [
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
                 media: ["/images/handball1.jpeg"],
-                ajouteLe: "28/12/2024",
+                ajouteLe: "28/11/2024",
                 commentaire: [
                     {
                         id: 38,

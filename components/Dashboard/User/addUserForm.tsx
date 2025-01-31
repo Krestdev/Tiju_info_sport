@@ -75,7 +75,7 @@ function AddUserForm({ addButton }: { addButton: string }) {
             password: "",
             phone: "",
             role: "",
-            abonnement: ""
+            abonnement: "Bouquet normal"
         },
     });
 

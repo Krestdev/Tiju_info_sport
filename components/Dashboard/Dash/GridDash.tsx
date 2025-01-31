@@ -11,15 +11,15 @@ import { IconType } from 'react-icons/lib';
 interface Props {
     tableau: {
         icon: IconType;
-        value: number;
+        value: number | undefined;
         category: string;
         color: string;
-    }[]
+    }[],
 }
 
 const GridDash = ({ tableau }: Props) => {
     return (
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-2 w-full'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 w-full'>
             {
                 tableau.map((tab, index) => (
                     <div key={index} className="w-full px-4 py-6 bg-white rounded shadow-sm flex gap-6">
