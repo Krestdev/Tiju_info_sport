@@ -3,7 +3,6 @@
 import React from 'react'
 import { Categorie, Pubs } from '@/data/temps';
 import Link from 'next/link';
-import { BiFootball } from 'react-icons/bi';
 import IconeComp from '../IconeComp';
 import UnePub from '../UnePub';
 
@@ -26,10 +25,10 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                 <div className='flex flex-col gap-10'>
                     <div className='flex flex-col justify-between md:flex-row'>
                         <div className='flex flex-col gap-5 px-7 py-5 w-full'>
-                            <h3>{"Tous les Sports"}</h3>
+                            <Link href={"/user/category"} className='font-bold text-lg'>{"Tous les Sports"}</Link>
                             <div className='flex flex-col gap-2'>
                                 {gridAff &&
-                                    gridAff.map(x => {
+                                    gridAff.slice(0, 10).map(x => {
                                         return (
                                             <Link key={x.nom} href={`/user/category/${x.nom}`}>
                                                 <div className='border-b pl-2 pb-2 max-w-[360px] w-full flex gap-[10px] items-center'>{x.nom} <IconeComp nom={x.nom} /></div>
@@ -56,7 +55,7 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                     </div>
                     <div className='flex p-7 gap-7'>
                         {
-                            gridAff?.slice(2).map(x => x.donnees.slice(1, 2).map(x => (
+                            gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 2).map(x => (
                                 <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
                                     {x.media && <img src={x.media[0]} alt={x.description} className='object-cover max-w-[824px] w-full h-auto aspect-video' />}
                                     <div>

@@ -37,7 +37,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 const group = article!.slice(i, i + groupSize);
                 result.push(
                     <div key={`group-${i}`} className="group">
-                        {group.filter(x => x.id !== premier?.id).map((x) => {
+                        {group.filter(a => a.id !== premier?.id).map((x) => {
                             return (
                                 <Link key={x.id} href={path === '/user/category' ? `/user/category/${x && x.nom}` : `/user/detail-article/${x?.id}`} className='flex flex-row gap-7 px-5 py-4'>
                                     <img src={x.media && x.media[0]} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />

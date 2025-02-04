@@ -10,10 +10,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { CalendarIcon, Search, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,6 +29,7 @@ import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
 import Pagination from "../Pagination";
+import ShowArticle from "./showArticle";
 
 
 
@@ -209,7 +209,13 @@ function ArticleTable() {
                                                     <FiEdit size={"20px"} />
                                                 </Button>
                                             </EditArticleForm>
-                                            <FaRegEye size={"20px"} />
+                                            <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm">
+                                                    <FaRegEye size={"20px"} />
+                                                </Button>
+                                            </ShowArticle>
                                         </TableCell>
                                     </TableRow>
                                 )

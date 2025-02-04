@@ -77,7 +77,7 @@ function EditArticleForm({ children, donnee, nom }: Props) {
             extrait: donnee.extrait,
             description: donnee.description,
             media: donnee.media,
-            abonArticle: donnee.abonArticle
+            abonArticle: donnee.abonArticle.nom
         },
     });
 

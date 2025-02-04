@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/chart"
 import useStore from "@/context/store"
 import { useQuery } from "@tanstack/react-query"
-import { Abonnement } from "@/data/temps"
 
+const n = 5;
 
 interface Props {
   getPreviousMonths: (count: number) => {
@@ -66,15 +66,7 @@ const chartConfig = {
 
 export function CircChart({ getPreviousMonths, chartData, totalAbonne }: Props) {
 
-  // const chartData = [
-  //   { bouquet: "Bouquet Or", visitors: 1, fill: "var(--color-chrome)" },
-  //   { bouquet: "Bouquet Diamant", visitors: 5, fill: "var(--color-safari)" },
-  //   { bouquet: "Bouquet Argent", visitors: 2, fill: "var(--color-firefox)" },
-  //   { bouquet: "Bouquet Bronze", visitors: 10, fill: "var(--color-edge)" },
-  //   { bouquet: "Bouquet Normal", visitors: 25, fill: "var(--color-other)" },
-  // ]
-
-
+ 
   const { dataUsers } = useStore()
 
   const subsData = useQuery({
@@ -86,7 +78,7 @@ export function CircChart({ getPreviousMonths, chartData, totalAbonne }: Props) 
     <Card className="flex flex-col max-w-md w-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>{"Utilisateurs et Abonnés"}</CardTitle>
-        <CardDescription>{`${getPreviousMonths(5)[0].mois} ${getPreviousMonths(5)[0].year}- ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].mois} ${getPreviousMonths(5)[getPreviousMonths(5).length - 1].year} `}</CardDescription>
+        <CardDescription>{`${getPreviousMonths(n)[0].mois} ${getPreviousMonths(n)[0].year}- ${getPreviousMonths(n)[getPreviousMonths(n).length - 1].mois} ${getPreviousMonths(n)[getPreviousMonths(n).length - 1].year} `}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -103,7 +95,7 @@ export function CircChart({ getPreviousMonths, chartData, totalAbonne }: Props) 
               dataKey="visitors"
               nameKey="bouquet"
               innerRadius={60}
-              strokeWidth={5}
+              strokeWidth={n}
             >
               <Label
                 content={({ viewBox }) => {

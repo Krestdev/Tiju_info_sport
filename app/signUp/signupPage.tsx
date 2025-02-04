@@ -8,7 +8,7 @@ import useStore from "@/context/store";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from '@react-oauth/google';
@@ -40,9 +40,14 @@ const formSchema = z
 
 export default function SignupPage() {
 
-  const { registerUser, dataUsers } = useStore();
+  const { registerUser, dataUsers, dataSubscription } = useStore();
   const queryClient = useQueryClient();
   const router = useRouter();
+
+  const subsData = useQuery({
+    queryKey: ["abonnement"],
+    queryFn: async () => dataSubscription
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,7 +75,8 @@ export default function SignupPage() {
           year: "numeric",
         }),
         role: "user",
-        abonnement: "normal"
+        abonnement: subsData.data?.find(x => x.cout === 0),
+        pseudo: ""
       });
 
       console.log("Utilisateur inscrit :", values);

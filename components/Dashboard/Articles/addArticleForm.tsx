@@ -16,19 +16,22 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/context/store";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TbUserPlus } from "react-icons/tb";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Abonnement } from "@/data/temps";
+import { IoMdClose } from "react-icons/io";
+import { IoMdAdd } from "react-icons/io";
 
 const formSchema = z.object({
     nom: z.string().min(4, {
@@ -49,17 +52,22 @@ const formSchema = z.object({
     media: z
         .any()
         .refine(
-            (file) => !file || file instanceof File,
-            { message: "Image must be a file." }
+            (files) =>
+                !files ||
+                (Array.isArray(files) && files.every(file => file instanceof File)),
+            { message: "Chaque image doit être un fichier valide." }
         ),
+
     abonArticle: z.string(),
 });
 
 
 function AddArticleForm({ addButton }: { addButton: string }) {
 
-    const { addCategory, currentAdmin } = useStore();
+    const { addCategory, currentAdmin, dataSubscription } = useStore();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [subs, setSubs] = useState<Abonnement[]>();
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const queryClient = useQueryClient();
 
     // 1. Define your form.
@@ -75,6 +83,17 @@ function AddArticleForm({ addButton }: { addButton: string }) {
             abonArticle: ""
         },
     });
+
+    const subsData = useQuery({
+        queryKey: ["abonnement"],
+        queryFn: async () => dataSubscription
+    })
+
+    useEffect(() => {
+        if (subsData.isSuccess) {
+            setSubs(subsData.data)
+        }
+    }, [subsData.data])
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -95,7 +114,7 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                         year: "numeric",
                     }),
                     user: currentAdmin!,
-                    abonArticle: values.abonArticle,
+                    abonArticle: subs?.find(x => x.nom === values.abonArticle)!,
                     commentaire: [],
                     like: []
                 }
@@ -107,8 +126,6 @@ function AddArticleForm({ addButton }: { addButton: string }) {
         toast.success("Ajouté avec succès");
         form.reset();
     }
-
-    const abon = ["normal", "premium"];
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -181,9 +198,9 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                                                 <SelectValue placeholder="Déffinissez un abonnement" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {abon.map((ab, index) => (
-                                                    <SelectItem key={index} value={ab}>
-                                                        {ab}
+                                                {subs?.map((ab, index) => (
+                                                    <SelectItem key={index} value={ab.nom}>
+                                                        {ab.nom}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -225,23 +242,55 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                             name="media"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Image"}</FormLabel>
+                                    <FormLabel>{"Sélectionner toutes les images"}</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files[0]) {
-                                                    field.onChange(e.target.files[0]);
-                                                }
-                                            }}
-                                        />
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex gap-4 items-center">
+                                                {selectedFiles.length > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedFiles([]); // Réinitialiser l'état
+                                                            field.onChange([]); // Réinitialiser le champ du formulaire
+                                                        }}
+                                                        className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                    >
+                                                        <IoMdClose />
+                                                    </button>
+                                                )}
+                                                <Input
+                                                    id="fileInput"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    multiple
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                        if (e.target.files) {
+                                                            const newFiles = Array.from(e.target.files);
+                                                            const updatedFiles = [...selectedFiles, ...newFiles];
+
+                                                            setSelectedFiles(updatedFiles);
+                                                            field.onChange(updatedFiles);
+                                                        }
+                                                    }}
+                                                />
+                                                <label
+                                                    htmlFor="fileInput"
+                                                    className="cursor-pointer flex items-center gap-2 border p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600"
+                                                >
+                                                    <IoMdAdd />
+                                                </label>
+                                            </div>
+
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        
+
+
+
+
                         <span className="flex items-center gap-3 flex-wrap">
                             <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
                                 {"Publier"}

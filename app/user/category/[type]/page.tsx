@@ -13,7 +13,7 @@ interface Result {
     id: number | undefined;
     titre: string | undefined;
     nom: string;
-    media: string | undefined;
+    media: string[] | undefined;
   }
 
 const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => {
@@ -34,7 +34,8 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     useEffect(()=>{
         if (articleData.isSuccess) {
-            setArticle(articleData.data.find(x => x.nom === decodeURIComponent(param.type))?.donnees.map(
+            setArticle(articleData.data.find(x => x.nom.trimEnd() === decodeURIComponent(param.type))?.donnees.map(
+                
                 x => (
                     {
                         id: x.id,

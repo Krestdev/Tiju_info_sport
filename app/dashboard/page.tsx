@@ -13,7 +13,6 @@ import { Article, Categorie, comment, Users } from "@/data/temps";
 
 const DashbordPage = () => {
   const { logoutAdmin, dataArticles, dataUsers } = useStore()
-  const router = useRouter();
   const pathname = usePathname();
   const [art, setArt] = useState<Article[]>()
   const [comment, setComment] = useState<comment[]>()
@@ -59,7 +58,6 @@ const DashbordPage = () => {
       return acc;
     }, {} as Record<string, number>);
   };
-
 
   const groupUsersForChart = (users: Users[]) => {
     const colors: Record<string, string> = {

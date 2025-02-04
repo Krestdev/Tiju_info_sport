@@ -1,11 +1,6 @@
-export interface comment {
-    id: number
-    user: Users | null,
-    message: string,
-    reponse: comment[]
-    like: Omit<Users, "password">[];
-    signals: Omit<Users, "password">[];
-    date: string
+export interface Categorie {
+    nom: string;
+    donnees: Article[];
 };
 
 export interface Article {
@@ -22,9 +17,12 @@ export interface Article {
     abonArticle: Abonnement
 };
 
-export interface Categorie {
+export interface Pubs {
+    id: number;
     nom: string;
-    donnees: Article[];
+    lien: string;
+    image: string;
+    date: string;
 };
 
 export interface Users {
@@ -43,22 +41,23 @@ export interface Users {
     abonnement?: Abonnement
 };
 
-export interface Pubs {
-    id: number;
-    nom: string;
-    lien: string;
-    image: string;
-    date: string;
-}
-
 export interface Abonnement {
     id: number,
     nom: string,
     cout: number,
     validite: number
     date: string
-}
+};
 
+export interface comment {
+    id: number
+    user: Users | null,
+    message: string,
+    reponse: comment[]
+    like: Omit<Users, "password">[];
+    signals: Omit<Users, "password">[];
+    date: string
+};
 
 
 //Données temp
@@ -73,6 +72,7 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Grande complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
+                media: ["/images/lions.jpg", "/images/lions.jpg"],
                 ajouteLe: "27/01/2025",
                 commentaire: [
                     {
@@ -407,6 +407,259 @@ export const articles: Categorie[] = [
         donnees: [
             {
                 id: 3,
+                type: "Hockey",
+                titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
+                description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
+                media: ["/images/etoo.jpg"],
+                ajouteLe: "28/10/2024",
+                commentaire: [
+                    {
+                        id: 68,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 86,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    },
+                    {
+                        id: 69,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 85,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
+                like: [
+                    {
+                        id: 9,
+                        nom: "Etarcos",
+                        email: "etarcos@gmail.com",
+                        phone: "654477445",
+                        createdAt: "",
+                        role: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
+                    },
+                    {
+                        id: 19,
+                        nom: "socrate",
+                        email: "socrate@gmail.com",
+                        phone: "654477445",
+                        createdAt: "",
+                        role: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
+                    }
+                ],
+                user: {
+                    id: 0,
+                    nom: "socrate",
+                    email: "socrate@gmail.com",
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
+                },
+                extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
+            },
+            {
+                id: 9,
+                type: "Hockey",
+                titre: "Samuel Eto'o, élu président de la Fédération Camerounaise de Football (FECAFOOT) en décembre 2021",
+                description: "Depuis son élection à la présidence de la FECAFOOT en décembre 2021...",
+                media: ["/images/fecafoot.jpeg"],
+                ajouteLe: "28/10/2024",
+                commentaire: [
+                    {
+                        id: 64,
+                        message: "J'aime bien comment il s'entensent",
+                        user: {
+                            id: 0,
+                            nom: "Etarcos Tech",
+                            email: "etarcos@tyju.com",
+                            phone: "654455455",
+                            password: "",
+                            createdAt: "",
+                            role: "",
+                            abonnement: {
+                                id: 4,
+                                nom: "Bouquet normal",
+                                cout: 0,
+                                validite: 12,
+                                date: "28/01/2025"
+                            },
+                            photo: "/images/profil.jpg",
+                            pseudo: "",
+                            sexe: "",
+                            ville: "",
+                            pays: ""
+                        },
+                        reponse: [],
+                        like: [],
+                        signals: [],
+                        date: ""
+                    }
+                ],
+                like: [
+                    {
+                        id: 0,
+                        nom: "Etarcos",
+                        email: "etarcos@gmail.com",
+                        phone: "654477445",
+                        createdAt: "",
+                        role: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
+                    },
+                    {
+                        id: 1,
+                        nom: "socrate",
+                        email: "socrate@gmail.com",
+                        phone: "654477445",
+                        createdAt: "",
+                        role: "",
+                        abonnement: {
+                            id: 4,
+                            nom: "Bouquet normal",
+                            cout: 0,
+                            validite: 12,
+                            date: "28/01/2025"
+                        },
+                        photo: "/images/profil.jpg",
+                        pseudo: "",
+                        sexe: "",
+                        ville: "",
+                        pays: ""
+                    }
+                ],
+                user: {
+                    id: 0,
+                    nom: "socrate",
+                    email: "socrate@gmail.com",
+                    phone: "654477445",
+                    createdAt: "",
+                    role: "",
+                    abonnement: {
+                        id: 4,
+                        nom: "Bouquet normal",
+                        cout: 0,
+                        validite: 12,
+                        date: "28/01/2025"
+                    },
+                    photo: "/images/profil.jpg",
+                    pseudo: "",
+                    sexe: "",
+                    ville: "",
+                    pays: ""
+                },
+                extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
+                abonArticle: {
+                    id: 4,
+                    nom: "Bouquet normal",
+                    cout: 0,
+                    validite: 12,
+                    date: "28/01/2025"
+                }
+            }
+        ]
+    },
+
+    {
+        nom: "Boxe",
+        donnees: [
+            {
+                id: 21,
                 type: "Fecafoot",
                 titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
                 description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
@@ -544,7 +797,7 @@ export const articles: Categorie[] = [
                 }
             },
             {
-                id: 9,
+                id: 22,
                 type: "Fecafoot",
                 titre: "Samuel Eto'o, élu président de la Fédération Camerounaise de Football (FECAFOOT) en décembre 2021",
                 description: "Depuis son élection à la présidence de la FECAFOOT en décembre 2021...",
@@ -1270,4 +1523,4 @@ export const abonnement: Abonnement[] = [
         validite: 12,
         date: "28/01/2025"
     }
-]
+];

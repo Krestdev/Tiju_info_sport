@@ -36,23 +36,23 @@ const page = () => {
       const lastArticleWithMedia = [...categorie.donnees]
         .reverse()
         .find(article => article.media !== undefined);
-
+  
+      const lastArticle = [...categorie.donnees].reverse()[0]; 
+  
       return {
-        id: lastArticleWithMedia?.id,
-        titre: lastArticleWithMedia?.titre,
+        id: lastArticleWithMedia?.id ?? lastArticle?.id,
+        titre: lastArticleWithMedia?.titre ?? lastArticle?.titre,
         nom: categorie.nom,
-        media: lastArticleWithMedia?.media
+        media: lastArticleWithMedia?.media ?? lastArticle?.media
       };
     });
   }
-
-
+  
   useEffect(() => {
     if (articleData.isSuccess) {
       setCategory(getLastImagesByCategory(articleData.data))
     }
   }, [articleData.data]);
-
 
   useEffect(() => {
     if (pubData.isSuccess) {
