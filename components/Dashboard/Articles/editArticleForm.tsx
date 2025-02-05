@@ -19,16 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article } from "@/data/temps";
+import { Abonnement, Article } from "@/data/temps";
 import FullScreen from "../FullScreen";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { GrFormClose } from "react-icons/gr";
+import { IoMdAdd, IoMdClose } from "react-icons/io";
 
 const formSchema = z.object({
     nom: z.string().min(4, {
@@ -63,9 +65,23 @@ type Props = {
 };
 
 function EditArticleForm({ children, donnee, nom }: Props) {
-    const { editPub } = useStore();
+
+    const { dataSubscription } = useStore()
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [images, setImages] = useState<string[] | undefined>(donnee.media);
+    const [abon, setAbon] = useState<Abonnement[]>();
     const queryClient = useQueryClient();
+
+    const subsData = useQuery({
+        queryKey: ["abonnement"],
+        queryFn: async () => dataSubscription
+    })
+
+    useEffect(()=>{
+        if (subsData.isSuccess) {
+            setAbon(subsData.data)
+        }
+    }, [subsData.data])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -81,8 +97,6 @@ function EditArticleForm({ children, donnee, nom }: Props) {
         },
     });
 
-
-
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
         // editPub({
@@ -96,8 +110,6 @@ function EditArticleForm({ children, donnee, nom }: Props) {
         toast.success("Modifié avec succès");
         form.reset();
     }
-
-    const abon = ["normal", "premium"];
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -165,9 +177,9 @@ function EditArticleForm({ children, donnee, nom }: Props) {
                                                 <SelectValue placeholder="Déffinissez un abonnement" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {abon.map((ab, index) => (
-                                                    <SelectItem key={index} value={ab}>
-                                                        {ab}
+                                                {abon?.map((ab, index) => (
+                                                    <SelectItem key={index} value={ab.nom}>
+                                                        {ab.nom}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -204,10 +216,8 @@ function EditArticleForm({ children, donnee, nom }: Props) {
                             )}
                         />
 
+
                         <div className="flex flex-row items-center gap-2">
-                            {donnee.media && <FullScreen image={donnee.media[0]}>
-                                <img src={donnee.media[0]} alt="" className="size-14 object-cover cursor-pointer" />
-                            </FullScreen>}
                             <FormField
                                 control={form.control}
                                 name="media"
@@ -215,15 +225,74 @@ function EditArticleForm({ children, donnee, nom }: Props) {
                                     <FormItem>
                                         <FormLabel>{"Image"}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    if (e.target.files && e.target.files[0]) {
-                                                        field.onChange(e.target.files[0]);
+                                            <div>
+                                                <div className="flex flex-row gap-2 flex-wrap">
+                                                    {
+                                                        images?.map((x, index) => (
+                                                            <div key={index} className="relative">
+                                                                <FullScreen image={x}>
+                                                                    <img src={x} alt="" className="size-14 object-cover cursor-pointer" />
+                                                                </FullScreen>
+                                                                <button
+                                                                    type="button"
+                                                                    className="absolute h-4 -top-1 -right-1 bg-gray-400 w-fit rounded-full p-0"
+                                                                    onClick={() => {
+                                                                        const newFiles = images.filter((_, i) => i !== index);
+                                                                        setImages(newFiles);
+                                                                        field.onChange(newFiles);
+                                                                    }}
+                                                                >
+                                                                    <GrFormClose />
+                                                                </button>
+                                                            </div>
+                                                        ))
                                                     }
-                                                }}
-                                            />
+                                                </div>
+                                                <div className="flex flex-row gap-4 items-center justify-center mt-2">
+                                                    {images?.length ? images?.length > 0 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setImages([]);
+                                                                field.onChange([]);
+                                                            }}
+                                                            className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                        >
+                                                            <IoMdClose />
+                                                        </button>
+                                                    ) : ""}
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            if (e.target.files && e.target.files[0]) {
+                                                                field.onChange(e.target.files[0]);
+                                                            }
+                                                        }}
+                                                    />
+                                                    {/* <Input
+                                                        id="fileInput"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        multiple
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                            if (e.target.files) {
+                                                                const newFiles = Array.from(e.target.files);
+                                                                // const updatedFiles = [...images, ...newFiles];
+
+                                                                // setImages(updatedFiles);
+                                                                // field.onChange(updatedFiles);
+                                                            }
+                                                        }}
+                                                    /> */}
+                                                    <label
+                                                        htmlFor="fileInput"
+                                                        className="cursor-pointer flex items-center gap-2 border p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600"
+                                                    >
+                                                        <IoMdAdd />
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

@@ -393,7 +393,7 @@ const useStore = create<store & actions>()(
       editPub: (pub) => set((state) => ({ dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el)) })),
       deletePub: (id) => set((state) => ({ dataPubs: state.dataPubs.filter((item) => item.id != id) })),
 
-      addSubscription: (subscription) => set((state) =>({dataSubscription: [...state.dataSubscription, subscription]})), 
+      addSubscription: (subscription) => set((state) => ({ dataSubscription: [...state.dataSubscription, subscription] })),
       editSubscription: (subscription) => set((state) => ({ dataSubscription: state.dataSubscription.map((el) => (el.id === subscription.id ? subscription : el)) })),
       deleteSubscription: (id) => set((state) => ({ dataSubscription: state.dataSubscription.filter((item) => item.id != id) })),
     }),

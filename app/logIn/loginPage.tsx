@@ -149,7 +149,7 @@ export default function LoginPage() {
           </Form>
         </CardContent>
         <CardFooter className="flex flex-row justify-between items-center space-y-2">
-          <Link href="#" className="text-sm text-[#012BAE] font-medium hover:underline">
+          <Link href="/restaure-password" className="text-sm text-[#012BAE] font-medium hover:underline">
             {"Mot De Passe Oublié ?"}
           </Link>
           <Link href="/signUp" className="text-[#012BAE] font-medium hover:underline">

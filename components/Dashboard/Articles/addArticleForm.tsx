@@ -32,6 +32,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Abonnement } from "@/data/temps";
 import { IoMdClose } from "react-icons/io";
 import { IoMdAdd } from "react-icons/io";
+import { BiShow } from "react-icons/bi";
+import { GrFormClose } from "react-icons/gr";
 
 const formSchema = z.object({
     nom: z.string().min(4, {
@@ -53,11 +55,9 @@ const formSchema = z.object({
         .any()
         .refine(
             (files) =>
-                !files ||
-                (Array.isArray(files) && files.every(file => file instanceof File)),
-            { message: "Chaque image doit être un fichier valide." }
+                Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
+            { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ),
-
     abonArticle: z.string(),
 });
 
@@ -68,6 +68,7 @@ function AddArticleForm({ addButton }: { addButton: string }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [subs, setSubs] = useState<Abonnement[]>();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [show, setShow] = useState(false);
     const queryClient = useQueryClient();
 
     // 1. Define your form.
@@ -113,6 +114,7 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                         month: "2-digit",
                         year: "numeric",
                     }),
+                    media: values.media,
                     user: currentAdmin!,
                     abonArticle: subs?.find(x => x.nom === values.abonArticle)!,
                     commentaire: [],
@@ -279,6 +281,33 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                                                 >
                                                     <IoMdAdd />
                                                 </label>
+                                                {selectedFiles.length > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShow(true)}
+                                                    >
+                                                        <BiShow className="size-7" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2 flex-wrap">
+                                                {show &&
+                                                    selectedFiles.map((file, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img src={URL.createObjectURL(file)} alt="" className="size-10 object-cover rounded" />
+                                                            <button
+                                                                type="button"
+                                                                className="absolute h-4 -top-1 -right-1 bg-gray-400 w-fit rounded-full p-0"
+                                                                onClick={() => {
+                                                                    const newFiles = selectedFiles.filter((_, i) => i !== index);
+                                                                    setSelectedFiles(newFiles);
+                                                                    field.onChange(newFiles);
+                                                                }}
+                                                            >
+                                                                <GrFormClose />
+                                                            </button>
+                                                        </div>
+                                                    ))}
                                             </div>
 
                                         </div>
@@ -297,7 +326,7 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                             </Button>
                             <DialogClose asChild>
                                 <Button variant={"outline"} onClick={() => form.reset()}>
-                                    {"Close"}
+                                    {"Annuler"}
                                 </Button>
                             </DialogClose>
                         </span>

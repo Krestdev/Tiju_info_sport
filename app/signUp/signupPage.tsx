@@ -22,9 +22,10 @@ const formSchema = z
       message: "Le nom doit contenir au moins 4 caractères.",
     }),
     email: z.string().email({ message: "Adresse e-mail invalide." }),
-    phone: z
-      .string()
-      .regex(/^\d{9}$/, "Le numéro de téléphone doit contenir exactement 9 chiffres."),
+    pseudo: z
+      .string().min(4, {
+        message: "Le Pseudo doit avoir au moins 4 caractères"
+      }),
     password: z
       .string()
       .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
@@ -54,7 +55,7 @@ export default function SignupPage() {
     defaultValues: {
       nom: "",
       email: "",
-      phone: "",
+      pseudo: "",
       password: "",
       cfpassword: "",
     },
@@ -67,7 +68,7 @@ export default function SignupPage() {
         id: Date.now(),
         nom: values.nom,
         email: values.email,
-        phone: values.phone,
+        pseudo: values.pseudo,
         password: values.password,
         createdAt: new Date(Date.now()).toLocaleDateString("fr-FR", {
           day: "2-digit",
@@ -76,11 +77,8 @@ export default function SignupPage() {
         }),
         role: "user",
         abonnement: subsData.data?.find(x => x.cout === 0),
-        pseudo: ""
+        phone: "",
       });
-
-      console.log("Utilisateur inscrit :", values);
-      console.log("Liste des utilisateurs :", dataUsers);
 
       // Invalider les données en cache
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -147,12 +145,12 @@ export default function SignupPage() {
               />
               <FormField
                 control={form.control}
-                name="phone"
+                name="pseudo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{"Numéro de téléphone"}</FormLabel>
+                    <FormLabel>{"Pseudo"}</FormLabel>
                     <FormControl>
-                      <Input placeholder="ex. 655544556" {...field} className="w-full" />
+                      <Input placeholder="ex. King" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

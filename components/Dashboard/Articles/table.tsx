@@ -156,7 +156,7 @@ function ArticleTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
-                <AddArticleForm addButton={"Ajouter une publicité"} />
+                <AddArticleForm addButton={"Ajouter un article"} />
             </span>
             {articleData.isLoading && "Loading"}
             {articleData.isSuccess && filterData.length > 0 ? (

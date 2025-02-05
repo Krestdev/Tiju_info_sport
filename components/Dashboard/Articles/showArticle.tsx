@@ -47,7 +47,7 @@ function ShowArticle({ children, id, type, titre, extrait, description, media, a
         <div className="flex flex-col overflow-auto scrollbar max-h-[600px] justify-between gap-5 px-7">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <p className="font-semibold">Media</p>
+              <p className="font-semibold">{"Media"}</p>
               <div className="grid grid-cols-5 gap-1 ">
                 {
                   media?.map((x, i) => {
@@ -61,37 +61,37 @@ function ShowArticle({ children, id, type, titre, extrait, description, media, a
               </div>
             </div>
             <div>
-              <p className="font-semibold">Titre</p>
+              <p className="font-semibold">{"Titre"}</p>
               <p>{titre}</p>
             </div>
             <div>
-              <p className="font-semibold">Extrait</p>
+              <p className="font-semibold">{"Extrait"}</p>
               <p>{extrait}</p>
             </div>
             <div>
-              <p className="font-semibold">Date de publication</p>
+              <p className="font-semibold">{"Date de publication"}</p>
               <p>{ajouteLe}</p>
             </div>
             <div>
-              <p className="font-semibold">Nombre de commentaires</p>
+              <p className="font-semibold">{"Nombre de commentaires"}</p>
               <p>{commentaire.length}</p>
             </div>
             <div>
-              <p className="font-semibold">Nombre de likes</p>
+              <p className="font-semibold">{"Nombre de likes"}</p>
               <p>{like.length}</p>
             </div>
           </div>
           <div>
-            <p className="font-semibold">Description</p>
+            <p className="font-semibold">{"Description"}</p>
             <p>{description}</p>
           </div>
           <div className="flex flex-row justify-between">
             <div>
-              <p className="font-semibold">Type d'abonnement</p>
+              <p className="font-semibold">{"Type d'abonnement"}</p>
               <p>{abonArticle.nom}</p>
             </div>
             <div>
-              <p className="font-semibold">Publié par</p>
+              <p className="font-semibold">{"Publié par"}</p>
               <p>{user.nom}</p>
             </div>
           </div>
