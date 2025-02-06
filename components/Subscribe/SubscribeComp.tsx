@@ -24,14 +24,14 @@ export default function SubscribePage() {
 
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-center justify-center m-10 p-4">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 items-center justify-center">
       {
         subs?.filter(a => a.cout !== 0).map((x, i) => {
           return (
             <div key={x.id} className={`h-[400px] max-w-[320px] w-full flex flex-col gap-10 items-center justify-center px-5 pt-5 pb-10 rounded-ss-[150px] ${i % 2 === 0 ? "bg-blue-50" : "bg-orange-50"} rounded-ee-[150px]`}>
-              <div className='p-10 w-full h-full flex flex-col gap-10 items-center justify-center rounded-ss-[150px] rounded-ee-[150px] bg-white'>
+              <div className='w-full h-full flex flex-col gap-10 items-center justify-center rounded-ss-[150px] rounded-ee-[150px] bg-white'>
                 <div className=' flex flex-col'>
-                  <p className='font-black text-4xl'>XAF</p>
+                  <p className='font-black text-4xl'>{"XAF"}</p>
                   <p className='font-black text-2xl'>{x.cout}</p>
                 </div>
                 <p>{x.nom}</p>

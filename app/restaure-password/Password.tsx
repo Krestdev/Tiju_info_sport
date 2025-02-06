@@ -22,9 +22,10 @@ const form2Schema = z.object({
 
 interface Props {
     setActive: (value: React.SetStateAction<number>) => void
+    email: string
 }
 
-const Password = ({ setActive }: Props) => {
+const Password = ({ setActive, email }: Props) => {
 
     const { editUser, dataUsers } = useStore();
     const [message, setMessage] = useState("")
@@ -49,14 +50,13 @@ const Password = ({ setActive }: Props) => {
         },
     });
 
-
     async function onSubmit2(values: z.infer<typeof form2Schema>) {
         try {
             if (values.password === values.cfpassword) {
-                // editUser({
-                //     ...user?.find(x => x.email === )
-                //     password: values.cfpassword
-                // })
+                editUser({
+                    ...user?.find(x => x.email === email),
+                    password: values.cfpassword
+                })
                 setActive(3)
             } else {
                 setMessage("Les mots de passes doivent correspondre")

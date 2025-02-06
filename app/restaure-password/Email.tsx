@@ -18,9 +18,10 @@ const formSchema = z.object({
 
 interface Props {
     setActive: (value: React.SetStateAction<number>) => void
+    setEmail: React.Dispatch<React.SetStateAction<string>>
 }
 
-const Email = ({ setActive }: Props) => {
+const Email = ({ setActive, setEmail }: Props) => {
 
     const { dataUsers } = useStore()
     const [users, setUsers] = useState<Users[]>()
@@ -48,6 +49,7 @@ const Email = ({ setActive }: Props) => {
         try {
             if (users?.some(x => x.email === values.email)) {
                 setActive(1)
+                setEmail(values.email)
             } else {
                 setMessage("L'adresse email saisie n'existe")
             }

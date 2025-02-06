@@ -13,6 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Phone } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { BiRadioCircleMarked } from "react-icons/bi";
+import { useRouter } from 'next/navigation';
 
 const formSchema1 = z.object({
     email: z.string(),
@@ -42,10 +43,11 @@ interface Props {
 }
 
 const ProfilForm = ({ currentUser, category, pub }: Props) => {
-    const { settings, editUser } = useStore();
+    const { settings, editUser, logout } = useStore();
     const queryClient = useQueryClient();
     const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
     const sexe = ["Homme", "Femme"]
+    const router = useRouter();
 
     const sec1 = category?.flatMap((x) => x.donnees).filter((x) => x)[0];
     const sim1 = category && category[0];
@@ -94,6 +96,11 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
 
         queryClient.invalidateQueries({ queryKey: ['users'] });
     }
+
+    const handleLogout = () => {
+        logout();
+        router.push("/logIn");
+    };
 
     return (
         <div className="max-w-[1280px] w-full flex flex-col md:flex-row gap-7">
@@ -206,7 +213,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
 
                                                     }}
                                                 >
-                                                    Modifier
+                                                    {"Modifier"}
                                                 </Button>
                                             </div>
                                         </FormControl>
@@ -333,15 +340,18 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     </div>
                                     <Button className='rounded-none'>{"S'abonner"}</Button>
                                 </div> :
-                                <div className='flex flex-col md:flex-row gap-10'>
-                                    <div className='flex flex-row items-center gap-4 px-4 py-2 text-[#012BAE]'>
-                                        <BiRadioCircleMarked className='h-10 w-10' />
-                                        <div className='flex flex-col'>
-                                            <p className='text-[16px]'>{currentUser?.abonnement?.nom}</p>
-                                            <p className='text-[#545454] text-[12px]'>{"11 mois restant"}</p>
+                                <div className='flex flex-col md:flex-row items-center justify-between gap-10'>
+                                    <div className='flex flex-col md:flex-row items-center'>
+                                        <div className='flex flex-row items-center gap-4 px-4 py-2 text-[#012BAE]'>
+                                            <BiRadioCircleMarked className='h-10 w-10' />
+                                            <div className='flex flex-col'>
+                                                <p className='text-[16px]'>{currentUser?.abonnement?.nom}</p>
+                                                <p className='text-[#545454] text-[12px]'>{"11 mois restant"}</p>
+                                            </div>
                                         </div>
+                                        <Button onClick={() => {router.push("/user/subscribe")}} className='rounded-none'>{"Changer d'abonnement"}</Button>
                                     </div>
-                                    <Button className='rounded-none'>{"Changer d'abonnement"}</Button>
+                                    <Button variant={'destructive'} onClick={handleLogout} className='hidden md:flex w-fit'> {"Se déconnecter"}</Button>
                                 </div>
                         }
 

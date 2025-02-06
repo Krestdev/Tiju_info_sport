@@ -44,7 +44,7 @@ const Navbar = () => {
 
     const filterData = useMemo(() => {
         if (articleData.isSuccess) {
-            if (searchEntry === "") return articleData.data.flatMap(x=> x.donnees);
+            if (searchEntry === "") return articleData.data.flatMap(x => x.donnees);
             return articleData.data.flatMap(x => x.donnees).filter((el) =>
                 Object.values(el).some((value) =>
                     String(value)
@@ -94,11 +94,24 @@ const Navbar = () => {
                         {
                             currentUser ?
                                 <div className='flex flex-row items-center gap-4'>
-                                    <Button variant={'destructive'} onClick={handleLogout} className='hidden md:flex'> {"Se déconnecter"}</Button>
                                     <div className='flex flex-row items-center gap-2'>
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
-                                        <Link href={'/user/profil'}><h3>Mon Compte</h3></Link>
+                                        <Link href={'/user/profil'}><h3>{"Mon Compte"}</h3></Link>
                                     </div>
+                                    {
+                                        currentUser.abonnement?.cout && currentUser.abonnement?.cout > 0 ? 
+                                        <Link href={'/user/subscribe'} className='hover:underline'>
+                                        <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
+                                            {"Changer d'offre"}
+                                        </div>
+                                    </Link>
+                                         :
+                                            <Link href={'/user/subscribe'} className='hover:underline'>
+                                                <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
+                                                    {"S'ABONNER"}
+                                                </div>
+                                            </Link>
+                                    }
                                 </ div> :
                                 <>
                                     <Button variant={'ghost'} onClick={handleLogin}>
@@ -106,7 +119,7 @@ const Navbar = () => {
                                             <User />
                                         </div> {"SE CONNECTER"}
                                     </Button>
-                                    <Link href={'/signUp'} className='hover:underline'>
+                                    <Link href={'/user/subscribe'} className='hover:underline'>
                                         <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
                                             {"S'ABONNER"}
                                         </div>

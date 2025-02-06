@@ -18,6 +18,7 @@ const ForgetPassword = () => {
 
 
   const [active, setActive] = useState(0)
+  const [email, setEmail] = useState("")
   const router = useRouter();
 
   const handleDecrement = () => {
@@ -43,16 +44,19 @@ const ForgetPassword = () => {
       </Stepper>
       {
         active === 0 ?
-          <Email setActive={setActive} /> : active === 1 ?
+          <Email setActive={setActive} setEmail={setEmail} />
+          : active === 1 ?
             <Code setActive={setActive} /> : active === 2 ?
-              <Password setActive={setActive} /> : active === 3 ?
+              <Password setActive={setActive} email={email} />
+              : active === 3 ?
                 <div className='pb-10 flex flex-col items-center gap-4'>
                   <div className='flex flex-row items-center gap-2'>
                     <div className='rounded-full bg-green-500 text-white'><FaCheck className='size-10 p-2' /></div>
                     <h3 className='text-green-500'>{"Mot de passe modifié avec succès"}</h3>
                   </div>
                   <Button onClick={() => router.back()}>{"Revenir à la page de connection"}</Button>
-                </div> : ""
+                </div>
+                : ""
       }
       {active >= 1 && active < 3 && <Button onClick={handleDecrement} variant={'secondary'}> <LucideArrowLeft /> {"Precedent"}</Button>}
     </Box>

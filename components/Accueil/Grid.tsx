@@ -40,7 +40,7 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                         </div>
                         <div className='flex flex-row items-center p-7 gap-7'>
                             {
-                                gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 2).map(x => (
+                                gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 2).map(x => (
                                     <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
                                         {x.media && <img src={x.media[0]} alt="" className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-lg' />}
                                         <div>
@@ -55,7 +55,7 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                     </div>
                     <div className='flex p-7 gap-7'>
                         {
-                            gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 2).map(x => (
+                            gridAff?.slice(2, 3).map(x => x.donnees.slice(0, 1).map(x => (
                                 <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
                                     {x.media && <img src={x.media[0]} alt={x.description} className='object-cover max-w-[824px] w-full h-auto aspect-video' />}
                                     <div>

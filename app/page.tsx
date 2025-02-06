@@ -56,55 +56,67 @@ export default function HomePage() {
     };
   }, [pathname]);
 
+  const isNewArticle = (createdAt: string): boolean => {
+    const dateAjout = new Date(createdAt);
+    const dateLimite = new Date();
+    dateLimite.setDate(dateLimite.getDate() - 1); // Considéré "nouveau" s'il a moins de 7 jours
+    return dateAjout > dateLimite;
+  };
+  
   const getUserFavoriteCategories = (
     categories: Categorie[],
     userId: number
-): Categorie[] => {
-    // Étape 1 : Filtrer et trier les catégories selon les interactions de l'utilisateur
-    const userFavoriteCategories = categories.sort((a, b) => {
-        const aHasInteraction = a.donnees.some(article =>
-            article.like.some(user => user.id === userId) ||
-            article.commentaire.some(comment => comment.user?.id === userId)
-        );
-        const bHasInteraction = b.donnees.some(article =>
-            article.like.some(user => user.id === userId) ||
-            article.commentaire.some(comment => comment.user?.id === userId)
-        );
-
-        // Prioriser les catégories où l'utilisateur a interagi (like ou commentaire)
-        if (aHasInteraction && !bHasInteraction) return -1;
-        if (!aHasInteraction && bHasInteraction) return 1;
-
-        // Conserver l'ordre initial si elles sont identiques
-        return 0;
+  ): Categorie[] => {
+    // Étape 1 : Trier les catégories selon la présence d'un nouvel article
+    const sortedCategories = categories.sort((a, b) => {
+      const aHasNewArticle = a.donnees.some(article => isNewArticle(article.ajouteLe));
+      const bHasNewArticle = b.donnees.some(article => isNewArticle(article.ajouteLe));
+  
+      if (aHasNewArticle && !bHasNewArticle) return -1; // Catégorie avec nouvel article en premier
+      if (!aHasNewArticle && bHasNewArticle) return 1;
+  
+      // Vérifier les interactions de l'utilisateur (like ou commentaire)
+      const aHasInteraction = a.donnees.some(article =>
+        article.like.some(user => user.id === userId) ||
+        article.commentaire.some(comment => comment.user?.id === userId)
+      );
+      const bHasInteraction = b.donnees.some(article =>
+        article.like.some(user => user.id === userId) ||
+        article.commentaire.some(comment => comment.user?.id === userId)
+      );
+  
+      if (aHasInteraction && !bHasInteraction) return -1; // Catégorie avec interaction en premier
+      if (!aHasInteraction && bHasInteraction) return 1;
+  
+      return 0; // Sinon, conserver l'ordre initial
     });
-
+  
     // Étape 2 : Trier les articles à l'intérieur de chaque catégorie
-    const sortedCategories = userFavoriteCategories.map(categorie => {
-        const sortedDonnees = categorie.donnees.sort((a, b) => {
-            const aUserLiked = a.like.some(user => user.id === userId) ? 1 : 0;
-            const bUserLiked = b.like.some(user => user.id === userId) ? 1 : 0;
-
-            const aUserCommented = a.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
-            const bUserCommented = b.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
-
-            // Articles où l'utilisateur a liké ou commenté en premier
-            if ((aUserLiked || aUserCommented) !== (bUserLiked || bUserCommented)) {
-                return (bUserLiked + bUserCommented) - (aUserLiked + aUserCommented);
-            }
-
-            // Si égalité, trier par popularité (total des likes + commentaires)
-            const aPopularity = a.like.length + a.commentaire.length;
-            const bPopularity = b.like.length + b.commentaire.length;
-
-            return bPopularity - aPopularity; // Les articles les plus populaires en premier
-        });
-
-        return { ...categorie, donnees: sortedDonnees };
+    return sortedCategories.map(categorie => {
+      const sortedDonnees = categorie.donnees.sort((a, b) => {
+        const aIsNew = isNewArticle(a.ajouteLe) ? 1 : 0;
+        const bIsNew = isNewArticle(b.ajouteLe) ? 1 : 0;
+  
+        if (aIsNew !== bIsNew) return bIsNew - aIsNew; // Nouveaux articles en premier
+  
+        const aUserLiked = a.like.some(user => user.id === userId) ? 1 : 0;
+        const bUserLiked = b.like.some(user => user.id === userId) ? 1 : 0;
+        const aUserCommented = a.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
+        const bUserCommented = b.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
+  
+        if ((aUserLiked || aUserCommented) !== (bUserLiked || bUserCommented)) {
+          return (bUserLiked + bUserCommented) - (aUserLiked + aUserCommented);
+        }
+  
+        const aPopularity = a.like.length + a.commentaire.length;
+        const bPopularity = b.like.length + b.commentaire.length;
+  
+        return bPopularity - aPopularity; // Les articles les plus populaires en premier
+      });
+  
+      return { ...categorie, donnees: sortedDonnees };
     });
-
-    return sortedCategories;
-};
+  };
 
 
   useEffect(() => {

@@ -1,4 +1,7 @@
+"use client"
+
 import SubscribePage from '@/components/Subscribe/SubscribeComp'
+import withAuth from '@/lib/withAuth'
 import React from 'react'
 
 const page = () => {
@@ -9,4 +12,4 @@ const page = () => {
   )
 }
 
-export default page
+export default withAuth(page)

@@ -61,7 +61,7 @@ const formSchema = z.object({
 type Props = {
     children: ReactNode;
     donnee: Article;
-    nom: string
+    nom: string | undefined
 };
 
 function EditArticleForm({ children, donnee, nom }: Props) {
@@ -133,7 +133,7 @@ function EditArticleForm({ children, donnee, nom }: Props) {
                                 <FormItem>
                                     <FormLabel>{"Catégorie sportive"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="ex. Football" />
+                                        <Input {...field} value={nom} disabled placeholder="ex. Football" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -51,17 +51,6 @@ function ArticleTable() {
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
-
-    useEffect(() => {
-        if (dateRange) {
-            console.log("Date range updated:", dateRange);
-            console.log(rein);
-
-        }
-    }, [dateRange]);
-
-
-
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -202,7 +191,7 @@ function ArticleTable() {
                                                     <Trash2 size={20} />
                                                 </Button>
                                             </ModalWarning>
-                                            <EditArticleForm donnee={item} nom="">
+                                            <EditArticleForm donnee={item} nom={articleData.data.find(x => x.donnees.some(x => x === item))?.nom}>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm">

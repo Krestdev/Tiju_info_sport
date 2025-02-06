@@ -18,7 +18,7 @@ const UnePub = ({ gridAff, pubAff }: Aff) => {
                 <p className='text-[20px] font-semibold'>{"À la une"}</p>
                 <div className='flex flex-col gap-2'>
                     {
-                        gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 3).map(x => {
+                        gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 4).map(x => {
                             return (
                                 <Link key={x.id} href={`/user/detail-article/${x.id}`} className='flex flex-row items-center gap-4 p-4'>
                                     <img src={x.media && x.media[0]} alt={x.type} className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-lg' />

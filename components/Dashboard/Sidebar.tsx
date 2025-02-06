@@ -79,7 +79,7 @@ export function AppSidebar() {
     }
 
     return (
-        <Sidebar variant="floating" collapsible="icon">
+        <Sidebar variant="sidebar" collapsible="icon">
             <SidebarInset>
                 <div className="flex items-center justify-center">
                     <SidebarHeader className="h-[150px] w-[150px]">

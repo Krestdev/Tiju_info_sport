@@ -39,7 +39,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     <div key={`group-${i}`} className="group">
                         {group.filter(a => a.id !== premier?.id).map((x) => {
                             return (
-                                <Link key={x.id} href={path === '/user/category' ? `/user/category/${x && x.nom}` : `/user/detail-article/${x?.id}`} className='flex flex-row gap-7 px-5 py-4'>
+                                <Link key={x.id} href={path === '/user/category' ? `/user/category/${x && x.nom}` : `/user/detail-article/${x?.id}`} className='flex flex-col-reverse lg:flex-row gap-7 px-5 py-4'>
                                     <img src={x.media && x.media[0]} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />
                                     <div className='flex flex-col'>
                                         <p className='text-[#A1A1A1]'>{x.nom}</p>
@@ -76,7 +76,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
     const sec1 = categorie?.filter(x => x.donnees.filter(x => x.id === premier?.id)).flatMap(x => x.donnees)[0]
 
     return (
-        <div className='flex flex-row gap-7'>
+        <div className='flex flex-col md:flex-row gap-7'>
             <div className='containerBloc flex flex-col gap-7'>
                 <Link href={path === '/user/category' ? `/user/category/${premier && premier.nom}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7 px-7'>
                     <div key={premier?.id} className='flex flex-col gap-4 py-4'>
