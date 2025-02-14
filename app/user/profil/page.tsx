@@ -15,18 +15,18 @@ const page = () => {
   const [pub, setPub] = useState<Pubs>();
   const [category, setCategory] = useState<Categorie[]>()
 
-  
+
   const articleData = useQuery({
     queryKey: ['articles'],
     queryFn: async () => dataArticles,
   });
-  
+
   const pubData = useQuery({
     queryKey: ["pubs"],
     queryFn: async () => dataPubs,
   });
-  
-  
+
+
   useEffect(() => {
     if (pubData.isSuccess) {
       setPub(pubData.data[0])
@@ -38,7 +38,7 @@ const page = () => {
       setCategory(articleData.data)
     }
   }, [articleData.data])
-  
+
 
 
   return (

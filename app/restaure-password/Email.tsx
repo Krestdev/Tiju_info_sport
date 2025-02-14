@@ -60,7 +60,7 @@ const Email = ({ setActive, setEmail }: Props) => {
     return (
         <div className='flex flex-col gap-2 items-center py-10'>
             <p>{"Nous allons vous envoyer un code a 6 chiffres par email"}</p>
-            <h3>{"Entrez votre email et cliquez sur réinitialiser"}</h3>
+            <h3>{"Entrez votre email et cliquez sur Envoyer le code"}</h3>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4 flex flex-col gap-4">

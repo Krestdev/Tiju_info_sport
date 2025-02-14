@@ -14,6 +14,7 @@ import { Phone } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { BiRadioCircleMarked } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
+import FullScreen from '../Dashboard/FullScreen';
 
 const formSchema1 = z.object({
     email: z.string(),
@@ -140,11 +141,13 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     <FormItem>
                                         <FormControl>
                                             <div className="flex items-center gap-3 px-5">
-                                                <img
-                                                    className="w-10 h-10 rounded-full object-cover"
-                                                    src={photo}
-                                                    alt="Aperçu de la photo"
-                                                />
+                                                <FullScreen image={photo}>
+                                                    <img
+                                                        className="w-10 h-10 rounded-full object-cover"
+                                                        src={photo}
+                                                        alt="Aperçu de la photo"
+                                                    />
+                                                </FullScreen>
                                                 <Input
                                                     type="file"
                                                     className="shadow-none border-0"
@@ -330,6 +333,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                         </Form>
                     </div>
 
+                    <Button variant={'destructive'} onClick={handleLogout} className='flex w-fit'> {"Se déconnecter"}</Button>
                     <div className='flex flex-col gap-4'>
                         <h2>{"Mon abonnement"}</h2>
                         {
@@ -349,15 +353,13 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                                 <p className='text-[#545454] text-[12px]'>{"11 mois restant"}</p>
                                             </div>
                                         </div>
-                                        <Button onClick={() => {router.push("/user/subscribe")}} className='rounded-none'>{"Changer d'abonnement"}</Button>
+                                        <Button onClick={() => { router.push("/user/subscribe") }} className='rounded-none'>{"Changer d'abonnement"}</Button>
                                     </div>
-                                    <Button variant={'destructive'} onClick={handleLogout} className='hidden md:flex w-fit'> {"Se déconnecter"}</Button>
                                 </div>
-                        }
 
+                        }
                     </div>
                 </div>
-
             </div>
             <div className="max-w-[360px] flex flex-col gap-7 px-7 py-5">
                 <Similaire similaire={sec1} sim={sim1} />

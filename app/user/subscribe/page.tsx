@@ -1,13 +1,13 @@
 "use client"
 
-import SubscribePage from '@/components/Subscribe/SubscribeComp'
+import Subscribe from '@/components/Subscribe/Subscribe'
 import withAuth from '@/lib/withAuth'
 import React from 'react'
 
 const page = () => {
   return (
     <div className='containerBloc'>
-      <SubscribePage />
+      <Subscribe />
     </div>
   )
 }

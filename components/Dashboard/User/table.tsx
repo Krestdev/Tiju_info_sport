@@ -10,13 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Ellipsis, Search, SquarePen, Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import AddUserForm from "./addUserForm";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BiSolidEdit } from "react-icons/bi";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -130,7 +128,7 @@ function UsersTable() {
                     <TableCell>{item.role}</TableCell>
                     <TableCell>{item.password}</TableCell>
                     <TableCell>
-                      <Badge className={`${item.abonnement?.nom === 'normal' ? 'bg-gray-300 text-black' : 'bg-green-500 text-white'}`}>
+                      <Badge className={`${item.abonnement?.cout === 0 ? 'bg-gray-300 text-black' : 'bg-green-500 text-white'}`}>
                         {item.abonnement?.nom}
                       </Badge>
                     </TableCell>
