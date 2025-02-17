@@ -3,7 +3,7 @@ import ContactPage from './ContactPage'
 
 const page = () => {
   return (
-    <div>
+    <div className='containerBloc'>
       <ContactPage />
     </div>
   )

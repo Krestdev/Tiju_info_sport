@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useStore from "@/context/store";
+import { IoMdArrowDropright } from "react-icons/io";
 
 export interface Categorie {
     nom: string;
@@ -34,15 +35,17 @@ interface Donnee {
 
 function MenuBar({ article, currentUser }: Donnee) {
 
-    const { logout } = useStore()
+    const { logout, settings } = useStore()
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false);
+    const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
 
     const closeSheet = () => setIsOpen(false);
 
     const handleLogin = () => {
         router.push("/logIn")
     }
+
     const handleLogout = () => {
         setIsOpen(false)
         logout();
@@ -60,10 +63,14 @@ function MenuBar({ article, currentUser }: Donnee) {
             <SheetContent className="flex flex-col gap-8">
                 <SheetHeader>
                     <SheetTitle className="flex flex-row gap-1 items-center">
-                        <Link onClick={() => setIsOpen(false)} href={''} className="rounded-full bg-gray-100 border border-black w-fit p-1">
-                            <User />
-                        </Link>
+                        <Link onClick={() => setIsOpen(false)} href={'/user/profil'} className="flex flex-row gap-2 items-center" >
+                            <img
+                                className="w-10 h-10 rounded-full object-cover"
+                                src={photo}
+                                alt="Aperçu de la photo"
+                            />
                         {`${currentUser && currentUser.nom}`}
+                        </Link>
                     </SheetTitle>
                 </SheetHeader>
                 <Accordion type="single" collapsible className="w-full flex flex-col gap-3">
@@ -78,8 +85,8 @@ function MenuBar({ article, currentUser }: Donnee) {
                                         {
                                             x.donnees.map(it => {
                                                 return (
-                                                    <Link onClick={() => setIsOpen(false)} key={it.id} href={''} className="hover:underline uppercase text border-b border-white pl-2">
-                                                        {it.type}
+                                                    <Link onClick={() => setIsOpen(false)} key={it.id} href={''} className="flex gap-1 items-center hover:underline uppercase text border-b border-white pl-2">
+                                                        <IoMdArrowDropright /> {it.type}
                                                     </Link>
                                                 )
                                             })
@@ -90,9 +97,9 @@ function MenuBar({ article, currentUser }: Donnee) {
                         })
                     }
                     <SheetClose>
-                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/category'}>{"Toutes Les Categories"}</Link>
-                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/contact'}>{"Nous contacter"}</Link>
-                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/about'}>{"À Propos de nous"}</Link>
+                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/user/category'}>{"Toutes Les Categories"}</Link>
+                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/user/contact'}>{"Nous contacter"}</Link>
+                        <Link onClick={() => setIsOpen(false)} className="uppercase hover:underline flex !justify-start border-b pt-4 pb-3" href={'/user/about'}>{"À Propos de nous"}</Link>
                         {
                             currentUser ?
                                 <div onClick={handleLogout} className="uppercase !p-0 flex !justify-start mt-2 cursor-pointer"> {"Se déconnecter"}</div> :

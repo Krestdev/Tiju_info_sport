@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 const formSchema = z.object({
     phone: z
         .string()
-        .regex(/^6(5[0-9]|7[0-9]|8[0-9]|9[0-9])\d{6}$/, "Numéro invalide")
+        .regex(/^6(5[0-9]|7[0-9]|8[0-9]|9[0-9])\d{6}$/, "Numéro de téléphone invalide")
 });
 
 interface Props {

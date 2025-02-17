@@ -42,7 +42,7 @@ const Payement = ({ setActive, setMethode, abonId }: Props) => {
                     <img src="/images/Mobile.png" alt="" className='max-w-[250px] w-full h-auto aspect-video object-cover' />
                     <h3>{"Mobile"}</h3>
                 </div>
-                <div onClick={() => handlePay("visa")} className='flex flex-col items-center justify-center gap-3 p-5 cursor-pointer hover:bg-blue-50'>
+                <div className="flex flex-col items-center justify-center gap-3 p-5 cursor-pointer hover:bg-blue-50">
                     <img src="/images/Visa.jpg" alt="" className='max-w-[250px] w-full h-auto aspect-video object-cover' />
                     <h3>{"Carte Visa"}</h3>
                 </div>

@@ -10,6 +10,7 @@ import MenuBar from './menuBar'
 import { Article, Categorie } from '@/data/temps'
 import { useQuery } from '@tanstack/react-query'
 import { Input } from './ui/input'
+import { IoIosMail } from "react-icons/io";
 
 
 const Navbar = () => {
@@ -63,8 +64,9 @@ const Navbar = () => {
     const fav = articleData.data?.flatMap(x => x.nom)
 
     return (
-        <div className='w-full flex items-center justify-center'>
-            <div className='max-w-[1280px] px-5 w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px]'>
+        <div className='w-full flex items-center justify-center fixed md:static z-50'>
+            <div className='absolute px-5 w-full h-[80px] bg-blue-100/80 blur-sm md:bg-transparent z-20'></div>
+            <div className='max-w-[1280px] px-5 w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src="/logo.png" alt="Logo" className='size-[50px]' />
@@ -90,22 +92,21 @@ const Navbar = () => {
                     />
                 }
                 <div className='flex flex-row items-center gap-5'>
-                    <div className='hidden md:flex'>
+                    <div className='hidden md:flex items-center gap-3'>
                         {
                             currentUser ?
                                 <div className='flex flex-row items-center gap-4'>
-                                    <div className='flex flex-row items-center gap-2'>
+                                    <Link href={'/user/profil'} className='flex flex-row items-center gap-2'>
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
-                                        <Link href={'/user/profil'}><h3>{"Mon Compte"}</h3></Link>
-                                    </div>
-                                    {
-                                        currentUser.abonnement?.cout && currentUser.abonnement?.cout > 0 ? 
-                                        <Link href={'/user/subscribe'} className='hover:underline'>
-                                        <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
-                                            {"Changer d'offre"}
-                                        </div>
                                     </Link>
-                                         :
+                                    {
+                                        currentUser.abonnement?.cout && currentUser.abonnement?.cout > 0 ?
+                                            <Link href={'/user/subscribe'} className='hover:underline'>
+                                                <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
+                                                    {"Changer d'offre"}
+                                                </div>
+                                            </Link>
+                                            :
                                             <Link href={'/user/subscribe'} className='hover:underline'>
                                                 <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
                                                     {"S'ABONNER"}
@@ -126,6 +127,7 @@ const Navbar = () => {
                                     </Link>
                                 </>
                         }
+                        <Link href={"/user/contact"} className='flex flex-row items-center gap-0 hover:bg-blue-100 px-2'><IoIosMail className='size-10' /> <h3>{"Contacter"}</h3></Link>
                     </div>
                     <MenuBar article={article} currentUser={currentUser} />
                 </div>

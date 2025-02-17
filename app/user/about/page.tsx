@@ -1,9 +1,10 @@
 import React from 'react'
+import AProposComp from './AProposComp'
 
 const page = () => {
   return (
     <div>
-      about
+      <AProposComp />
     </div>
   )
 }

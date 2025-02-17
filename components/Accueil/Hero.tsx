@@ -22,7 +22,7 @@ const Hero = ({ gridAff }: Aff) => {
   const currentLocale = router
 
     return (
-        <div className='w-full'>
+        <div className='w-full pt-[80px] md:pt-0'>
             <Carousel
                 plugins={[
                     Autoplay({

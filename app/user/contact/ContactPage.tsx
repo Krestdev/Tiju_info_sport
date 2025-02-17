@@ -12,7 +12,7 @@ const ContactPage = () => {
       </div>
 
       <div className='my-10 flex flex-col justify-center md:flex-row gap-10'>
-        <img className='w-full object-cover md:max-w-[480px]' src='/images/Contact.jpg' alt="" />
+        <img className='w-full object-cover md:max-w-[480px] h-auto aspect-video' src='/images/Contact.jpg' alt="" />
         <div className='flex flex-col justify-center items-start gap-6'>
           <div className='flex flex-col'>
             <p className='font-semibold text-xl text-gray-600'>Nous sommes</p>
@@ -23,8 +23,8 @@ const ContactPage = () => {
             <Link className='hover:underline' href={"mailto: tyjuofficiel@gmail.com"}>Email: tyjuofficiel@gmail.com</Link>
           </div>
           <p className='font-semibold text-xl text-gray-600'>Careers  at Forever</p>
-          <p className='text-gray-500'>Informez vous sur le sport en visitant nos articles</p>
-          <Link href={'/category'} className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Nos Articles</Link>
+          <p className='text-gray-500'>Informez vous sur le sport en visitant nos publications</p>
+          <Link href={'/category'} className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Nos Publications</Link>
         </div>
       </div>
       <div>
