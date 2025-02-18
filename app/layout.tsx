@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { DM_Sans as FontSans } from "next/font/google";
+import { Oswald, Roboto } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
-import Navbar from "@/components/navbar";
-import Footbar from "@/components/footbar";
-import { FormProvider } from "react-hook-form";
 
+const oswald = Oswald({ subsets: ["latin"]});
+const roboto = Roboto({ subsets: ["latin"], weight: "400" });
 
-const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
 
 
@@ -21,10 +19,7 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )}
+        className={`${roboto.className} ${oswald.className}`}
         suppressHydrationWarning={true}
       >
         <main>

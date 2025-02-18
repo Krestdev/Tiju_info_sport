@@ -7,10 +7,6 @@ import Navbar from "@/components/navbar";
 import Footbar from "@/components/footbar";
 
 
-const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
-
-
-
 export default async function RootLayout({
   children,
 }: Readonly<{

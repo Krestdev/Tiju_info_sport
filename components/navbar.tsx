@@ -11,6 +11,7 @@ import { Article, Categorie } from '@/data/temps'
 import { useQuery } from '@tanstack/react-query'
 import { Input } from './ui/input'
 import { IoIosMail } from "react-icons/io";
+import { MenuComp } from './menu'
 
 
 const Navbar = () => {
@@ -61,24 +62,18 @@ const Navbar = () => {
         setSearch(filterData)
     }, [searchEntry, articleData.data])
 
-    const fav = articleData.data?.flatMap(x => x.nom)
 
     return (
-        <div className='w-full flex items-center justify-center fixed md:static z-50'>
-            <div className='absolute px-5 w-full h-[80px] bg-blue-100/80 blur-sm md:bg-transparent z-20'></div>
-            <div className='max-w-[1280px] px-5 w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
+        <div className='containerBloc w-full flex items-center justify-center fixed md:static z-50'>
+            <div className='absolute w-full h-[80px] bg-blue-100/80 blur-sm md:bg-transparent z-20'></div>
+            <div className='w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src="/logo.png" alt="Logo" className='size-[50px]' />
                         <p className='font-semibold text-[18px] hidden md:flex'>{"TYJU INFO SPORT"}</p>
                     </Link>
                     <div className='hidden md:flex md:flex-row items-center gap-3'>
-                        {
-                            !showSearch &&
-                            fav?.slice(0, 3).map(x => (
-                                <Link key={x} href={`/user/category/${x}`} className='px-3 py-2 hover:bg-gray-100'><h3 className='font-medium'>{x}</h3></Link>
-                            ))
-                        }
+                        <MenuComp />
                         <Link href={"/user/all-articles"}><Button onClick={() => SetShowSearch(!showSearch)} variant={'ghost'}><Search className='size-[60px]' /></Button></Link>
                     </div>
                 </div>

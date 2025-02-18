@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react'
 const page = () => {
 
   const { currentUser, dataPubs, favorite, dataArticles } = useStore();
-  const [pub, setPub] = useState<Pubs>();
+  const [pub, setPub] = useState<Pubs[]>();
   const [category, setCategory] = useState<Categorie[]>()
 
 
@@ -29,7 +29,7 @@ const page = () => {
 
   useEffect(() => {
     if (pubData.isSuccess) {
-      setPub(pubData.data[0])
+      setPub(pubData.data)
     }
   }, [pubData.data])
 

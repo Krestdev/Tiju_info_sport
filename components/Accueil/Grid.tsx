@@ -25,13 +25,13 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                 <div className='flex flex-col gap-10'>
                     <div className='flex flex-col justify-between md:flex-row'>
                         <div className='flex flex-col gap-5 px-7 py-5 w-full'>
-                            <Link href={"/user/category"} className='font-bold text-lg'>{"Tous les Sports"}</Link>
+                            <Link href={"/user/category"} className='font-semibold text-[24px]'>{"Tous les Sports"}</Link>
                             <div className='flex flex-col gap-2'>
                                 {gridAff &&
                                     gridAff.slice(0, 10).map(x => {
                                         return (
                                             <Link key={x.nom} href={`/user/category/${x.nom}`}>
-                                                <div className='border-b pl-2 pb-2 max-w-[360px] w-full flex gap-[10px] items-center'>{x.nom} <IconeComp nom={x.nom} /></div>
+                                                <div className='border-b pl-2 pb-2 max-w-[360px] w-full flex gap-[10px] items-center text-[16px] font-medium'>{x.nom} <IconeComp nom={x.nom} /></div>
                                             </Link>
                                         )
                                     })
@@ -42,10 +42,10 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                             {
                                 gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 2).map(x => (
                                     <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
-                                        {x.media && <img src={x.media[0]} alt="" className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-lg' />}
+                                        {x.media && <img src={x.media[0]} alt="" className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-[6px]' />}
                                         <div>
-                                            <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
-                                            <h2 className='line-clamp-2 font-bold mr-7 text-[28px]'>{x.titre}</h2>
+                                            <p className='text-[#A1A1A1] text-[16px] font-normal'>{x.type}</p>
+                                            <h2 className='line-clamp-2 font-bold text-[28px]'>{x.titre}</h2>
                                         </div>
                                     </Link>
                                 )))
@@ -56,12 +56,12 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                     <div className='flex p-7 gap-7'>
                         {
                             gridAff?.slice(2, 3).map(x => x.donnees.slice(0, 1).map(x => (
-                                <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5'>
-                                    {x.media && <img src={x.media[0]} alt={x.description} className='object-cover max-w-[824px] w-full h-auto aspect-video' />}
-                                    <div>
-                                        <p className='text-[#A1A1A1] font-normal'>{x.type}</p>
+                                <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5 max-w-[824px] w-full'>
+                                    {x.media && <img src={x.media[0]} alt={x.description} className='max-w-[824px] w-full h-auto aspect-video rounded-[6px] object-cover' />}
+                                    <div className='w-full'>
+                                        <p className='text-[#A1A1A1] text-[16px] font-normal'>{x.type}</p>
                                         <h2 className='line-clamp-1 font-bold mr-7 text-[28px]'>{x.titre}</h2>
-                                        <p className='text-[#545454] line-clamp-2'>{x.description}</p>
+                                        <p className='text-[#545454] text-[16px] line-clamp-2'>{x.description}</p>
                                     </div>
                                 </Link>
                             )))

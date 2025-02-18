@@ -21,7 +21,7 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     const { dataArticles, dataPubs } = useStore();
     const [article, setArticle] = useState<Result[]>();
-    const [pub, setPub] = useState<Pubs>();
+    const [pub, setPub] = useState<Pubs[]>();
 
     const articleData = useQuery({
         queryKey: ['articles'],
@@ -49,7 +49,7 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     }, [articleData.data, param.type, param.id]);
     useEffect(() => {
         if (pubData.isSuccess) {
-          setPub(pubData.data[0])
+          setPub(pubData.data)
         }
       }, [pubData.data])
 

@@ -3,7 +3,7 @@ import { IoMdArrowDropright } from "react-icons/io";
 
 const AProposComp = () => {
     return (
-        <div className='containerBloc flex flex-col gap-8 items-center'>
+        <div className='containerBloc flex flex-col gap-12 items-center'>
             <div className='text-center text-4xl font-bold pt-10 border-t'>
                 <div className='inline-flex gap-2 items-center mb-3'>
                     <p className='text-gray-500'>À PROPOS<span className='text-gray-700 font-medium'> DE NOUS</span></p>

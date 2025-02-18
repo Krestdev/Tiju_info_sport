@@ -14,7 +14,7 @@ interface Result {
 interface Props {
     categorie: Categorie[] | undefined
     article: Result[] | undefined
-    ad: Pubs | undefined
+    ad: Pubs[] | undefined
 }
 
 const CategoryComp = ({ article, ad, categorie }: Props) => {
@@ -43,7 +43,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                                     <img src={x.media && x.media[0]} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />
                                     <div className='flex flex-col'>
                                         <p className='text-[#A1A1A1]'>{x.nom}</p>
-                                        <h2 className='line-clamp-3'>{x.titre}</h2>
+                                        <h2 className='line-clamp-3 font-bold'>{x.titre}</h2>
                                     </div>
                                 </Link>
                             )
@@ -55,7 +55,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 // Ajouter une publicité après chaque groupe (sauf le dernier)
                 if (i + groupSize < article!.length) {
                     result.push(
-                        ad && <PubsComp key={`ad-${i}`} {...ad} />
+                        ad && <PubsComp key={`ad-${i}`} pub={ad} />
                     );
                 }
             }
@@ -63,7 +63,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             // Ajouter une publicité après tous les éléments si la liste est <= 4
             if (article?.length <= groupSize) {
                 result.push(
-                    ad && <PubsComp key={'final'} {...ad} />
+                    ad && <PubsComp key={'final'} pub={ad} />
                 );
             }
             return result;
@@ -81,7 +81,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 <Link href={path === '/user/category' ? `/user/category/${premier && premier.nom}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7 px-7'>
                     <div key={premier?.id} className='flex flex-col gap-4 py-4'>
                         <p className='text-[#A1A1A1]'>{premier?.nom}</p>
-                        <h2>{premier?.titre}</h2>
+                        <h2 className='font-bold'>{premier?.titre}</h2>
                         <img src={premier?.media && premier?.media[0]} alt={premier?.nom} className='max-w-[836px] w-full h-auto aspect-video object-cover' />
                     </div>
                 </Link>
@@ -89,7 +89,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             </div>
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
                 <Similaire similaire={sec1} sim={ sim1 } />
-                <PubsComp id={ad?.id} lien={ad ? ad?.lien : "#"} image={ad?.image} />
+                <PubsComp pub={ad} />
                 <Similaire similaire={sec1} sim={ sim2 } />
             </div>
 

@@ -19,10 +19,10 @@ const Hero = ({ gridAff }: Aff) => {
     };
 
     const router = useRouter();
-  const currentLocale = router
+    const currentLocale = router
 
     return (
-        <div className='w-full pt-[80px] md:pt-0'>
+        <div className='w-full px-7 py-8'>
             <Carousel
                 plugins={[
                     Autoplay({
@@ -37,18 +37,18 @@ const Hero = ({ gridAff }: Aff) => {
                             className='h-full'
                         >
                             <Link href={`/user/detail-article/${x.id}`}>
-                                <div className={`containerBloc w-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-col md:flex-row gap-5`}>
+                                <div className={`containerBloc w-full h-auto nw-screen md:w-full ${x.media ? 'md:items-start' : 'md:items-center'} flex flex-col md:flex-row gap-5`}>
                                     {x.media && (
 
                                         isImage(x.media[0]) ? (
                                             <img
-                                                className='md:flex max-w-[640px] w-full h-auto aspect-video  object-cover rounded-xl'
+                                                className='md:flex max-w-[640px] w-full h-auto aspect-video  object-cover rounded-[6px]'
                                                 src={x.media[0]}
                                                 alt={x.type}
                                             />
                                         ) : (
                                             <video
-                                                className='md:flex max-w-[640px] w-full h-auto aspect-video object-cover rounded-xl'
+                                                className='md:flex max-w-[640px] w-full h-auto aspect-video object-cover rounded-[6px]'
                                                 controls
                                                 autoPlay
                                                 muted
@@ -60,15 +60,16 @@ const Hero = ({ gridAff }: Aff) => {
                                         )
 
                                     )}
-                                    <div
-                                        className=" flex flex-col gap-5 justify-center "
-                                    >
-                                        <div className='px-3 py-2 bg-[#0C73BD] w-fit'>
-                                            <p className='uppercase text-white'>{x.type}</p>
+                                    
+                                        <div
+                                            className="flex max-w-[512px] w-full h-auto aspect-video flex-col gap-5 justify-center "
+                                        >
+                                            <div className='px-3 py-2 bg-[#012BAE] w-fit'>
+                                                <p className='uppercase text-white'>{x.type}</p>
+                                            </div>
+                                            <h1 className='line-clamp-2'>{x.titre}</h1>
+                                            <p className='line-clamp-3'>{x.description}</p>
                                         </div>
-                                        <h1 className='line-clamp-2'>{x.titre}</h1>
-                                        <p className='line-clamp-3'>{x.description}</p>
-                                    </div>
                                 </div>
                             </Link>
                         </CarouselItem>

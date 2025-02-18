@@ -15,7 +15,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const { dataArticles, dataPubs, favorite } = useStore();
   const [article, setArticle] = useState<Article | undefined>();
-  const [pub, setPub] = useState<Pubs>();
+  const [pub, setPub] = useState<Pubs[]>();
   const [similaire, setSimilaire] = useState<Article[] | undefined>();
 
 
@@ -31,7 +31,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     if (pubData.isSuccess) {
-      setPub(pubData.data[0])
+      setPub(pubData.data)
     }
   }, [pubData.data])
 
@@ -52,7 +52,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className='containerBloc gap-3'>
-      {pub && <PubsComp {...pub} />}
+      {pub && <PubsComp pub={pub} />}
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
     </div>
   );

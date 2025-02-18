@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Déclaration des polices */
-@font-face {
-  font-family: 'Darker Grotesque';
-  src: url('/fonts/DarkerGrotesque/DarkerGrotesque-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900; /* Poids variable */
-  font-style: normal;
-}
-
 /* Variables CSS personnalisées */
 @layer base {
   :root {
@@ -86,22 +78,27 @@
 
 /* Styles de base */
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground font-sans tracking-normal;
+    @apply bg-background text-foreground text-[18px] font-roboto tracking-normal;
   }
+
   h1 {
-    @apply text-[28px] md:text-[40px] font-bold tracking-tight first-letter:uppercase;
+    @apply font-oswald;
   }
+
+  h1 {
+    @apply text-[28px] md:text-[32px] font-medium tracking-tight first-letter:uppercase;
+  }
+
   h2 {
-    @apply font-bold  text-[18px] md:text-[28px];
+    @apply font-medium text-[18px] md:text-[28px];
   }
-  h3 { 
-    @apply font-bold text-lg;
+
+  h3 {
+    @apply font-medium text-lg;
   }
 }
+
 
 /* Composants personnalisés */
 @layer components {
@@ -109,7 +106,7 @@
     @apply px-4 py-5 bg-white rounded shadow-sm flex flex-col gap-10 w-full;
   }
   .tabTrigger {
-    @apply min-w-40 min-h-14 !rounded-none capitalize px-4 bg-transparent text-gray-900 data-[state=active]:!bg-blue-500 data-[state=active]:!text-white data-[state=active]:font-bold text-base;
+    @apply min-w-40 min-h-14 !rounded-none capitalize px-4 bg-transparent text-gray-900 data-[state=active]:!bg-blue-500 data-[state=active]:!text-white text-base;
   }
   .scrollbar {
     @apply overflow-y-auto
@@ -121,14 +118,11 @@
   }
 }
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
   .containerBloc {
-    @apply container py-[8px] sm:py-[10px] md:py-[16px] lg:py-[32px] px-5 sm:px-8 md:px-12 lg:px-20;
+    @apply container max-w-[1440px];
+  }
+  .clip-custom {
+    clip-path: polygon(0 0, 90% 0, 100% 15%, 100% 100%, 0 100%);
   }
 }
 

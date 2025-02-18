@@ -40,7 +40,7 @@ const formSchema = z.object({
 interface Props {
     currentUser: Users | null;
     category: Categorie[] | undefined;
-    pub: Pubs | undefined;
+    pub: Pubs[] | undefined;
 }
 
 const ProfilForm = ({ currentUser, category, pub }: Props) => {
@@ -363,7 +363,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
             </div>
             <div className="max-w-[360px] flex flex-col gap-7 px-7 py-5">
                 <Similaire similaire={sec1} sim={sim1} />
-                <PubsComp id={pub?.id} lien={pub ? pub?.lien : '#'} image={pub?.image} />
+                <PubsComp pub={pub} />
             </div>
         </div>
     );

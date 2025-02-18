@@ -19,7 +19,7 @@ const page = () => {
 
 
   const { dataArticles, dataPubs } = useStore();
-  const [pub, setPub] = useState<Pubs>();
+  const [pub, setPub] = useState<Pubs[]>();
   const [category, setCategory] = useState<Result[]>()
 
   const articleData = useQuery({
@@ -56,7 +56,7 @@ const page = () => {
 
   useEffect(() => {
     if (pubData.isSuccess) {
-      setPub(pubData.data[0])
+      setPub(pubData.data)
     }
   }, [pubData.data])  
 

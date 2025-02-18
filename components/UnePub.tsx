@@ -14,15 +14,15 @@ const UnePub = ({ gridAff, pubAff }: Aff) => {
 
     return (
         <div className='flex flex-col px-7 py-5 gap-7 max-w-[360px] w-full'>
-            <div className='flex flex-col gap-5'>
-                <p className='text-[20px] font-semibold'>{"À la une"}</p>
-                <div className='flex flex-col gap-2'>
+            <div className='flex flex-col'>
+                <p className='text-[24px] font-semibold px-3 py-4'>{"À la une"}</p>
+                <div className='flex flex-col'>
                     {
-                        gridAff?.slice(0, 1).map(x => x.donnees.slice(1, 4).map(x => {
+                        gridAff?.slice(0, 2).flatMap(x => x.donnees.slice(1, 4).map(x => {
                             return (
                                 <Link key={x.id} href={`/user/detail-article/${x.id}`} className='flex flex-row items-center gap-4 p-4'>
-                                    <img src={x.media && x.media[0]} alt={x.type} className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-lg' />
-                                    <p className='line-clamp-3 font-medium'>{x.titre}</p>
+                                    <img src={x.media && x.media[0]} alt={x.type} className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-[6px]' />
+                                    <p className='line-clamp-3 leading-[18.2px] font-bold text-[14px]'>{x.titre}</p>
                                 </Link>
                             )
                         })
@@ -35,7 +35,7 @@ const UnePub = ({ gridAff, pubAff }: Aff) => {
                     pubAff?.slice(0, 2).map(x => {
                         return (
                             <Link key={x.id} href={x.lien}>
-                                <img className='w-[300px] h-[300px] object-cover' src={x.image} alt={settings.pub} />
+                                <img className='w-[300px] h-[300px] object-cover clip-custom' src={x.image} alt={settings.pub} />
                             </Link>
                         )
                     })

@@ -48,7 +48,7 @@ export default function SubscribePage({ setAbon, setActive, abonId }: Props) {
                   </div>
                   <p>{x.nom}</p>
                 </div>
-                <Button onClick={() => HandleAbon(x.id)} className={`${i % 2 === 0 ? "bg-blue-500" : "bg-orange-500"} px-3 py-1 rounded-lg`}>{"S'abonner"}</Button>
+                <Button onClick={() => HandleAbon(x.id)} className={`${i % 2 === 0 ? "bg-blue-500" : "bg-orange-500"} px-3 py-1 rounded-[6px]`}>{"S'abonner"}</Button>
               </div>
             )
           })
