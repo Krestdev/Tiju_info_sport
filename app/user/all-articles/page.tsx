@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 const page = () => {
 
     const { dataPubs, dataArticles, search } = useStore()
-    const [pub1, setPu1] = useState<Pubs>();
+    const [pub1, setPu1] = useState<Pubs[]>();
     
     
     const pubData = useQuery({
@@ -21,16 +21,16 @@ const page = () => {
     
     useEffect(() => {
         if (pubData.isSuccess) {
-            setPu1(pubData.data[0])
+            setPu1(pubData.data)
         }
     }, [pubData.data])
 
     return (
         <div>
-            {pub1 && <PubsComp {...pub1} />}
+            {pub1 && <PubsComp pub={pub1} />}
             <GridAll article={search} />
         </div>
     )
 }
 
-export default withAuth(page)
+export default page

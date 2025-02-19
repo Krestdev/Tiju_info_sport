@@ -61,4 +61,4 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     )
 }
 
-export default withAuth(page);
+export default page;
