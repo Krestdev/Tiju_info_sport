@@ -1,4 +1,4 @@
-import { getUserFavoriteCategories } from "@/app/page"
+
 import {
     Menubar,
     MenubarCheckboxItem,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/menubar"
 import useStore from "@/context/store"
 import { Categorie } from "@/data/temps"
+import { getUserFavoriteCategories } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useEffect, useState } from "react"
