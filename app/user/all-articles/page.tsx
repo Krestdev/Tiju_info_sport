@@ -26,7 +26,7 @@ const page = () => {
     }, [pubData.data])
 
     return (
-        <div>
+        <div className='containerBloc'>
             {pub1 && <PubsComp pub={pub1} />}
             <GridAll article={search} />
         </div>

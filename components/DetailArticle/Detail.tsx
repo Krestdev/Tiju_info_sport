@@ -1,30 +1,23 @@
 import { Article, Categorie, comment, Pubs, Users } from '@/data/temps'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import { IoCloseOutline } from "react-icons/io5";
-import { BiDownArrow, BiSolidLike, BiUpArrow } from "react-icons/bi";
-import { AiFillDislike } from "react-icons/ai";
-import { FaRegComment } from "react-icons/fa6";
+import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { Share2, ThumbsUp, User } from 'lucide-react';
-import { date, z } from 'zod';
+import { Share2, ThumbsUp } from 'lucide-react';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from '../ui/form';
 import { useForm } from 'react-hook-form';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { BsThreeDots } from "react-icons/bs";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import PubsComp from '../PubsComp';
-import { CiUser } from "react-icons/ci";
 import Similaire from './Similaire';
 import GridSport from '../GridSport';
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
-import { GiSpectreM4 } from 'react-icons/gi';
-import { title } from 'process';
 import FullScreen from '../Dashboard/FullScreen';
+import { useRouter } from 'next/navigation';
 
 
 const formSchema = z
@@ -41,6 +34,8 @@ interface Details {
 }
 
 const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
+
+    const router = useRouter()
 
     useEffect(() => {
         details;
@@ -273,7 +268,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                             <FullScreen image={details.media[0]}>
                                 <img src={details.media[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover' />
                             </FullScreen>}
-                        {currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
+                        {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                             <div className='grid grid-cols-4 gap-4'>
                                 {photo &&
                                     photo.map((x, i) => (
@@ -294,7 +289,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                                     </div>
                                 }
                             </div> : details.media &&
-                            <Link href={""} className='w-fit'>
+                            <Link href={"/user/subscribe"} className='w-fit'>
                                 <Button className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] object-cover relative overflow-hidden bg-transparent/50'>
                                     <img src={details.media[1]} alt="" className='absolute z-0 w-full' />
                                     <div className='z-20 w-[197px] h-[200px] aspect-video rounded-[6px] bg-[#012BAE]/80 flex flex-col gap-3 items-center justify-center text-center text-wrap'>
@@ -307,22 +302,26 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                     </div>
                     <div className='flex flex-col py-7 gap-4'>
                         <p className='text-[#545454]'>{details.extrait}</p>
-                        <div className={`${currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
-                            <Link href={''} className='w-fit px-3 py-2 gap-2 bg-[#012BAE] text-white capitalize text-center'>{`Abonnez-vous à ${details.abonArticle.nom} pour lire cet article`}</Link>
+                        <div className={`${details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
+                            <Link href={"/user/subscribe"} className='w-fit px-3 py-2 gap-2 bg-[#012BAE] text-white capitalize text-center'>{`Abonnez-vous à ${details.abonArticle.nom} pour lire cet article`}</Link>
                         </div>
                         <div>
                             <p className='font-bold'>{details.user.nom}</p>
                             <p className='text-[#A1A1A1]'>{details.ajouteLe}</p>
                         </div>
-                        <div className={`${currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
-                            <p className='text-[rgb(84,84,84)]'>{currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ? details.description : btoa(details.description).split(' ')}</p>
+                        <div className={`${details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
+                            <p className='text-[rgb(84,84,84)]'>{details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? details.description : btoa(details.description).split(' ')}</p>
                         </div>
                     </div>
 
-                    {currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
+                    {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                         <div className='flex flex-col md:flex-row md:items-center justify-between'>
                             <div className='flex items-center gap-4'>
-                                <Button variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
+                                <Button onClick={() => handleShare([new File([], "nom_du_fichier.txt", {
+                                    type: "text/plain",
+                                    lastModified: Date.now(),
+                                })]
+                                    , details.extrait)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
                                 <Button onClick={handleLike} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
                                     <ThumbsUp
                                         style={{
@@ -372,7 +371,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                     </Button>
                     {masquerCom ?
                         <div>
-                            {currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout ?
+                            {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                                 <div className='flex flex-col pt-8'>
                                     {
                                         details.commentaire.map(x => {
@@ -592,7 +591,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                     <Similaire similaire={sec} sim={second} />
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

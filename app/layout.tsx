@@ -6,7 +6,7 @@ import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
 
 const oswald = Oswald({ subsets: ["latin"]});
-const roboto = Roboto({ subsets: ["latin"], weight: "400" });
+const roboto = Roboto({ subsets: ["latin"], weight: "500" });
 
 
 

@@ -72,7 +72,7 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Grande complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/lions.jpg", "/images/lions.jpg"],
+                media: ["/images/feminin1.jpg", "/images/feminin.jpeg"],
                 ajouteLe: "27/01/2025",
                 commentaire: [
                     {
@@ -181,7 +181,7 @@ export const articles: Categorie[] = [
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/lions.jpg", "/images/lions.jpg"],
+                media: ["/images/lions.jpg", "/images/lion1.jpeg"],
                 ajouteLe: "27/12/2024",
                 commentaire: [
                     {
@@ -249,7 +249,7 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Les nouvelles ambitions des équipes féminines en Afrique",
                 description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
-                media: ["/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg", "/images/Hero.jpg"],
+                media: ["/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg", ],
                 ajouteLe: "27/10/2024",
                 commentaire: [
                     {
@@ -410,7 +410,7 @@ export const articles: Categorie[] = [
                 type: "Hockey",
                 titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
                 description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
-                media: ["/images/etoo.jpg"],
+                media: ["/images/Hockey1.jpeg", "/images/Hockey2.jpeg"],
                 ajouteLe: "28/10/2024",
                 commentaire: [
                     {
@@ -548,7 +548,7 @@ export const articles: Categorie[] = [
                 type: "Hockey",
                 titre: "Samuel Eto'o, élu président de la Fédération Camerounaise de Football (FECAFOOT) en décembre 2021",
                 description: "Depuis son élection à la présidence de la FECAFOOT en décembre 2021...",
-                media: ["/images/fecafoot.jpeg"],
+                media: ["/images/Hockey1.jpeg", "/images/Hockey1.jpeg"],
                 ajouteLe: "28/10/2024",
                 commentaire: [
                     {
@@ -660,10 +660,10 @@ export const articles: Categorie[] = [
         donnees: [
             {
                 id: 21,
-                type: "Fecafoot",
+                type: "MMA",
                 titre: "La FECAFOOT annonce de nouvelles initiatives pour le développement du football au Cameroun",
                 description: "La Fédération Camerounaise de Football (FECAFOOT) a lancé une série de nouvelles initiatives...",
-                media: ["/images/etoo.jpg"],
+                media: ["/images/Boxe1.jpeg"],
                 ajouteLe: "28/10/2024",
                 commentaire: [
                     {
@@ -1318,7 +1318,7 @@ export const articles: Categorie[] = [
                 type: "Lion indomptable",
                 titre: "FECAFOOT met en place un programme d'accompagnement pour les arbitres de football",
                 description: "Dans le cadre de son engagement pour le développement du football...",
-                media: ["/images/etoo.jpg"],
+                media: ["/images/Volley.jpeg"],
                 ajouteLe: "25/11/2024",
                 commentaire: [
                     {

@@ -47,7 +47,7 @@ export function MenuComp() {
     return (
         <Menubar>
             <MenubarMenu>
-                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase">{"Tous les Sport"}</MenubarTrigger>
+                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase cursor-pointer">{"Tous les Sport"}</MenubarTrigger>
                 <MenubarContent>
                     {
                         cate?.map((x, i) => (
@@ -59,19 +59,12 @@ export function MenuComp() {
                 </MenubarContent>
             </MenubarMenu>
             <MenubarMenu>
-                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase">{"Dernières Actualités"}</MenubarTrigger>
-                <MenubarContent>
-                    {
-                        cate?.flatMap(x => x.donnees).slice(0,10).map((x,i) => (
-                                <MenubarItem key={i}>
-                                    <Link href={`/user/detail-article/${x.id}`}>{x.type}</Link>
-                                </MenubarItem>
-                        ))
-                    }
-                </MenubarContent>
+                <Link href={"/user/all-articles"}>
+                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase cursor-pointer">{"Dernières Actualités"}</MenubarTrigger>
+                </Link>
             </MenubarMenu>
             <MenubarMenu>
-                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase">{"Mes Favoris"}</MenubarTrigger>
+                <MenubarTrigger className="font-oswald font-medium text-[14px] uppercase cursor-pointer">{"Mes Favoris"}</MenubarTrigger>
                 <MenubarContent>
                     {
                         favorite ?

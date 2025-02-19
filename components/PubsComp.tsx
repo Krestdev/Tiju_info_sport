@@ -32,8 +32,8 @@ const PubsComp = ({
           pub?.map((x, i) => (
             <CarouselItem key={i}>
               <Link href={x.lien} target="_blank">
-                <div className='w-full flex items-center justify-center py-0 relative'>
-                  <img src={x.image} alt={settings?.pub || "Publicité"} className='object-cover h-[200px] md:h-[240px] clip-custom' />
+                <div className='w-full flex items-center justify-center py-0'>
+                  <img src={x.image} alt={settings?.pub || "Publicité"} className='w-full object-cover h-[200px] md:h-[240px] clip-custom' />
                 </div>
               </Link>
             </CarouselItem>

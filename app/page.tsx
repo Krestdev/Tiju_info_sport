@@ -71,10 +71,10 @@ export default function HomePage() {
       {carrHero && <Hero gridAff={carrHero} />}
       {grid1 && <Grid gridAff={favorite} pubAff={pub} />}
       {grid1 && <GridInfo gridAff={grid1} />}
-      {pub && <PubsComp pub={pub} />}
+      <div className="containerBloc">{pub && <PubsComp pub={pub} />}</div>
       {/* {blog1 && <Blog {...blog1} />} */}
       {grid2 && <GridInfo gridAff={grid2} />}
-      {pub && <PubsComp pub={pub?.slice().reverse()} />}
+      <div className="containerBloc">{pub && <PubsComp pub={pub?.slice().reverse()} />}</div>
       {/* {blog2 && <Blog {...blog2} />} */}
       <Footbar />
     </div>

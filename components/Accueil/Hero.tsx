@@ -62,7 +62,7 @@ const Hero = ({ gridAff }: Aff) => {
                                     )}
                                     
                                         <div
-                                            className="flex max-w-[512px] w-full h-auto aspect-video flex-col gap-5 justify-center "
+                                            className="flex max-w-[512px] w-full h-auto aspect-video flex-col gap-5 pt-10"
                                         >
                                             <div className='px-3 py-2 bg-[#012BAE] w-fit'>
                                                 <p className='uppercase text-white'>{x.type}</p>
