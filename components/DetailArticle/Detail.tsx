@@ -268,7 +268,7 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                             <FullScreen image={details.media[0]}>
                                 <img src={details.media[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover' />
                             </FullScreen>}
-                        {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
+                        {details.abonArticle.cout ===0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                             <div className='grid grid-cols-4 gap-4'>
                                 {photo &&
                                     photo.map((x, i) => (
