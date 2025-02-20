@@ -1,3 +1,5 @@
+// Type de données
+
 export interface Categorie {
     nom: string;
     donnees: Article[];
@@ -181,7 +183,7 @@ export const articles: Categorie[] = [
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/lions.jpg", "/images/lion1.jpeg"],
+                media: ["/images/video.mp4","/images/lions.jpg", "/images/lion1.jpeg"],
                 ajouteLe: "27/12/2024",
                 commentaire: [
                     {
@@ -1440,7 +1442,6 @@ export const publicites: Pubs[] = [
         nom: "Boutique Socrate",
     },
 ];
-
 
 export const users: Users[] = [
     {

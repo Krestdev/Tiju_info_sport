@@ -31,7 +31,26 @@ const GridInfo = ({ gridAff }: Aff) => {
                             </div>
                             <div className='flex flex-col md:flex-row gap-7'>
                                 <Link href={`/user/detail-article/${donne[0].id}`} className='flex flex-col gap-[10px] px-5 py-4'>
-                                    {donne[0].media && <img src={donne[0].media[0]} alt={donne[0].type} className='max-w-[600px] w-full h-auto aspect-video object-cover rounded-[6px]' />}
+                                    {donne[0].media && (
+                                        isImage(donne[0].media[0]) ? (
+                                            <img
+                                                className='max-w-[600px] w-full h-auto aspect-video object-cover rounded-[6px]'
+                                                src={donne[0].media[0]}
+                                                alt={`${donne[0].type} - ${donne[0].titre}`}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='max-w-[600px] w-full h-auto aspect-video object-cover rounded-[6px]'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={donne[0].media[0]}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )
+                                    )}
                                     <div className='flex flex-col'>
                                         <p className='text-[#A1A1A1]'>{donne[0].type}</p>
                                         <h2 className='line-clamp-2 font-bold mr-7 text-[28px]'>{donne[0].titre}</h2>
@@ -41,7 +60,26 @@ const GridInfo = ({ gridAff }: Aff) => {
                                     {
                                         donne.slice(1, 3).map(a => (
                                             <Link href={`/user/detail-article/${a.id}`} key={a.id} className='flex flex-col md:flex-row gap-7 px-5 py-4'>
-                                                {a.media && <img src={a.media[0]} alt={a.type} className='max-w-[320px] w-full h-auto aspect-video object-cover rounded-[6px]' />}
+                                                {a.media && (
+                                                    isImage(a.media[0]) ? (
+                                                        <img
+                                                            className='max-w-[320px] w-full h-auto aspect-video object-cover rounded-[6px]'
+                                                            src={a.media[0]}
+                                                            alt={`${a.type} - ${a.titre}`}
+                                                        />
+                                                    ) : (
+                                                        <video
+                                                            className='max-w-[320px] w-full h-auto aspect-video object-cover rounded-[6px]'
+                                                            controls
+                                                            autoPlay
+                                                            muted
+                                                            loop
+                                                            src={a.media[0]}
+                                                        >
+                                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                                        </video>
+                                                    )
+                                                )}
                                                 <div className='flex flex-col'>
                                                     <p className='text-[#A1A1A1]'>{donne[0].type}</p>
                                                     <h2 className='line-clamp-3 leading-[36.4px] font-bold mr-7 text-[28px]'>{donne[0].titre}</h2>

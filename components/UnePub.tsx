@@ -10,7 +10,12 @@ interface Aff {
 
 const UnePub = ({ gridAff, pubAff }: Aff) => {
 
-    const { settings } = useStore()
+    const { settings } = useStore();
+
+    const isImage = (media: string | undefined): boolean => {
+        if (!media) return false;
+        return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
+    };
 
     return (
         <div className='flex flex-col px-7 py-5 gap-7 max-w-[360px] w-full'>
@@ -21,7 +26,26 @@ const UnePub = ({ gridAff, pubAff }: Aff) => {
                         gridAff?.slice(0, 2).flatMap(x => x.donnees.slice(1, 4).map(x => {
                             return (
                                 <Link key={x.id} href={`/user/detail-article/${x.id}`} className='flex flex-row items-center gap-4 p-4'>
-                                    <img src={x.media && x.media[0]} alt={x.type} className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-[6px]' />
+                                    {x.media && (
+                                        isImage(x.media[0]) ? (
+                                            <img
+                                                className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-[6px]'
+                                                src={x.media[0]}
+                                                alt={`${x.type} - ${x.titre}`}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='object-cover max-w-[80px] max-h-[60px] h-full w-full rounded-[6px]'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={x.media[0]}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )
+                                    )}
                                     <p className='line-clamp-3 leading-[18.2px] font-bold text-[14px]'>{x.titre}</p>
                                 </Link>
                             )

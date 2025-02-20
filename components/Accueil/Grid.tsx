@@ -42,7 +42,26 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                             {
                                 gridAff?.slice(1, 2).map(x => x.donnees.slice(1, 2).map(x => (
                                     <Link href={`/user/detail-article/${x.id}`} key={x.id} className=' max-w-[464px] w-full flex flex-col gap-5'>
-                                        {x.media && <img src={x.media[0]} alt="" className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-[6px]' />}
+                                        {x.media && (
+                                            isImage(x.media[0]) ? (
+                                                <img
+                                                    className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-[6px]'
+                                                    src={x.media[0]}
+                                                    alt={`${x.type} - ${x.titre}`}
+                                                />
+                                            ) : (
+                                                <video
+                                                    className='object-cover max-w-[464px] w-full h-auto aspect-video rounded-[6px]'
+                                                    controls
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    src={x.media[0]}
+                                                >
+                                                    Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                                </video>
+                                            )
+                                        )}
                                         <div>
                                             <p className='text-[#A1A1A1] text-[16px] font-normal'>{x.type}</p>
                                             <h2 className='line-clamp-2 font-bold text-[28px]'>{x.titre}</h2>
@@ -57,7 +76,26 @@ const Grid = ({ gridAff, pubAff }: Aff) => {
                         {
                             gridAff?.slice(2, 3).map(x => x.donnees.slice(0, 1).map(x => (
                                 <Link href={`/user/detail-article/${x.id}`} key={x.id} className='flex flex-col gap-5 max-w-[824px] w-full'>
-                                    {x.media && <img src={x.media[0]} alt={x.description} className='max-w-[824px] w-full h-auto aspect-video rounded-[6px] object-cover' />}
+                                    {x.media && (
+                                        isImage(x.media[0]) ? (
+                                            <img
+                                                className='max-w-[824px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                                src={x.media[0]}
+                                                alt={`${x.type} - ${x.titre}`}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='max-w-[824px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={x.media[0]}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )
+                                    )}
                                     <div className='w-full'>
                                         <p className='text-[#A1A1A1] text-[16px] font-normal'>{x.type}</p>
                                         <h2 className='line-clamp-1 font-bold mr-7 text-[28px]'>{x.titre}</h2>

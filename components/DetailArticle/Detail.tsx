@@ -266,14 +266,50 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                         </div>
                         {details.media &&
                             <FullScreen image={details.media[0]}>
-                                <img src={details.media[0]} alt="" className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover' />
+                                {details.media && (
+                                    isImage(details.media[0]) ? (
+                                        <img
+                                            className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                            src={details.media[0]}
+                                            alt={`${details.type} - ${details.titre}`}
+                                        />
+                                    ) : (
+                                        <video
+                                            className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                            controls
+                                            autoPlay
+                                            muted
+                                            loop
+                                            src={details.media[0]}
+                                        >
+                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                        </video>
+                                    )
+                                )}
                             </FullScreen>}
-                        {details.abonArticle.cout ===0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
+                        {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                             <div className='grid grid-cols-4 gap-4'>
                                 {photo &&
                                     photo.map((x, i) => (
                                         <FullScreen key={i} image={x}>
-                                            <img src={x} alt="" className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] cursor-pointer object-cover overflow-hidden' />
+                                            {isImage(x) ? (
+                                                <img
+                                                    className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] cursor-pointer object-cover overflow-hidden'
+                                                    src={x}
+                                                    alt={`${details.type} - ${details.titre}`}
+                                                />
+                                            ) : (
+                                                <video
+                                                    className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] cursor-pointer object-cover overflow-hidden'
+                                                    controls
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    src={x}
+                                                >
+                                                    Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                                </video>
+                                            )}
                                         </FullScreen>
                                     ))
                                 }
@@ -281,7 +317,25 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                                     <div >
                                         {!allPhoto &&
                                             <Button onClick={() => setAllPhoto(!allPhoto)} className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] object-cover relative overflow-hidden bg-transparent/50'>
-                                                <img src={photo[1]} alt="" className='absolute z-0 w-full' />
+                                                {
+                                                    isImage(photo[1]) ? (
+                                                        <img
+                                                            className='absolute z-0 w-full'
+                                                            src={photo[1]}
+                                                            alt={`${details.type} - ${details.titre}`}
+                                                        />
+                                                    ) : (
+                                                        <video
+                                                            className='absolute z-0 w-full'
+                                                            controls
+                                                            autoPlay
+                                                            muted
+                                                            loop
+                                                            src={photo[1]}
+                                                        >
+                                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                                        </video>
+                                                    )}
                                                 <div className='z-20 w-[197px] h-[200px] aspect-video rounded-[6px] bg-[#012BAE]/50 flex items-center justify-center text-[20px]'>
                                                     {`Tout Voir + ${details.media.length - 3}`}
                                                 </div>
@@ -291,7 +345,25 @@ const Detail = ({ details, similaire, pub, dataArticle }: Details) => {
                             </div> : details.media &&
                             <Link href={"/user/subscribe"} className='w-fit'>
                                 <Button className='max-w-[197px] w-full h-auto aspect-video rounded-[6px] object-cover relative overflow-hidden bg-transparent/50'>
-                                    <img src={details.media[1]} alt="" className='absolute z-0 w-full' />
+                                    {
+                                        isImage(details.media[1]) ? (
+                                            <img
+                                                className='absolute z-0 w-full'
+                                                src={details.media[1]}
+                                                alt={`${details.type} - ${details.titre}`}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='absolute z-0 w-full'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={details.media[1]}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )}
                                     <div className='z-20 w-[197px] h-[200px] aspect-video rounded-[6px] bg-[#012BAE]/80 flex flex-col gap-3 items-center justify-center text-center text-wrap'>
                                         <p>{`Abonnez-vous à  ${details.abonArticle.nom} pour voir toutes les photos`}</p>
                                         {`Tout Voir + ${details.media.length - 1}`}

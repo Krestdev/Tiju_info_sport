@@ -6,6 +6,11 @@ interface Props {
     article: Article[]
 }
 
+const isImage = (media: string | undefined): boolean => {
+    if (!media) return false;
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
+};
+
 const GridAll = ({ article }: Props) => {
     return (
         <div className='containerBloc pt-5'>
@@ -13,20 +18,39 @@ const GridAll = ({ article }: Props) => {
                 <div className='px-4 gap-2 w-fit bg-[#EEEEEE] rounded-[6px]'><h1>{"Tous les produits"}</h1></div>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14'>
-            {
-                article.length > 0 ?
-                article.map(x => (
-                    <Link key={x.id} href={`/user/detail-article/${x.id}`} className='max-w-[400px] w-full flex flex-col items-center gap-3'>
-                        {x.media && <img src={x.media[0]} alt={x.type} className='max-w-[400px] w-full h-auto aspect-video object-cover rounded-lg'/>}
-                        <div>
-                            <p className='text-[#545454]'>{x.type}</p>
-                            <h3 className='line-clamp-2'>{x.titre}</h3>
-                        </div>
-                    </Link>
-                )):
-                "Aucun element trouvé..."
-            }
-        </div>
+                {
+                    article.length > 0 ?
+                        article.map(x => (
+                            <Link key={x.id} href={`/user/detail-article/${x.id}`} className='max-w-[400px] w-full flex flex-col items-center gap-3'>
+                                {x.media && (
+                                    isImage(x.media[0]) ? (
+                                        <img
+                                            className='max-w-[400px] w-full h-auto aspect-video object-cover rounded-lg'
+                                            src={x.media[0]}
+                                            alt={`${x.type} - ${x.titre}`}
+                                        />
+                                    ) : (
+                                        <video
+                                            className='max-w-[400px] w-full h-auto aspect-video object-cover rounded-lg'
+                                            controls
+                                            autoPlay
+                                            muted
+                                            loop
+                                            src={x.media[0]}
+                                        >
+                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                        </video>
+                                    )
+                                )}
+                                <div>
+                                    <p className='text-[#545454]'>{x.type}</p>
+                                    <h3 className='line-clamp-2'>{x.titre}</h3>
+                                </div>
+                            </Link>
+                        )) :
+                        "Aucun element trouvé..."
+                }
+            </div>
         </div>
     )
 }

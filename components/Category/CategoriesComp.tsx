@@ -40,7 +40,26 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         {group.filter(a => a.id !== premier?.id).map((x) => {
                             return (
                                 <Link key={x.id} href={path === '/user/category' ? `/user/category/${x && x.nom}` : `/user/detail-article/${x?.id}`} className='flex flex-col-reverse lg:flex-row gap-7 px-5 py-4'>
-                                    <img src={x.media && x.media[0]} alt={x.nom} className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover' />
+                                    {x.media && (
+                                        isImage(x.media[0]) ? (
+                                            <img
+                                                className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover'
+                                                src={x.media[0]}
+                                                alt={`${x.nom} - ${x.titre}`}
+                                            />
+                                        ) : (
+                                            <video
+                                                className='max-w-[384px] w-full h-auto aspect-video rounded-lg object-cover'
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                src={x.media[0]}
+                                            >
+                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                            </video>
+                                        )
+                                    )}
                                     <div className='flex flex-col'>
                                         <p className='text-[#A1A1A1]'>{x.nom}</p>
                                         <h2 className='line-clamp-3 font-bold'>{x.titre}</h2>
@@ -82,15 +101,35 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     <div key={premier?.id} className='flex flex-col gap-4 py-4'>
                         <p className='text-[#A1A1A1]'>{premier?.nom}</p>
                         <h2 className='font-bold'>{premier?.titre}</h2>
-                        <img src={premier?.media && premier?.media[0]} alt={premier?.nom} className='max-w-[836px] w-full h-auto aspect-video object-cover' />
+                        {/* <img src={premier?.media && premier?.media[0]} alt={premier?.nom} className='max-w-[836px] w-full h-auto aspect-video object-cover' /> */}
+                        {premier?.media && (
+                            isImage(premier?.media[0]) ? (
+                                <img
+                                    className='max-w-[836px] w-full h-auto aspect-video object-cover'
+                                    src={premier?.media[0]}
+                                    alt={`${premier.nom} - ${premier.titre}`}
+                                />
+                            ) : (
+                                <video
+                                    className='max-w-[836px] w-full h-auto aspect-video object-cover'
+                                    controls
+                                    autoPlay
+                                    muted
+                                    loop
+                                    src={premier?.media[0]}
+                                >
+                                    Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                </video>
+                            )
+                        )}
                     </div>
                 </Link>
                 <div className='flex flex-col gap-7'>{renderList()}</div>
             </div>
             <div className='max-w-[360px] flex flex-col gap-7 px-7 py-5'>
-                <Similaire similaire={sec1} sim={ sim1 } />
+                <Similaire similaire={sec1} sim={sim1} />
                 <PubsComp pub={ad} />
-                <Similaire similaire={sec1} sim={ sim2 } />
+                <Similaire similaire={sec1} sim={sim2} />
             </div>
 
         </div>
