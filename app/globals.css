@@ -79,23 +79,23 @@
 /* Styles de base */
 @layer base {
   body {
-    @apply bg-background text-foreground text-[18px] font-roboto tracking-normal;
+    @apply bg-background text-foreground text-[18px] font-ubuntu leading-[23.4px] tracking-[-2%];
   }
 
   h1 {
-    @apply font-oswald;
-  }
-
-  h1 {
-    @apply text-[28px] md:text-[32px] font-medium tracking-tight first-letter:uppercase;
+    @apply font-oswald text-[28px] md:text-[32px] font-medium leading-[36.4px] md:leading-[52px] tracking-tight first-letter:uppercase;
   }
 
   h2 {
-    @apply font-medium text-[18px] md:text-[28px];
+    @apply font-oswald font-medium text-[18px] md:text-[28px];
   }
 
   h3 {
-    @apply font-medium text-lg;
+    @apply font-oswald font-medium text-[28px] leading-[36.4px] tracking-[-2%];
+  }
+
+  h4 {
+    @apply font-medium text-[18px] font-oswald leading-[18.2px] tracking-[-2%];
   }
 }
 
@@ -116,10 +116,18 @@
     dark:[&::-webkit-scrollbar-track]:bg-neutral-700
     dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
   }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* Pour IE et Edge */
+    scrollbar-width: none; /* Pour Firefox */
+  }
 }
 @layer base {
   .containerBloc {
-    @apply container max-w-[1440px] px-1 md:px-0;
+    @apply container max-w-[1280px] px-0;
   }
   .clip-custom {
     clip-path: polygon(0 0, 90% 0, 100% 15%, 100% 100%, 0 100%);

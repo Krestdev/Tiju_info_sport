@@ -5,6 +5,7 @@ import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
 import Navbar from "@/components/navbar";
 import Footbar from "@/components/footbar";
+import { MenuComp } from "@/components/menu";
 
 
 export default async function RootLayout({
@@ -17,10 +18,11 @@ export default async function RootLayout({
     <Providers>
       <HydrationZustand>
         <Navbar />
-        <div className="pt-[80px] md:pt-0">
+        <div className="pt-[50px] md:pt-0">
+        <MenuComp />
         {children}
         </div>
-        <Footbar />
+        <Footbar categorie={undefined} />
       </HydrationZustand>
     </Providers>
   );

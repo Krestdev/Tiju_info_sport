@@ -1,9 +1,11 @@
 "use client"
 
+import Accueil from "@/components/Accueil/Accueil";
 import Grid from "@/components/Accueil/Grid";
 import GridInfo from "@/components/Accueil/GridInfo";
 import Hero from "@/components/Accueil/Hero";
 import Footbar from "@/components/footbar";
+import { MenuComp } from "@/components/menu";
 import Navbar from "@/components/navbar";
 import PubsComp from "@/components/PubsComp";
 import useStore from "@/context/store";
@@ -68,17 +70,19 @@ export default function HomePage() {
   return (
     <div>
       <Navbar />
-      <div className=" pt-[60px] md:pt-0">
-        {carrHero && <Hero gridAff={carrHero} />}
+      <div className="pt-[65px] md:pt-0">
+        <MenuComp />
+        <Accueil />
+        {/* {carrHero && <Hero gridAff={carrHero} />}
         {grid1 && <Grid gridAff={favorite} pubAff={pub} />}
-        {grid1 && <GridInfo gridAff={grid1} />}
-        <div className="containerBloc">{pub && <PubsComp pub={pub} />}</div>
+        {grid1 && <GridInfo gridAff={grid1} />} */}
+        {/* <div className="containerBloc">{pub && <PubsComp pub={pub} />}</div> */}
         {/* {blog1 && <Blog {...blog1} />} */}
-        {grid2 && <GridInfo gridAff={grid2} />}
-        <div className="containerBloc">{pub && <PubsComp pub={pub?.slice().reverse()} />}</div>
+        {/* {grid2 && <GridInfo gridAff={grid2} />} */}
+        {/* <div className="containerBloc">{pub && <PubsComp pub={pub?.slice().reverse()} />}</div> */}
         {/* {blog2 && <Blog {...blog2} />} */}
       </div>
-      <Footbar />
+      <Footbar categorie={art} />
     </div>
   );
 }

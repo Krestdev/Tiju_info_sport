@@ -20,7 +20,7 @@ const page = () => {
 
   const { dataArticles, dataPubs } = useStore();
   const [pub, setPub] = useState<Pubs[]>();
-  const [category, setCategory] = useState<Result[]>()
+  const [category, setCategory] = useState<Article[]>()
 
   const articleData = useQuery({
     queryKey: ['articles'],
@@ -29,28 +29,19 @@ const page = () => {
   const pubData = useQuery({
     queryKey: ["pubs"],
     queryFn: async () => dataPubs,
-  });  
+  });
 
-  function getLastImagesByCategory(categories: Categorie[]): Result[] {
-    return categories.map(categorie => {
-      const lastArticleWithMedia = [...categorie.donnees]
-        .reverse()
-        .find(article => article.media !== undefined);
-  
-      const lastArticle = [...categorie.donnees].reverse()[0]; 
-  
-      return {
-        id: lastArticleWithMedia?.id ?? lastArticle?.id,
-        titre: lastArticleWithMedia?.titre ?? lastArticle?.titre,
-        nom: categorie.nom,
-        media: lastArticleWithMedia?.media ?? lastArticle?.media
-      };
-    });
-  }
-  
+  const getFirstArticlesByCategory = (categories: Categorie[]): Article[] => {
+    return categories
+        .map(category => category.donnees[0]) // Récupère le premier article de chaque catégorie
+        .filter(article => article !== undefined); // Supprime les catégories vides
+};
+
+
+
   useEffect(() => {
     if (articleData.isSuccess) {
-      setCategory(getLastImagesByCategory(articleData.data))
+      setCategory(getFirstArticlesByCategory(articleData.data))
     }
   }, [articleData.data]);
 
@@ -58,10 +49,13 @@ const page = () => {
     if (pubData.isSuccess) {
       setPub(pubData.data)
     }
-  }, [pubData.data])  
+  }, [pubData.data])
 
   return (
-    <div className='containerBloc '>
+    <div className='containerBloc items-center pb-[60px]'>
+      <div className='px-7 py-10'>
+        <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />
+      </div>
       <CategoryComp article={category} ad={pub} categorie={articleData.data} />
     </div>
   )

@@ -1,10 +1,10 @@
 "use client"
 
-import useStore from '@/context/store';
-import { Article, Categorie } from '@/data/temps';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Categorie } from '@/data/temps';
 import Link from 'next/link';
 import React from 'react'
+import { Button } from '../ui/button';
+import Info from './Info';
 
 
 interface Aff {
@@ -17,82 +17,51 @@ const GridInfo = ({ gridAff }: Aff) => {
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
 
+    const article = gridAff.flatMap(x => x.donnees)
+
 
     return (
-        <div>
-            {
-                gridAff.slice(0, 1).map((x, i) => {
-                    const donne = x.donnees
-                    return (
-                        <div key={i} className='containerBloc flex flex-col py-3 md:py-[60px] gap-3'>
-                            <div className='flex flex-row px-5 gap-4 justify-between'>
-                                <h1 className='font-medium  text-[40px]'>{x.nom}</h1>
-                                <Link href={`/user/category/${x.nom}`}><h3 className='font-bold border border-black px-3 py-2'>Tout Voir</h3></Link>
-                            </div>
-                            <div className='flex flex-col md:flex-row gap-7'>
-                                <Link href={`/user/detail-article/${donne[0].id}`} className='flex flex-col gap-[10px] px-5 py-4'>
-                                    {donne[0].media && (
-                                        isImage(donne[0].media[0]) ? (
-                                            <img
-                                                className='max-w-[600px] w-full h-auto aspect-video object-cover rounded-[6px]'
-                                                src={donne[0].media[0]}
-                                                alt={`${donne[0].type} - ${donne[0].titre}`}
-                                            />
-                                        ) : (
-                                            <video
-                                                className='max-w-[600px] w-full h-auto aspect-video object-cover rounded-[6px]'
-                                                controls
-                                                autoPlay
-                                                muted
-                                                loop
-                                                src={donne[0].media[0]}
-                                            >
-                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                            </video>
-                                        )
-                                    )}
-                                    <div className='flex flex-col'>
-                                        <p className='text-[#A1A1A1]'>{donne[0].type}</p>
-                                        <h2 className='line-clamp-2 font-bold mr-7 text-[28px]'>{donne[0].titre}</h2>
-                                    </div>
-                                </Link>
-                                <div className='flex flex-col gap-3'>
-                                    {
-                                        donne.slice(1, 3).map(a => (
-                                            <Link href={`/user/detail-article/${a.id}`} key={a.id} className='flex flex-col md:flex-row gap-7 px-5 py-4'>
-                                                {a.media && (
-                                                    isImage(a.media[0]) ? (
-                                                        <img
-                                                            className='max-w-[320px] w-full h-auto aspect-video object-cover rounded-[6px]'
-                                                            src={a.media[0]}
-                                                            alt={`${a.type} - ${a.titre}`}
-                                                        />
-                                                    ) : (
-                                                        <video
-                                                            className='max-w-[320px] w-full h-auto aspect-video object-cover rounded-[6px]'
-                                                            controls
-                                                            autoPlay
-                                                            muted
-                                                            loop
-                                                            src={a.media[0]}
-                                                        >
-                                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                                        </video>
-                                                    )
-                                                )}
-                                                <div className='flex flex-col'>
-                                                    <p className='text-[#A1A1A1]'>{donne[0].type}</p>
-                                                    <h2 className='line-clamp-3 leading-[36.4px] font-bold mr-7 text-[28px]'>{donne[0].titre}</h2>
-                                                </div>
-                                            </Link>
-                                        ))
-                                    }
+        <div className='containerBloc w-full hidden md:flex flex-col items-center py-[60px] gap-6'>
+            <div className='flex flex-row w-full items-center justify-between px-5 gap-4'>
+                <h1 className='uppercase'>{"Champions league"}</h1>
+                <Button className='uppercase rounded-none'><Link href={""}>{"Tout voir"}</Link></Button>
+            </div>
+            <div className='w-full flex flex-row gap-10 px-7'>
+                <Info article={article[0]} taille={'max-w-[592px] max-h-[333px]'} />
+                <div className='flex flex-col gap-5'>
+                    {
+                        article.slice(0, 3).map((x, i) => (
+                            <Link href={`/user/detail-article/${x.id}`} key={i} className='flex flex-row gap-7'>
+                                {x.media && (
+                                    isImage(x.media[0]) ? (
+                                        <img
+                                            className={`max-w-[160px] max-h-[90px] w-full h-full aspect-video rounded-[6px] object-cover`}
+                                            src={x.media[0]}
+                                            alt={`${x.type} - ${x.titre}`}
+                                        />
+                                    ) : (
+                                        <video
+                                            className={`max-w-[160px] max-h-[90px] w-full h-full aspect-video rounded-[6px] object-cover`}
+                                            controls
+                                            muted
+                                            loop
+                                            src={x.media[0]}
+                                        >
+                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                        </video>
+                                    )
+                                )}
+                                <div className='flex flex-col gap-1'>
+                                    <p className="uppercase font-oswald font-medium text-[16px] leading-[20.8px] text-[#A1A1A1]">
+                                        {x.type}
+                                    </p>
+                                    <h3 className="first-letter:uppercase line-clamp-2">{x.titre}</h3>
                                 </div>
-                            </div>
-                        </div>
-                    )
-                })
-            }
+                            </Link>
+                        ))
+                    }
+                </div>
+            </div>
         </div>
     )
 }

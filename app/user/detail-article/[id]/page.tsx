@@ -4,7 +4,7 @@ import Detail from '@/components/DetailArticle/Detail';
 import Test from '@/components/DetailArticle/Test';
 import PubsComp from '@/components/PubsComp';
 import useStore from '@/context/store';
-import { Article, Pubs } from '@/data/temps';
+import { Article, Categorie, Pubs } from '@/data/temps';
 import withAuth from '@/lib/withAuth'
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
@@ -35,6 +35,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   }, [pubData.data])
 
+
   useEffect(() => {
     if (articleData.isSuccess) {
       const articles = articleData.data.flatMap(cate => cate.donnees)
@@ -52,8 +53,10 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className='containerBloc gap-3'>
-      {pub && <PubsComp pub={pub} />}
-      <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data}/>
+      <div className='px-7'>
+      {pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}
+      </div>
+      <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data} favorite={favorite}/>
     </div>
   );
 };

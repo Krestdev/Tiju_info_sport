@@ -1,76 +1,67 @@
 import { Facebook, Twitter } from 'lucide-react'
 import React from 'react'
-import { FaFacebookF } from "react-icons/fa";
-import { FaTwitter } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { Categorie } from '@/data/temps';
 
-const Footbar = () => {
+interface Props {
+    categorie: Categorie[] | undefined;
+}
+
+const Footbar = ({ categorie }: Props) => {
     return (
-        <div className='w-full flex flex-col items-center justify-center gap-8 border-t border-[#0128AE]'>
-            <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3'>
-                <img src="/logo.png" alt="logo" className='h-[80px] w-[80.88] object-cover' />
-                <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-[#0128AE]'>
-                    <p className='text-[16px]'>{"Suivez l'activité sur nos réseaux"}</p>
+        <div className='w-full flex flex-col items-center justify-center gap-8'>
+            <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
+                <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
+                    <img src="/logo.png" alt="logo" className='h-[70px] w-[70px] object-cover' />
+                    <p className='font-semibold font-oswald text-[32px] leading-[47.42px]'>{"TYJU INFO SPORTS"}</p>
+                </Link>
+                <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
                         <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
-                        <Button variant={'ghost'} className='p-2 border border-[#0128AE] rounded-full w-fit h-fit'>
-                            <FaFacebookF />
-                        </Button>
+                            <Button variant={'ghost'} className='p-2 border border-black rounded-none'>
+                                <FaFacebook className='size-5' />
+                            </Button>
                         </Link>
-                        <Button variant={'ghost'} className='p-2 border border-[#0128AE] rounded-full w-fit h-fit'>
-                            <FaTwitter />
-                        </Button>
+                        <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
+                            <Button variant={'ghost'} className='p-2 border border-black rounded-none'>
+                                <FaXTwitter className='size-5' />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>
-            <div className='w-full flex items-center justify-center bg-[#F5F5F5]'>
-                <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-8 px-5 py-20'>
-                    <div className='flex flex-col max-w-[280px] w-full gap-4'>
-                        <h3>{"Football"}</h3>
+            <div className='w-full flex items-center justify-center'>
+                <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7 px-5 py-8'>
+                    <div className='max-w-[320px] flex flex-col w-full gap-4'>
+                        <h4 className='uppercase text-[#A1A1A1]'>{"Catégories"}</h4>
+                        <div className='flex flex-col gap-3'>
+                            {
+                                categorie?.slice(0, 6).map((x, i) => (
+                                    <p key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.nom}</p>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    {categorie && <div className='max-w-[320px] flex flex-col w-full gap-4'>
+                        <h4 className='uppercase text-[#A1A1A1]'>{categorie[0].nom}</h4>
                         <div className='flex flex-col gap-2'>
-                            <p>{"Championnat du cameroun"}</p>
-                            <p>{"Qualification can 2025"}</p>
-                            <p>{"Champions League Africain"}</p>
-                            <p>{"Coupe du monde 2026"}</p>
-                            <p>{"Coupe du cameroun"}</p>
-                            <p>{"Coupe d'Afrique des Nations"}</p>
-                            <p>{"Ligue 1"}</p>
+                            {
+                                categorie[0].donnees.map((x, i) => (
+                                    <p key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.type}</p>
+                                ))
+                            }
                         </div>
-                    </div>
-                    <div className='flex flex-col max-w-[280px] w-full gap-6'>
-                        <div className='flex flex-col gap-4'>
-                            <h3>{"Basketball"}</h3>
-                            <div className='flex flex-col gap-2'>
-                                <p>{"Classement BAL"}</p>
-                                <p>{"Championnat d'Afrique"}</p>
-                                <p>{"NBA"}</p>
-                                <p>{"Eurolique"}</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-4'>
-                            <h3>{"Combat"}</h3>
-                            <div className='flex flex-col gap-2'>
-                                <p>{"MMA"}</p>
-                                <p>{"PLF"}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className='flex flex-col max-w-[280px] w-full gap-6'>
-                        <div className='flex flex-col gap-4'>
-                            <h3>{"Rugby"}</h3>
-                            <div className='flex flex-col gap-2'>
-                                <p>{"Coupe d'Afrique"}</p>
-                                <p>{"Qualification Coupe du Monde"}</p>
-                            </div>
-                        </div>
-                        <div className='flex flex-col gap-4'>
-                            <h3>{"Tenis"}</h3>
-                            <div className='flex flex-col gap-2'>
-                                <p>{"Classement ATP"}</p>
-                                <p>{"Classement WTA"}</p>
-                            </div>
+                    </div>}
+                    <div className='max-w-[320px] flex flex-col w-full gap-4'>
+                        <h4 className='uppercase text-[#A1A1A1]'>{"Football"}</h4>
+                        <div className='flex flex-col gap-3'>
+                            <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Politique de confidentialité"}</p>
+                            <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Aide"}</p>
+                            <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Réclamation"}</p>
+                            <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Nous Contacter"}</p>
                         </div>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ const config: Config = {
 		extend: {
 			fontFamily: {
 				oswald: ["Oswald", ...fontFamily.sans],
-				roboto: ["Roboto", ...fontFamily.sans],
+				ubuntu: ["Ubuntu", ...fontFamily.sans],
 			  },
 			colors: {
 				border: 'hsl(var(--border))',

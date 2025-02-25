@@ -60,13 +60,13 @@ function MenuBar({ article, currentUser }: Donnee) {
 
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger className="flex md:hidden" asChild>
-                <Button variant="ghost" className="flex flex-row gap-2">
+            <SheetTrigger className="flex" asChild>
+                <Button variant="ghost" className="flex !pl-0 flex-row gap-2">
                     <Menu className="h-6 w-6" />
-                    <p>{"Menu"}</p>
+                    <p className="hidden md:flex">{"Menu"}</p>
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex flex-col gap-8">
+            <SheetContent side={"left"} className="flex flex-col gap-8">
                 <SheetHeader>
                     {
                         currentUser ?

@@ -51,3 +51,9 @@ export const getUserFavoriteCategories = (
     return { ...categorie, donnees: sortedDonnees };
   });
 };
+
+
+export const isImage = (media: string | undefined): boolean => {
+  if (!media) return false;
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
+};

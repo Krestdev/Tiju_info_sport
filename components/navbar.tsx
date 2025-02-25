@@ -64,18 +64,18 @@ const Navbar = () => {
 
 
     return (
-        <div className='containerBloc w-full flex items-center justify-center fixed md:static z-50'>
-            <div className='absolute w-full h-[80px] bg-blue-100/80 blur-sm md:bg-transparent z-20'></div>
-            <div className='w-full h-[80px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
+        <div className='containerBloc px-7 md:w-full w-screen flex items-center justify-center fixed md:static z-50'> 
+            <div className='w-screen md:w-full h-[50px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
+                <MenuBar article={article} currentUser={currentUser} />
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src="/logo.png" alt="Logo" className='size-[50px]' />
-                        <p className='font-semibold text-[18px] hidden md:flex'>{"TYJU INFO SPORT"}</p>
+                        <p className='font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{"TYJU INFO SPORTS"}</p>
                     </Link>
-                    <div className='hidden md:flex md:flex-row items-center gap-3'>
+                    {/* <div className='hidden md:flex md:flex-row items-center gap-3'>
                         <MenuComp />
                         <Link href={"/user/all-articles"}><Button onClick={() => SetShowSearch(!showSearch)} variant={'ghost'}><Search className='size-[60px]' /></Button></Link>
-                    </div>
+                    </div> */}
                 </div>
                 {
                     showSearch && <Input
@@ -87,11 +87,11 @@ const Navbar = () => {
                     />
                 }
                 <div className='flex flex-row items-center gap-5'>
-                    <div className='hidden md:flex items-center gap-3'>
+                    <div className='flex items-center gap-3'>
                         {
                             currentUser ?
                                 <div className='flex flex-row items-center gap-4'>
-                                    <Link href={'/user/profil'} className='flex flex-row items-center gap-2'>
+                                    <Link href={'/user/profil'} className='hidden md:flex flex-row items-center gap-2'>
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
                                     </Link>
                                     {
@@ -111,7 +111,7 @@ const Navbar = () => {
                                 </ div> :
                                 <>
                                     <Button variant={'ghost'} onClick={handleLogin}>
-                                        <div className=' border-black border rounded-full'>
+                                        <div className='hidden md:flex border-black border rounded-full'>
                                             <User />
                                         </div> {"SE CONNECTER"}
                                     </Button>
@@ -122,9 +122,8 @@ const Navbar = () => {
                                     </Link>
                                 </>
                         }
-                        <Link href={"/user/contact"} className='flex flex-row items-center gap-0 hover:bg-blue-100 px-2'><IoIosMail className='size-10' /> <h3>{"Contacter"}</h3></Link>
+                        {/* <Link href={"/user/contact"} className='flex flex-row items-center gap-0 hover:bg-blue-100 px-2'><IoIosMail className='size-10' /> <h3>{"Contacter"}</h3></Link> */}
                     </div>
-                    <MenuBar article={article} currentUser={currentUser} />
                 </div>
             </div>
         </div>
