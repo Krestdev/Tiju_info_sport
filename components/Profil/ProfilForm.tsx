@@ -363,7 +363,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
             </div>
             <div className="max-w-[360px] flex flex-col gap-7 px-7 py-5">
                 <Similaire similaire={sec1} sim={sim1} />
-                <PubsComp pub={pub} />
+                <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />
             </div>
         </div>
     );
