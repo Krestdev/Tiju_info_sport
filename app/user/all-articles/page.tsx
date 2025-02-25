@@ -27,7 +27,7 @@ const page = () => {
 
     return (
         <div className='containerBloc'>
-            {pub1 && <PubsComp pub={pub1} />}
+            {pub1 && <PubsComp pub={pub1} taille={'h-[200px]'} clip={''} />}
             <GridAll article={search} />
         </div>
     )
