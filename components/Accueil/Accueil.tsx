@@ -70,7 +70,7 @@ const Accueil = () => {
     return (
         <div className='containerBloc flex flex-col justify-center py-8 gap-[10px]'>
             <div className='w-full flex flex-col-reverse items-center  md:flex-row gap-10 md:px-7'>
-                <div className='max-w-[824px] w-full flex flex-col gap-10 md:px-7'>
+                <div className='max-w-[824px] w-full flex flex-col gap-10'>
                     <div className='w-full flex flex-col gap-10'>
                         <div className='hidden md:flex'>
                             {carrHero && <Head gridAff={carrHero} />}
@@ -83,7 +83,7 @@ const Accueil = () => {
                     <div className='flex pb-7 !px-0 md:hidden'>
                         {carrHero && <Head gridAff={carrHero} />}
                     </div>
-                    <div className={`${tail} md:max-h-full h-full overflow-hidden px-7`}>
+                    <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
                         <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={pub} />
                         <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.donnees.slice()).slice(0, 8)} pubs={pub?.slice().reverse()} />
                     </div>

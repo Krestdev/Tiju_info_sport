@@ -82,7 +82,7 @@ export default function HomePage() {
         {/* <div className="containerBloc">{pub && <PubsComp pub={pub?.slice().reverse()} />}</div> */}
         {/* {blog2 && <Blog {...blog2} />} */}
       </div>
-      <Footbar categorie={art} />
+      <Footbar />
     </div>
   );
 }

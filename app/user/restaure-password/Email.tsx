@@ -58,21 +58,19 @@ const Email = ({ setActive, setEmail }: Props) => {
         }
     }
     return (
-        <div className='flex flex-col gap-2 items-center py-10'>
-            <p>{"Nous allons vous envoyer un code a 6 chiffres par email"}</p>
-            <h3>{"Entrez votre email et cliquez sur Envoyer le code"}</h3>
+        <div className='flex flex-col items-center gap-10 px-7 py-20'>
+            <h1 className='uppercase text-[52px] leading-[52px] !font-medium'>{"Récuperation de compte"}</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4 flex flex-col gap-4">
+                    className="flex flex-col gap-5">
                     <FormField
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem className='flex items-center justify-center gap-2'>
-                                <FormLabel>{"Email: "}</FormLabel>
+                            <FormItem>
                                 <FormControl>
-                                    <div>
-                                        <Input placeholder="Entrez votre adresse email" {...field} className="max-w-sm w-full rounded-none" />
+                                    <div className='flex flex-col items-center gap-2'>
+                                        <Input placeholder="Adresse mail" {...field} className="w-[384px] rounded-none" />
                                         <p className='text-red-500'>{message}</p>
                                     </div>
                                 </FormControl>
@@ -80,7 +78,7 @@ const Email = ({ setActive, setEmail }: Props) => {
                             </FormItem>
                         )}
                     />
-                    <Button type='submit' className='max-w-[360px] w-full'>{"Envoyer le code"}</Button>
+                    <Button type='submit' className='w-[384px] rounded-none'>{"Envoyer le code"}</Button>
                 </form>
             </Form>
         </div>

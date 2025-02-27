@@ -1,5 +1,5 @@
 import { Categorie, Pubs, Users } from '@/data/temps';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Similaire from '../DetailArticle/Similaire';
 import PubsComp from '../PubsComp';
 import { z } from 'zod';
@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { BiRadioCircleMarked } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
 import FullScreen from '../Dashboard/FullScreen';
+import UnePubs from '../Accueil/UnePubs';
 
 const formSchema1 = z.object({
     email: z.string(),
@@ -41,15 +42,22 @@ interface Props {
     currentUser: Users | null;
     category: Categorie[] | undefined;
     pub: Pubs[] | undefined;
+    une: Categorie[] | undefined
 }
 
-const ProfilForm = ({ currentUser, category, pub }: Props) => {
+const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
     const { settings, editUser, logout } = useStore();
     const queryClient = useQueryClient();
     const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
     const sexe = ["Homme", "Femme"]
     const router = useRouter();
 
+    const [tail, setTail] = useState("max-h-[379px]")
+
+
+    const handleVoirtout = () => {
+        setTail("");
+    }
     const sec1 = category?.flatMap((x) => x.donnees).filter((x) => x)[0];
     const sim1 = category && category[0];
 
@@ -105,9 +113,9 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
 
     return (
         <div className="max-w-[1280px] w-full flex flex-col md:flex-row gap-7">
-            <div className="flex flex-col gap-5">
+            <div className="px-7 md:px-0 flex flex-col gap-5">
                 <div className="flex flex-col gap-8">
-                    <h1>{"Mon Compte"}</h1>
+                    <h1  className='uppercase'>{"Mon Compte"}</h1>
                     <Form {...form1}>
                         <form
                             onSubmit={form1.handleSubmit(onSubmit1)}
@@ -227,7 +235,7 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                         </form>
                     </Form>
                     <div className='flex flex-col gap-4'>
-                        <h2>{"Informations personnelles"}</h2>
+                        <h3 className='uppercase'>{"Informations personnelles"}</h3>
                         <Form {...form}>
                             <form
                                 onSubmit={form.handleSubmit(onSubmit2)}
@@ -328,14 +336,14 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                     />
                                 </div>
                                 <Button
-                                    type='submit' className='max-w-[360px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
+                                    type='submit' className='w-full max-w-[398px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
                             </form>
                         </Form>
                     </div>
 
                     <Button variant={'destructive'} onClick={handleLogout} className='flex w-fit'> {"Se déconnecter"}</Button>
                     <div className='flex flex-col gap-4'>
-                        <h2>{"Mon abonnement"}</h2>
+                        <h3 className='uppercase'>{"Mon abonnement"}</h3>
                         {
                             currentUser?.abonnement?.cout === 0 ?
                                 <div className='flex flex-col md:flex-row gap-10'>
@@ -356,14 +364,17 @@ const ProfilForm = ({ currentUser, category, pub }: Props) => {
                                         <Button onClick={() => { router.push("/user/subscribe") }} className='rounded-none'>{"Changer d'abonnement"}</Button>
                                     </div>
                                 </div>
-
                         }
                     </div>
                 </div>
             </div>
-            <div className="max-w-[360px] flex flex-col gap-7 px-7 py-5">
-                <Similaire similaire={sec1} sim={sim1} />
-                <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />
+            <div className="md:max-w-[360px] w-full gap-7">
+                <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
+                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={pub} affPub={false}/>
+                    <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.donnees.slice()).slice(0, 2)} pubs={pub?.slice().reverse()} affPub={true} />
+                </div>
+                {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
+                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'}  />}</div>
             </div>
         </div>
     );

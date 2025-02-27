@@ -104,22 +104,27 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">{"Connexion"}</CardTitle>
-          <CardDescription className="flex flex-col items-center gap-4 text-center">
-            ou
+          <CardTitle className="font-bold text-center pb-10"><h1 className="text-[52px] uppercase">{"Connexion"}</h1></CardTitle>
+          <CardDescription className="flex flex-col items-center justify-center gap-4 text-center pb-5">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
+              width={384}
             />
+            <div className="flex flex-row gap-2">
+              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
+              <p className="text-[14px] text-[#545454]">ou</p>
+              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 flex flex-col gap-4">
+              className="flex flex-col gap-5">
               <FormField
                 control={form.control}
                 name="email"
@@ -144,15 +149,15 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full rounded-none">{"Se connecter"}</Button>
+              <Button type="submit" className="w-full rounded-none uppercase">{"Se connecter"}</Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex flex-row justify-between items-center space-y-2">
-          <Link href="/restaure-password" className="text-sm text-[#012BAE] font-medium hover:underline">
-            {"Mot De Passe Oublié ?"}
+          <Link href="/user/restaure-password" className=" font-oswald font-medium text-[14px] leading-[18.2px] uppercase hover:underline">
+            {"Mot De Passe Oublié"}
           </Link>
-          <Link href="/signUp" className="text-[#012BAE] font-medium hover:underline">
+          <Link href="/user/signUp" className=" font-oswald font-medium text-[14px] leading-[18.2px] uppercase hover:underline">
             {"Creer Un Compte"}
           </Link>
         </CardFooter>

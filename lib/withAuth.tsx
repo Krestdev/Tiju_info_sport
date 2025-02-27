@@ -10,7 +10,7 @@ const withAuth = <P extends object>(WrappedComponent: React.ComponentType<P>) =>
     useEffect(() => {
       // Si l'utilisateur n'est pas connecté, redirigez vers la page de connexion
       if (!currentUser) {
-        router.push("/logIn");
+        router.push("/user/logIn");
       }
     }, [currentUser, router]);
 

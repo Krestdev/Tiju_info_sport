@@ -43,13 +43,13 @@ function MenuBar({ article, currentUser }: Donnee) {
     const closeSheet = () => setIsOpen(false);
 
     const handleLogin = () => {
-        router.push("/logIn")
+        router.push("/user/logIn")
     }
 
     const handleLogout = () => {
         setIsOpen(false)
         logout();
-        router.push("/logIn");
+        router.push("/user/logIn");
     };
 
     useEffect(() => {
@@ -81,7 +81,7 @@ function MenuBar({ article, currentUser }: Donnee) {
                                 </Link>
                             </SheetTitle> :
                             <SheetTitle className="flex flex-row gap-1 items-center">
-                                <Link onClick={() => setIsOpen(false)} href={'/logIn'} className="flex flex-row gap-2 items-center" >
+                                <Link onClick={() => setIsOpen(false)} href={'/user/logIn'} className="flex flex-row gap-2 items-center" >
                                     <img
                                         className="w-10 h-10 rounded-full object-cover"
                                         src={photo}

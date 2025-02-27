@@ -34,11 +34,11 @@ const Navbar = () => {
     }, [articleData.data])
 
     const handleLogin = () => {
-        router.push("/logIn")
+        router.push("/user/logIn")
     }
     const handleLogout = () => {
         logout();
-        router.push("/logIn");
+        router.push("/user/logIn");
     };
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setSearchEntry(event.target.value);
@@ -65,6 +65,7 @@ const Navbar = () => {
 
     return (
         <div className='containerBloc px-7 md:w-full w-screen flex items-center justify-center fixed md:static z-50'> 
+        <div className='absolute w-full h-[80px] bg-blue-100/80 blur-sm md:bg-transparent z-20'></div>
             <div className='w-screen md:w-full h-[50px] flex flex-row items-center justify-between -top-[1782px] -left-[482px] z-30'>
                 <MenuBar article={article} currentUser={currentUser} />
                 <div className='flex flex-row items-center gap-5'>

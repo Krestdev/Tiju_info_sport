@@ -18,9 +18,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const formSchema = z
   .object({
-    nom: z.string().min(4, {
-      message: "Le nom doit contenir au moins 4 caractères.",
-    }),
     email: z.string().email({ message: "Adresse e-mail invalide." }),
     pseudo: z
       .string().min(4, {
@@ -38,6 +35,10 @@ const formSchema = z
     path: ["password", "cfpassword"],
   });
 
+interface GoogleUser {
+  name: string;
+  email: string;
+}
 
 export default function SignupPage() {
 
@@ -53,7 +54,6 @@ export default function SignupPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nom: "",
       email: "",
       pseudo: "",
       password: "",
@@ -66,7 +66,6 @@ export default function SignupPage() {
       // Inscription de l'utilisateur
       registerUser({
         id: Date.now(),
-        nom: values.nom,
         email: values.email,
         pseudo: values.pseudo,
         password: values.password,
@@ -78,6 +77,7 @@ export default function SignupPage() {
         role: "user",
         abonnement: subsData.data?.find(x => x.cout === 0),
         phone: "",
+        nom: ""
       });
 
       // Invalider les données en cache
@@ -94,63 +94,59 @@ export default function SignupPage() {
     }
   }
 
+  const handleGoogleSuccess = (credentialResponse: any) => {
+    try {
+      if (!credentialResponse.credential) {
+        throw new Error("Token JWT manquant !");
+      }
+
+      const decoded: GoogleUser = jwtDecode(credentialResponse.credential);
+
+      console.log("Utilisateur connecté avec succès : ", decoded);
+      console.log("Nom : ", decoded.name);
+      console.log("Email : ", decoded.email);
+
+      router.push("/");
+    } catch (error: any) {
+      console.error("Erreur lors de la connexion Google :", error.message);
+    }
+  };
+
+  const handleGoogleError = () => {
+    console.error("Échec de la connexion Google.");
+  };
+
+
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">{"Inscription"}</CardTitle>
-          <CardDescription className="flex flex-col items-center gap-4 text-center">
-            ou
+        <CardTitle className="font-bold text-center pb-10"><h1 className="text-[52px] uppercase">{"Inscription"}</h1></CardTitle>
+          <CardDescription className="flex flex-col items-center gap-4 text-center pb-5">
             <GoogleLogin
-              onSuccess={credentialResponse => {
-                const decoded = jwtDecode(credentialResponse.credential!);
-                console.log(decoded);
-              }}
-              onError={() => {
-                console.log('Login Failed');
-              }}
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              width={384}
             />
+            <div className="flex flex-row items-center gap-2">
+              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
+              <p className="text-[14px] text-[#545454]">ou</p>
+              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} 
-            className="space-y-4 flex flex-col gap-4">
-              <FormField
-                control={form.control}
-                name="nom"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{"Nom"}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Entrez votre nom" {...field} className="w-full rounded-none" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <form onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{"Adresse e-mail"}</FormLabel>
                     <FormControl>
-                      <Input placeholder="vous@exemple.com" {...field} className="w-full rounded-none" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="pseudo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{"Pseudo"}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ex. King" {...field} className="w-full" />
+                      <Input placeholder="Adresse mail" {...field} className="w-full rounded-none" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,9 +157,8 @@ export default function SignupPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{"Mot de passe"}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="********" {...field} className="w-full" />
+                      <Input type="password" placeholder="Mot de passe" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,9 +169,20 @@ export default function SignupPage() {
                 name="cfpassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{"Confirmez le mot de passe"}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="********" {...field} className="w-full" />
+                      <Input type="password" placeholder="Comfirmer le mot de passe" {...field} className="w-full" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pseudo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Pseudonyme" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -189,7 +195,7 @@ export default function SignupPage() {
         <CardFooter className="justify-center flex flex-col">
           <p className="text-sm text-gray-600">
             {"Déjà un compte ? "}
-            <Link href="/logIn" className="text-[#012BAE] hover:underline">
+            <Link href="/user/logIn" className="text-[#012BAE] hover:underline">
               {"Connectez-vous"}
             </Link>
           </p>

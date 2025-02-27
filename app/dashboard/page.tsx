@@ -10,6 +10,10 @@ import { BarChartComp } from "@/components/Dashboard/Dash/BarChartComp";
 import { CircChart } from "@/components/Dashboard/Dash/CircChart";
 import { useQuery } from "@tanstack/react-query";
 import { Article, Categorie, comment, Users } from "@/data/temps";
+import Compo from "@/components/Dashboard/Dash/Compo";
+import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
+import LinearChat from "@/components/Dashboard/Dash/LinearChar";
+import CircChar from "@/components/Dashboard/Dash/CircChar";
 
 const DashbordPage = () => {
   const { logoutAdmin, dataArticles, dataUsers } = useStore()
@@ -18,6 +22,7 @@ const DashbordPage = () => {
   const [comment, setComment] = useState<comment[]>()
   const [abonne, setAbonne] = useState<Record<string, number>>()
   const [user, setUser] = useState<Users[]>()
+  const [likes, setLikes] = useState<number>(0)
 
   const articleData = useQuery({
     queryKey: ["articles"],
@@ -28,6 +33,12 @@ const DashbordPage = () => {
     queryKey: ["users"],
     queryFn: async () => dataUsers
   })
+
+  const countTotalLikes = (categories: Categorie[]): number => {
+    return categories.reduce((totalLikes, category) => {
+      return totalLikes + category.donnees.reduce((sum, article) => sum + article.like.length, 0);
+    }, 0);
+  };
 
   useEffect(() => {
     if (articleData.isSuccess) {
@@ -40,6 +51,7 @@ const DashbordPage = () => {
         .flatMap(x => x.reponse)
         .filter(x => x.signals.length > 0)
       setComment([...commentSignal, ...respenseSignal])
+      setLikes(countTotalLikes(articleData.data))
     }
   }, [articleData.data])
 
@@ -149,42 +161,52 @@ const DashbordPage = () => {
 
   const grid = [
     {
-      icon: MdOutlineSportsVolleyball,
       value: art ? art?.length : 0,
-      category: "Total De Publications",
-      color: "blue"
+      category: "Articles publiés",
+      bgColor: "bg-[#0128AE]/10",
+      color: "text-[#182067]"
     },
     {
-      icon: MdOutlineSportsVolleyball,
-      value: getTotalSubscribers(userData.data ? userData.data : []),
-      category: "Total Abonnés",
-      color: "red"
+      value: likes,
+      category: "Likes",
+      bgColor: "bg-[#FF0068]/10",
+      color: "text-[#FF0068]"
     },
     {
-      icon: MdOutlineSportsVolleyball,
       value: comment?.length,
       category: "Commentaires Signalés",
-      color: "purple"
-    },
-    {
-      icon: MdOutlineSportsVolleyball,
-      value: getActiveUsers(articleData.data ? articleData.data : []).length,
-      category: "Utilisateurs Reactifs",
-      color: "green"
+      bgColor: "bg-[#01AE35]/10",
+      color: "text-[#01AE35]"
     },
   ]
 
   return (
-    <div className="containerBloc pb-36 flex flex-col gap-5">
-      <GridDash tableau={grid}  />
-      <div className="flex flex-col md:flex-row gap-2">
-        <BarChartComp getPreviousMonths={getPreviousMonths} />
-        <CircChart 
-        totalAbonne={getTotalSubscribers(userData.data ? userData.data : [])} 
-        getPreviousMonths={getPreviousMonths} 
-        chartData={groupUsersForChart(user ? user : [])} 
-         />
+    <div className="flex flex-col gap-5 px-7 py-10">
+      <h1 className="uppercase">{"Tableau de bord"}</h1>
+      <div className="flex flex-row gap-5">
+        <Compo texte={"Publication"} page={"Tous les articles"} width={""}>
+          <GridDash tableau={grid} />
+        </Compo>
+        {/* <Compo texte={"Vues"} page={"Statistiques"}>
+          <SemiCirc />
+        </Compo> */}
       </div>
+      <div className="flex flex-row gap-5">
+        <Compo texte={"Vues"} page={"Tous les articles"} width={"max-w-[340px] w-full"}>
+          <LinearChat />
+        </Compo>
+        <Compo texte={"Vues par catégorie"} page={"Catégories"} width={"w-full"}>
+          <CircChar />
+        </Compo>
+      </div>
+      {/* <div className="flex flex-col md:flex-row gap-2">
+        <BarChartComp getPreviousMonths={getPreviousMonths} />
+        <CircChart
+          totalAbonne={getTotalSubscribers(userData.data ? userData.data : [])}
+          getPreviousMonths={getPreviousMonths}
+          chartData={groupUsersForChart(user ? user : [])}
+        />
+      </div> */}
     </div>
   );
 };

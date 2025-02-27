@@ -1,16 +1,32 @@
+"use client"
+
 import { Facebook, Twitter } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Categorie } from '@/data/temps';
+import useStore from '@/context/store';
+import { useQuery } from '@tanstack/react-query';
 
-interface Props {
-    categorie: Categorie[] | undefined;
-}
 
-const Footbar = ({ categorie }: Props) => {
+const Footbar = () => {
+
+    const {dataArticles} = useStore()
+    const [categorie, setCategorie] = useState<Categorie[]>()
+
+    const articleData = useQuery({
+        queryKey: ["articles"],
+        queryFn: async () => dataArticles
+    })
+
+    useEffect(()=>{
+        if (articleData.isSuccess) {
+            setCategorie(articleData.data)
+        }
+    }, [articleData.data])
+
     return (
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
@@ -40,7 +56,7 @@ const Footbar = ({ categorie }: Props) => {
                         <div className='flex flex-col gap-3'>
                             {
                                 categorie?.slice(0, 6).map((x, i) => (
-                                    <p key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.nom}</p>
+                                    <Link href={`/user/category/${x.nom}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.nom}</Link>
                                 ))
                             }
                         </div>
@@ -49,14 +65,14 @@ const Footbar = ({ categorie }: Props) => {
                         <h4 className='uppercase text-[#A1A1A1]'>{categorie[0].nom}</h4>
                         <div className='flex flex-col gap-2'>
                             {
-                                categorie[0].donnees.map((x, i) => (
-                                    <p key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.type}</p>
+                                [...new Set(categorie[0].donnees?.map(x => x.type))].map((x, i) => (
+                                    <Link href={`/user/detail-article/`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
                                 ))
                             }
                         </div>
                     </div>}
                     <div className='max-w-[320px] flex flex-col w-full gap-4'>
-                        <h4 className='uppercase text-[#A1A1A1]'>{"Football"}</h4>
+                        <h4 className='uppercase text-[#A1A1A1]'>{"Ressources"}</h4>
                         <div className='flex flex-col gap-3'>
                             <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Politique de confidentialité"}</p>
                             <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Aide"}</p>

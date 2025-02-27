@@ -15,6 +15,8 @@ const page = () => {
   const [pub, setPub] = useState<Pubs[]>();
   const [category, setCategory] = useState<Categorie[]>()
 
+  const [une, setUne] = useState<Categorie[]>();
+
 
   const articleData = useQuery({
     queryKey: ['articles'],
@@ -36,6 +38,7 @@ const page = () => {
   useEffect(() => {
     if (articleData.isSuccess) {
       setCategory(articleData.data)
+      setUne(favorite)
     }
   }, [articleData.data])
 
@@ -43,7 +46,7 @@ const page = () => {
 
   return (
     <div className='containerBloc'>
-      <ProfilForm currentUser={currentUser} category={category} pub={pub} />
+      <ProfilForm une={une} currentUser={currentUser} category={category} pub={pub} />
     </div>
   )
 }

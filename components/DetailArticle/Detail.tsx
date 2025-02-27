@@ -271,7 +271,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
             </div>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7'>
                 <div className='w-full flex flex-col md:flex-row gap-10 px-7'>
-                    <div className='max-w-[824px] flex flex-col md:px-7 gap-5'>
+                    <div className='max-w-[824px] flex flex-col gap-5'>
                         <div className='flex flex-col gap-4'>
                             <div>
                                 <h1 className='text-[40px]'>{details.titre}</h1>
@@ -402,40 +402,43 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
                         {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                             <div className='flex flex-col md:flex-row md:items-center justify-between'>
-                                <div className='flex items-center gap-4'>
-                                    <Button onClick={() => handleShare([new File([], "nom_du_fichier.txt", {
-                                        type: "text/plain",
-                                        lastModified: Date.now(),
-                                    })]
-                                        , details.extrait)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
-                                    <Button onClick={handleLike} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
-                                        <ThumbsUp
-                                            style={{
-                                                color: like ? "red" : "gray",
-                                                cursor: "pointer",
-                                            }}
-                                            size={30} />
-                                    </Button>
-                                    <h2 style={{
-                                        color: like ? "red" : "gray",
-                                        cursor: "pointer",
-                                    }}>{details.like.length}</h2>
-                                    <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
-                                        <PopoverTrigger asChild>
-                                            <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-80 flex flex-col gap-2">
-                                            <div className="flex flex-col gap-2">
-                                                <Textarea
-                                                    placeholder="Répondre au commentaire"
-                                                    rows={2}
-                                                    onChange={(e) => setCommentaire(e.target.value)}
-                                                />
-                                                <Button onClick={handleAddComment}>{"COMMENTER"}</Button>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
+                                {
+                                    currentUser &&
+                                    <div className='flex items-center gap-4'>
+                                        <Button onClick={() => handleShare([new File([], "nom_du_fichier.txt", {
+                                            type: "text/plain",
+                                            lastModified: Date.now(),
+                                        })]
+                                            , details.extrait)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
+                                        <Button onClick={handleLike} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
+                                            <ThumbsUp
+                                                style={{
+                                                    color: like ? "red" : "gray",
+                                                    cursor: "pointer",
+                                                }}
+                                                size={30} />
+                                        </Button>
+                                        <h2 style={{
+                                            color: like ? "red" : "gray",
+                                            cursor: "pointer",
+                                        }}>{details.like.length}</h2>
+                                        <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
+                                            <PopoverTrigger asChild>
+                                                <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-80 flex flex-col gap-2">
+                                                <div className="flex flex-col gap-2">
+                                                    <Textarea
+                                                        placeholder="Répondre au commentaire"
+                                                        rows={2}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                    />
+                                                    <Button onClick={handleAddComment}>{"COMMENTER"}</Button>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                }
                                 <p className='font-bold'> {details.commentaire.length <= 9 && '0'}{details.commentaire.length} Commentaire{details.commentaire.length > 1 && 's'}</p>
                             </div> : ""
                         }

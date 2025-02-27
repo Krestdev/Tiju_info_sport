@@ -14,7 +14,7 @@ interface Result {
     titre: string | undefined;
     nom: string;
     media: string[] | undefined;
-  }
+}
 
 const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => {
     const param = React.use(params);
@@ -30,12 +30,12 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     const pubData = useQuery({
         queryKey: ["pubs"],
         queryFn: async () => dataPubs,
-      });
+    });
 
-    useEffect(()=>{
+    useEffect(() => {
         if (articleData.isSuccess) {
             setArticle(articleData.data.find(x => x.nom.trimEnd() === decodeURIComponent(param.type))?.donnees.map(
-                
+
                 x => (
                     {
                         ...x,
@@ -50,14 +50,17 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
     }, [articleData.data, param.type, param.id]);
     useEffect(() => {
         if (pubData.isSuccess) {
-          setPub(pubData.data)
+            setPub(pubData.data)
         }
-      }, [pubData.data])
+    }, [pubData.data])
 
 
     return (
-        <div className='containerBloc'>
-            <CategoryComp article={article} ad={pub} categorie={articleData.data} />
+        <div className='containerBloc items-center pb-[60px]'>
+            <div className='px-7 py-5 md:py-10'>
+                <PubsComp pub={pub} taille={'h-[180px]'} clip={''} />
+            </div>
+            <CategoryComp article={article} ad={pub} categorie={articleData.data} favorite={undefined} />
         </div>
     )
 }

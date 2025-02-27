@@ -22,7 +22,7 @@ export default async function RootLayout({
         <MenuComp />
         {children}
         </div>
-        <Footbar categorie={undefined} />
+        <Footbar />
       </HydrationZustand>
     </Providers>
   );

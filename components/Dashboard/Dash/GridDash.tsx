@@ -1,37 +1,38 @@
+import { ArrowRight } from 'lucide-react';
 import React from 'react'
 import { IconType } from 'react-icons/lib';
 
-// interface Props {
-//     icon: string,
-//     value: number,
-//     category: string,
-//     iconBgColor: string
-// }
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface Props {
     tableau: {
-        icon: IconType;
         value: number | undefined;
         category: string;
+        bgColor: string;
         color: string;
     }[],
 }
 
 const GridDash = ({ tableau }: Props) => {
     return (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 w-full'>
+        <div className='flex flex-row gap-3 px-5 py-3 max-h-[140px] h-full w-full'>
             {
-                tableau.map((tab, index) => (
-                    <div key={index} className="w-full px-4 py-6 bg-white rounded shadow-sm flex gap-6">
-                        <span className={`w-10 h-10 rounded-full inline-flex items-center justify-center bg-${tab.color}-100 `}>
-                            {<tab.icon className={`text-${tab.color}-500 size-7`}/>}
-                        </span>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-sm font-medium text-gray-400">{tab.category}</span>
-                            <span className="text-xl font-bold text-gray-900">{tab.value}</span>
+                tableau.map((x, i) => {
+                    return (
+                        <div key={i} className={`w-full rounded-[6px] flex flex-col gap-2 p-3 ${x.bgColor}`}>
+                            <p className={`text-[40px] font-bold leading-[52px] ${x.color}`}>{x.value}</p>
+                            <p className='text-[12px] font-normal leading-[15.6px] text-[#545454]'>{x.category}</p>
                         </div>
-                    </div>
-                ))
+                    )
+                })
             }
         </div>
     )

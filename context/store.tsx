@@ -1,6 +1,18 @@
-import { abonnement, Abonnement, Article, articles, Categorie, comment, publicites, Pubs, users, Users } from "@/data/temps";
+import {
+  abonnement,
+  Abonnement,
+  Article,
+  articles,
+  Categorie,
+  comment,
+  publicites,
+  Pubs,
+  users,
+  Users
+} from "@/data/temps";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+
 
 interface store {
   settings: any;
@@ -63,15 +75,17 @@ const initialData: store = {
     pub: "Tyju Publicité",
     noPhoto: "/images/no-user.jpg"
   },
+
+  //données initiales
   dataArticles: articles,
+  favorite: articles,
   dataPubs: publicites,
   dataUsers: users,
   dataSubscription: abonnement,
   currentUser: null,
   currentAdmin: null,
   isFull: true,
-  favorite: articles,
-  search: []
+  search: [],
 };
 
 const useStore = create<store & actions>()(
@@ -156,7 +170,6 @@ const useStore = create<store & actions>()(
           })),
         })),
 
-
       deleteComment: (id: number) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
@@ -236,8 +249,17 @@ const useStore = create<store & actions>()(
         set((state) => ({
           dataUsers: [...state.dataUsers, user],
         })),
-      editUser: (user) => set((state) => ({ dataUsers: state.dataUsers.map((el) => (el.id === user.id ? user : el)) })),
-      deleteUser: (id) => set((state) => ({ dataUsers: state.dataUsers.filter((item) => item.id != id) })),
+
+      editUser: (user) =>
+        set((state) => ({
+          dataUsers: state.dataUsers.map((el) => (el.id === user.id ? user : el))
+        })),
+
+      deleteUser: (id) =>
+        set((state) => ({
+          dataUsers: state.dataUsers.filter((item) => item.id != id)
+        })),
+
       login: (email, password) => {
         const foundUser = get().dataUsers.find(
           (user) => user.email === email && user.password === password
@@ -247,7 +269,9 @@ const useStore = create<store & actions>()(
         }
         return foundUser || null;
       },
+
       logout: () => set({ currentUser: null }),
+
       loginAdmin: (email, password) => {
         const foundUser = get().dataUsers.find(
           (user) => user.email === email && user.password === password && user.role === "admin"
@@ -258,6 +282,7 @@ const useStore = create<store & actions>()(
         return foundUser || null;
       },
       logoutAdmin: () => set({ currentAdmin: null }),
+
       addLike: (id: number, user: Omit<Users, "password">) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
@@ -329,7 +354,6 @@ const useStore = create<store & actions>()(
           })),
         })),
 
-
       addResponseSignals: (idC: number, idR: number, user: Omit<Users, "password">) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
@@ -390,12 +414,31 @@ const useStore = create<store & actions>()(
         set((state) => ({
           dataPubs: [...state.dataPubs, pub],
         })),
-      editPub: (pub) => set((state) => ({ dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el)) })),
-      deletePub: (id) => set((state) => ({ dataPubs: state.dataPubs.filter((item) => item.id != id) })),
 
-      addSubscription: (subscription) => set((state) => ({ dataSubscription: [...state.dataSubscription, subscription] })),
-      editSubscription: (subscription) => set((state) => ({ dataSubscription: state.dataSubscription.map((el) => (el.id === subscription.id ? subscription : el)) })),
-      deleteSubscription: (id) => set((state) => ({ dataSubscription: state.dataSubscription.filter((item) => item.id != id) })),
+      editPub: (pub) =>
+        set((state) => ({
+          dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el))
+        })),
+
+      deletePub: (id) =>
+        set((state) => ({
+          dataPubs: state.dataPubs.filter((item) => item.id != id)
+        })),
+
+      addSubscription: (subscription) =>
+        set((state) => ({
+          dataSubscription: [...state.dataSubscription, subscription]
+        })),
+
+      editSubscription: (subscription) =>
+        set((state) => ({
+          dataSubscription: state.dataSubscription.map((el) => (el.id === subscription.id ? subscription : el))
+        })),
+
+      deleteSubscription: (id) =>
+        set((state) => ({
+          dataSubscription: state.dataSubscription.filter((item) => item.id != id)
+        })),
     }),
     { name: "Tyju" }
   )

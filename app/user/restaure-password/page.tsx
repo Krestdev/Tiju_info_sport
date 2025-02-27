@@ -3,7 +3,7 @@ import ForgetPassword from './ForgetPassword'
 
 const PasswordPage = () => {
   return (
-    <div className='containerBloc w-full h-screen flex flex-col items-center justify-center'>
+    <div className='containerBloc w-full py-20 flex flex-col items-center justify-center'>
       <ForgetPassword />
     </div>
   )

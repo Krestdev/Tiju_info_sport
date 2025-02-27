@@ -31,9 +31,9 @@ export function MenuComp() {
     }, [articleData.data])
 
     return (
-        <div className="overflow-x-auto scrollbar-hide w-full flex items-center justify-center border-y py-1 my-3">
-            <div>
-                <div className="max-w-[1280px] w-full flex flex-row items-center justify-center gap-3 font-medium text-[14px] uppercase">
+        <div className="flex items-start md:items-center justify-center border-y py-1 my-3">
+            <div className="overflow-x-auto scrollbar-hide">
+                <div className="md:max-w-[1280px] w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
                     {
                         cate?.map((x, i) => (
                             <Button variant={"ghost"} key={i}>

@@ -16,9 +16,7 @@ interface Result {
 }
 
 const page = () => {
-
-
-  const { dataArticles, dataPubs } = useStore();
+  const { dataArticles, dataPubs, favorite } = useStore();
   const [pub, setPub] = useState<Pubs[]>();
   const [category, setCategory] = useState<Article[]>()
 
@@ -33,8 +31,8 @@ const page = () => {
 
   const getFirstArticlesByCategory = (categories: Categorie[]): Article[] => {
     return categories
-        .map(category => category.donnees[0]) // Récupère le premier article de chaque catégorie
-        .filter(article => article !== undefined); // Supprime les catégories vides
+        .map(category => category.donnees[0]) 
+        .filter(article => article !== undefined); 
 };
 
 
@@ -53,10 +51,10 @@ const page = () => {
 
   return (
     <div className='containerBloc items-center pb-[60px]'>
-      <div className='px-7 py-10'>
-        <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />
+      <div className='px-7 py-5 md:py-10'>
+        <PubsComp pub={pub} taille={'h-[180px]'} clip={''} />
       </div>
-      <CategoryComp article={category} ad={pub} categorie={articleData.data} />
+      <CategoryComp article={category} ad={pub} categorie={articleData.data} favorite={favorite} />
     </div>
   )
 }
