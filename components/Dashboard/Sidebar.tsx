@@ -11,78 +11,111 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { MdDashboard } from "react-icons/md";
-import { MdOutlineSportsVolleyball } from "react-icons/md";
-import { FaUserFriends } from "react-icons/fa";
-import { FaCommentAlt } from "react-icons/fa";
-import { FaAdversal } from "react-icons/fa6";
-import { IoIosNotifications } from "react-icons/io";
-import { MdAccountBalanceWallet } from "react-icons/md";
-import useStore from "@/context/store";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import useStore from "@/context/store";
 import { Button } from "../ui/button";
-import { FaChevronLeft } from "react-icons/fa";
-import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, LucideCircleDollarSign } from "lucide-react";
 import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuSettings } from "react-icons/lu";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { useState } from "react";
 
 // Menu items.
 const items = [
     {
         title: "Tableau de bord",
         url: "/dashboard",
-        icon: MdDashboard,
+        icon: LuLayoutGrid,
+        param: false,
     },
     {
         title: "Articles",
-        url: "/dashboard/articles",
-        icon: MdOutlineSportsVolleyball,
-    },
-    {
-        title: "Utilisateurs",
-        url: "/dashboard/users",
-        icon: FaUserFriends,
+        icon: LuFile,
+        param: true,
+        parametre: [
+            {
+                nom: "Tous les articles",
+                lien: "/dashboard/articles",
+                icon: LuFiles
+            },
+            {
+                nom: "Ajouter un article",
+                lien: "",
+                icon: LuCirclePlus
+            },
+        ],
     },
     {
         title: "Commentaires",
         url: "/dashboard/comment",
-        icon: FaCommentAlt,
+        icon: LuMessageSquare,
+        param: true,
+        parametre: [],
     },
     {
-        title: "Publicités",
-        url: "/dashboard/pubs",
-        icon: FaAdversal,
-    },
-    {
-        title: "Notifications",
-        url: "/dashboard/notifications",
-        icon: IoIosNotifications,
+        title: "Catégories",
+        url: "/dashboard/comment",
+        icon: LuFolder,
+        param: true,
+        parametre: [],
     },
     {
         title: "Abonnements",
         url: "/dashboard/subscription",
-        icon: MdAccountBalanceWallet,
+        icon: LucideCircleDollarSign,
+        param: true,
+        parametre: [],
+    },
+    {
+        title: "Publicités",
+        url: "/dashboard/pubs",
+        icon: LuMegaphone,
+        param: true,
+        parametre: [],
+    },
+    {
+        title: "Utilisateurs",
+        url: "/dashboard/users",
+        icon: LuCircleUser,
+        param: true,
+        parametre: [],
+    },
+    {
+        title: "Paramètre du site",
+        url: "/dashboard/subscription",
+        icon: LuSettings,
+        param: false,
     },
 ];
 
 export function AppSidebar() {
     const { settings, isFull, setIsFull, logoutAdmin } = useStore();
     const currentPath = usePathname();
+    const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+    const toggleMenu = (title: string) => {
+        setOpenMenus((prev) => ({
+            ...prev,
+            [title]: !prev[title]
+        }));
+    };
 
     const handleLogout = () => {
         logoutAdmin()
-        toast.success("Deconnecté avec succès");
+        toast.success("Déconnecté avec succès");
     }
 
     return (
         <Sidebar variant="sidebar" collapsible="icon">
-            <SidebarInset>
-                <div className="flex items-center justify-center">
-                    <SidebarHeader className="h-[150px] w-[150px]">
+            <SidebarInset className="max-w-[320px] w-full">
+                <div className="flex flex-row items-center gap-3">
+                    <SidebarHeader className="h-[60px] w-[60px]">
                         <img
                             sizes="20px"
                             className="w-full object-cover"
@@ -90,54 +123,71 @@ export function AppSidebar() {
                             alt=""
                         />
                     </SidebarHeader>
+                    {isFull && <p className='font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{"TYJU INFO SPORTS"}</p>}
                 </div>
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {items.map((item) => {
-                                    const isActive = currentPath === `${item.url}`;
+                                    const isActive = currentPath === item.url;
+                                    const isOpen = openMenus[item.title] || false;
                                     return (
-                                        <SidebarMenuItem
-                                            key={item.title}
-                                            className={`${isActive
-                                                ? "bg-[#012BAE] text-white"
-                                                : "text-gray-700"
-                                                } rounded-md`}
-                                        >
-                                            <SidebarMenuButton className={`${isActive ? 'hover:bg-blue-400 hover:text-white' : "hover:bg-blue-50"} h-14`} asChild>
-                                                <Link href={`${item.url}`}>
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
+                                        item.param ? (
+                                            <Collapsible key={item.title} open={isOpen} onOpenChange={() => toggleMenu(item.title)} className="group/collapsible">
+                                                <SidebarMenuItem>
+                                                    <CollapsibleTrigger asChild>
+                                                        <SidebarMenuButton className="hover:!bg-blue-50 flex items-center gap-2 py-2 w-full">
+                                                            <item.icon className="size-5" />
+                                                            <span>{item.title}</span>
+                                                            {isOpen ? <ChevronUp className="ml-auto w-4 h-4 transition-transform group-open/collapsible:rotate-180" /> :
+                                                                <ChevronDown className="ml-auto w-4 h-4 transition-transform group-open/collapsible:rotate-180" />
+                                                            }
+                                                        </SidebarMenuButton>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent>
+                                                        <SidebarMenuSub className="mx-0">
+                                                            {item.parametre?.map(a => {
+                                                                const isSubActive = currentPath === a.lien;
+                                                                return (
+                                                                    <SidebarMenuSubItem key={a.nom} className={`h-10 ${isSubActive ? "bg-[#0128AE] text-white" : "text-gray-700"} rounded-[6px]`}>
+                                                                        <SidebarMenuButton className={`h-10 ${isSubActive ? 'hover:bg-[#0010CE] hover:text-white' : "hover:bg-blue-50"}`} asChild>
+                                                                            <Link className="flex items-center gap-2 py-2 w-full" href={a.lien}>
+                                                                                <a.icon className="size-5" />
+                                                                                <span>{a.nom}</span>
+                                                                            </Link>
+                                                                        </SidebarMenuButton>
+                                                                    </SidebarMenuSubItem>
+                                                                );
+                                                            })}
+                                                        </SidebarMenuSub>
+                                                    </CollapsibleContent>
+                                                </SidebarMenuItem>
+                                            </Collapsible>
+                                        ) : (
+                                            <SidebarMenuItem key={item.title} className={`h-10 ${isActive ? "bg-[#0128AE] text-white" : "text-gray-700"} rounded-[6px]`}>
+                                                <SidebarMenuButton className={`h-10 ${isActive ? 'hover:bg-[#0010CE] hover:text-white' : "hover:bg-blue-50"}`} asChild>
+                                                    <Link href={`${item.url}`}>
+                                                        <item.icon className="size-5" />
+                                                        <span>{item.title}</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        )
                                     );
                                 })}
-                                <Button
-                                    onClick={setIsFull}
-                                    variant={"ghost"}
-                                    size={!isFull ? "icon" : "default"}
-                                    className={`h-14 mt-4 hover:!bg-blue-50 ${isFull
-                                        ? "w-full justify-start gap-4 rounded-md"
-                                        : "justify-start  size-[30px] pl-2"
-                                        }`}
-                                >
-                                    <ChevronRight
-                                        size={20}
-                                        className={`transition-all duration-300 ease-linear ${isFull ? " scale-x-[-1]" : "scale-x-[1]"}`}
-                                    />
-                                    {isFull && <span>Réduire</span>}{" "}
+                                <Button onClick={setIsFull} variant="ghost" size={!isFull ? "icon" : "default"} className={`h-10 mt-4 hover:!bg-blue-50 ${isFull ? "w-full justify-start gap-4 rounded-md" : "justify-start size-[30px] pl-2"}`}>
+                                    <ChevronRight size={20} className={`transition-all duration-300 ease-linear ${isFull ? " scale-x-[-1]" : "scale-x-[1]"}`} />
+                                    {isFull && <span>{"Réduire"}</span>}
                                 </Button>
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter className="pb-20">
-                    <Button onClick={() => handleLogout()} className="bg-red-500 font-bold">{isFull ? "Déconnexion" : <AiOutlineLogout />}</Button>
+                    <Button onClick={handleLogout} className="bg-red-500 font-bold">{isFull ? "Déconnexion" : <AiOutlineLogout />}</Button>
                 </SidebarFooter>
             </SidebarInset>
-         </Sidebar>
-
+        </Sidebar>
     );
 }

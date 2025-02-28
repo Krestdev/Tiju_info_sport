@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Dashboard/Sidebar";
 import useStore from "@/context/store";
 import withAdminAuth from "@/lib/whithAdminAuth";
+import { NavAdmin } from "@/components/Dashboard/navAdmin";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { isFull, setIsFull } = useStore();
@@ -12,11 +13,14 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider open={isFull} onOpenChange={setIsFull}>
       <AppSidebar />
-      <main className="flex-1 bg-gray-100 p-6 overflow-auto">
-        {children}
+      <main className="flex-1 overflow-auto">
+        <NavAdmin />
+        <div className="gap-5 px-7 py-10">
+          {children}
+        </div>
       </main>
     </SidebarProvider>
   );
 }
 
-export default withAdminAuth(Layout); // Application du HOC
+export default withAdminAuth(Layout); 

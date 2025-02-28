@@ -30,8 +30,18 @@ import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
 import Pagination from "../Pagination";
 import ShowArticle from "./showArticle";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
-
+const FormSchema = z.object({
+    items: z.array(z.number()).refine((value) => value.length > 0, {
+        message: "You have to select at least one item.",
+    }),
+});
 
 function ArticleTable() {
     const { dataArticles, deleteArticle } = useStore();
@@ -40,6 +50,17 @@ function ArticleTable() {
         queryKey: ["articles"],
         queryFn: async () => dataArticles,
     });
+
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log(data);
+    }
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            items: [],
+        },
+    })
 
     //Search value
     const [searchEntry, setSearchEntry] = useState("");
@@ -51,7 +72,7 @@ function ArticleTable() {
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
-    const itemsPerPage = 10;
+    const itemsPerPage = 15;
 
     useEffect(() => {
         if (articleData.isSuccess) {
@@ -147,81 +168,121 @@ function ArticleTable() {
                 </div>
                 <AddArticleForm addButton={"Ajouter un article"} />
             </span>
-            {articleData.isLoading && "Loading"}
-            {articleData.isSuccess && filterData.length > 0 ? (
-                <div className="min-h-[70vh] overflow-y-auto w-full">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="text-[18px]">
-                                <TableHead>{"ID"}</TableHead>
-                                <TableHead>{"type"}</TableHead>
-                                <TableHead>{"titre"}</TableHead>
-                                <TableHead>{"Image"}</TableHead>
-                                <TableHead>{"Nbr Likes"}</TableHead>
-                                <TableHead>{"Nbr Commentaires"}</TableHead>
-                                <TableHead>{"Ajouté le"}</TableHead>
-                                <TableHead>{"Type d'abonnement"}</TableHead>
-                                <TableHead>{"Actions"}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {currentItems.map((item, id) => {
-                                return (
-                                    <TableRow className="text-[16px]" key={id}>
-                                        <TableCell>{item.id}</TableCell>
-                                        <TableCell>{item.type}</TableCell>
-                                        <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
-                                        <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
-                                            {item.media &&
-                                                <FullScreen image={item.media[0]}>
-                                                    <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
-                                                </FullScreen>}
-                                        </TableCell>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    {articleData.isLoading && "Loading"}
+                    {articleData.isSuccess && filterData.length > 0 ? (
+                        <div className="min-h-[70vh] overflow-y-auto w-full">
+                            <FormField
+                                control={form.control}
+                                name="items"
+                                render={({ field }) => (
+                                    <FormItem>
 
-                                        <TableCell>{item.like.length}</TableCell>
-                                        <TableCell>{item.commentaire.length}</TableCell>
-                                        <TableCell>{item.ajouteLe}</TableCell>
-                                        <TableCell>{item.abonArticle.nom}</TableCell>
-                                        <TableCell className="flex gap-2 items-center">
-                                            <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
-                                                <Button
-                                                    variant={"destructive"}
-                                                    size={"icon"}
-                                                >
-                                                    <Trash2 size={20} />
-                                                </Button>
-                                            </ModalWarning>
-                                            <EditArticleForm donnee={item} nom={articleData.data.find(x => x.donnees.some(x => x === item))?.nom}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm">
-                                                    <FiEdit size={"20px"} />
-                                                </Button>
-                                            </EditArticleForm>
-                                            <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm">
-                                                    <FaRegEye size={"20px"} />
-                                                </Button>
-                                            </ShowArticle>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            }
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
-                "No result"
-            ) : articleData.isSuccess && articleData.data.length === 0 ? (
-                "Empty table"
-            ) : (
-                articleData.isError && (
-                    "Some error occured"
-                )
-            )}
+                                        <FormControl>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow className="text-[18px]">
+                                                        <TableHead>
+                                                            <Checkbox
+                                                                checked={currentItems.length > 0 && field.value?.length === currentItems.length}
+                                                                onCheckedChange={(checked) => {
+                                                                    field.onChange(checked ? currentItems.map((item) => item.id) : []);
+                                                                }}
+                                                            />
+                                                        </TableHead>
+                                                        <TableHead>{"type"}</TableHead>
+                                                        <TableHead>{"titre"}</TableHead>
+                                                        <TableHead>{"Image"}</TableHead>
+                                                        <TableHead>{"Nbr Likes"}</TableHead>
+                                                        <TableHead>{"Nbr Commentaires"}</TableHead>
+                                                        <TableHead>{"Ajouté le"}</TableHead>
+                                                        <TableHead>{"Type d'abonnement"}</TableHead>
+                                                        <TableHead>{"Actions"}</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {currentItems.map((item, id) => {
+                                                        return (
+                                                            <TableRow className="text-[16px]" key={id}>
+                                                                <TableCell>
+                                                                    <Checkbox
+                                                                        checked={field.value?.includes(item.id)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            return checked
+                                                                                ? field.onChange([...field.value, item.id])
+                                                                                : field.onChange(
+                                                                                    field.value?.filter(
+                                                                                        (value) => value !== item.id
+                                                                                    )
+                                                                                )
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell>{item.type}</TableCell>
+                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
+                                                                <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
+                                                                    {item.media &&
+                                                                        <FullScreen image={item.media[0]}>
+                                                                            <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
+                                                                        </FullScreen>}
+                                                                </TableCell>
+
+                                                                <TableCell>{item.like.length}</TableCell>
+                                                                <TableCell>{item.commentaire.length}</TableCell>
+                                                                <TableCell>{item.ajouteLe}</TableCell>
+                                                                <TableCell>{item.abonArticle.nom}</TableCell>
+                                                                <TableCell className="flex gap-2 items-center">
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
+                                                                        <Button
+                                                                            variant={"destructive"}
+                                                                            size={"icon"}
+                                                                        >
+                                                                            <Trash2 size={20} />
+                                                                        </Button>
+                                                                    </ModalWarning>
+                                                                    <EditArticleForm donnee={item} nom={articleData.data.find(x => x.donnees.some(x => x === item))?.nom}>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm">
+                                                                            <FiEdit size={"20px"} />
+                                                                        </Button>
+                                                                    </EditArticleForm>
+                                                                    <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm">
+                                                                            <FaRegEye size={"20px"} />
+                                                                        </Button>
+                                                                    </ShowArticle>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    }
+                                                    )}
+                                                </TableBody>
+                                            </Table>
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
+                    ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
+                        "No result"
+                    ) : articleData.isSuccess && articleData.data.length === 0 ? (
+                        "Empty table"
+                    ) : (
+                        articleData.isError && (
+                            "Some error occured"
+                        )
+                    )}
+
+                    <Button type="submit">Soumetre</Button>
+                </form>
+            </Form>
 
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
 
