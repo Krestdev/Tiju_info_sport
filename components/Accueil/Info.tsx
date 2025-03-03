@@ -6,9 +6,10 @@ import React from 'react';
 interface Props {
     article: Article | undefined;
     taille: string;
+    couleur: string;
 }
 
-const Info = ({ article, taille }: Props) => {
+const Info = ({ article, taille, couleur }: Props) => {
     return (
         <Link href={`/user/detail-article/${article?.id}`} className={`relative ${taille} h-full w-full`}>
             {article?.media && (
@@ -32,7 +33,7 @@ const Info = ({ article, taille }: Props) => {
             )}
             <div className="absolute flex flex-col justify-end top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent rounded-none md:rounded-[6px]">
                 <div className='flex flex-col px-5 py-7 gap-2 max-w-[824px] w-full  font-oswald uppercase text-white'>
-                    <div className='flex px-3 py-2 gap-2 bg-[#01AE35] w-fit'>
+                    <div className={`flex px-3 py-2 gap-2 ${couleur} w-fit`}>
                         {article?.type}
                     </div>
                     <h1 className='line-clamp-2'>{article?.titre}</h1>

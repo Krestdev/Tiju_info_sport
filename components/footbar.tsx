@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const Footbar = () => {
 
-    const {dataArticles} = useStore()
+    const { dataArticles } = useStore()
     const [categorie, setCategorie] = useState<Categorie[]>()
 
     const articleData = useQuery({
@@ -21,7 +21,7 @@ const Footbar = () => {
         queryFn: async () => dataArticles
     })
 
-    useEffect(()=>{
+    useEffect(() => {
         if (articleData.isSuccess) {
             setCategorie(articleData.data)
         }
@@ -31,8 +31,8 @@ const Footbar = () => {
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
-                    <img src="/logo.png" alt="logo" className='h-[70px] w-[70px] object-cover' />
-                    <p className='font-semibold font-oswald text-[32px] leading-[47.42px]'>{"TYJU INFO SPORTS"}</p>
+                    <img src="/logo.png" alt="Logo" className='size-[50px]' />
+                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{"TYJU INFO SPORTS"}</p>
                 </Link>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>

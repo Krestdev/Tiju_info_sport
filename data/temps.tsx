@@ -16,7 +16,9 @@ export interface Article {
     commentaire: comment[],
     like: Omit<Users, "password">[];
     user: Users,
-    abonArticle: Abonnement
+    abonArticle: Abonnement,
+    statut: string,
+    auteur: Users | null 
 };
 
 export interface Pubs {
@@ -176,6 +178,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -183,7 +194,7 @@ export const articles: Categorie[] = [
                 type: "football masculin",
                 titre: "Gigantesque complicité entre le DTN de la federation zambienne de football et les footballeuses camerounaises au Hilton de Yaoundé",
                 description: "Un air de camaraderie et de convivialité a régné récemment...",
-                media: ["/images/video.mp4","/images/lions.jpg", "/images/lion1.jpeg"],
+                media: ["/images/video.mp4", "/images/lions.jpg", "/images/lion1.jpeg"],
                 ajouteLe: "27/12/2024",
                 commentaire: [
                     {
@@ -244,6 +255,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -251,7 +271,7 @@ export const articles: Categorie[] = [
                 type: "football feminin",
                 titre: "Les nouvelles ambitions des équipes féminines en Afrique",
                 description: " Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos recusandae modi atque optio eligendi commodi deleniti quae, natus quam sit possimus, aliquam totam. Aspernatur porro error temporibus nostrum, velit ipsa magni odio earum deleniti facere sint a voluptates dolorem repellat modi hic veniam nulla officiis incidunt, reprehenderit atque repudiandae? Ullam aut odit vitae quo voluptates repudiandae aliquam quod consequatur beatae ad. Tempore facere ullam nisi sint, debitis pariatur doloribus aliquam aspernatur sit beatae tenetur deserunt, illum libero earum temporibus porro corporis, cumque exercitationem cum ut! Ipsam ducimus et expedita repudiandae consequatur nam quos, quae velit aperiam, asperiores sint nisi corporis.",
-                media: ["/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg","/images/feminin1.jpg", "/images/feminin.jpeg", ],
+                media: ["/images/feminin1.jpg", "/images/feminin.jpeg", "/images/feminin1.jpg", "/images/feminin.jpeg", "/images/feminin1.jpg", "/images/feminin.jpeg", "/images/feminin1.jpg", "/images/feminin.jpeg",],
                 ajouteLe: "27/10/2024",
                 commentaire: [
                     {
@@ -401,6 +421,15 @@ export const articles: Categorie[] = [
                     validite: 12,
                     date: "28/01/2025"
                 },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
+                }
             }
         ]
     },
@@ -543,6 +572,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -652,6 +690,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "brouillon",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             }
         ]
@@ -796,6 +843,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "brouillon",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -905,6 +961,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             }
         ]
@@ -978,6 +1043,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "publie",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             }
         ]
@@ -1092,6 +1166,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "brouillon",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -1201,6 +1284,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "corbeille",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             },
             {
@@ -1308,6 +1400,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "corbeille",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             }
         ]
@@ -1420,6 +1521,15 @@ export const articles: Categorie[] = [
                     cout: 0,
                     validite: 12,
                     date: "28/01/2025"
+                },
+                statut: "corbeille",
+                auteur: {
+                    id: 0,
+                    nom: "Admin",
+                    email: "admin@tyju.com",
+                    pseudo: "admin",
+                    createdAt: "2021/12/02",
+                    role: "admin"
                 }
             }
         ]

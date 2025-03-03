@@ -15,10 +15,7 @@ interface DatePickerWithRangeProps {
 }
 
 export function DatePick({ onChange }: DatePickerWithRangeProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2025, 0, 20),
-    to: addDays(new Date(2025, 0, 20), 20),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>();
 
   return (
     <div className={cn("grid gap-2")}>
@@ -27,9 +24,8 @@ export function DatePick({ onChange }: DatePickerWithRangeProps) {
           <Button
             id="date"
             variant={"outline"}
-            className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+            className={cn("w-fit h-[40px] font-ubuntu rounded-none justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
-            <CalendarIcon />
             {date?.from ? (
               date.to ? (
                 <>
@@ -39,8 +35,9 @@ export function DatePick({ onChange }: DatePickerWithRangeProps) {
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Filtrer par date</span>
             )}
+            <CalendarIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">

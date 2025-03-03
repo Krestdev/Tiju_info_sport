@@ -8,9 +8,10 @@ import Info from './Info';
 
 
 interface Aff {
-    gridAff: Categorie[]
+    gridAff: Categorie[];
+    couleur: string;
 }
-const GridInfo = ({ gridAff }: Aff) => {
+const GridInfo = ({ gridAff, couleur }: Aff) => {
 
     const isImage = (media: string | undefined): boolean => {
         if (!media) return false;
@@ -27,7 +28,7 @@ const GridInfo = ({ gridAff }: Aff) => {
                 <Button className='uppercase rounded-none'><Link href={""}>{"Tout voir"}</Link></Button>
             </div>
             <div className='w-full flex flex-row gap-10 px-7'>
-                <Info article={article[0]} taille={'max-w-[592px] max-h-[333px]'} />
+                <Info article={article[0]} taille={'max-w-[592px] max-h-[333px]'} couleur={couleur} />
                 <div className='flex flex-col gap-5'>
                     {
                         article.slice(0, 3).map((x, i) => (

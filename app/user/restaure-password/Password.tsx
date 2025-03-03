@@ -21,11 +21,10 @@ const form2Schema = z.object({
 });
 
 interface Props {
-    setActive: (value: React.SetStateAction<number>) => void
     email: string
 }
 
-const Password = ({ setActive, email }: Props) => {
+const Password = ({ email }: Props) => {
 
     const { editUser, dataUsers } = useStore();
     const [message, setMessage] = useState("")
@@ -57,7 +56,6 @@ const Password = ({ setActive, email }: Props) => {
                     ...user?.find(x => x.email === email),
                     password: values.cfpassword
                 })
-                setActive(3)
             } else {
                 setMessage("Les mots de passes doivent correspondre")
             }
@@ -99,7 +97,7 @@ const Password = ({ setActive, email }: Props) => {
                             </FormItem>
                         )}
                     />
-                    <Button type='submit' className='max-w-[360px] w-full'>{"Envoyer le code"}</Button>
+                    <Button type='submit' className='max-w-[360px] w-full'>{"Modifier"}</Button>
                 </form>
             </Form>
         </div>

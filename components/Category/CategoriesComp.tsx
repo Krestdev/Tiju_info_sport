@@ -155,7 +155,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 </div>
             }
             <div className='flex flex-col justify-center md:flex-row gap-7'>
-                <div className='flex flex-col items-center'>
+                <div className='h-fit flex flex-col items-center sticky top-0'>
                     <div className='max-w-[824px] w-full flex flex-col gap-7'>
                         <Link href={path === '/user/category' ? `/user/category/${sim1?.nom}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7'>
                             <div key={premier?.id} className={`relative max-w-[824px] max-h-[320px] h-full w-full`}>
@@ -191,7 +191,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         <div className='flex flex-col gap-7'>{renderList()}</div>
                     </div>
                 </div>
-                <div className={`${tail} md:max-h-full h-full overflow-hidden max-w-[360px] w-full flex flex-col gap-7 px-7 py-5 md:py-0`}>
+                <div className={`${tail} md:max-h-full h-full overflow-hidden max-w-[360px] w-full flex flex-col gap-7 px-7 py-5 md:py-0 sticky top-0`}>
                     <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={favorite?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={ad} />
                     <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={favorite?.slice().flatMap(cat => cat.donnees.slice()).slice(0, 8)} pubs={ad?.slice().reverse()} />
                 </div>

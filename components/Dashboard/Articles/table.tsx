@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import ModalWarning from "@/components/modalWarning";
@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import AddPubsForm from "./addPubsForm";
 // import EditPubsForm from "./editPubsForm";
 import FullScreen from "../FullScreen";
-import { Article } from "@/data/temps";
+import { Article, Categorie } from "@/data/temps";
 import AddArticleForm from "./addArticleForm";
 import EditArticleForm from "./editArticleForm";
 import { FiEdit } from "react-icons/fi";
@@ -67,8 +67,10 @@ function ArticleTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Article[]>()
-    const [full, setFull] = useState(false)
+    const [sport, setSport] = useState<Article[]>();
+    const [full, setFull] = useState(false);
+    const [current, setCurrent] = useState("tous");
+    const [article, setArticle] = useState<Categorie[]>();
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
@@ -77,6 +79,7 @@ function ArticleTable() {
     useEffect(() => {
         if (articleData.isSuccess) {
             setSport(articleData.data.flatMap(x => x.donnees))
+            setArticle(articleData.data)
         }
     }, [articleData.data])
 
@@ -92,41 +95,40 @@ function ArticleTable() {
 
     const filterData = useMemo(() => {
         if (!sport) {
-            setRein(false)
-            return []
-        };
-
-        if (rein) {
-            setRein(false)
-            return sport
+            setRein(false);
+            return [];
         }
-        return sport.filter((item) => {
-            setRein(false)
-            if (!dateRange?.from) return true;
-            const itemDate = toNormalDate(item.ajouteLe);
-            return (
-                itemDate >= dateRange.from &&
-                (dateRange.to ? itemDate <= dateRange.to : true)
+    
+        let filtered = sport;
+    
+        // Filtrage par date
+        if (!rein) {
+            filtered = filtered.filter((item) => {
+                if (!dateRange?.from) return true;
+                const itemDate = toNormalDate(item.ajouteLe);
+                return (
+                    itemDate >= dateRange.from &&
+                    (dateRange.to ? itemDate <= dateRange.to : true)
+                );
+            });
+        } else {
+            setRein(false);
+        }
+    
+        // Filtrage par recherche
+        if (searchEntry !== "") {
+            filtered = filtered.filter((el) =>
+                Object.values(el).some((value) =>
+                    String(value)
+                        .toLocaleLowerCase()
+                        .includes(searchEntry.toLocaleLowerCase())
+                )
             );
-        });
-
-    }, [rein, sport, dateRange]);
-
-
-    //Updated data with search implemented
-    //to do: change data articles for data
-    // const filterData = useMemo(() => {
-    //     if (!sport) return [];
-    //     if (searchEntry === "") return sport;
-    //     return sport.filter((el) =>
-    //         Object.values(el).some((value) =>
-    //             String(value)
-    //                 .toLocaleLowerCase()
-    //                 .includes(searchEntry.toLocaleLowerCase())
-    //         )
-    //     );
-    //     //to do: complete this code
-    // }, [searchEntry, sport]);
+        }
+    
+        return filtered;
+    }, [rein, sport, dateRange, searchEntry]);
+    
 
 
     //Delete function
@@ -138,26 +140,31 @@ function ArticleTable() {
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage);
+    const currentItems = current === "tous" ?
+        filterData.slice(startIndex, startIndex + itemsPerPage) :
+        filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.statut === current);
+
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
     return (
-        <div className="w-full">
-            <span className="flex flex-wrap items-center justify-end gap-5 mb-10">
-                {/* <span className="relative max-w-sm w-full">
+        <div className="w-full flex flex-col gap-5 px-7 py-10">
+            <h1 className="uppercase text-[52px]">{"Tous Les Articles"}</h1>
+            <div className="flex flex-row items-center gap-3">
+                <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
+                <Button onClick={() => setCurrent("publie")} className={`shadow-none text-[16px] rounded-[6px] ${current === "publie" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
+                <Button onClick={() => setCurrent("brouillon")} className={`shadow-none text-[16px] rounded-[6px] ${current === "brouillon" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
+                <Button onClick={() => setCurrent("corbeille")} className={`shadow-none text-[16px] rounded-[6px] ${current === "corbeille" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
+            </div>
+            <span className="flex flex-wrap items-center gap-5">
+                <span className="relative max-w-sm w-full">
                     <Input
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Rechercher un utilisateur"
-                        className="max-w-lg pr-3"
+                        placeholder="Nom de l'article"
+                        className="max-w-lg h-[40px] rounded-none"
                     />
-                    <Search
-                        size={16}
-                        className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 ${searchEntry != "" && "hidden"
-                            }`}
-                    />
-                </span> */}
+                </span>
                 <div className="flex gap-2 items-center">
                     <SlRefresh className="cursor-pointer size-5"
                         onClick={() => {
@@ -166,10 +173,10 @@ function ArticleTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
-                <AddArticleForm addButton={"Ajouter un article"} />
+
             </span>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     {articleData.isLoading && "Loading"}
                     {articleData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
@@ -180,9 +187,9 @@ function ArticleTable() {
                                     <FormItem>
 
                                         <FormControl>
-                                            <Table>
+                                            <Table className="border divide-x">
                                                 <TableHeader>
-                                                    <TableRow className="text-[18px]">
+                                                    <TableRow className="text-[18px] capitalize font-normal">
                                                         <TableHead>
                                                             <Checkbox
                                                                 checked={currentItems.length > 0 && field.value?.length === currentItems.length}
@@ -191,21 +198,21 @@ function ArticleTable() {
                                                                 }}
                                                             />
                                                         </TableHead>
-                                                        <TableHead>{"type"}</TableHead>
                                                         <TableHead>{"titre"}</TableHead>
-                                                        <TableHead>{"Image"}</TableHead>
-                                                        <TableHead>{"Nbr Likes"}</TableHead>
-                                                        <TableHead>{"Nbr Commentaires"}</TableHead>
-                                                        <TableHead>{"Ajouté le"}</TableHead>
+                                                        <TableHead>{"Auteur"}</TableHead>
+                                                        <TableHead>{"Categories"}</TableHead>
+                                                        <TableHead>{"Date"}</TableHead>
+                                                        <TableHead>{"statut"}</TableHead>
+                                                        {/* <TableHead>{"Nbr Commentaires"}</TableHead>
                                                         <TableHead>{"Type d'abonnement"}</TableHead>
-                                                        <TableHead>{"Actions"}</TableHead>
+                                                        <TableHead>{"Actions"}</TableHead> */}
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {currentItems.map((item, id) => {
                                                         return (
                                                             <TableRow className="text-[16px]" key={id}>
-                                                                <TableCell>
+                                                                <TableCell className="border">
                                                                     <Checkbox
                                                                         checked={field.value?.includes(item.id)}
                                                                         onCheckedChange={(checked) => {
@@ -219,19 +226,22 @@ function ArticleTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell>{item.type}</TableCell>
-                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[200px] w-full">{item.titre}</TableCell>
-                                                                <TableCell onClick={() => setFull(!full)} className="cursor-pointer">
+                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.titre}</TableCell>
+                                                                <TableCell className="border">{item.auteur?.nom}</TableCell>
+                                                                <TableCell className="border">{item.type}</TableCell>
+                                                                <TableCell className="border">{item.ajouteLe}</TableCell>
+                                                                <TableCell className="border">{item.statut}</TableCell>
+
+
+                                                                {/* <TableCell onClick={() => setFull(!full)} className="cursor-pointer border">
                                                                     {item.media &&
                                                                         <FullScreen image={item.media[0]}>
                                                                             <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
                                                                         </FullScreen>}
-                                                                </TableCell>
-
-                                                                <TableCell>{item.like.length}</TableCell>
-                                                                <TableCell>{item.commentaire.length}</TableCell>
-                                                                <TableCell>{item.ajouteLe}</TableCell>
-                                                                <TableCell>{item.abonArticle.nom}</TableCell>
+                                                                </TableCell> */}
+                                                                {/* <TableCell className="border">{item.like.length}</TableCell>
+                                                                <TableCell className="border">{item.commentaire.length}</TableCell>
+                                                                <TableCell className="border">{item.abonArticle.nom}</TableCell>
                                                                 <TableCell className="flex gap-2 items-center">
                                                                     <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
                                                                         <Button
@@ -255,7 +265,9 @@ function ArticleTable() {
                                                                             <FaRegEye size={"20px"} />
                                                                         </Button>
                                                                     </ShowArticle>
-                                                                </TableCell>
+                                                                </TableCell> */}
+
+
                                                             </TableRow>
                                                         )
                                                     }

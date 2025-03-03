@@ -30,7 +30,7 @@ const Head = ({ gridAff }: Aff) => {
                             <div
                                 className="flex items-center justify-center"
                             >
-                                <Info article={x} taille={'max-w-[824px] max-h-[320px]'}  />
+                                <Info article={x} taille={'max-w-[824px] max-h-[320px]'} couleur={'bg-[#01AE35]'}  />
                             </div>
                         </CarouselItem>
                     ))}

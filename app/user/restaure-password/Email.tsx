@@ -16,12 +16,7 @@ const formSchema = z.object({
     email: z.string().email(),
 });
 
-interface Props {
-    setActive: (value: React.SetStateAction<number>) => void
-    setEmail: React.Dispatch<React.SetStateAction<string>>
-}
-
-const Email = ({ setActive, setEmail }: Props) => {
+const Email = () => {
 
     const { dataUsers } = useStore()
     const [users, setUsers] = useState<Users[]>()
@@ -48,8 +43,8 @@ const Email = ({ setActive, setEmail }: Props) => {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             if (users?.some(x => x.email === values.email)) {
-                setActive(1)
-                setEmail(values.email)
+                console.log(values);
+                
             } else {
                 setMessage("L'adresse email saisie n'existe")
             }
@@ -59,7 +54,7 @@ const Email = ({ setActive, setEmail }: Props) => {
     }
     return (
         <div className='flex flex-col items-center gap-10 px-7 py-20'>
-            <h1 className='uppercase text-[52px] leading-[52px] !font-medium'>{"Récuperation de compte"}</h1>
+            <h1 className='uppercase text-[40px] leading-[52px] !font-medium'>{"Récuperation de compte"}</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col gap-5">
@@ -78,7 +73,7 @@ const Email = ({ setActive, setEmail }: Props) => {
                             </FormItem>
                         )}
                     />
-                    <Button type='submit' className='w-[384px] rounded-none'>{"Envoyer le code"}</Button>
+                    <Button type='submit' className='w-[384px] rounded-none'>{"Envoyer"}</Button>
                 </form>
             </Form>
         </div>
