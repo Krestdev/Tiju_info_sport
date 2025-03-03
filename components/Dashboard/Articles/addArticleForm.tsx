@@ -118,7 +118,9 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                     user: currentAdmin!,
                     abonArticle: subs?.find(x => x.nom === values.abonArticle)!,
                     commentaire: [],
-                    like: []
+                    like: [],
+                    statut: "",
+                    auteur: currentAdmin
                 }
             ]
         });
