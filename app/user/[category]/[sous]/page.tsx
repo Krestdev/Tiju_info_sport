@@ -9,15 +9,9 @@ import withAuth from '@/lib/withAuth';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react'
 
-interface Result {
-    id: number | undefined;
-    titre: string | undefined;
-    nom: string;
-    media: string[] | undefined;
-}
 
-const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => {
-    const param = React.use(params);
+const page = ({ params }: { params: Promise<{ sous: string, id: string }> }) => {
+    const param = React.use(params)
 
     const { dataArticles, dataPubs } = useStore();
     const [article, setArticle] = useState<Article[]>();
@@ -34,33 +28,22 @@ const page = ({ params }: { params: Promise<{ type: string, id: string }> }) => 
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            setArticle(articleData.data.find(x => x.nom.trimEnd() === decodeURIComponent(param.type))?.donnees.map(
 
-                x => (
-                    {
-                        ...x,
-                        id: x.id,
-                        nom: x.type,
-                        titre: x.titre,
-                        media: x.media
-                    }
-                )
-            ))
+            setArticle(articleData.data.flatMap(x => x.donnees).filter(x => x.type === decodeURIComponent(param.sous)))
         }
-    }, [articleData.data, param.type, param.id]);
+    }, [articleData.data, param.sous, param.id]);
     useEffect(() => {
         if (pubData.isSuccess) {
             setPub(pubData.data)
         }
     }, [pubData.data])
 
-
     return (
         <div className='containerBloc items-center pb-[60px]'>
             <div className='px-7 py-5 md:py-10'>
                 <PubsComp pub={pub} taille={'h-[180px]'} clip={''} />
             </div>
-            <CategoryComp article={article} ad={pub} categorie={articleData.data} favorite={undefined} />
+            <CategoryComp article={article} ad={pub} categorie={articleData.data} />
         </div>
     )
 }

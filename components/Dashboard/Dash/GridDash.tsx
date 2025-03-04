@@ -1,16 +1,4 @@
-import { ArrowRight } from 'lucide-react';
 import React from 'react'
-import { IconType } from 'react-icons/lib';
-
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 
 interface Props {
     tableau: {

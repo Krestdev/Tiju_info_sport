@@ -32,7 +32,7 @@ const Footbar = () => {
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                     <img src="/logo.png" alt="Logo" className='size-[50px]' />
-                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{"TYJU INFO SPORTS"}</p>
+                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] flex'>{"TYJU INFO SPORTS"}</p>
                 </Link>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
@@ -66,7 +66,7 @@ const Footbar = () => {
                         <div className='flex flex-col gap-2'>
                             {
                                 [...new Set(categorie[0].donnees?.map(x => x.type))].map((x, i) => (
-                                    <Link href={`/user/detail-article/`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
+                                    <Link href={`/user/${categorie[0].nom}/${x}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
                                 ))
                             }
                         </div>
