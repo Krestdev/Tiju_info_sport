@@ -29,7 +29,7 @@ function  ModalWarning({ children, id, action, name="an element" }: Props) {
             {`You are about to delete ${name}`}
           </DialogDescription>
         </DialogHeader>
-        <span className="flex gap-3 flex-wrap items-center">
+        <span className="flex gap-3 flex-wrap items-center justify-center">
           <DialogClose asChild>
             <Button variant={"destructive"} onClick={()=>action(id)}>
               {"Delete"}

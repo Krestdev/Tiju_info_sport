@@ -4,6 +4,8 @@ import {
   Article,
   articles,
   Categorie,
+  categories,
+  Categories,
   comment,
   publicites,
   Pubs,
@@ -16,6 +18,7 @@ import { persist } from "zustand/middleware";
 
 interface store {
   settings: any;
+  dataCategorie: Categories[]
   dataArticles: Categorie[];
   dataPubs: Pubs[];
   dataUsers: Users[];
@@ -86,6 +89,7 @@ const initialData: store = {
   currentAdmin: null,
   isFull: true,
   search: [],
+  dataCategorie: categories
 };
 
 const useStore = create<store & actions>()(

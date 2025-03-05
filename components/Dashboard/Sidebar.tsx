@@ -22,7 +22,7 @@ import { ChevronDown, ChevronRight, ChevronUp, LucideCircleDollarSign } from "lu
 import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuSettings } from "react-icons/lu";
+import { LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuFolderOpen, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuSettings } from "react-icons/lu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useState } from "react";
 
@@ -46,7 +46,7 @@ const items = [
             },
             {
                 nom: "Ajouter un article",
-                lien: "",
+                lien: "/dashboard/articles/add-article",
                 icon: LuCirclePlus
             },
         ],
@@ -56,14 +56,36 @@ const items = [
         url: "/dashboard/comment",
         icon: LuMessageSquare,
         param: true,
-        parametre: [],
+        parametre: [
+            {
+                nom: "Signalés",
+                lien: "/dashboard/comment?tab=signale",
+                icon: LuFiles
+            },
+            {
+                nom: "Tous les commentaire",
+                lien: "/dashboard/comment",
+                icon: LuFiles
+            },
+        ],
     },
     {
         title: "Catégories",
         url: "/dashboard/comment",
         icon: LuFolder,
         param: true,
-        parametre: [],
+        parametre: [
+            {
+                nom: "Ajouter une catégorie",
+                lien: "/dashboard/categories/add-category",
+                icon: LuFolderOpen
+            },
+            {
+                nom: "Toutes les catégories",
+                lien: "/dashboard/comment",
+                icon: LuFolder
+            },
+        ],
     },
     {
         title: "Abonnements",

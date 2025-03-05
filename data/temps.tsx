@@ -1,5 +1,12 @@
 // Type de données
 
+export interface Categories {
+    id: number,
+    nom: string,
+    description: string,
+    parent?: Categories
+}
+
 export interface Categorie {
     nom: string;
     donnees: Article[];
@@ -60,11 +67,70 @@ export interface comment {
     reponse: comment[]
     like: Omit<Users, "password">[];
     signals: Omit<Users, "password">[];
-    date: string
+    date: string,
+    delete: boolean
 };
 
 
 //Données temp
+
+export const categories: Categories[] = [
+    {
+        nom: "Football",
+        description: "",
+        id: 0
+    },
+    {
+        nom: "Handball",
+        description: "",
+        id: 1
+    },
+    {
+        nom: "BasketBall",
+        description: "",
+        id: 2
+    },
+    {
+        nom: "VolleyBall",
+        description: "",
+        id: 3
+    },
+    {
+        nom: "Boxe",
+        description: "",
+        id: 4
+    },
+    {
+        nom: "League 1",
+        description: "",
+        parent: {
+            nom: "Football",
+            description: "",
+            id: 0
+        },
+        id: 5
+    },
+    {
+        nom: "FecaHand",
+        description: "",
+        parent: {
+            nom: "Handball",
+            description: "",
+            id: 1
+        },
+        id: 0
+    },
+    {
+        nom: "MMA",
+        description: "",
+        parent: {
+            nom: "Boxe",
+            description: "",
+            id: 4
+        },
+        id: 6
+    },
+]
 
 
 export const articles: Categorie[] = [
@@ -106,7 +172,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -224,7 +291,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [],
@@ -326,12 +394,14 @@ export const articles: Categorie[] = [
                                 reponse: [],
                                 like: [],
                                 signals: [],
-                                date: "12-01-2024"
+                                date: "12-01-2024",
+                                delete: true
                             },
                         ],
                         like: [],
                         signals: [],
-                        date: "12-01-2024"
+                        date: "12-01-2024",
+                        delete: false
                     },
                     {
                         id: 1,
@@ -360,7 +430,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: "12-01-2024"
+                        date: "12-01-2024",
+                        delete: false
                     },
                     {
                         id: 2,
@@ -389,7 +460,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: "12-01-2024"
+                        date: "12-01-2024",
+                        delete: true
                     },
                 ],
                 like: [],
@@ -471,7 +543,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     },
                     {
                         id: 69,
@@ -500,7 +573,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -618,7 +692,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -742,7 +817,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     },
                     {
                         id: 69,
@@ -771,7 +847,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -889,7 +966,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -1012,7 +1090,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [],
@@ -1094,7 +1173,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -1212,7 +1292,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [
@@ -1330,7 +1411,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [{
@@ -1451,7 +1533,8 @@ export const articles: Categorie[] = [
                         reponse: [],
                         like: [],
                         signals: [],
-                        date: ""
+                        date: "",
+                        delete: false
                     }
                 ],
                 like: [{

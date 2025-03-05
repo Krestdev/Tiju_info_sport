@@ -118,7 +118,8 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                 message: commentaire,
                 reponse: [],
                 like: [],
-                signals: []
+                signals: [],
+                delete: false
             };
             addComment(newComment, details.id);
             setCommentaire("");
@@ -194,7 +195,8 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                 message: response,
                 reponse: [],
                 like: [],
-                signals: []
+                signals: [],
+                delete: false
             };
 
             // Appelle la fonction addComment pour ajouter le commentaire
@@ -463,7 +465,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
                                     <div className='flex flex-col pt-8'>
                                         {
-                                            details.commentaire.map(x => {
+                                            details.commentaire.filter(a => a.delete === false).map(x => {
                                                 return (
                                                     <div key={x.id} className='flex flex-row py-3 gap-3'>
                                                         <img src={x.user?.photo ? x.user?.photo : '/images/no-user.jpg'} alt="" className='size-10 object-cover rounded-full' />
@@ -566,7 +568,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                             }
                                                             {
                                                                 showReponses[x.id] &&
-                                                                x.reponse.map(a => (
+                                                                x.reponse.filter(s => s.delete === false).map(a => (
                                                                     <div key={a.id} className='flex flex-row py-3 gap-3'>
                                                                         <img src={a.user?.photo ? a.user?.photo : '/images/no-user.jpg'} alt="" className='size-10 object-cover rounded-full' />
                                                                         <div className='flex flex-col gap-2'>

@@ -1,5 +1,5 @@
 import { Article, Categorie, Pubs } from '@/data/temps';
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Similaire from '../DetailArticle/Similaire';
 import PubsComp from '../PubsComp';
 import Info from '../Accueil/Info';
@@ -21,7 +21,8 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
     const { favorite } = useStore()
     const [tail, setTail] = useState("max-h-[379px]")
     const [display, setDisplay] = useState(article)
-    const [selected, setSelected] = useState("");
+    // const [selected, setSelected] = useState("");
+    
 
     const handleVoirtout = () => {
         setTail("");
@@ -108,7 +109,11 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
 
     const pathname = usePathname();
     const categoryId = decodeURIComponent(pathname?.split('/').pop()!);
-    
+
+    const selected = useMemo(() => {
+        return decodeURIComponent(pathname?.split('/').pop()!);
+    }, [pathname]);
+
     const liste = article && categorie?.find(x => x.donnees.find(x => x.type === article[0].type))
 
     return (
@@ -128,9 +133,9 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             }
             <div className='flex flex-row gap-1 px-7 py-3 overflow-x-auto scrollbar-hide'>
                 {
-                    [...new Set(liste?.donnees?.map(x => x.type))]
+                    [...new Set(liste?.donnees?.map(a => a.type))]
                         .map((x, i) => (
-                            <Button onClick={() => setSelected(x)} variant={"outline"} className={`rounded-none ${selected === x ? "" : ""}`} key={i}>
+                            <Button variant={"outline"} className={`rounded-none ${selected === x ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white" : ""}`} key={i}>
                                 <Link href={`/user/${categoryId}/${x}`}>{x}</Link>
                             </Button>
                         ))
