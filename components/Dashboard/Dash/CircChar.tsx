@@ -1,19 +1,21 @@
 "use client"
 
+import { TrendingUp } from "lucide-react"
 import { Pie, PieChart } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart"
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
@@ -51,21 +53,31 @@ const chartConfig = {
 
 const CircChar = () => {
   return (
-    <Card className="flex flex-col">
-      <CardContent className="flex-1 pb-0">
+    <Card className="w-full flex flex-row h-[208px]">
+      <CardContent className="flex-1 flex items-center flex-row pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[208px]"
+          className="aspect-square max-h-[250px]"
         >
-          <PieChart className="flex flex-row gap-3">
-            <Pie data={chartData} dataKey="visitors" />
-            <ChartLegend
-              content={<ChartLegendContent nameKey="browser" />}
-              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
             />
+            <Pie data={chartData} dataKey="visitors" nameKey="browser" />
           </PieChart>
         </ChartContainer>
+        <div className="flex flex-col gap-2">
+          {chartData.map((x, i) => (
+            <div key={i} className="flex flex-row items-center gap-2">
+              <div style={{ backgroundColor: x.fill }} className="w-[41px] h-[18px] rounded"></div>
+              <p>{x.browser}</p>
+            </div>
+          ))}
+        </div>
+
       </CardContent>
+
     </Card>
   )
 }

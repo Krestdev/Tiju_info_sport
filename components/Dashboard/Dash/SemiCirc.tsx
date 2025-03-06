@@ -34,66 +34,10 @@ const SemiCirc = () => {
     const totalVisitors = chartData[0].desktop + chartData[0].mobile
 
     return (
-        <Card className="flex flex-col">
-            <CardContent className="flex flex-1 items-center pb-0">
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto flex items-center justify-center aspect-square w-full max-w-[250px]"
-                >
-                    <RadialBarChart
-                        data={chartData}
-                        endAngle={180}
-                        innerRadius={80}
-                        outerRadius={130}
-                    >
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                            <Label
-                                content={({ viewBox }) => {
-                                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                        return (
-                                            <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) - 16}
-                                                    className="fill-foreground text-2xl font-bold"
-                                                >
-                                                    {totalVisitors.toLocaleString()}
-                                                </tspan>
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) + 4}
-                                                    className="fill-muted-foreground"
-                                                >
-                                                    Visitors
-                                                </tspan>
-                                            </text>
-                                        )
-                                    }
-                                }}
-                            />
-                        </PolarRadiusAxis>
-                        <RadialBar
-                            dataKey="desktop"
-                            stackId="a"
-                            cornerRadius={5}
-                            fill="var(--color-desktop)"
-                            className="stroke-transparent stroke-2"
-                        />
-                        <RadialBar
-                            dataKey="mobile"
-                            fill="var(--color-mobile)"
-                            stackId="a"
-                            cornerRadius={5}
-                            className="stroke-transparent stroke-2"
-                        />
-                    </RadialBarChart>
-                </ChartContainer>
-            </CardContent>
-        </Card>
+        <div className="flex flex-col items-center justify-center h-[140px] gap-3 px-5 py-3">
+            <p className="font-bold text-[40px] leading-[52px]">6432</p>
+            <p className="text-[16px] leading-[20.8px] text-[#545454]">visites</p>
+        </div>
     )
 }
 

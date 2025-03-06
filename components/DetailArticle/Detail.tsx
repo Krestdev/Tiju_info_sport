@@ -14,8 +14,6 @@ import { useForm } from 'react-hook-form';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import PubsComp from '../PubsComp';
-import Similaire from './Similaire';
-import GridSport from '../GridSport';
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import FullScreen from '../Dashboard/FullScreen';

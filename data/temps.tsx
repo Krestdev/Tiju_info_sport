@@ -31,9 +31,11 @@ export interface Article {
 export interface Pubs {
     id: number;
     nom: string;
+    type: string
     lien: string;
     image: string;
-    date: string;
+    dateDebut: string;
+    dateFin: string;
 };
 
 export interface Users {
@@ -1624,15 +1626,19 @@ export const publicites: Pubs[] = [
         id: 1,
         lien: "https://google.com",
         image: "/images/pub1.jpeg",
-        date: "2024-12-12",
         nom: "Orange CM",
+        type: "large",
+        dateDebut: "2024-12-12",
+        dateFin: "2025-03-12"
     },
     {
         id: 2,
         lien: "https://google.com",
         image: "/images/pub.jpg",
-        date: "2025-01-12",
         nom: "Boutique Socrate",
+        type: "large",
+        dateDebut: "2024-12-12",
+        dateFin: "2025-03-12"
     },
 ];
 

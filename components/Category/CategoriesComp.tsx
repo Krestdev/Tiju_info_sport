@@ -108,7 +108,8 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
     const sim1 = categorie?.find(x => x.donnees.some(x => x.id === premier?.id))
 
     const pathname = usePathname();
-    const categoryId = decodeURIComponent(pathname?.split('/').pop()!);
+
+    
 
     const selected = useMemo(() => {
         return decodeURIComponent(pathname?.split('/').pop()!);
@@ -125,7 +126,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                             <h1 className='uppercase'>{"Catégories"}</h1>
                         </div> :
                         <div className='flex items-center gap-4 px-7 py-4'>
-                            <h1 className='uppercase'>{categoryId}</h1>
+                            <h1 className='uppercase'>{sim1?.nom}</h1>
                             <Button className=' flex gap-2 bg-[#FF0068] rounded-none'><LuPlus className='size-5' />{"Ajouter aux favoris"}</Button>
                         </div>
                     }
@@ -136,7 +137,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     [...new Set(liste?.donnees?.map(a => a.type))]
                         .map((x, i) => (
                             <Button variant={"outline"} className={`rounded-none ${selected === x ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white" : ""}`} key={i}>
-                                <Link href={`/user/${categoryId}/${x}`}>{x}</Link>
+                                <Link href={`/user/${sim1?.nom}/${x}`}>{x}</Link>
                             </Button>
                         ))
                 }

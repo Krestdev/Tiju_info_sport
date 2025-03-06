@@ -11,7 +11,7 @@ interface Props {
 
 const GridDash = ({ tableau }: Props) => {
     return (
-        <div className='flex flex-row gap-3 px-5 py-3 max-h-[140px] h-full w-full'>
+        <div className='flex flex-row gap-3 px-5 py-3 h-[140px] w-full'>
             {
                 tableau.map((x, i) => {
                     return (

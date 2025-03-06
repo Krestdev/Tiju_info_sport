@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Abonnement } from "@/data/temps";
+import { LuUserRoundPlus } from "react-icons/lu";
 
 const formSchema = z
     .object({
@@ -55,11 +56,11 @@ function AddUserForm({ addButton }: { addButton: string }) {
 
     const queryClient = useQueryClient();
     const abonData = useQuery({
-        queryKey : ["abonnement"],
+        queryKey: ["abonnement"],
         queryFn: async () => dataSubscription
     })
 
-    useEffect(()=>{
+    useEffect(() => {
         if (abonData.isSuccess) {
             setAbon(abonData.data)
         }
@@ -107,8 +108,8 @@ function AddUserForm({ addButton }: { addButton: string }) {
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant={"default"}>
-                    <TbUserPlus size={20} />
+                <Button className="rounded-none font-ubuntu font-normal">
+                    <LuUserRoundPlus />
                     {addButton}
                 </Button>
             </DialogTrigger>

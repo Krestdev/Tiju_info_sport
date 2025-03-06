@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import useStore from '@/context/store'
+import { Categories } from '@/data/temps'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
@@ -19,16 +20,16 @@ const formSchema = z.object({
 const AddCategory = () => {
 
     const { dataCategorie, addCategory } = useStore();
-    const [parent, setParent] = useState<string[]>();
+    const [parent, setParent] = useState<Categories[]>();
 
-    const articleData = useQuery({
-        queryKey: ["articles"],
+    const cateData = useQuery({
+        queryKey: ["category"],
         queryFn: async () => dataCategorie
     });
 
     useEffect(() => {
-        if (articleData.isSuccess) {
-            setParent(articleData.data.flatMap(x => x.nom))
+        if (cateData.isSuccess) {
+            setParent(cateData.data.filter(x => !x.parent))
         }
     }, [])
 
@@ -87,7 +88,7 @@ const AddCategory = () => {
                     name="parent"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{"Catégorie"}</FormLabel>
+                            <FormLabel>{"Catégorie parent"}</FormLabel>
                             <FormControl>
                                 <Select
                                     onValueChange={(value) => field.onChange(value === "none" ? undefined : value)}
@@ -99,8 +100,8 @@ const AddCategory = () => {
                                     <SelectContent className="border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2">
                                         <SelectItem value="none">{"Sélectionner une catégorie"}</SelectItem>
                                         {parent?.map((x, i) => (
-                                            <SelectItem key={i} value={x}>
-                                                {x}
+                                            <SelectItem key={i} value={x.nom}>
+                                                {x.nom}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -110,7 +111,7 @@ const AddCategory = () => {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className='rounded-none max-w-[384px] w-full'>{"Ajouter"}</Button>
+                <Button onClick={() => console.log(form.getValues())}  type="submit" className='rounded-none max-w-[384px] w-full'>{"Ajouter"}</Button>
 
             </form>
 

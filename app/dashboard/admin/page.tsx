@@ -1,10 +1,10 @@
-import CategoryTable from '@/components/Dashboard/Categories/table'
+import AdminTable from '@/components/Dashboard/Admin/table'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <CategoryTable />
+      <AdminTable />
     </div>
   )
 }

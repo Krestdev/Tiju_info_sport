@@ -1,5 +1,5 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -10,30 +10,19 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { Search, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
-import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import EditUserForm from "./editUserForm";
-// import AddPubsForm from "./addPubsForm";
-// import EditPubsForm from "./editPubsForm";
-import FullScreen from "../FullScreen";
 import { Article, Categorie } from "@/data/temps";
-import AddArticleForm from "./addArticleForm";
-import EditArticleForm from "./editArticleForm";
-import { FiEdit } from "react-icons/fi";
-import { FaRegEye } from "react-icons/fa";
 import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
 import Pagination from "../Pagination";
-import ShowArticle from "./showArticle";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -148,7 +137,7 @@ function ArticleTable() {
 
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
-            <h1 className="uppercase text-[52px]">{"Tous Les Articles"}</h1>
+            <h1 className="uppercase text-[40px]">{"Tous Les Articles"}</h1>
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("publie")} className={`shadow-none text-[16px] rounded-[6px] ${current === "publie" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>

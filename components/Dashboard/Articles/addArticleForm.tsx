@@ -254,8 +254,8 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                                                     <button
                                                         type="button"
                                                         onClick={() => {
-                                                            setSelectedFiles([]); // Réinitialiser l'état
-                                                            field.onChange([]); // Réinitialiser le champ du formulaire
+                                                            setSelectedFiles([]); 
+                                                            field.onChange([]);
                                                         }}
                                                         className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
                                                     >

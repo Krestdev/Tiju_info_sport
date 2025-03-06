@@ -55,7 +55,7 @@ const items = [
         title: "Commentaires",
         url: "/dashboard/comment",
         icon: LuMessageSquare,
-        param: true,
+        param: false,
         parametre: [
             {
                 nom: "Signalés",
@@ -82,7 +82,7 @@ const items = [
             },
             {
                 nom: "Toutes les catégories",
-                lien: "/dashboard/comment",
+                lien: "/dashboard/categories",
                 icon: LuFolder
             },
         ],
@@ -99,14 +99,36 @@ const items = [
         url: "/dashboard/pubs",
         icon: LuMegaphone,
         param: true,
-        parametre: [],
+        parametre: [
+            {
+                nom: "Toutes les publicité",
+                lien: "/dashboard/pubs",
+                icon: LuFolderOpen
+            },
+            {
+                nom: "Ajouter une publicité",
+                lien: "/dashboard/categories",
+                icon: LuFolder
+            },
+        ],
     },
     {
         title: "Utilisateurs",
         url: "/dashboard/users",
         icon: LuCircleUser,
         param: true,
-        parametre: [],
+        parametre: [
+            {
+                nom: "Utilisateurs",
+                lien: "/dashboard/users",
+                icon: LuFolderOpen
+            },
+            {
+                nom: "Administration",
+                lien: "/dashboard/admin",
+                icon: LuFolder
+            },
+        ],
     },
     {
         title: "Paramètre du site",

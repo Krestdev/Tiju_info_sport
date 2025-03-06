@@ -12,9 +12,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Input } from '@/components/ui/input';
 import LexicalEditor from './LexicalEditor';
 import { Textarea } from '@/components/ui/textarea';
-import { LuPlus } from 'react-icons/lu';
+import { LuEye, LuPlus } from 'react-icons/lu';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { IoMdAdd, IoMdClose } from 'react-icons/io';
+import { BiShow } from 'react-icons/bi';
+import { GrFormClose } from 'react-icons/gr';
+import { Categories } from '@/data/temps';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+
+const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
     nom: z.string().min(4, {
@@ -32,6 +41,14 @@ const formSchema = z.object({
     description: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
+    couverture: z
+        .custom<File>((file) => file instanceof File, {
+            message: "Veuillez sélectionner un fichier valide.",
+        })
+        .refine((file) => file.size < MAX_FILE_SIZE, {
+            message: "Le fichier est trop volumineux (max 5MB).",
+        }),
+
     media: z
         .any()
         .refine(
@@ -40,21 +57,37 @@ const formSchema = z.object({
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ),
     abonArticle: z.string(),
+
 });
 
 
 const AddArticle = () => {
 
 
-    const { addCategory, currentAdmin, dataArticles } = useStore();
+    const { addCategory, currentAdmin, dataArticles, dataCategorie } = useStore();
     const queryClient = useQueryClient();
     const [article, setArticle] = useState<string[]>()
     const [entry, setEntry] = useState<string>("")
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [show, setShow] = useState(false);
+    const [photo, setPhoto] = useState<string>();
+    const [cate, setCate] = useState<Categories[]>()
 
     const articleData = useQuery({
         queryKey: ["articles"],
         queryFn: async () => dataArticles
     })
+
+    const cateData = useQuery({
+        queryKey: ["category"],
+        queryFn: async () => dataCategorie
+    })
+
+    useEffect(()=> {
+        if (cateData.isSuccess) {
+            setCate(cateData.data.filter(x => x.parent))
+        }
+    }, [cateData.data])
 
     useEffect(() => {
         if (articleData.isSuccess) {
@@ -181,10 +214,117 @@ const AddArticle = () => {
                         </FormItem>
                     )}
                 />
+                <FormField
+                    control={form.control}
+                    name="couverture"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{"Photo de couverture de l'Article"}</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="file"
+                                    className="max-w-[384px] w-full h-[60px]"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = () => {
+                                                setPhoto(reader.result as string);
+                                                field.onChange(reader.result);
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="media"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{"Ajouter des images"}</FormLabel>
+                            <FormControl>
+                                <div className="flex flex-col gap-2">
+                                    <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
+                                        {selectedFiles.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedFiles([]);
+                                                    field.onChange([]);
+                                                }}
+                                                className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
+                                            >
+                                                <IoMdClose />
+                                            </button>
+                                        )}
+                                        <Input
+                                            id="fileInput"
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                if (e.target.files) {
+                                                    const newFiles = Array.from(e.target.files);
+                                                    const updatedFiles = [...selectedFiles, ...newFiles];
+
+                                                    setSelectedFiles(updatedFiles);
+                                                    field.onChange(updatedFiles);
+                                                }
+                                            }}
+                                            className='w-full h-[60px]'
+                                        />
+                                        <label
+                                            htmlFor="fileInput"
+                                            className="cursor-pointer flex items-center gap-2 border p-2 rounded-full bg-gray-50 text-black"
+                                        >
+                                            <IoMdAdd />
+                                        </label>
+                                        {selectedFiles.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShow(true)}
+                                            >
+                                                <LuEye className="size-7 text-gray-300" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-2 flex-wrap">
+                                        {show &&
+                                            selectedFiles.map((file, index) => (
+                                                <div key={index} className="relative">
+                                                    <img src={URL.createObjectURL(file)} alt="" className="size-10 object-cover rounded" />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute h-4 -top-1 -right-1 bg-gray-400 w-fit rounded-full p-0"
+                                                        onClick={() => {
+                                                            const newFiles = selectedFiles.filter((_, i) => i !== index);
+                                                            setSelectedFiles(newFiles);
+                                                            field.onChange(newFiles);
+                                                        }}
+                                                    >
+                                                        <GrFormClose />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                    </div>
+
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
                 <div className='flex flex-col gap-2'>
                     <FormField
                         control={form.control}
-                        name="abonArticle"
+                        name="type"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{"Catégorie"}</FormLabel>
@@ -204,15 +344,15 @@ const AddArticle = () => {
                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
                                             <div>
                                                 <Input
-                                                type='search' 
-                                                onChange={handleSearch} 
-                                                value={entry} 
-                                                placeholder='rechercher une catégorie' 
-                                                className='h-10 w-full'
-                                                 />
-                                                {filterData?.map((x, i) => (
-                                                    <SelectItem key={i} value={x}>
-                                                        {x}
+                                                    type='search'
+                                                    onChange={handleSearch}
+                                                    value={entry}
+                                                    placeholder='rechercher une catégorie'
+                                                    className='h-10 w-full'
+                                                />
+                                                {cate?.map((x, i) => (
+                                                    <SelectItem key={i} value={x.nom}>
+                                                        {x.nom}
                                                     </SelectItem>
                                                 ))}
                                             </div>
@@ -225,8 +365,8 @@ const AddArticle = () => {
                     />
                 </div>
                 <div className='w-full flex flex-col gap-2'>
-                    <Button variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                    <Button className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
+                    <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
+                    <Button onClick={() => console.log(form.getValues())} className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
                 </div>
             </form>
         </Form>

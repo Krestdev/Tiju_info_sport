@@ -1,12 +1,11 @@
-"use client";
-
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { EditorState } from "lexical";
-import Toolbar from "./Toolbar"; // Importe la barre d'outils
+import { EditorState, TextNode, ParagraphNode } from "lexical";
+
+import Toolbar from "./Toolbar";
 
 interface LexicalEditorProps {
   value: string;
@@ -18,12 +17,13 @@ export default function LexicalEditor({ value, onChange }: LexicalEditorProps) {
     namespace: "LexicalEditor",
     theme: { paragraph: "text-gray-800" },
     onError: (error: Error) => console.error(error),
+    nodes: [TextNode, ParagraphNode]
   };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="border border-black rounded-none">
-        <Toolbar /> {/* Affiche la barre d'outils */}
+        <Toolbar />
         <RichTextPlugin
           contentEditable={<ContentEditable className="min-h-[280px] p-2 outline-none" />}
           placeholder={<p className="text-gray-400">Saisir du texte ici...</p>}

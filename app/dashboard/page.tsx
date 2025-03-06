@@ -182,14 +182,14 @@ const DashbordPage = () => {
 
   return (
     <div className="flex flex-col gap-5 px-7 py-10">
-      <h1 className="uppercase">{"Tableau de bord"}</h1>
+      <h1 className="uppercase text-[40px]">{"Tableau de bord"}</h1>
       <div className="flex flex-row gap-5">
-        <Compo texte={"Publication"} page={"Tous les articles"} width={""}>
+        <Compo texte={"Publication"} page={"Tous les articles"} width={"w-full"}>
           <GridDash tableau={grid} />
         </Compo>
-        {/* <Compo texte={"Vues"} page={"Statistiques"}>
+        <Compo texte={"Vues"} page={"Statistiques"} width={"max-w-[340px] w-full"}>
           <SemiCirc />
-        </Compo> */}
+        </Compo>
       </div>
       <div className="flex flex-row gap-5">
         <Compo texte={"Vues"} page={"Tous les articles"} width={"max-w-[340px] w-full"}>
@@ -199,14 +199,6 @@ const DashbordPage = () => {
           <CircChar />
         </Compo>
       </div>
-      {/* <div className="flex flex-col md:flex-row gap-2">
-        <BarChartComp getPreviousMonths={getPreviousMonths} />
-        <CircChart
-          totalAbonne={getTotalSubscribers(userData.data ? userData.data : [])}
-          getPreviousMonths={getPreviousMonths}
-          chartData={groupUsersForChart(user ? user : [])}
-        />
-      </div> */}
     </div>
   );
 };

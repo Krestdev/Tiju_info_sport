@@ -21,7 +21,7 @@ interface Props {
 
 const Compo = ({ children, texte, page, width }: Props) => {
     return (
-        <div className={`${width} flex flex-col justify-between gap-[9px] rounded-[6px] border border-[#182067]/20 `}>
+        <div className={`${width}  h-fit flex flex-col justify-between gap-[9px] rounded-[6px] border border-[#182067]/20 `}>
             <div className='flex flex-row items-center justify-between gap-4 px-5 py-3 bg-[#FAFAFA] '>
                 <p className='font-medium text-[16px] leading-[20.8px] '>{texte}</p>
                 <Select defaultValue="semaine">
