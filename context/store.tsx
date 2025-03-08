@@ -70,13 +70,17 @@ interface actions {
 
 const initialData: store = {
   settings: {
-    compagnyName: "Tyju Info Sport",
+    compagnyName: "Tyju Info Sports",
     logo: "/logo.png",
     email: "",
     phone: "",
     address: "",
+    facebook: "",
+    instagram: "",
+    x: "",
     pub: "Tyju Publicité",
-    noPhoto: "/images/no-user.jpg"
+    noPhoto: "/images/no-user.jpg",
+    description: "Tyju Info sport est un journal sportif"
   },
 
   //données initiales

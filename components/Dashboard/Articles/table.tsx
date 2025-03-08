@@ -25,6 +25,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TbH3 } from "react-icons/tb";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ModalWarning from "@/components/modalWarning";
+import { Trash2 } from "lucide-react";
+import EditArticle from "./EditArticle";
+import { LuSquarePen } from "react-icons/lu";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -63,12 +69,15 @@ function ArticleTable() {
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
+    const [selectedAuthor, setSelectedAuthor] = useState("none");
+    const [auteur, setAuteur] = useState<string[] | undefined>()
     const itemsPerPage = 15;
 
     useEffect(() => {
         if (articleData.isSuccess) {
             setSport(articleData.data.flatMap(x => x.donnees))
             setArticle(articleData.data)
+            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x => x.auteur!.nom))
         }
     }, [articleData.data])
 
@@ -87,9 +96,9 @@ function ArticleTable() {
             setRein(false);
             return [];
         }
-    
+
         let filtered = sport;
-    
+
         // Filtrage par date
         if (!rein) {
             filtered = filtered.filter((item) => {
@@ -103,7 +112,7 @@ function ArticleTable() {
         } else {
             setRein(false);
         }
-    
+
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
@@ -114,10 +123,16 @@ function ArticleTable() {
                 )
             );
         }
-    
+
+        // Filtrage par auteur
+        if (selectedAuthor && selectedAuthor !== "none") {
+            filtered = filtered.filter((el) => el.auteur?.nom === selectedAuthor);
+        }
+
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
-    
+    }, [rein, sport, dateRange, searchEntry, selectedAuthor]);
+
+
 
 
     //Delete function
@@ -162,11 +177,24 @@ function ArticleTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
+                <Select onValueChange={setSelectedAuthor}>
+                    <SelectTrigger className="border border-[#A1A1A1] w-fit h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Auteur" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les auteurs"}</SelectItem>
+                        {[...new Set(auteur)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleData.isLoading && "Loading"}
+                    {articleData.isLoading && <h3>{"Loading"}</h3>}
                     {articleData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -191,10 +219,8 @@ function ArticleTable() {
                                                         <TableHead>{"Auteur"}</TableHead>
                                                         <TableHead>{"Categories"}</TableHead>
                                                         <TableHead>{"Date"}</TableHead>
-                                                        <TableHead>{"statut"}</TableHead>
-                                                        {/* <TableHead>{"Nbr Commentaires"}</TableHead>
-                                                        <TableHead>{"Type d'abonnement"}</TableHead>
-                                                        <TableHead>{"Actions"}</TableHead> */}
+                                                        <TableHead>{"Statut"}</TableHead>
+                                                        <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -220,43 +246,14 @@ function ArticleTable() {
                                                                 <TableCell className="border">{item.type}</TableCell>
                                                                 <TableCell className="border">{item.ajouteLe}</TableCell>
                                                                 <TableCell className="border">{item.statut}</TableCell>
-
-
-                                                                {/* <TableCell onClick={() => setFull(!full)} className="cursor-pointer border">
-                                                                    {item.media &&
-                                                                        <FullScreen image={item.media[0]}>
-                                                                            <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
-                                                                        </FullScreen>}
-                                                                </TableCell> */}
-                                                                {/* <TableCell className="border">{item.like.length}</TableCell>
-                                                                <TableCell className="border">{item.commentaire.length}</TableCell>
-                                                                <TableCell className="border">{item.abonArticle.nom}</TableCell>
-                                                                <TableCell className="flex gap-2 items-center">
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
-                                                                        <Button
-                                                                            variant={"destructive"}
-                                                                            size={"icon"}
-                                                                        >
-                                                                            <Trash2 size={20} />
-                                                                        </Button>
+                                                                <TableCell className="flex gap-4 justify-center">
+                                                                    <EditArticle donnee={item} nom={item.titre}>
+                                                                        <LuSquarePen className="size-5 cursor-pointer" />
+                                                                    </EditArticle>
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.titre}>
+                                                                            <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
-                                                                    <EditArticleForm donnee={item} nom={articleData.data.find(x => x.donnees.some(x => x === item))?.nom}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FiEdit size={"20px"} />
-                                                                        </Button>
-                                                                    </EditArticleForm>
-                                                                    <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FaRegEye size={"20px"} />
-                                                                        </Button>
-                                                                    </ShowArticle>
-                                                                </TableCell> */}
-
-
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }

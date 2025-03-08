@@ -17,7 +17,7 @@ export default function LexicalEditor({ value, onChange }: LexicalEditorProps) {
     namespace: "LexicalEditor",
     theme: { paragraph: "text-gray-800" },
     onError: (error: Error) => console.error(error),
-    nodes: [TextNode, ParagraphNode]
+    nodes: [TextNode, ParagraphNode],
   };
 
   return (
@@ -25,7 +25,7 @@ export default function LexicalEditor({ value, onChange }: LexicalEditorProps) {
       <div className="border border-black rounded-none">
         <Toolbar />
         <RichTextPlugin
-          contentEditable={<ContentEditable className="min-h-[280px] p-2 outline-none" />}
+          contentEditable={<ContentEditable defaultValue={value} className="min-h-[280px] p-2 outline-none" />}
           placeholder={<p className="text-gray-400">Saisir du texte ici...</p>}
           ErrorBoundary={LexicalErrorBoundary}
         />

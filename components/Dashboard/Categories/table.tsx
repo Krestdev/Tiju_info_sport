@@ -25,6 +25,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import ModalWarning from "@/components/modalWarning";
+import { Trash2 } from "lucide-react";
+import { LuSquarePen } from "react-icons/lu";
+import EditCategorie from "./EditCategorie";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -76,11 +80,11 @@ function CategoryTable() {
             setRein(false);
             return [];
         }
-    
+
         let filtered = sport;
-    
-        
-    
+
+
+
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
@@ -91,10 +95,10 @@ function CategoryTable() {
                 )
             );
         }
-    
+
         return filtered;
     }, [rein, sport, searchEntry]);
-    
+
 
 
     //Delete function
@@ -174,7 +178,14 @@ function CategoryTable() {
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.nom}</TableCell>
                                                                 <TableCell className="border">{"252"}</TableCell>
                                                                 <TableCell className="border">{item.parent ? item.parent.nom : "Aucun"}</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
+                                                                <TableCell className="flex gap-4 justify-center">
+                                                                    <EditCategorie donnee={item} nom={item.nom}>
+                                                                        <LuSquarePen className="size-5 cursor-pointer" />
+                                                                    </EditCategorie>
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
+                                                                        <Trash2 className="text-red-400 size-5 cursor-pointer" />
+                                                                    </ModalWarning>
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }

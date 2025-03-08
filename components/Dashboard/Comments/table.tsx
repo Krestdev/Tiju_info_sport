@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { comment } from "@/data/temps";
+import { Article, comment } from "@/data/temps";
 import Pagination from "../Pagination";
 import { SlRefresh } from "react-icons/sl";
 import { DatePick } from "../DatePick";
@@ -31,6 +31,7 @@ import { DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LuTrash2 } from "react-icons/lu";
 import { useSearchParams } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -56,9 +57,11 @@ function CommentsTable() {
     const [commentsData, setCommentsData] = useState<comment[]>([])
     const [comments, setComments] = useState<comment[]>([])
     const [current, setCurrent] = useState("tous");
-
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
+    const [selectedArticle, setSelectedArticle] = useState("none");
+    const [articles, setArticles] = useState<Article[]>()
+
     const itemsPerPage = 15;
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -84,6 +87,7 @@ function CommentsTable() {
 
             setCommentsData([...commentSignal, ...respenseSignal])
             setComments(articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire))
+            setArticles(articleData.data?.flatMap(x => x.donnees))
         }
     }, [articleData.data])
 
@@ -109,9 +113,9 @@ function CommentsTable() {
             setRein(false);
             return [];
         }
-
+    
         let filtered = comments;
-
+    
         // Filtrage par date
         if (!rein) {
             filtered = filtered.filter((item) => {
@@ -125,20 +129,31 @@ function CommentsTable() {
         } else {
             setRein(false);
         }
-
+    
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
                 Object.values(el).some((value) =>
                     String(value)
-                        .toLocaleLowerCase()
-                        .includes(searchEntry.toLocaleLowerCase())
+                        .toLowerCase()
+                        .includes(searchEntry.toLowerCase())
                 )
             );
         }
-
+    
+        // ✅ Filtrage par article sélectionné
+        if (selectedArticle && selectedArticle !== "none") {
+            filtered = filtered.filter((comment) =>
+                articles?.some(article => 
+                    article.titre === selectedArticle && article.commentaire.some(c => c.id === comment.id)
+                )
+            );
+        }
+    
         return filtered;
-    }, [rein, comments, dateRange, searchEntry]);
+    }, [rein, comments, dateRange, searchEntry, selectedArticle, articles]);
+    
+    
 
 
     //Delete function
@@ -161,9 +176,10 @@ function CommentsTable() {
             filterData.filter(x => x.delete === true).slice(startIndex, startIndex + itemsPerPage);
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
+
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
-            <h1 className="uppercase text-[40px]">{"Tous Les Articles"}</h1>
+            <h1 className="uppercase text-[40px]">{"Commentaires"}</h1>
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("signale")} className={`shadow-none text-[16px] rounded-[6px] ${current === "signale" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Signalés"}</Button>
@@ -187,7 +203,19 @@ function CommentsTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
-
+                <Select onValueChange={setSelectedArticle}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Articles" className="" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les articles"}</SelectItem>
+                        {[...new Set(articles)].map((x, i) => (
+                            <SelectItem key={i} value={x.titre} className="max-w-[200px] line-clamp-1 truncate">
+                                {x.titre}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>

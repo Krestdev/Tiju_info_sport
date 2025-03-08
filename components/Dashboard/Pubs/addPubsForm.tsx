@@ -69,11 +69,9 @@ function AddPubsForm({ addButton }: { addButton: string }) {
             nom: values.nom,
             lien: values.lien,
             image: values.image,
-            date: new Date(Date.now()).toLocaleDateString("fr-FR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            }),
+            type: "large",
+            dateDebut: "2024-30-12",
+            dateFin: "2025-30-12"
         });
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
         setDialogOpen(false);

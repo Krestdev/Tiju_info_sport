@@ -132,7 +132,7 @@ const items = [
     },
     {
         title: "Paramètre du site",
-        url: "/dashboard/subscription",
+        url: "/dashboard/settings",
         icon: LuSettings,
         param: false,
     },

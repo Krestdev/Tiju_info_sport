@@ -18,6 +18,7 @@ export interface Article {
     titre: string,
     extrait: string,
     description: string,
+    couverture: string,
     media?: string[],
     ajouteLe: string,
     commentaire: comment[],
@@ -51,7 +52,7 @@ export interface Users {
     password?: string,
     createdAt: string,
     role: string,
-    abonnement?: Abonnement
+    abonnement?: Abonnement,
 };
 
 export interface Abonnement {
@@ -251,12 +252,13 @@ export const articles: Categorie[] = [
                 statut: "publie",
                 auteur: {
                     id: 0,
-                    nom: "Admin",
+                    nom: "Admin 1",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/feminin1.jpg"
             },
             {
                 id: 2,
@@ -329,12 +331,13 @@ export const articles: Categorie[] = [
                 statut: "publie",
                 auteur: {
                     id: 0,
-                    nom: "Admin",
+                    nom: "Admin 1",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/video.mp4"
             },
             {
                 id: 5,
@@ -498,12 +501,13 @@ export const articles: Categorie[] = [
                 statut: "publie",
                 auteur: {
                     id: 0,
-                    nom: "Admin",
+                    nom: "Admin 1",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/feminin1.jpg"
             }
         ]
     },
@@ -652,12 +656,13 @@ export const articles: Categorie[] = [
                 statut: "publie",
                 auteur: {
                     id: 0,
-                    nom: "Admin",
+                    nom: "Admin 1",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: ""
             },
             {
                 id: 9,
@@ -770,13 +775,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "brouillon",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/Hockey1.jpeg"
             }
         ]
     },
@@ -925,13 +931,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "brouillon",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/Boxe1.jpeg"
             },
             {
                 id: 22,
@@ -1044,13 +1051,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "publie",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/fecafoot.jpeg"
             }
         ]
     },
@@ -1127,13 +1135,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "publie",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/basket.jpg"
             }
         ]
     },
@@ -1142,7 +1151,7 @@ export const articles: Categorie[] = [
         donnees: [
             {
                 id: 6,
-                type: "Handball",
+                type: "FecaHand",
                 titre: "La victoire éclatante du Cameroun lors du tournoi africain de handball",
                 description: "L’équipe nationale camerounaise de handball a remporté le tournoi africain...",
                 media: ["/images/hand.jpg"],
@@ -1251,13 +1260,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "brouillon",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/hand.jpg"
             },
             {
                 id: 7,
@@ -1370,13 +1380,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "corbeille",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/handball1.jpeg"
             },
             {
                 id: 8,
@@ -1487,13 +1498,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "corbeille",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 1,
+                    nom: "Admin 2",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/handball2.jpg"
             }
         ]
     },
@@ -1609,13 +1621,14 @@ export const articles: Categorie[] = [
                 },
                 statut: "corbeille",
                 auteur: {
-                    id: 0,
-                    nom: "Admin",
+                    id: 3,
+                    nom: "Admin 3",
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
                     role: "admin"
-                }
+                },
+                couverture: "/images/Volley.jpeg"
             }
         ]
     }

@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import { Oswald, Ubuntu } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 const oswald = Oswald({ subsets: ["latin"]});
 const ubuntu = Ubuntu({ subsets: ["latin"], weight: "500" });
@@ -23,6 +22,7 @@ export default async function RootLayout({
         suppressHydrationWarning={true}
       >
         <main>
+        <GoogleAnalytics trackPageViews />
           <Providers>
             <HydrationZustand>
               {children}

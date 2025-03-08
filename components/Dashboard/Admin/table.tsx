@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LuUserRoundPlus } from "react-icons/lu";
 import AddUserForm from "../User/addUserForm";
+import Link from "next/link";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -134,7 +135,12 @@ function AdminTable() {
         <div className="w-full flex flex-col gap-5 px-7 py-10">
             <h1 className="uppercase text-[40px]">{"Administration"}</h1>
             <span className="flex flex-wrap items-center gap-5">
-                <AddUserForm addButton={"Creer un utilisateur"} />
+                <Link href={"/dashboard/users/add-user"}>
+                    <Button className="rounded-none font-ubuntu font-normal">
+                        <LuUserRoundPlus />
+                        {"Créer un utilisateur"}
+                    </Button>
+                </Link>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -185,7 +191,7 @@ function AdminTable() {
                                                                 </TableCell>
                                                                 <TableCell className="border">{item.pseudo}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
-                                                                <TableCell className="border">{item.createdAt}</TableCell>
+                                                                <TableCell className="border">{item.role}</TableCell>
                                                                 <TableCell className="border">Online</TableCell>
                                                                 <TableCell className="border">Action</TableCell>
                                                             </TableRow>

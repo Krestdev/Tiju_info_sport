@@ -133,7 +133,7 @@ function ArticleTable() {
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage) 
+    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -162,7 +162,7 @@ function ArticleTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {pubsData.isLoading && "Loading"}
+                    {pubsData.isLoading && <h3>{"Loading"}</h3>}
                     {pubsData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField

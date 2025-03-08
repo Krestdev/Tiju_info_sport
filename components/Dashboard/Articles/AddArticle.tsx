@@ -20,7 +20,7 @@ import { BiShow } from 'react-icons/bi';
 import { GrFormClose } from 'react-icons/gr';
 import { Categories } from '@/data/temps';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
@@ -41,13 +41,13 @@ const formSchema = z.object({
     description: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
-    couverture: z
-        .custom<File>((file) => file instanceof File, {
-            message: "Veuillez sélectionner un fichier valide.",
-        })
-        .refine((file) => file.size < MAX_FILE_SIZE, {
-            message: "Le fichier est trop volumineux (max 5MB).",
-        }),
+    couverture: z.any(),
+        // .custom<File>((file) => file instanceof File, {
+        //     message: "Veuillez sélectionner un fichier valide.",
+        // })
+        // .refine((file) => file.size < MAX_FILE_SIZE, {
+        //     message: "Le fichier est trop volumineux (max 5MB).",
+        // }),
 
     media: z
         .any()
@@ -140,7 +140,8 @@ const AddArticle = () => {
                     commentaire: [],
                     like: [],
                     statut: "",
-                    auteur: currentAdmin
+                    auteur: currentAdmin,
+                    couverture: ''
                 }
             ]
         });
