@@ -7,7 +7,7 @@ import React from 'react';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Pubs } from '@/data/temps';
-// import { event } from "nextjs-google-analytics";
+import { event } from "nextjs-google-analytics";
 
 interface pub {
   pub: Pubs[] | undefined
@@ -23,13 +23,14 @@ const PubsComp = ({
   const { settings } = useStore();
 
   const handleClick = () => {
-    // event("click", {
-    //   category: "interaction",
-    //   label: "Publicité",
-    //   value: 1,
-    // });
+    event("click", {
+      category: "interaction",
+      label: "Publicité",
+      value: 1,
+    });
   };
 
+  
   return (
 
     <Carousel

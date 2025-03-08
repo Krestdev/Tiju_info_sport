@@ -49,10 +49,6 @@ export function MenuComp() {
         return cate?.flatMap(x => x.nom).includes(selected);
     };
 
-    console.log(checkUserCategory(), selected);
-
-
-
     return (
         <div className="flex items-start md:items-center justify-center border-y my-3">
             <div className="overflow-x-auto scrollbar-hide">
