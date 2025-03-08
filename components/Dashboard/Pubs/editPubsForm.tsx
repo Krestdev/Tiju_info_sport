@@ -68,13 +68,13 @@ function EditPubsForm({ children, selectedPubs }: Props) {
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        editPub({
-            id: selectedPubs.id,
-            nom: values.nom,
-            lien: values.lien,
-            image: values.image,
-            date: selectedPubs.date
-        });
+        // editPub({
+        //     id: selectedPubs.id,
+        //     nom: values.nom,
+        //     lien: values.lien,
+        //     image: values.image,
+        //     date: selectedPubs.date
+        // });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });
         setDialogOpen(false);
