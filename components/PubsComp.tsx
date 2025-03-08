@@ -1,6 +1,7 @@
 "use client";
 
 import useStore from '@/context/store';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react';
 
@@ -24,13 +25,12 @@ const PubsComp = ({
 
   const handleClick = () => {
     event("click", {
-      category: "interaction",
-      label: "Publicité",
+      category: "Interaction",
+      label: "Bouton achat",
       value: 1,
     });
   };
 
-  
   return (
 
     <Carousel
