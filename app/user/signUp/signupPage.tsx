@@ -77,7 +77,8 @@ export default function SignupPage() {
         role: "user",
         abonnement: subsData.data?.find(x => x.cout === 0),
         phone: "",
-        nom: ""
+        nom: "",
+        statut: ""
       });
 
       // Invalider les données en cache
