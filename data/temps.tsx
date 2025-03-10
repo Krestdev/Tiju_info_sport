@@ -37,6 +37,7 @@ export interface Pubs {
     image: string;
     dateDebut: string;
     dateFin: string;
+    statut: string;
 };
 
 export interface Users {
@@ -53,6 +54,7 @@ export interface Users {
     createdAt: string,
     role: string,
     abonnement?: Abonnement,
+    statut: string
 };
 
 export interface Abonnement {
@@ -170,7 +172,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -198,7 +201,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -218,7 +222,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -239,7 +244,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -256,7 +262,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/feminin1.jpg"
             },
@@ -290,7 +297,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -318,7 +326,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -335,7 +344,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/video.mp4"
             },
@@ -369,7 +379,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [
                             {
@@ -394,7 +405,8 @@ export const articles: Categorie[] = [
                                     pseudo: "",
                                     sexe: "",
                                     ville: "",
-                                    pays: ""
+                                    pays: "",
+                                    statut: ""
                                 },
                                 reponse: [],
                                 like: [],
@@ -430,7 +442,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -460,7 +473,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -488,7 +502,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -505,7 +520,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/feminin1.jpg"
             }
@@ -544,7 +560,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -574,7 +591,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -602,7 +620,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 19,
@@ -622,7 +641,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -643,7 +663,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -660,7 +681,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: ""
             },
@@ -694,7 +716,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -722,7 +745,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -742,7 +766,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -763,7 +788,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -780,7 +806,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/Hockey1.jpeg"
             }
@@ -820,7 +847,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -850,7 +878,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -878,7 +907,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -898,7 +928,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -919,7 +950,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -936,7 +968,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/Boxe1.jpeg"
             },
@@ -970,7 +1003,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -998,7 +1032,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -1018,7 +1053,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -1039,7 +1075,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1056,7 +1093,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/fecafoot.jpeg"
             }
@@ -1095,7 +1133,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -1123,7 +1162,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1140,7 +1180,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/basket.jpg"
             }
@@ -1179,7 +1220,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -1207,7 +1249,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -1227,7 +1270,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -1248,7 +1292,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1265,7 +1310,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/hand.jpg"
             },
@@ -1299,7 +1345,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -1327,7 +1374,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     },
                     {
                         id: 1,
@@ -1347,7 +1395,8 @@ export const articles: Categorie[] = [
                         pseudo: "",
                         sexe: "",
                         ville: "",
-                        pays: ""
+                        pays: "",
+                        statut: ""
                     }
                 ],
                 user: {
@@ -1368,7 +1417,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1385,7 +1435,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/handball1.jpeg"
             },
@@ -1419,7 +1470,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -1446,7 +1498,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 {
                     id: 1,
@@ -1466,7 +1519,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 }],
                 user: {
                     id: 0,
@@ -1486,7 +1540,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1503,7 +1558,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/handball2.jpg"
             }
@@ -1542,7 +1598,8 @@ export const articles: Categorie[] = [
                             pseudo: "",
                             sexe: "",
                             ville: "",
-                            pays: ""
+                            pays: "",
+                            statut: ""
                         },
                         reponse: [],
                         like: [],
@@ -1569,7 +1626,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 {
                     id: 1,
@@ -1589,7 +1647,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 }],
                 user: {
                     id: 0,
@@ -1609,7 +1668,8 @@ export const articles: Categorie[] = [
                     pseudo: "",
                     sexe: "",
                     ville: "",
-                    pays: ""
+                    pays: "",
+                    statut: ""
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
@@ -1626,7 +1686,8 @@ export const articles: Categorie[] = [
                     email: "admin@tyju.com",
                     pseudo: "admin",
                     createdAt: "2021/12/02",
-                    role: "admin"
+                    role: "admin",
+                    statut: ""
                 },
                 couverture: "/images/Volley.jpeg"
             }
@@ -1642,7 +1703,8 @@ export const publicites: Pubs[] = [
         nom: "Orange CM",
         type: "large",
         dateDebut: "2024-12-12",
-        dateFin: "2025-03-12"
+        dateFin: "2025-03-12",
+        statut: "active",
     },
     {
         id: 2,
@@ -1651,7 +1713,18 @@ export const publicites: Pubs[] = [
         nom: "Boutique Socrate",
         type: "large",
         dateDebut: "2024-12-12",
-        dateFin: "2025-03-12"
+        dateFin: "2025-03-12",
+        statut: "active",
+    },
+    {
+        id: 2,
+        lien: "https://google.com",
+        image: "/images/pub.jpg",
+        nom: "Boutique Socrate",
+        type: "small",
+        dateDebut: "2024-12-12",
+        dateFin: "2024-03-12",
+        statut: "expire",
     },
 ];
 
@@ -1675,7 +1748,8 @@ export const users: Users[] = [
         pseudo: "Etarcos",
         sexe: "Homme",
         ville: "Yaoundé",
-        pays: "Cameroun"
+        pays: "Cameroun",
+        statut: "Active"
     },
     {
         id: 2,
@@ -1696,7 +1770,30 @@ export const users: Users[] = [
         pseudo: "DevTech",
         sexe: "Femme",
         ville: "Douala",
-        pays: "Cameroun"
+        pays: "Cameroun",
+        statut: "Inactive"
+    },
+    {
+        id: 2,
+        nom: "Etarcos Dev",
+        email: "etarcosDev@gmail.com",
+        phone: "656633225",
+        password: "EtarcosDev123",
+        createdAt: "2024-12-31",
+        role: "user",
+        abonnement: {
+            id: 4,
+            nom: "Bouquet normal",
+            cout: 0,
+            validite: 12,
+            date: "28/01/2025"
+        },
+        photo: "",
+        pseudo: "etarcosDev",
+        sexe: "Femme",
+        ville: "Douala",
+        pays: "Cameroun",
+        statut: "Banni"
     },
 ];
 

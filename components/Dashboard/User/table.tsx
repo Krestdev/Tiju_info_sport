@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -54,15 +55,18 @@ function UserTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Users[]>();
+    const [user, setUser] = useState<Users[]>();
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
-    const [rein, setRein] = useState(false)
+    const [rein, setRein] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState("none");
+    const [statut, setStatut] = useState<string[] | undefined>()
     const itemsPerPage = 15;
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setSport(userData.data)
+            setUser(userData.data)
+            setStatut(userData.data.flatMap(x => x.statut))
         }
     }, [userData.data])
 
@@ -77,26 +81,26 @@ function UserTable() {
     };
 
     const filterData = useMemo(() => {
-        if (!sport) {
+        if (!user) {
             setRein(false);
             return [];
         }
 
-        let filtered = sport;
+        let filtered = user;
 
         // Filtrage par date
         if (!rein) {
-          filtered = filtered.filter((item) => {
-              if (!dateRange?.from) return true;
-              const itemDate = toNormalDate(item.createdAt);
-              return (
-                  itemDate >= dateRange.from &&
-                  (dateRange.to ? itemDate <= dateRange.to : true)
-              );
-          });
-      } else {
-          setRein(false);
-      }
+            filtered = filtered.filter((item) => {
+                if (!dateRange?.from) return true;
+                const itemDate = toNormalDate(item.createdAt);
+                return (
+                    itemDate >= dateRange.from &&
+                    (dateRange.to ? itemDate <= dateRange.to : true)
+                );
+            });
+        } else {
+            setRein(false);
+        }
 
 
         // Filtrage par recherche
@@ -110,8 +114,13 @@ function UserTable() {
             );
         }
 
+        //Filtrage par statut
+        if (selectedStatus && selectedStatus !== "none") {
+            filtered = filtered.filter((el) => el.statut === selectedStatus);
+        }
+
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
+    }, [rein, user, dateRange, searchEntry, selectedStatus]);
 
 
 
@@ -124,7 +133,7 @@ function UserTable() {
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage) 
+    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -149,7 +158,19 @@ function UserTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
-
+                <Select onValueChange={setSelectedStatus}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par statut" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les statuts"}</SelectItem>
+                        {[...new Set(statut)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -202,7 +223,7 @@ function UserTable() {
                                                                 <TableCell className="border">{item.pseudo}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.createdAt}</TableCell>
-                                                                <TableCell className="border">Online</TableCell>
+                                                                <TableCell className="border">{item.statut}</TableCell>
                                                                 <TableCell className="border">Action</TableCell>
                                                             </TableRow>
                                                         )

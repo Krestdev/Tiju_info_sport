@@ -78,7 +78,7 @@ function CommentsTable() {
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire).filter(x => x.signals.length > 0)
+            const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire && y.commentaire).filter(x => x.signals.length > 0)
             const respenseSignal = articleData.data.flatMap(x => x.donnees)
                 .flatMap(x => x.commentaire && x.commentaire)
                 .filter(x => x.reponse.length > 0)

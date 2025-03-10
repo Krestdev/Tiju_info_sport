@@ -25,6 +25,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LuPlus, LuSquarePen } from "react-icons/lu";
+import AddPubsForm from "./addPubsForm";
+import EditPubsForm from "./editPubsForm";
+import ModalWarning from "@/components/modalWarning";
+import { Trash2 } from "lucide-react";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -58,6 +64,9 @@ function ArticleTable() {
     const [full, setFull] = useState(false);
     const [current, setCurrent] = useState("tous");
     const [article, setArticle] = useState<Categorie[]>();
+    const [selectedType, setSelectedType] = useState("none");
+    const [type, setType] = useState<string[] | undefined>()
+    const [selectedStatut, setSelectedStatut] = useState("none");
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
@@ -66,6 +75,7 @@ function ArticleTable() {
     useEffect(() => {
         if (pubsData.isSuccess) {
             setSport(pubsData.data)
+            setType(pubsData.data.flatMap(x => x.type))
         }
     }, [pubsData.data])
 
@@ -78,6 +88,8 @@ function ArticleTable() {
         const [day, month, year] = dateStr.split("/").map(Number);
         return new Date(year, month - 1, day);
     };
+
+    const statut = ["Active", "Expiré"]
 
     const filterData = useMemo(() => {
         if (!sport) {
@@ -119,8 +131,19 @@ function ArticleTable() {
             );
         }
 
+        //Filtrage par type
+        if (selectedType && selectedType !== "none") {
+            filtered = filtered.filter((el) => el.type === selectedType);
+        }
+
+        //Filtrage par statut
+        if (selectedStatut && selectedStatut !== "none") {
+            selectedStatut === "Active" ?
+            filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) > Date.now()) :
+            filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) <= Date.now())
+            }
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
+    }, [rein, sport, dateRange, searchEntry, selectedType, selectedStatut]);
 
 
 
@@ -150,6 +173,7 @@ function ArticleTable() {
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
+                <AddPubsForm addButton={"Ajouter"} />
                 <div className="flex gap-2 items-center">
                     <SlRefresh className="cursor-pointer size-5"
                         onClick={() => {
@@ -158,7 +182,32 @@ function ArticleTable() {
                         }} />
                     <DatePick onChange={(range) => setDateRange(range)} />
                 </div>
-
+                <Select onValueChange={setSelectedType}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par type" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les types"}</SelectItem>
+                        {[...new Set(type)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Select onValueChange={setSelectedStatut}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par statut" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les statuts"}</SelectItem>
+                        {[...new Set(statut)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -214,7 +263,14 @@ function ArticleTable() {
                                                                 <TableCell className="border">{item.dateDebut}</TableCell>
                                                                 <TableCell className="border">{item.dateFin}</TableCell>
                                                                 <TableCell className="border">252</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
+                                                                <TableCell className="flex gap-4 justify-center">
+                                                                    <EditPubsForm selectedPubs={item} >
+                                                                        <LuSquarePen className="size-5 cursor-pointer" />
+                                                                    </EditPubsForm>
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
+                                                                            <Trash2 className="text-red-400 size-5 cursor-pointer" />
+                                                                    </ModalWarning>
+                                                                </TableCell>
 
 
 

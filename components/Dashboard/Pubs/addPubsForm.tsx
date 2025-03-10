@@ -27,6 +27,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { TbUserPlus } from "react-icons/tb";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LuPlus } from "react-icons/lu";
 
 const formSchema = z.object({
     nom: z.string().min(4, {
@@ -71,7 +72,8 @@ function AddPubsForm({ addButton }: { addButton: string }) {
             image: values.image,
             type: "large",
             dateDebut: "2024-30-12",
-            dateFin: "2025-30-12"
+            dateFin: "2025-30-12",
+            statut: ""
         });
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
         setDialogOpen(false);
@@ -82,8 +84,8 @@ function AddPubsForm({ addButton }: { addButton: string }) {
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant={"default"}>
-                    <TbUserPlus size={20} />
+                <Button className="rounded-none font-ubuntu" variant={"default"}>
+                    <LuPlus />
                     {addButton}
                 </Button>
             </DialogTrigger>

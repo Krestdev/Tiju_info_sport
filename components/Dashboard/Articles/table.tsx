@@ -77,7 +77,7 @@ function ArticleTable() {
         if (articleData.isSuccess) {
             setSport(articleData.data.flatMap(x => x.donnees))
             setArticle(articleData.data)
-            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x => x.auteur!.nom))
+            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x =>x.auteur ? x.auteur.nom : ""))
         }
     }, [articleData.data])
 
