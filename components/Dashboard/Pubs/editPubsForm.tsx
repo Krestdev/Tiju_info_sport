@@ -27,20 +27,23 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Pubs } from "@/data/temps";
 import FullScreen from "../FullScreen";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
+    nom: z.string().min(1, {
+        message: "Vous devez taper au moins 1 caractère",
     }),
+    type: z.string(),
     lien: z.string({
-        message: "Lien must be a valid URL.",
+        message: "LE lien doit etre une URL",
     }),
     image: z
-    .any()
-    .refine(
-        (file) => !file || file instanceof File,
-        { message: "Image must be a file." }
-    )
+        .any()
+        .refine(
+            (file) => !file || file instanceof File,
+            { message: "Image must be a file." }
+        ),
+    dateFin: z.string()
 });
 
 
@@ -61,6 +64,8 @@ function EditPubsForm({ children, selectedPubs }: Props) {
             nom: selectedPubs.nom,
             lien: selectedPubs.lien,
             image: selectedPubs.image,
+            type: selectedPubs.type,
+            dateFin: selectedPubs.dateFin
         },
     });
 
@@ -68,19 +73,25 @@ function EditPubsForm({ children, selectedPubs }: Props) {
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // editPub({
-        //     id: selectedPubs.id,
-        //     nom: values.nom,
-        //     lien: values.lien,
-        //     image: values.image,
-        //     date: selectedPubs.date
-        // });
+        editPub({
+            id: selectedPubs.id,
+            nom: values.nom,
+            lien: values.lien,
+            image: values.image,
+            type: values.type,
+            dateDebut: selectedPubs.dateDebut,
+            dateFin: selectedPubs.dateFin,
+            statut: selectedPubs.statut
+        });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });
         setDialogOpen(false);
         toast.success("Modifié avec succès");
         form.reset();
     }
+
+    const type = ["large", "petit"]
+
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -102,9 +113,9 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                             name="nom"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Nom"}</FormLabel>
+                                    <FormLabel>{"Titre"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Nom" />
+                                        <Input {...field} placeholder="Titre de la publicité" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -112,12 +123,41 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                         />
                         <FormField
                             control={form.control}
-                            name="lien"
+                            name="dateFin"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Pseudonyme"}</FormLabel>
+                                    <FormLabel>{"Date de fin"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Pseudonyme" />
+                                        <Input type="date" {...field} placeholder="Date de fin" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Type d'image"}</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className="rounded-none">
+                                                <SelectValue
+                                                    placeholder={
+                                                        <div>
+                                                            {"Type d'image"}
+                                                        </div>
+                                                    } />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {type.map((x, i) => (
+                                                    <SelectItem key={i} value={x}>
+                                                        {x}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -132,7 +172,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                                 name="image"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Image</FormLabel>
+                                        <FormLabel>{"Image"}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="file"
@@ -149,6 +189,19 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                                 )}
                             />
                         </div>
+                        <FormField
+                            control={form.control}
+                            name="lien"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Lien vers la pub..."}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Lien vers la pub..." />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <span className="flex items-center gap-3 flex-wrap">
                             <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
                                 {"Modifier la Pub"}

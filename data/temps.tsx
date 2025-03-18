@@ -26,7 +26,7 @@ export interface Article {
     user: Users,
     abonArticle: Abonnement,
     statut: string,
-    auteur: Users | null 
+    auteur: Users
 };
 
 export interface Pubs {
@@ -60,9 +60,8 @@ export interface Users {
 export interface Abonnement {
     id: number,
     nom: string,
-    cout: number,
-    validite: number
-    date: string
+    coutMois: number,
+    coutAn: number,
 };
 
 export interface comment {
@@ -162,11 +161,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -191,11 +189,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -212,11 +209,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -234,11 +230,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -249,11 +244,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "publie",
                 auteur: {
@@ -287,11 +281,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -316,11 +309,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -331,11 +323,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "publie",
                 auteur: {
@@ -369,11 +360,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -395,11 +385,10 @@ export const articles: Categorie[] = [
                                     createdAt: "",
                                     role: "",
                                     abonnement: {
-                                        id: 4,
-                                        nom: "Bouquet normal",
-                                        cout: 0,
-                                        validite: 12,
-                                        date: "28/01/2025"
+                                        id: 0,
+                                        nom: "Basique",
+                                        coutMois: 0,
+                                        coutAn: 0
                                     },
                                     photo: "/images/profil.jpg",
                                     pseudo: "",
@@ -432,11 +421,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -463,11 +451,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -492,11 +479,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -507,11 +493,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 0,
-                    nom: "Bouquet Or",
-                    cout: 20000,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 1,
+                    nom: "Passionne",
+                    coutMois: 1000,
+                    coutAn: 10000
                 },
                 statut: "publie",
                 auteur: {
@@ -550,11 +535,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -581,11 +565,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -610,11 +593,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -631,11 +613,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -653,11 +634,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -668,11 +648,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0,
                 },
                 statut: "publie",
                 auteur: {
@@ -706,11 +685,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -735,11 +713,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -756,11 +733,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -778,11 +754,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -793,11 +768,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "brouillon",
                 auteur: {
@@ -837,11 +811,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -868,11 +841,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -897,11 +869,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -918,11 +889,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -940,11 +910,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -955,11 +924,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "brouillon",
                 auteur: {
@@ -993,11 +961,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1022,11 +989,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1043,11 +1009,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1065,11 +1030,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1080,11 +1044,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "publie",
                 auteur: {
@@ -1123,11 +1086,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1152,11 +1114,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1167,11 +1128,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "publie",
                 auteur: {
@@ -1210,11 +1170,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1239,11 +1198,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1260,11 +1218,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1282,11 +1239,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1297,11 +1253,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "brouillon",
                 auteur: {
@@ -1335,11 +1290,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1364,11 +1318,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1385,11 +1338,10 @@ export const articles: Categorie[] = [
                         createdAt: "",
                         role: "",
                         abonnement: {
-                            id: 4,
-                            nom: "Bouquet normal",
-                            cout: 0,
-                            validite: 12,
-                            date: "28/01/2025"
+                            id: 0,
+                            nom: "Basique",
+                            coutMois: 0,
+                            coutAn:0
                         },
                         photo: "/images/profil.jpg",
                         pseudo: "",
@@ -1407,11 +1359,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1422,11 +1373,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "corbeille",
                 auteur: {
@@ -1460,11 +1410,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1488,11 +1437,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1509,11 +1457,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1530,11 +1477,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1545,11 +1491,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "corbeille",
                 auteur: {
@@ -1588,11 +1533,10 @@ export const articles: Categorie[] = [
                             createdAt: "",
                             role: "",
                             abonnement: {
-                                id: 4,
-                                nom: "Bouquet normal",
-                                cout: 0,
-                                validite: 12,
-                                date: "28/01/2025"
+                                id: 0,
+                                nom: "Basique",
+                                coutMois: 0,
+                                coutAn: 0
                             },
                             photo: "/images/profil.jpg",
                             pseudo: "",
@@ -1616,11 +1560,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1637,11 +1580,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1658,11 +1600,10 @@ export const articles: Categorie[] = [
                     createdAt: "",
                     role: "",
                     abonnement: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        id: 0,
+                        nom: "Basique",
+                        coutMois: 0,
+                        coutAn: 0
                     },
                     photo: "/images/profil.jpg",
                     pseudo: "",
@@ -1673,11 +1614,10 @@ export const articles: Categorie[] = [
                 },
                 extrait: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed, nobis nostrum. Quam, cupiditate corrupti eaque sed pariatur facere aliquam repellendus culpa. Assumenda numquam doloribus laudantium sunt fugit nihil, voluptas quas.",
                 abonArticle: {
-                    id: 4,
-                    nom: "Bouquet normal",
-                    cout: 0,
-                    validite: 12,
-                    date: "28/01/2025"
+                    id: 0,
+                    nom: "Basique",
+                    coutMois: 0,
+                    coutAn: 0
                 },
                 statut: "corbeille",
                 auteur: {
@@ -1738,11 +1678,10 @@ export const users: Users[] = [
         createdAt: "2024-12-31",
         role: "admin",
         abonnement: {
-            id: 0,
-            nom: "Bouquet Or",
-            cout: 20000,
-            validite: 12,
-            date: "28/01/2025"
+            id: 1,
+            nom: "Passionne",
+            coutMois: 1000,
+            coutAn: 10000
         },
         photo: "",
         pseudo: "Etarcos",
@@ -1760,11 +1699,10 @@ export const users: Users[] = [
         createdAt: "2024-12-31",
         role: "user",
         abonnement: {
-            id: 4,
-            nom: "Bouquet normal",
-            cout: 0,
-            validite: 12,
-            date: "28/01/2025"
+            id: 0,
+            nom: "Basique",
+            coutMois: 0,
+            coutAn: 0
         },
         photo: "",
         pseudo: "DevTech",
@@ -1774,7 +1712,7 @@ export const users: Users[] = [
         statut: "Inactive"
     },
     {
-        id: 2,
+        id: 3,
         nom: "Etarcos Dev",
         email: "etarcosDev@gmail.com",
         phone: "656633225",
@@ -1782,11 +1720,10 @@ export const users: Users[] = [
         createdAt: "2024-12-31",
         role: "user",
         abonnement: {
-            id: 4,
-            nom: "Bouquet normal",
-            cout: 0,
-            validite: 12,
-            date: "28/01/2025"
+            id: 0,
+            nom: "Basique",
+            coutMois: 0,
+            coutAn: 0
         },
         photo: "",
         pseudo: "etarcosDev",
@@ -1800,37 +1737,14 @@ export const users: Users[] = [
 export const abonnement: Abonnement[] = [
     {
         id: 0,
-        nom: "Bouquet Or",
-        cout: 20000,
-        validite: 12,
-        date: "28/01/2025"
+        nom: "Basique",
+        coutMois: 0,
+        coutAn: 0
     },
     {
         id: 1,
-        nom: "Bouquet Diamant",
-        cout: 10000,
-        validite: 12,
-        date: "28/01/2025"
-    },
-    {
-        id: 2,
-        nom: "Bouquet Argent",
-        cout: 5000,
-        validite: 12,
-        date: "28/01/2025"
-    },
-    {
-        id: 3,
-        nom: "Bouquet Bronze",
-        cout: 2500,
-        validite: 12,
-        date: "28/01/2025"
-    },
-    {
-        id: 4,
-        nom: "Bouquet normal",
-        cout: 0,
-        validite: 12,
-        date: "28/01/2025"
+        nom: "Passionne",
+        coutMois: 1000,
+        coutAn: 10000
     }
 ];

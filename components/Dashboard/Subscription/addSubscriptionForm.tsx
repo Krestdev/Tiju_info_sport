@@ -27,19 +27,20 @@ import { useQueryClient } from "@tanstack/react-query";
 import { TbUserPlus } from "react-icons/tb";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LuPlus } from "react-icons/lu";
 
 const formSchema = z.object({
     nom: z.string().min(4, {
         message: "Le nom doit contenir au moins 4 caractères.",
     }),
-    cout: z.number({
+    coutMois: z.number({
         required_error: "Le coût doit être un nombre valide.",
         invalid_type_error: "Le coût doit être un nombre valide.",
     }).positive("Le coût doit être un nombre positif."),
-    validite: z.number({
-        required_error: "La validité doit être un nombre valide.",
-        invalid_type_error: "La validité doit être un nombre valide.",
-    }).int("La validité doit être un nombre entier.").positive("La validité doit être un nombre positif."),
+    coutAn: z.number({
+        required_error: "Le coût doit être un nombre valide.",
+        invalid_type_error: "Le coût doit être un nombre valide.",
+    }).positive("Le coût doit être un nombre positif."),
 });
 
 
@@ -54,8 +55,8 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
-            cout: 0,
-            validite: 0
+            coutMois: 0,
+            coutAn: 0
         },
     });
 
@@ -64,15 +65,10 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
         addSubscription({
             id: Date.now(),
             nom: values.nom,
-            cout: Number(values.cout),
-            validite: Number(values.validite),
-            date: new Date(Date.now()).toLocaleDateString("fr-FR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            }),
+            coutMois: Number(values.coutMois),
+            coutAn: Number(values.coutAn),
         });
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
+        queryClient.invalidateQueries({ queryKey: ["subscription"] })
         setDialogOpen(false);
         toast.success("Ajouté avec succès");
         form.reset();
@@ -81,8 +77,8 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <TbUserPlus size={20} />
+                <Button className="rounded-none">
+                    <LuPlus size={20} />
                     {addButton}
                 </Button>
             </DialogTrigger>
@@ -103,7 +99,7 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
                             name="nom"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Nom"}</FormLabel>
+                                    <FormLabel>{"Titre"}</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Nom" />
                                     </FormControl>
@@ -114,15 +110,15 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
 
                         <FormField
                             control={form.control}
-                            name="cout"
+                            name="coutMois"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Coût (en FCFA)"}</FormLabel>
+                                    <FormLabel>{"Prix Mois (en FCFA)"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             {...field}
-                                            placeholder="Coût de l'abonnement en FCFA"
+                                            placeholder="Coût de l'abonnement sur 1 mois FCFA"
                                             onChange={(e) => field.onChange(Number(e.target.value))}
                                         />
                                     </FormControl>
@@ -133,15 +129,15 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
 
                         <FormField
                             control={form.control}
-                            name="validite"
+                            name="coutAn"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Validité (en Mois)"}</FormLabel>
+                                    <FormLabel>{"Prix An (en FCFA)"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             {...field}
-                                            placeholder="Validité de l'abonnement en FCFA"
+                                            placeholder="Coût de l'abonnement sur 1 an en FCFA"
                                             onChange={(e) => field.onChange(Number(e.target.value))}
                                         />
                                     </FormControl>
@@ -155,7 +151,7 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
                                 {"Ajouter un nouvel abonnement"}
                             </Button>
                             <DialogClose asChild>
-                                <Button variant={"outline"} onClick={() => form.reset()}>
+                                <Button className="rounded-none" variant={"outline"} onClick={() => form.reset()}>
                                     {"Close"}
                                 </Button>
                             </DialogClose>

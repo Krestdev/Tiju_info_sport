@@ -19,7 +19,7 @@ import {
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { string, z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/context/store";
@@ -28,20 +28,22 @@ import { TbUserPlus } from "react-icons/tb";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LuPlus } from "react-icons/lu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
+    nom: z.string().min(1, {
+        message: "Vous devez taper au moins 1 caractère",
     }),
+    type: z.string(),
     lien: z.string({
-        message: "Lien must be a valid URL.",
+        message: "LE lien doit etre une URL",
     }),
     image: z
-    .any()
-    .refine(
-        (file) => !file || file instanceof File,
-        { message: "Image must be a file." }
-    )
+        .any()
+        .refine(
+            (file) => !file || file instanceof File,
+            { message: "Image must be a file." }
+        )
 });
 
 
@@ -57,22 +59,19 @@ function AddPubsForm({ addButton }: { addButton: string }) {
         defaultValues: {
             nom: "",
             lien: "",
-            // image: undefined
         },
     });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Hello");
-        
         addPub({
             id: Date.now(),
             nom: values.nom,
             lien: values.lien,
             image: values.image,
-            type: "large",
-            dateDebut: "2024-30-12",
-            dateFin: "2025-30-12",
+            type: values.type,
+            dateDebut: "2024-03-12",
+            dateFin: "2025-03-12",
             statut: ""
         });
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
@@ -80,6 +79,8 @@ function AddPubsForm({ addButton }: { addButton: string }) {
         toast.success("Ajouté avec succès");
         form.reset();
     }
+
+    const type = ["large", "petit"]
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -106,9 +107,9 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                             name="nom"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Nom"}</FormLabel>
+                                    <FormLabel>{"Titre"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Nom" />
+                                        <Input {...field} placeholder="Titre de la publicité" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -117,12 +118,28 @@ function AddPubsForm({ addButton }: { addButton: string }) {
 
                         <FormField
                             control={form.control}
-                            name="lien"
+                            name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Lien..."}</FormLabel>
+                                    <FormLabel>{"Type d'image"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Lien vers la pub..." />
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className="rounded-none">
+                                                <SelectValue
+                                                    placeholder={
+                                                        <div>
+                                                            {"Type d'image"}
+                                                        </div>
+                                                    } />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {type.map((x, i) => (
+                                                    <SelectItem key={i} value={x}>
+                                                        {x}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -150,6 +167,21 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="lien"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Lien..."}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Lien vers la pub..." />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
 
                         <span className="flex items-center gap-3 flex-wrap">
                             <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">

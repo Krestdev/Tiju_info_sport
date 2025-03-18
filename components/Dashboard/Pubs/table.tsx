@@ -14,7 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, Categorie, Pubs } from "@/data/temps";
+import { Categorie, Pubs } from "@/data/temps";
 import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
@@ -26,7 +26,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LuPlus, LuSquarePen } from "react-icons/lu";
+import { LuSquarePen } from "react-icons/lu";
 import AddPubsForm from "./addPubsForm";
 import EditPubsForm from "./editPubsForm";
 import ModalWarning from "@/components/modalWarning";
@@ -61,9 +61,6 @@ function ArticleTable() {
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Pubs[]>();
-    const [full, setFull] = useState(false);
-    const [current, setCurrent] = useState("tous");
-    const [article, setArticle] = useState<Categorie[]>();
     const [selectedType, setSelectedType] = useState("none");
     const [type, setType] = useState<string[] | undefined>()
     const [selectedStatut, setSelectedStatut] = useState("none");
@@ -139,9 +136,9 @@ function ArticleTable() {
         //Filtrage par statut
         if (selectedStatut && selectedStatut !== "none") {
             selectedStatut === "Active" ?
-            filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) > Date.now()) :
-            filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) <= Date.now())
-            }
+                filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) > Date.now()) :
+                filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) <= Date.now())
+        }
         return filtered;
     }, [rein, sport, dateRange, searchEntry, selectedType, selectedStatut]);
 
@@ -169,7 +166,7 @@ function ArticleTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Titre de la Publicité"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
@@ -237,6 +234,7 @@ function ArticleTable() {
                                                         <TableHead>{"Date de debut"}</TableHead>
                                                         <TableHead>{"Date de fin"}</TableHead>
                                                         <TableHead>{"Nombre clics"}</TableHead>
+                                                        <TableHead>{"Statuts"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -263,52 +261,15 @@ function ArticleTable() {
                                                                 <TableCell className="border">{item.dateDebut}</TableCell>
                                                                 <TableCell className="border">{item.dateFin}</TableCell>
                                                                 <TableCell className="border">252</TableCell>
+                                                                <TableCell className="border">{item.statut}</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditPubsForm selectedPubs={item} >
                                                                         <LuSquarePen className="size-5 cursor-pointer" />
                                                                     </EditPubsForm>
                                                                     <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
-                                                                            <Trash2 className="text-red-400 size-5 cursor-pointer" />
+                                                                        <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
                                                                 </TableCell>
-
-
-
-                                                                {/* <TableCell onClick={() => setFull(!full)} className="cursor-pointer border">
-                                                                    {item.media &&
-                                                                        <FullScreen image={item.media[0]}>
-                                                                            <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
-                                                                        </FullScreen>}
-                                                                </TableCell> */}
-                                                                {/* <TableCell className="border">{item.like.length}</TableCell>
-                                                                <TableCell className="border">{item.commentaire.length}</TableCell>
-                                                                <TableCell className="border">{item.abonArticle.nom}</TableCell>
-                                                                <TableCell className="flex gap-2 items-center">
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
-                                                                        <Button
-                                                                            variant={"destructive"}
-                                                                            size={"icon"}
-                                                                        >
-                                                                            <Trash2 size={20} />
-                                                                        </Button>
-                                                                    </ModalWarning>
-                                                                    <EditArticleForm donnee={item} nom={pubsData.data.find(x => x.donnees.some(x => x === item))?.nom}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FiEdit size={"20px"} />
-                                                                        </Button>
-                                                                    </EditArticleForm>
-                                                                    <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FaRegEye size={"20px"} />
-                                                                        </Button>
-                                                                    </ShowArticle>
-                                                                </TableCell> */}
-
-
                                                             </TableRow>
                                                         )
                                                     }
@@ -332,8 +293,6 @@ function ArticleTable() {
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

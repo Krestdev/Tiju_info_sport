@@ -31,6 +31,10 @@ import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
 import EditArticle from "./EditArticle";
 import { LuSquarePen } from "react-icons/lu";
+import { LuSend } from "react-icons/lu";
+import { LuUndo2 } from "react-icons/lu";
+import ShareWarning from "@/components/sharedWarning";
+import Link from "next/link";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -77,7 +81,7 @@ function ArticleTable() {
         if (articleData.isSuccess) {
             setSport(articleData.data.flatMap(x => x.donnees))
             setArticle(articleData.data)
-            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x =>x.auteur ? x.auteur.nom : ""))
+            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x => x.auteur ? x.auteur.nom : ""))
         }
     }, [articleData.data])
 
@@ -138,8 +142,18 @@ function ArticleTable() {
     //Delete function
     function onDeleteArticle(id: number) {
         deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
+        queryClient.invalidateQueries({ queryKey: ["article"] })
         toast.success("Supprimé avec succès");
+    }
+
+    function onPublishArticle(id: number) {
+        queryClient.invalidateQueries({ queryKey: ["article"] })
+        toast.success("Article publié avec succès");
+    }
+
+    function onRestoreArticle(id: number) {
+        queryClient.invalidateQueries({ queryKey: ["article"] })
+        toast.success("Article Restauré avec succès");
     }
 
     // Get current items
@@ -156,6 +170,7 @@ function ArticleTable() {
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("publie")} className={`shadow-none text-[16px] rounded-[6px] ${current === "publie" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
+                <Button onClick={() => setCurrent("programme")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programme" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
                 <Button onClick={() => setCurrent("brouillon")} className={`shadow-none text-[16px] rounded-[6px] ${current === "brouillon" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
                 <Button onClick={() => setCurrent("corbeille")} className={`shadow-none text-[16px] rounded-[6px] ${current === "corbeille" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
             </div>
@@ -175,7 +190,7 @@ function ArticleTable() {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
                 <Select onValueChange={setSelectedAuthor}>
                     <SelectTrigger className="border border-[#A1A1A1] w-fit h-[40px] flex items-center p-2 rounded-none">
@@ -190,95 +205,105 @@ function ArticleTable() {
                         ))}
                     </SelectContent>
                 </Select>
-
+                <Link href={"/dashboard/articles/add-article"} passHref>
+                    <Button className="rounded-none">{"Ajouter un Article"}</Button>
+                </Link>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleData.isLoading && <h3>{"Loading"}</h3>}
-                    {articleData.isSuccess && filterData.length > 0 ? (
-                        <div className="min-h-[70vh] overflow-y-auto w-full">
-                            <FormField
-                                control={form.control}
-                                name="items"
-                                render={({ field }) => (
-                                    <FormItem>
-
-                                        <FormControl>
-                                            <Table className="border divide-x">
-                                                <TableHeader>
-                                                    <TableRow className="text-[18px] capitalize font-normal">
-                                                        <TableHead>
-                                                            <Checkbox
-                                                                checked={currentItems.length > 0 && field.value?.length === currentItems.length}
-                                                                onCheckedChange={(checked) => {
-                                                                    field.onChange(checked ? currentItems.map((item) => item.id) : []);
-                                                                }}
-                                                            />
-                                                        </TableHead>
-                                                        <TableHead>{"titre"}</TableHead>
-                                                        <TableHead>{"Auteur"}</TableHead>
-                                                        <TableHead>{"Categories"}</TableHead>
-                                                        <TableHead>{"Date"}</TableHead>
-                                                        <TableHead>{"Statut"}</TableHead>
-                                                        <TableHead>{"Actions"}</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {currentItems.map((item, id) => {
-                                                        return (
-                                                            <TableRow className="text-[16px]" key={id}>
-                                                                <TableCell className="border">
-                                                                    <Checkbox
-                                                                        checked={field.value?.includes(item.id)}
-                                                                        onCheckedChange={(checked) => {
-                                                                            return checked
-                                                                                ? field.onChange([...field.value, item.id])
-                                                                                : field.onChange(
-                                                                                    field.value?.filter(
-                                                                                        (value) => value !== item.id
+                    {articleData.isLoading ? <h3>{"Loading"}</h3> :
+                        articleData.isSuccess && filterData.length > 0 ? (
+                            <div className="min-h-[70vh] overflow-y-auto w-full">
+                                <FormField
+                                    control={form.control}
+                                    name="items"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Table className="border divide-x">
+                                                    <TableHeader>
+                                                        <TableRow className="text-[18px] capitalize font-normal">
+                                                            <TableHead>
+                                                                <Checkbox
+                                                                    checked={currentItems.length > 0 && field.value?.length === currentItems.length}
+                                                                    onCheckedChange={(checked) => {
+                                                                        field.onChange(checked ? currentItems.map((item) => item.id) : []);
+                                                                    }}
+                                                                />
+                                                            </TableHead>
+                                                            <TableHead>{"titre"}</TableHead>
+                                                            <TableHead>{"Auteur"}</TableHead>
+                                                            <TableHead>{"Categories"}</TableHead>
+                                                            <TableHead>{"Date"}</TableHead>
+                                                            <TableHead>{"Statut"}</TableHead>
+                                                            <TableHead>{"Actions"}</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {currentItems.map((item, id) => {
+                                                            return (
+                                                                <TableRow className="text-[16px]" key={id}>
+                                                                    <TableCell className="border">
+                                                                        <Checkbox
+                                                                            checked={field.value?.includes(item.id)}
+                                                                            onCheckedChange={(checked) => {
+                                                                                return checked
+                                                                                    ? field.onChange([...field.value, item.id])
+                                                                                    : field.onChange(
+                                                                                        field.value?.filter(
+                                                                                            (value) => value !== item.id
+                                                                                        )
                                                                                     )
-                                                                                )
-                                                                        }}
-                                                                    />
-                                                                </TableCell>
-                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.titre}</TableCell>
-                                                                <TableCell className="border">{item.auteur?.nom}</TableCell>
-                                                                <TableCell className="border">{item.type}</TableCell>
-                                                                <TableCell className="border">{item.ajouteLe}</TableCell>
-                                                                <TableCell className="border">{item.statut}</TableCell>
-                                                                <TableCell className="flex gap-4 justify-center">
-                                                                    <EditArticle donnee={item} nom={item.titre}>
-                                                                        <LuSquarePen className="size-5 cursor-pointer" />
-                                                                    </EditArticle>
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.titre}>
+                                                                            }}
+                                                                        />
+                                                                    </TableCell>
+                                                                    <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.titre}</TableCell>
+                                                                    <TableCell className="border">{item.auteur?.nom}</TableCell>
+                                                                    <TableCell className="border">{item.type}</TableCell>
+                                                                    <TableCell className="border">{item.ajouteLe}</TableCell>
+                                                                    <TableCell className="border">{item.statut}</TableCell>
+                                                                    <TableCell className="flex gap-4 justify-center">
+                                                                        <EditArticle donnee={item} nom={item.titre}>
+                                                                            <LuSquarePen className="size-5 cursor-pointer" />
+                                                                        </EditArticle>
+                                                                        <ModalWarning id={item.id} action={onDeleteArticle} name={item.titre}>
                                                                             <Trash2 className="text-red-400 size-5 cursor-pointer" />
-                                                                    </ModalWarning>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                    )}
-                                                </TableBody>
-                                            </Table>
-                                        </FormControl>
+                                                                        </ModalWarning>
+                                                                        {
+                                                                            item.statut === "brouillon" ?
+                                                                                <ShareWarning id={item.id} action={onPublishArticle} name={item.titre} message={"Vous etes sur le point de publier"} bouton={"Publier"}>
+                                                                                    <LuSend className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                </ShareWarning> :
+                                                                                item.statut === "corbeille" ?
+                                                                                    <ShareWarning id={0} action={onRestoreArticle} name={item.titre} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
+                                                                                        <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                    </ShareWarning>
+                                                                                    : <LuSend className="opacity-0 size-5" />
+                                                                        }
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        }
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
+                                            </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        </div>
-                    ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
-                        "No result"
-                    ) : articleData.isSuccess && articleData.data.length === 0 ? (
-                        "Empty table"
-                    ) : (
-                        articleData.isError && (
-                            "Some error occured"
-                        )
-                    )}
-
-                    <Button type="submit">Soumetre</Button>
+                            </div>
+                        ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
+                            "No result"
+                        ) : articleData.isSuccess && articleData.data.length === 0 ? (
+                            "Empty table"
+                        ) : (
+                            articleData.isError && (
+                                "Some error occured"
+                            )
+                        )}
                 </form>
             </Form>
 

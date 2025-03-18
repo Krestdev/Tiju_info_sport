@@ -2,18 +2,41 @@
 
 import withAdminAuth from "@/lib/whithAdminAuth";
 import React, { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import useStore from "@/context/store";
 import GridDash from "@/components/Dashboard/Dash/GridDash";
-import { MdOutlineSportsVolleyball } from "react-icons/md";
-import { BarChartComp } from "@/components/Dashboard/Dash/BarChartComp";
-import { CircChart } from "@/components/Dashboard/Dash/CircChart";
 import { useQuery } from "@tanstack/react-query";
 import { Article, Categorie, comment, Users } from "@/data/temps";
 import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import LinearChat from "@/components/Dashboard/Dash/LinearChar";
-import CircChar from "@/components/Dashboard/Dash/CircChar";
+import { CircChar } from "@/components/Dashboard/Dash/CircChar";
+
+
+export function getDateRange(value: string) {
+  const today = new Date();
+  let startDate: string;
+  let endDate: string = today.toISOString().split("T")[0]; 
+
+  switch (value) {
+    case "semaine":
+      startDate = new Date(today.setDate(today.getDate() - 7)).toISOString().split("T")[0];
+      break;
+
+    case "mois":
+      startDate = new Date(today.setDate(today.getDate() - 28)).toISOString().split("T")[0]; // 4 semaines
+      break;
+
+    case "annee":
+      startDate = new Date(today.setFullYear(today.getFullYear() - 1)).toISOString().split("T")[0];
+      break;
+
+    default:
+      throw new Error("Valeur non valide. Utiliser 'semaine', 'mois' ou 'annee'.");
+  }
+
+  return { startDate, endDate };
+}
 
 const DashbordPage = () => {
   const { logoutAdmin, dataArticles, dataUsers } = useStore()
@@ -71,36 +94,6 @@ const DashbordPage = () => {
     }, {} as Record<string, number>);
   };
 
-  const groupUsersForChart = (users: Users[]) => {
-    const colors: Record<string, string> = {
-      "Bouquet Or": "var(--color-chrome)",
-      "Bouquet Diamant": "var(--color-safari)",
-      "Bouquet Argent": "var(--color-firefox)",
-      "Bouquet Bronze": "var(--color-edge)",
-      "Bouquet Normal": "var(--color-other)"
-    };
-
-    const grouped = users.reduce((acc, user) => {
-      if (user.abonnement) {
-        const type = user.abonnement.nom;
-        acc[type] = (acc[type] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(grouped).map(([bouquet, visitors]) => ({
-      bouquet,
-      visitors,
-      fill: colors[bouquet] || "var(--color-default)"
-    }));
-  };
-
-
-  const getTotalSubscribers = (users: Users[]) => {
-    const abonnementsParType = groupUsersBySubscriptionType(users);
-    return Object.values(abonnementsParType).reduce((total, count) => total + count, 0);
-  };
-
   useEffect(() => {
     if (userData.isSuccess) {
       setAbonne(groupUsersBySubscriptionType(userData.data))
@@ -121,43 +114,6 @@ const DashbordPage = () => {
       window.removeEventListener("popstate", handleRouteChange);
     };
   }, [pathname]);
-
-  // Fonction pour récupérer les X derniers mois
-  const getPreviousMonths = (count: number) => {
-    const months = [];
-    const today = new Date();
-
-    for (let i = 0; i < count; i++) {
-      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      months.push({
-        mois: d.toLocaleString("fr-FR", { month: "long" }),
-        monthNumber: d.getMonth() + 1,
-        year: d.getFullYear(),
-      });
-    }
-
-    return months.reverse();
-  };
-
-  const getActiveUsers = (categories: Categorie[]): Users[] => {
-    const userSet = new Set<number>();
-
-    categories.forEach(category =>
-      category.donnees.forEach(article => {
-        [article.user, ...article.like, ...article.commentaire.flatMap(c => [
-          c.user, ...c.like, ...c.reponse.map(r => r.user)
-        ])]
-          .filter(user => user)
-          .forEach(user => userSet.add(user!.id));
-      })
-    );
-
-    return Array.from(userSet).map(id =>
-      categories.flatMap(c => c.donnees)
-        .flatMap(a => [a.user, ...a.like, ...a.commentaire.flatMap(c => [c.user, ...c.like, ...c.reponse.map(r => r.user)])])
-        .find(user => user && user.id === id)!
-    );
-  };
 
   const grid = [
     {
@@ -180,22 +136,53 @@ const DashbordPage = () => {
     },
   ]
 
+  const [values, setValues] = useState<{ [key: string]: string }>({
+    publication: "semaine",
+    vuesSite: "semaine",
+    vuesPeriode: "semaine",
+    vuesCategorie: "semaine",
+  });
+
+  const handleChange = (key: string, newValue: string) => {
+    setValues((prev) => ({ ...prev, [key]: newValue }));
+  };
+
   return (
     <div className="flex flex-col gap-5 px-7 py-10">
       <h1 className="uppercase text-[40px]">{"Tableau de bord"}</h1>
       <div className="flex flex-row gap-5">
-        <Compo texte={"Publication"} page={"Tous les articles"} width={"w-full"}>
+        <Compo
+          texte={"Publication"}
+          page={"Tous les articles"}
+          width={"w-full"}
+          value={values.publication}
+          setValue={(val) => handleChange("publication", val)} link={""} isLink        >
           <GridDash tableau={grid} />
         </Compo>
-        <Compo texte={"Vues"} page={"Statistiques"} width={"max-w-[340px] w-full"}>
-          <SemiCirc />
+        <Compo
+          texte={"Vues sur le site"}
+          page={"Statistiques"}
+          width={"max-w-[340px] w-full"}
+          value={values.vuesSite}
+          setValue={(val) => handleChange("vuesSite", val)} link={""} isLink        >
+          <SemiCirc value={values.vuesSite} />
         </Compo>
       </div>
       <div className="flex flex-row gap-5">
-        <Compo texte={"Vues"} page={"Tous les articles"} width={"max-w-[340px] w-full"}>
-          <LinearChat />
+        <Compo
+          texte={"Vues par période"}
+          page={"Tous les articles"}
+          width={"max-w-[400px] w-full"}
+          value={values.vuesPeriode}
+          setValue={(val) => handleChange("vuesPeriode", val)} link={""} isLink        >
+          <LinearChat value={values.vuesPeriode} />
         </Compo>
-        <Compo texte={"Vues par catégorie"} page={"Catégories"} width={"w-full"}>
+        <Compo
+          texte={"Vues par catégorie"}
+          page={"Catégories"}
+          width={"w-full"}
+          value={values.vuesCategorie}
+          setValue={(val) => handleChange("vuesCategorie", val)} link={""} isLink        >
           <CircChar />
         </Compo>
       </div>

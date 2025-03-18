@@ -37,9 +37,9 @@ import { LuEye, LuPlus } from "react-icons/lu";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
+    // nom: z.string().min(4, {
+    //     message: "Name must be at least 4 characters.",
+    // }),
     type: z.string().min(4, {
         message: "Name must be at least 4 characters.",
     }),
@@ -66,7 +66,7 @@ const formSchema = z.object({
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ),
-    abonArticle: z.string(),
+    // abonArticle: z.string(),
 
 });
 
@@ -77,9 +77,9 @@ type Props = {
     nom: string | undefined
 };
 
-function EditArticle({ children, donnee, nom }: Props) {
+function EditArticle({ children, donnee }: Props) {
 
-    const { dataSubscription, dataCategorie } = useStore()
+    const { dataSubscription, dataCategorie, } = useStore()
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [images, setImages] = useState<string[] | undefined>(donnee.media);
     const [abon, setAbon] = useState<Abonnement[]>();
@@ -121,23 +121,12 @@ function EditArticle({ children, donnee, nom }: Props) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             ...donnee,
-            abonArticle: donnee.abonArticle.nom,
-            type: donnee.type,
         },
     });
 
-    console.log((donnee));
-
-
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // editPub({
-        //     nom: values.nom,
-        //     lien: values.lien,
-        //     image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }),
-        // });
-        console.log(values);
-        queryClient.invalidateQueries({ queryKey: ["client"] });
+        queryClient.invalidateQueries({ queryKey: ["article"] });
         setDialogOpen(false);
         toast.success("Modifié avec succès");
         form.reset();
@@ -176,7 +165,7 @@ function EditArticle({ children, donnee, nom }: Props) {
                             control={form.control}
                             name="description"
                             render={({ field }) => {
-                                console.log(field.value);
+                                // console.log(field.value);
                                 
                                 return (
                                     <FormItem>
@@ -354,7 +343,7 @@ function EditArticle({ children, donnee, nom }: Props) {
                         </div>
                         <div className='w-full flex flex-col gap-2'>
                             <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                            <Button onClick={() => console.log(form.getValues())} className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
+                            <Button type="submit" className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
                         </div>
                     </form>
                 </Form>

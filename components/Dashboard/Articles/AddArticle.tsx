@@ -19,6 +19,7 @@ import { IoMdAdd, IoMdClose } from 'react-icons/io';
 import { BiShow } from 'react-icons/bi';
 import { GrFormClose } from 'react-icons/gr';
 import { Categories } from '@/data/temps';
+import DatePubli from './DatePubli';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -26,9 +27,9 @@ const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
+    // nom: z.string().min(4, {
+    //     message: "Name must be at least 4 characters.",
+    // }),
     type: z.string().min(4, {
         message: "Name must be at least 4 characters.",
     }),
@@ -42,12 +43,12 @@ const formSchema = z.object({
         message: "Name must be at least 10 characters.",
     }),
     couverture: z.any(),
-        // .custom<File>((file) => file instanceof File, {
-        //     message: "Veuillez sélectionner un fichier valide.",
-        // })
-        // .refine((file) => file.size < MAX_FILE_SIZE, {
-        //     message: "Le fichier est trop volumineux (max 5MB).",
-        // }),
+    // .custom<File>((file) => file instanceof File, {
+    //     message: "Veuillez sélectionner un fichier valide.",
+    // })
+    // .refine((file) => file.size < MAX_FILE_SIZE, {
+    //     message: "Le fichier est trop volumineux (max 5MB).",
+    // }),
 
     media: z
         .any()
@@ -55,14 +56,14 @@ const formSchema = z.object({
             (files) =>
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
-        ),
-    abonArticle: z.string(),
+        ).optional(),
+    // ajouteLe: z.string(),
+    // abonArticle: z.string(),
 
 });
 
 
 const AddArticle = () => {
-
 
     const { addCategory, currentAdmin, dataArticles, dataCategorie } = useStore();
     const queryClient = useQueryClient();
@@ -72,6 +73,7 @@ const AddArticle = () => {
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [cate, setCate] = useState<Categories[]>()
+    const [dialogOpen, setDialogOpen] = React.useState(false);
 
     const articleData = useQuery({
         queryKey: ["articles"],
@@ -83,7 +85,7 @@ const AddArticle = () => {
         queryFn: async () => dataCategorie
     })
 
-    useEffect(()=> {
+    useEffect(() => {
         if (cateData.isSuccess) {
             setCate(cateData.data.filter(x => x.parent))
         }
@@ -100,22 +102,28 @@ const AddArticle = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: "",
+            // nom: "",
             type: "",
             titre: "",
             extrait: "",
             description: "",
             media: "",
-            abonArticle: ""
+            // abonArticle: ""
         },
     });
 
+    const handleOpen = () => {
+        if (formSchema.safeParse(form.getValues()).success) {
+            setDialogOpen(true);
+        } else {
+            toast.error("Veuillez remplir correctement le formulaire.");
+        }
+    };
+
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Hello");
-
         addCategory({
-            nom: values.nom,
+            nom: cateData.data!.find(x => x.nom === values.type)!.parent!.nom,
             donnees: [
                 {
                     id: Date.now(),
@@ -139,13 +147,12 @@ const AddArticle = () => {
                     },
                     commentaire: [],
                     like: [],
-                    statut: "",
-                    auteur: currentAdmin,
-                    couverture: ''
+                    statut: "brouillon",
+                    auteur: currentAdmin!,
+                    couverture: values.couverture
                 }
             ]
         });
-
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
         toast.success("Ajouté avec succès");
         form.reset();
@@ -155,25 +162,24 @@ const AddArticle = () => {
         setEntry(e.target.value)
     }
 
-    const filterData = useMemo(() => {
-        if (!article) return [];
-        if (entry === "") return article;
-        return article.filter((el) =>
-            Object.values(el).some((value) =>
-                String(value)
-                    .toLocaleLowerCase()
-                    .includes(entry.toLocaleLowerCase())
-            )
-        );
-        //to do: complete this code
-    }, [entry, article]);
+    // const filterData = useMemo(() => {
+    //     if (!article) return [];
+    //     if (entry === "") return article;
+    //     return article.filter((el) =>
+    //         Object.values(el).some((value) =>
+    //             String(value)
+    //                 .toLocaleLowerCase()
+    //                 .includes(entry.toLocaleLowerCase())
+    //         )
+    //     );
+    //     //to do: complete this code
+    // }, [entry, article]);
 
 
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-5 px-7 py-10"
             >
                 <h1 className='uppercase text-[40px]'>{"Ajouter un article"}</h1>
@@ -365,9 +371,36 @@ const AddArticle = () => {
                         )}
                     />
                 </div>
+
                 <div className='w-full flex flex-col gap-2'>
-                    <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                    <Button onClick={() => console.log(form.getValues())} className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
+                    <Button
+                        variant="outline"
+                        className="max-w-[384px] w-full font-normal rounded-none"
+                        type="button"
+                        onClick={() => form.handleSubmit(onSubmit)()}>
+                        {"Enregistrer"}
+                    </Button>
+
+                    {/* <DatePubli donnee={form.getValues()} >
+                        <Button
+                            type="submit"
+                            className="max-w-[384px] w-full rounded-none font-normal"
+                            onClick={() => form.setValue("action", "publish")}
+                        >
+                            {"Publier"}
+                        </Button>
+                    </DatePubli> */}
+                    <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                    <Button
+                        type="submit"
+                        className="max-w-[384px] w-full rounded-none font-normal"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleOpen();
+                        }}
+                    >
+                        {"Publier"}
+                    </Button>
                 </div>
             </form>
         </Form>

@@ -29,6 +29,8 @@ import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
 import { LuSquarePen } from "react-icons/lu";
 import EditCategorie from "./EditCategorie";
+import Link from "next/link";
+import AddCategory from "./AddCategory";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -37,7 +39,7 @@ const FormSchema = z.object({
 });
 
 function CategoryTable() {
-    const { dataCategorie, deleteArticle } = useStore();
+    const { dataCategorie, deleteCategorie } = useStore();
     const queryClient = useQueryClient();
     const articleCate = useQuery({
         queryKey: ["articles"],
@@ -103,8 +105,8 @@ function CategoryTable() {
 
     //Delete function
     function onDeleteArticle(id: number) {
-        deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
+        deleteCategorie(id)
+        queryClient.invalidateQueries({ queryKey: ["category"] })
         toast.success("Supprimé avec succès");
     }
 
@@ -123,10 +125,14 @@ function CategoryTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Nom de la catégorie"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
+                <AddCategory>
+                    <Button className="rounded-none">{"Ajouter une catégorie"}</Button>
+                </AddCategory>
+
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -177,7 +183,7 @@ function CategoryTable() {
                                                                 </TableCell>
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.nom}</TableCell>
                                                                 <TableCell className="border">{"252"}</TableCell>
-                                                                <TableCell className="border">{item.parent ? item.parent.nom : "Aucun"}</TableCell>
+                                                                <TableCell className="border">{item.parent !== undefined ? item.parent.nom : "Aucun"}</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditCategorie donnee={item} nom={item.nom}>
                                                                         <LuSquarePen className="size-5 cursor-pointer" />
@@ -209,8 +215,6 @@ function CategoryTable() {
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

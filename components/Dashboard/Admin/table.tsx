@@ -28,13 +28,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LuUserRoundPlus } from "react-icons/lu";
 import AddUserForm from "../User/addUserForm";
 import Link from "next/link";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ModalWarning from "@/components/modalWarning";
+import { SelectItem } from "@radix-ui/react-select";
+import EditUser from "./EditUser";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function AdminTable() {
-    const { dataUsers, deleteArticle } = useStore();
+    const { dataUsers, deleteArticle, editUser } = useStore();
     const queryClient = useQueryClient();
     const userData = useQuery({
         queryKey: ["pubs"],
@@ -125,6 +129,13 @@ function AdminTable() {
         toast.success("Supprimé avec succès");
     }
 
+    const onDelete = (id: number) => {
+        editUser({
+            id: id,
+            statut: "Banni"
+        })
+    }
+
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
@@ -167,7 +178,8 @@ function AdminTable() {
                                                         <TableHead>{"Nom d'utilisateur"}</TableHead>
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Rôle"}</TableHead>
-                                                        <TableHead>{"Statut"}</TableHead>
+                                                        {/* <TableHead>{"Statut"}</TableHead> */}
+                                                        <TableHead>{"Dernière connexion"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -189,11 +201,36 @@ function AdminTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.pseudo}</TableCell>
+                                                                <TableCell className="border">{item.nom}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.role}</TableCell>
-                                                                <TableCell className="border">Online</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
+                                                                <TableCell className="border">25/02/2025</TableCell>
+                                                                <TableCell className="border">
+                                                                    <Select onValueChange={field.onChange} >
+                                                                        <div className="w-full flex justify-center">
+                                                                            <SelectTrigger className='border border-[#A1A1A1] h-7 flex items-center justify-center w-fit p-2'>
+                                                                                <SelectValue
+                                                                                    placeholder={
+                                                                                        <div className='h-7 max-w-[78px] w-full flex px-2 gap-2 items-center justify-center'>
+                                                                                            {"Actions"}
+                                                                                        </div>
+                                                                                    } />
+                                                                            </SelectTrigger>
+                                                                        </div>
+                                                                        <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
+                                                                            <ModalWarning id={item.id} name={item.nom} action={() => onDelete(item.id)}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Bannir"}
+                                                                                </Button>
+                                                                            </ModalWarning>
+                                                                            <EditUser selectedUser={item}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Modifier"}
+                                                                                </Button>
+                                                                            </EditUser>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }
@@ -217,8 +254,6 @@ function AdminTable() {
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

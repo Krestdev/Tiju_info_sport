@@ -1,4 +1,4 @@
-import AddUser from '@/components/Dashboard/User/AddUser'
+import AddUser from '@/components/Dashboard/Admin/AddUser'
 import React from 'react'
 
 const page = () => {

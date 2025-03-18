@@ -105,33 +105,58 @@
   .boxedBloc {
     @apply px-4 py-5 bg-white rounded shadow-sm flex flex-col gap-10 w-full;
   }
+
   .tabTrigger {
-    @apply min-w-40 min-h-14 !rounded-none capitalize px-4 bg-transparent text-gray-900 data-[state=active]:!bg-blue-500 data-[state=active]:!text-white text-base;
+    @apply min-w-40 min-h-14 !rounded-none capitalize px-4 bg-transparent data-[state=active]:  !bg-blue-500 data-[state=active]: !text-white text-base;
   }
+
   .scrollbar {
-    @apply overflow-y-auto
-    [&::-webkit-scrollbar]:w-1
-    [&::-webkit-scrollbar-track]:bg-gray-100
-    [&::-webkit-scrollbar-thumb]:bg-gray-300
-    dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-    dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
+    overflow-y: auto;
   }
+  
+  /* Personnalisation de la scrollbar */
+  .scrollbar::-webkit-scrollbar {
+    width: 4px; /* Épaisseur de la scrollbar */
+  }
+  
+  .scrollbar::-webkit-scrollbar-track {
+    background: #f3f4f6; /* gray-100 */
+  }
+  
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #d1d5db; /* gray-300 */
+    border-radius: 4px;
+  }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   .scrollbar-hide {
-    -ms-overflow-style: none; /* Pour IE et Edge */
-    scrollbar-width: none; /* Pour Firefox */
+    -ms-overflow-style: none;
+    /* Pour IE et Edge */
+    scrollbar-width: none;
+    /* Pour Firefox */
   }
 }
+
 @layer base {
   .containerBloc {
     @apply container max-w-[1280px] px-0;
   }
+
   .clip-custom {
     clip-path: polygon(0 0, 90% 0, 100% 15%, 100% 100%, 0 100%);
   }
+
+  .text-underline {
+    text-decoration: underline;
+  }
+
+  .text-strikethrough {
+    text-decoration: line-through;
+  }
+
 }
 
 @layer base {
@@ -164,8 +189,8 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
-

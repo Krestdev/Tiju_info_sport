@@ -26,6 +26,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LuPlus } from "react-icons/lu";
+import ModalWarning from "@/components/modalWarning";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -136,6 +138,7 @@ function UserTable() {
     const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
+    const action = ["Bannir", "Modifier"]
 
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
@@ -146,7 +149,7 @@ function UserTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Nom de l'utilisateur"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
@@ -198,7 +201,8 @@ function UserTable() {
                                                         <TableHead>{"Pseudonyme"}</TableHead>
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Date d'inscription"}</TableHead>
-                                                        <TableHead>{"Statut"}</TableHead>
+                                                        {/* <TableHead>{"Statut"}</TableHead> */}
+                                                        <TableHead>{"Dernière connexion"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -223,8 +227,35 @@ function UserTable() {
                                                                 <TableCell className="border">{item.pseudo}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.createdAt}</TableCell>
-                                                                <TableCell className="border">{item.statut}</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
+                                                                {/* <TableCell className="border">{item.statut}</TableCell> */}
+                                                                <TableCell className="border">28/06/2025</TableCell>
+                                                                <TableCell className="border">
+                                                                    <Select onValueChange={field.onChange} >
+                                                                        <div className="w-full flex justify-center">
+                                                                            <SelectTrigger className='border border-[#A1A1A1] h-7 flex items-center justify-center w-fit p-2'>
+                                                                                <SelectValue
+                                                                                    placeholder={
+                                                                                        <div className='h-7 max-w-[78px] w-full flex px-2 gap-2 items-center justify-center'>
+                                                                                            {"Actions"}
+                                                                                        </div>
+                                                                                    } />
+                                                                            </SelectTrigger>
+                                                                        </div>
+                                                                        <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
+                                                                            <ModalWarning id={item.id} name={item.nom} action={() => console.log("")
+                                                                            }>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Bannir"}
+                                                                                </Button>
+                                                                            </ModalWarning>
+                                                                            {/* <EditUser selectedUser={item}> */}
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Modifier"}
+                                                                                </Button>
+                                                                            {/* </EditUser> */}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }

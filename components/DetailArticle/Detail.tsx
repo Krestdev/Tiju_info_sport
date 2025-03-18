@@ -471,7 +471,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                             <p className='font-normal text-[16px]'>{x.user?.nom}</p>
                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                             <div className='flex flex-row items-center gap-4'>
-                                                                <Button
+                                                                <Button disabled={!currentUser}
                                                                     onClick={() => handleLikeC(x.id)}
                                                                     style={{
                                                                         color: x.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
@@ -480,7 +480,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                     variant={'ghost'} className='flex items-center justify-center gap-1 px-1'>
                                                                     <ThumbsUp
                                                                         style={{
-                                                                            color: x.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                            color: currentUser && x.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
                                                                             cursor: "pointer",
                                                                         }}
                                                                         className='size-4 text-[#012BAE]' />
@@ -490,7 +490,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                     <div>
                                                                         <Popover open={openRepondre === x.id} onOpenChange={() => toggleRepondre(x.id)}>
                                                                             <PopoverTrigger asChild>
-                                                                                <Button className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
+                                                                                <Button disabled={!currentUser} className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
                                                                             </PopoverTrigger>
                                                                             <PopoverContent className="w-80 flex flex-col gap-2">
                                                                                 <div className="space-y-2 bg-gray-100 rounded-full">
@@ -507,9 +507,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                 </div>
                                                                             </PopoverContent>
                                                                         </Popover>
-                                                                        <Button onClick={() => handleSignal(x.id)}
+                                                                        <Button disabled={!currentUser} onClick={() => handleSignal(x.id)}
                                                                             style={{
-                                                                                color: x.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                color: currentUser && x.signals && x.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                 cursor: "pointer",
                                                                             }}
                                                                             className={`px-1 text-[12px] font-ubuntu hover:text-[#012BAE]`} variant={'ghost'}>{"Signaler"}
@@ -544,7 +544,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                     <DialogTitle>{"Supprimer"}</DialogTitle>
                                                                                     <DialogDescription>{"Voulez-vous vraiment supprimer ce commentaire?"}</DialogDescription>
                                                                                 </DialogHeader>
-
                                                                                 <DialogFooter className="sm:justify-end">
                                                                                     <DialogClose asChild>
                                                                                         <Button onClick={() => handleDeleteComment(x.id)} type="button">
@@ -557,7 +556,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                     </div>
                                                                 }
 
-                                                            </div>
+                                                            </div> 
                                                             {x.reponse.length > 0 &&
                                                                 <div onClick={() => toggleReponse(x.id)} className='flex gap-2 items-center text-[12px] text-blue-500 cursor-pointer'>
                                                                     {showReponses[x.id] ? <BiUpArrow className='size-3' /> : <BiDownArrow className='size-3' />}
@@ -686,13 +685,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                         <div className='flex md:hidden'>{sim?.donnees && <GridAcc gridAff={sim?.donnees} />}</div>
                     </div>
                 </div>
-                {/* <div className='flex '>
-                    <UnePubs titre={'à la une'} couleur={'bg-[#B3261E]'} article={undefined} pubs={undefined} />
-                    <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={undefined} pubs={undefined} />
-                    <Similaire similaire={details} sim={sim} />
-                    {pub && <PubsComp pub={pub.slice().reverse()} taille={'h-[200px]'} clip={''} />}
-                    <Similaire similaire={sec} sim={second} />
-                </div> */}
             </div>
         </div >
     )

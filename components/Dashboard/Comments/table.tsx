@@ -191,7 +191,7 @@ function CommentsTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Intitulé du commentaire"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
@@ -296,8 +296,6 @@ function CommentsTable() {
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

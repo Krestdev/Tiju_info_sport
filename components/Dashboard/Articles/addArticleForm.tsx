@@ -120,7 +120,7 @@ function AddArticleForm({ addButton }: { addButton: string }) {
                     commentaire: [],
                     like: [],
                     statut: "",
-                    auteur: currentAdmin,
+                    auteur: currentAdmin!,
                     couverture: ""
                 }
             ]

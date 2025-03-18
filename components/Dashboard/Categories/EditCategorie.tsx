@@ -4,6 +4,7 @@ import {
     DialogClose,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -50,7 +51,7 @@ type Props = {
 
 function EditCategorie({ children, donnee, nom }: Props) {
 
-    const { dataSubscription, dataCategorie } = useStore()
+    const { dataSubscription, dataCategorie, editCategorie } = useStore()
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [cate, setCate] = useState<Categories[]>()
     const queryClient = useQueryClient();
@@ -78,7 +79,7 @@ function EditCategorie({ children, donnee, nom }: Props) {
         if (cateData.isSuccess) {
             setParent(cateData.data.filter(x => !x.parent))
         }
-    }, [])
+    }, [cateData.data])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -86,21 +87,24 @@ function EditCategorie({ children, donnee, nom }: Props) {
         defaultValues: {
             nom: donnee.nom,
             description: donnee.description,
-            parent: donnee.parent?.nom
+            parent: String(donnee.parent?.id)
         }
     })
 
-    console.log((donnee));
+    // console.log((donnee));
 
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // editPub({
-        //     nom: values.nom,
-        //     lien: values.lien,
-        //     image: new File([""], "/images/pub.jpg", { type: "image/jpeg" }),
-        // });
-        console.log(values);
+        const update = {
+            nom: values.nom,
+            description: values.description
+        };
+        const idP = values.parent ? dataCategorie.find((cat) => cat.id === Number(values.parent))?.id : undefined;
+
+        console.log(idP);
+
+        editCategorie(donnee.id, update, idP);
         queryClient.invalidateQueries({ queryKey: ["category"] });
         setDialogOpen(false);
         toast.success("Modifié avec succès");
@@ -119,7 +123,7 @@ function EditCategorie({ children, donnee, nom }: Props) {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-5 px-7 py-10'>
-                        <h1 className='uppercase text-[40px]'>{"Modifier une catégorie"}</h1>
+                        <h1 className='uppercase text-[28px]'>{"Modifier une catégorie"}</h1>
                         <FormField
                             control={form.control}
                             name='nom'
@@ -162,7 +166,7 @@ function EditCategorie({ children, donnee, nom }: Props) {
                                             <SelectContent className="border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2">
                                                 <SelectItem value="none">{"Sélectionner une catégorie"}</SelectItem>
                                                 {parent?.map((x, i) => (
-                                                    <SelectItem key={i} value={x.nom}>
+                                                    <SelectItem key={i} value={String(x.id)}>
                                                         {x.nom}
                                                     </SelectItem>
                                                 ))}
@@ -174,7 +178,11 @@ function EditCategorie({ children, donnee, nom }: Props) {
                             )}
                         />
                         <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] w-full'>{"Modifier"}</Button>
-
+                        <DialogClose asChild>
+                            <Button variant="outline" className="rounded-none max-w-[384px] w-full">
+                                Annuler
+                            </Button>
+                        </DialogClose>
                     </form>
 
                 </Form>

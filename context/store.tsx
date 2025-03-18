@@ -35,7 +35,13 @@ interface actions {
   setSearch: (art: Article[] | undefined) => void
   setFavorite: (cate: Categorie[] | undefined) => void;
 
+  addCategorie: (categorie: Categories, parentId?: number) => void,
+  editCategorie: (id: number, updatedCategory: Partial<Categories>, parentId?: number) => void,
+  deleteCategorie: (id: number) => void;
+
   addCategory: (category: Categorie) => void;
+  addArticle: (article: Article) => void;
+  editArticle: (article: Article) => void;
   deleteArticle: (id: number) => void;
 
   registerUser: (user: Users) => void;
@@ -118,6 +124,37 @@ const useStore = create<store & actions>()(
           isFull: !state.isFull,
         })),
 
+      addCategorie: (category: Categories, parentId?: number) =>
+        set((state) => ({
+          dataCategorie: [
+            ...state.dataCategorie,
+            { ...category, parent: parentId ? state.dataCategorie.find(cat => cat.id === parentId) || undefined : undefined }
+          ]
+        })),
+
+      editCategorie: (id: number, updatedCategory: Partial<Categories>, parentId?: number) =>
+        set((state) => ({
+          dataCategorie: state.dataCategorie.map(cat =>
+            cat.id === id
+              ? {
+                ...cat,
+                ...updatedCategory,
+                parent: parentId ? state.dataCategorie.find(c => c.id === parentId) || undefined : undefined
+              }
+              : cat
+          )
+        })),
+
+      deleteCategorie: (id: number) =>
+        set((state) => ({
+          dataCategorie: state.dataCategorie
+            .filter((cat) => cat.id !== id)
+            .map((cat) =>
+              cat.parent?.id === id ? { ...cat, parent: undefined } : cat
+            ),
+        })),
+
+
       addCategory: (category: Categorie) =>
         set((state) => {
           const existingCategory = state.dataArticles.find(
@@ -197,6 +234,24 @@ const useStore = create<store & actions>()(
             donnees: article.donnees.filter((art) => art.id !== id)
           })),
         })),
+      addArticle: (article: Article) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) =>
+            categorie.nom === article.type
+              ? { ...categorie, donnees: [...categorie.donnees, article] }
+              : categorie
+          ),
+        })),
+      editArticle: (article: Article) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) => ({
+            ...categorie,
+            donnees: categorie.donnees.map((el) =>
+              el.id === article.id ? { ...el, ...article } : el
+            ),
+          })),
+        })),
+
 
       editComment: (id: number, message: string) =>
         set((state) => ({
