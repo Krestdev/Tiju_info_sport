@@ -168,7 +168,7 @@ const DashbordPage = () => {
           dateRanges={dateRanges.publication}
           setDateRanges={setDateRanges}
           rangeKey="publication">
-          <GridDash tableau={grid} />
+          <GridDash tableau={grid} value={values.publication} dateRanges={dateRanges} rangeKey={"publication"} />
         </Compo>
         <Compo
           texte={"Vues sur le site"}
