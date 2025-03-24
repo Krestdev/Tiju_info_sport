@@ -10,7 +10,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DateRange } from "react-day-picker";
-import { getDateRange } from "@/app/dashboard/page";
+import { getDateRange } from "@/lib/utils";
 
 const chartColors = [
   "hsl(var(--chart-1))",

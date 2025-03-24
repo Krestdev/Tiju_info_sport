@@ -57,3 +57,28 @@ export const isImage = (media: string | undefined): boolean => {
   if (!media) return false;
   return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
 };
+
+export function getDateRange(value: string) {
+  const today = new Date();
+  let startDate: string;
+  let endDate: string = today.toISOString().split("T")[0];
+
+  switch (value) {
+    case "semaine":
+      startDate = new Date(today.setDate(today.getDate() - 7)).toISOString().split("T")[0];
+      break;
+
+    case "mois":
+      startDate = new Date(today.setDate(today.getDate() - 28)).toISOString().split("T")[0];
+      break;
+
+    case "annee":
+      startDate = new Date(today.setFullYear(today.getFullYear() - 1)).toISOString().split("T")[0];
+      break;
+
+    default:
+      throw new Error("Valeur non valide. Utiliser 'semaine', 'mois' ou 'annee'.");
+  }
+
+  return { startDate, endDate };
+}
