@@ -14,10 +14,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, Categorie, Categories } from "@/data/temps";
-import { DateRange } from "react-day-picker";
-import { DatePick } from "../DatePick";
-import { SlRefresh } from "react-icons/sl";
 import Pagination from "../Pagination";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,8 +25,9 @@ import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
 import { LuSquarePen } from "react-icons/lu";
 import EditCategorie from "./EditCategorie";
-import Link from "next/link";
 import AddCategory from "./AddCategory";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -38,13 +35,39 @@ const FormSchema = z.object({
     }),
 });
 
+interface successRes {
+    data: Category[];
+}
+
 function CategoryTable() {
-    const { dataCategorie, deleteCategorie } = useStore();
+    // const { deleteCategorie } = useStore();
+    //Search value
+    const [searchEntry, setSearchEntry] = useState("");
+
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sport, setSport] = useState<Category[]>();
+    const [rein, setRein] = useState(false)
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
+    const itemsPerPage = 15;
+
     const articleCate = useQuery({
-        queryKey: ["articles"],
-        queryFn: async () => dataCategorie,
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<successRes>>(
+                `/api/category`
+            );
+        },
     });
+
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            console.log(articleCate.data);
+            
+            // setSport(articleCate.data.data)
+        }
+    }, [articleCate.data])
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
@@ -56,21 +79,6 @@ function CategoryTable() {
             items: [],
         },
     })
-
-    //Search value
-    const [searchEntry, setSearchEntry] = useState("");
-
-    //Pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Categories[]>();
-    const [rein, setRein] = useState(false)
-    const itemsPerPage = 15;
-
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setSport(articleCate.data)
-        }
-    }, [articleCate.data])
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -105,7 +113,7 @@ function CategoryTable() {
 
     //Delete function
     function onDeleteArticle(id: number) {
-        deleteCategorie(id)
+        // deleteCategorie(id)
         queryClient.invalidateQueries({ queryKey: ["category"] })
         toast.success("Supprimé avec succès");
     }
@@ -136,7 +144,7 @@ function CategoryTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleCate.isLoading && "Loading"}
+                    {articleCate.isLoading && <h3>{"Loading"}</h3>}
                     {articleCate.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -181,14 +189,14 @@ function CategoryTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.nom}</TableCell>
+                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
                                                                 <TableCell className="border">{"252"}</TableCell>
-                                                                <TableCell className="border">{item.parent !== undefined ? item.parent.nom : "Aucun"}</TableCell>
+                                                                {/* <TableCell className="border">{item.parent !== undefined ? item.parent.nom : "Aucun"}</TableCell> */}
                                                                 <TableCell className="flex gap-4 justify-center">
-                                                                    <EditCategorie donnee={item} nom={item.nom}>
+                                                                    <EditCategorie donnee={item} nom={item.title}>
                                                                         <LuSquarePen className="size-5 cursor-pointer" />
                                                                     </EditCategorie>
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.title}>
                                                                         <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
                                                                 </TableCell>
@@ -206,9 +214,9 @@ function CategoryTable() {
                             />
 
                         </div>
-                    ) : articleCate.isSuccess && filterData.length < 1 && articleCate.data.length > 0 ? (
+                    ) : articleCate.isSuccess && filterData.length < 1 && sport?.length && sport?.length > 0 ? (
                         "No result"
-                    ) : articleCate.isSuccess && articleCate.data.length === 0 ? (
+                    ) : articleCate.isSuccess && sport?.length === 0 ? (
                         "Empty table"
                     ) : (
                         articleCate.isError && (

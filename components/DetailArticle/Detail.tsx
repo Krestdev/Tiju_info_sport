@@ -94,9 +94,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     };
 
     const toggleReponse = (id: number) => {
-        setShowReponses((prev) => ({
+        setShowReponses(prev => ({
             ...prev,
-            [id]: !prev[id],
+            [id]: !prev[id]
         }));
     };
 
@@ -258,6 +258,26 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         }
     }
 
+    function peutConsulter(utilisateur: Users | null, article: Article): boolean {
+        // Si l'article est gratuit (coutMois et coutAn à 0), tout le monde peut le lire
+        if (article.abonArticle.coutMois === 0 && article.abonArticle.coutAn === 0) {
+            return true;
+        }
+
+        // Vérifier si l'utilisateur est défini et s'il a un abonnement
+        if (!utilisateur || !utilisateur.abonnement) {
+            return false; // Non connecté ou abonnement manquant → accès refusé
+        }
+
+        // Vérifier si l'abonnement de l'utilisateur permet de lire l'article
+        return (
+            utilisateur.abonnement.coutMois >= article.abonArticle.coutMois &&
+            utilisateur.abonnement.coutAn >= article.abonArticle.coutAn
+        );
+    }
+
+
+
     const cate = dataArticle?.find(x => x.donnees.some(x => x === details))
 
     return (
@@ -301,7 +321,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 </FullScreen>}
                             <div className='flex flex-col gap-4'>
                                 <p className='text-[18px] text-[#545454] font-bold'>{details.extrait}</p>
-                                <div className={`${details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
+                                <div className={`${peutConsulter(currentUser, details) ? 'hidden' : 'flex flex-row w-full items-center justify-center'}`}>
                                     <Link href={"/user/subscribe"} className='w-fit px-3 py-2 gap-2 bg-[#012BAE] text-white capitalize text-center'>{`Abonnez-vous à ${details.abonArticle.nom} pour lire cet article`}</Link>
                                 </div>
                                 <div>
@@ -310,10 +330,15 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 </div>
                             </div>
                             <div className='flex flex-col gap-6'>
-                                <div className={`${details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
-                                    <p className='font-normal'>{details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ? details.description : btoa(details.description).split(' ')}</p>
-                                </div>
-                                {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
+
+                                <div
+                                    className={`${peutConsulter(currentUser, details) ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}
+                                    dangerouslySetInnerHTML={{ __html: details.description }}
+                                />
+                                {/* <div className={`${peutConsulter(currentUser, details) ? '' : 'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}>
+                                    <p className='font-normal'>{peutConsulter(currentUser, details) ? details.description : btoa(details.description).split(' ')}</p>
+                                </div> */}
+                                {details.abonArticle.coutMois === 0 || (currentUser && currentUser?.abonnement?.coutMois !== undefined && currentUser?.abonnement.coutMois >= details.abonArticle.coutMois) || details.abonArticle.coutAn === 0 || (currentUser && currentUser?.abonnement?.coutAn !== undefined && currentUser?.abonnement.coutAn >= details.abonArticle.coutAn) ?
                                     <div className='flex flex-col md:grid grid-cols-4 gap-4'>
                                         {photo &&
                                             photo.map((x, i) => (
@@ -400,7 +425,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                             </div>
                         </div>
 
-                        {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
+                        {details.abonArticle.coutMois === 0 || (currentUser && currentUser?.abonnement?.coutMois !== undefined && currentUser?.abonnement.coutMois >= details.abonArticle.coutMois) || details.abonArticle.coutAn === 0 || (currentUser && currentUser?.abonnement?.coutAn !== undefined && currentUser?.abonnement.coutAn >= details.abonArticle.coutAn) ?
                             <div className='flex flex-col md:flex-row md:items-center justify-between'>
                                 {
                                     currentUser &&
@@ -460,7 +485,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                         </Button>
                         {masquerCom ?
                             <div>
-                                {details.abonArticle.cout === 0 || (currentUser && currentUser?.abonnement?.cout !== undefined && currentUser?.abonnement.cout >= details.abonArticle.cout) ?
+                                {details.abonArticle.coutMois === 0 || (currentUser && currentUser?.abonnement?.coutMois !== undefined && currentUser?.abonnement.coutMois >= details.abonArticle.coutMois) || details.abonArticle.coutAn === 0 || (currentUser && currentUser?.abonnement?.coutAn !== undefined && currentUser?.abonnement.coutAn >= details.abonArticle.coutAn) ?
                                     <div className='flex flex-col pt-8'>
                                         {
                                             details.commentaire.filter(a => a.delete === false).map(x => {
@@ -556,7 +581,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                     </div>
                                                                 }
 
-                                                            </div> 
+                                                            </div>
                                                             {x.reponse.length > 0 &&
                                                                 <div onClick={() => toggleReponse(x.id)} className='flex gap-2 items-center text-[12px] text-blue-500 cursor-pointer'>
                                                                     {showReponses[x.id] ? <BiUpArrow className='size-3' /> : <BiDownArrow className='size-3' />}
@@ -564,102 +589,102 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                 </div>
                                                             }
                                                             {
-                                                                showReponses[x.id] &&
-                                                                x.reponse.filter(s => s.delete === false).map(a => (
-                                                                    <div key={a.id} className='flex flex-row py-3 gap-3'>
-                                                                        <img src={a.user?.photo ? a.user?.photo : '/images/no-user.jpg'} alt="" className='size-10 object-cover rounded-full' />
-                                                                        <div className='flex flex-col gap-2'>
-                                                                            <p className='font-normal text-[16px]'>{a.user?.nom}</p>
-                                                                            <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
-                                                                            <div className='flex flex-row items-center gap-4'>
-                                                                                <Button onClick={() => handleLikeR(x.id, a.id)}
-                                                                                    style={{
-                                                                                        color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                                        cursor: "pointer",
-                                                                                    }}
-                                                                                    variant={'ghost'} className='flex gap-1 px-1'>
-                                                                                    <ThumbsUp
+                                                                showReponses[x.id] ?
+                                                                    x.reponse.filter(s => s.delete === false).map(a => (
+                                                                        <div key={a.id} className='flex flex-row py-3 gap-3'>
+                                                                            <img src={a.user?.photo ? a.user?.photo : '/images/no-user.jpg'} alt="" className='size-10 object-cover rounded-full' />
+                                                                            <div className='flex flex-col gap-2'>
+                                                                                <p className='font-normal text-[16px]'>{a.user?.nom}</p>
+                                                                                <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
+                                                                                <div className='flex flex-row items-center gap-4'>
+                                                                                    <Button onClick={() => handleLikeR(x.id, a.id)}
                                                                                         style={{
                                                                                             color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}
-                                                                                        className='size-5 text-[#012BAE]' />
-                                                                                    <p className='font-normal text-[12px] leading-[15.6px]'>{a.like ? a.like.length : '0'} </p>
-                                                                                </Button>
-                                                                                {a.user?.id !== currentUser?.id ?
-                                                                                    <div>
-                                                                                        <Popover open={openRepondre === a.id} onOpenChange={() => toggleRepondre(a.id)}>
-                                                                                            <PopoverTrigger asChild>
-                                                                                                <Button className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
-                                                                                            </PopoverTrigger>
-                                                                                            <PopoverContent className="w-80 flex flex-col gap-2">
-                                                                                                <div className="space-y-2 bg-gray-100 rounded-full">
-                                                                                                    <h3 className="line-clamp-1">{a.message}</h3>
-                                                                                                </div>
-                                                                                                <div className="flex flex-col gap-2">
-                                                                                                    <Textarea
-                                                                                                        placeholder="Répondre au commentaire"
-                                                                                                        rows={2}
-                                                                                                        value={response}
-                                                                                                        onChange={(e) => setResponse(e.target.value)}
-                                                                                                    />
-                                                                                                    <Button onClick={() => handleResponseClick(x)}>{"Répondre"}</Button>
-                                                                                                </div>
-                                                                                            </PopoverContent>
-                                                                                        </Popover>
-                                                                                        <Button onClick={() => handleSignalR(x.id, a.id)}
+                                                                                        variant={'ghost'} className='flex gap-1 px-1'>
+                                                                                        <ThumbsUp
                                                                                             style={{
-                                                                                                color: a.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                                color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                                 cursor: "pointer",
                                                                                             }}
-                                                                                            className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
-                                                                                    </div> :
-                                                                                    <div>
-                                                                                        <Popover open={openModifier === a.id} onOpenChange={() => toggleComment(a.id)}>
-                                                                                            <PopoverTrigger asChild>
-                                                                                                <Button className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Modifier"}</Button>
-                                                                                            </PopoverTrigger>
-                                                                                            <PopoverContent className="w-80 flex flex-col gap-2">
-                                                                                                <div className="space-y-2 bg-gray-100 rounded-full">
-                                                                                                    <h3 className='line-clamp-1'>{a.message}</h3>
-                                                                                                </div>
-                                                                                                <div className='flex flex-col gap-2'>
-                                                                                                    <Textarea
-                                                                                                        placeholder='Modifier votre commentaire'
-                                                                                                        rows={2}
-                                                                                                        defaultValue={a.message}
-                                                                                                        onChange={(e) => setModifie(e.target.value)}
-                                                                                                    />
-                                                                                                    <Button onClick={() => handleModifierRep(x.id, a.id)}>{"Modifier"}</Button>
-                                                                                                </div>
-                                                                                            </PopoverContent>
-                                                                                        </Popover>
-                                                                                        <Dialog>
-                                                                                            <DialogTrigger>
-                                                                                                <p className='px-1 text-[#B3261E] text-[12px] cursor-pointer'>{"Supprimer"}</p>
-                                                                                            </DialogTrigger>
-                                                                                            <DialogContent>
-                                                                                                <DialogHeader>
-                                                                                                    <DialogTitle>{"Supprimer"}</DialogTitle>
-                                                                                                    <DialogDescription>{"Voulez-vous vraiment supprimer ce commentaire?"}</DialogDescription>
-                                                                                                </DialogHeader>
+                                                                                            className='size-5 text-[#012BAE]' />
+                                                                                        <p className='font-normal text-[12px] leading-[15.6px]'>{a.like ? a.like.length : '0'} </p>
+                                                                                    </Button>
+                                                                                    {a.user?.id !== currentUser?.id ?
+                                                                                        <div>
+                                                                                            <Popover open={openRepondre === a.id} onOpenChange={() => toggleRepondre(a.id)}>
+                                                                                                <PopoverTrigger asChild>
+                                                                                                    <Button className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
+                                                                                                </PopoverTrigger>
+                                                                                                <PopoverContent className="w-80 flex flex-col gap-2">
+                                                                                                    <div className="space-y-2 bg-gray-100 rounded-full">
+                                                                                                        <h3 className="line-clamp-1">{a.message}</h3>
+                                                                                                    </div>
+                                                                                                    <div className="flex flex-col gap-2">
+                                                                                                        <Textarea
+                                                                                                            placeholder="Répondre au commentaire"
+                                                                                                            rows={2}
+                                                                                                            value={response}
+                                                                                                            onChange={(e) => setResponse(e.target.value)}
+                                                                                                        />
+                                                                                                        <Button onClick={() => handleResponseClick(x)}>{"Répondre"}</Button>
+                                                                                                    </div>
+                                                                                                </PopoverContent>
+                                                                                            </Popover>
+                                                                                            <Button onClick={() => handleSignalR(x.id, a.id)}
+                                                                                                style={{
+                                                                                                    color: a.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                                    cursor: "pointer",
+                                                                                                }}
+                                                                                                className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
+                                                                                        </div> :
+                                                                                        <div>
+                                                                                            <Popover open={openModifier === a.id} onOpenChange={() => toggleComment(a.id)}>
+                                                                                                <PopoverTrigger asChild>
+                                                                                                    <Button className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Modifier"}</Button>
+                                                                                                </PopoverTrigger>
+                                                                                                <PopoverContent className="w-80 flex flex-col gap-2">
+                                                                                                    <div className="space-y-2 bg-gray-100 rounded-full">
+                                                                                                        <h3 className='line-clamp-1'>{a.message}</h3>
+                                                                                                    </div>
+                                                                                                    <div className='flex flex-col gap-2'>
+                                                                                                        <Textarea
+                                                                                                            placeholder='Modifier votre commentaire'
+                                                                                                            rows={2}
+                                                                                                            defaultValue={a.message}
+                                                                                                            onChange={(e) => setModifie(e.target.value)}
+                                                                                                        />
+                                                                                                        <Button onClick={() => handleModifierRep(x.id, a.id)}>{"Modifier"}</Button>
+                                                                                                    </div>
+                                                                                                </PopoverContent>
+                                                                                            </Popover>
+                                                                                            <Dialog>
+                                                                                                <DialogTrigger>
+                                                                                                    <p className='px-1 text-[#B3261E] text-[12px] cursor-pointer'>{"Supprimer"}</p>
+                                                                                                </DialogTrigger>
+                                                                                                <DialogContent>
+                                                                                                    <DialogHeader>
+                                                                                                        <DialogTitle>{"Supprimer"}</DialogTitle>
+                                                                                                        <DialogDescription>{"Voulez-vous vraiment supprimer ce commentaire?"}</DialogDescription>
+                                                                                                    </DialogHeader>
 
-                                                                                                <DialogFooter className="sm:justify-end">
-                                                                                                    <DialogClose asChild>
-                                                                                                        <Button onClick={() => handleDeleteRep(x.id, a.id)} type="button">
-                                                                                                            {"Supprimer"}
-                                                                                                        </Button>
-                                                                                                    </DialogClose>
-                                                                                                </DialogFooter>
-                                                                                            </DialogContent>
-                                                                                        </Dialog>
-                                                                                    </div>
-                                                                                }
+                                                                                                    <DialogFooter className="sm:justify-end">
+                                                                                                        <DialogClose asChild>
+                                                                                                            <Button onClick={() => handleDeleteRep(x.id, a.id)} type="button">
+                                                                                                                {"Supprimer"}
+                                                                                                            </Button>
+                                                                                                        </DialogClose>
+                                                                                                    </DialogFooter>
+                                                                                                </DialogContent>
+                                                                                            </Dialog>
+                                                                                        </div>
+                                                                                    }
 
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                ))
+                                                                    )) : ""
                                                             }
                                                         </div>
                                                     </div>

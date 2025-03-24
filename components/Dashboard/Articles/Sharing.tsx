@@ -25,12 +25,12 @@ const formSchema = z.object({
 interface Props {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-    donnee: Partial<Article>;
+    donnee: Article;
 }
 
-const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
+const Sharing = ({ isOpen, onOpenChange, donnee }: Props) => {
 
-    const { editArticle, addCategory, currentAdmin, addArticle, dataCategorie } = useStore();
+    const { editArticle, currentAdmin, dataCategorie } = useStore();
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [selectedHour, setSelectedHour] = useState<number | null>(null);
@@ -59,70 +59,34 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
     }
 
     function onSubmit1(values: z.infer<typeof formSchema>) {
-
         const dateString = format(values.date, "yyyy-MM-dd");
         const dateTimeString = `${dateString}T${values.heure}:00`;
         const dateObject = new Date(dateTimeString);
-
-        addCategory({
-            nom: cateData.data!.find(x => x.nom === donnee.type)!.parent!.nom,
-            donnees: [
-                {
-                    id: Date.now(),
-                    type: donnee.type ? donnee.type : "",
-                    description: donnee.description ? donnee.description : "",
-                    titre: donnee.titre ? donnee.titre : "",
-                    extrait: donnee.extrait ? donnee.extrait : "",
-                    couverture: donnee.couverture ? donnee.couverture : "",
-                    media: donnee.media ? donnee.media : [],
-                    ajouteLe: dateObject.toString(),
-                    commentaire: [],
-                    like: [],
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 0,
-                        nom: "Basique",
-                        coutMois: 0,
-                        coutAn: 0
-                    },
-                    statut: 'programme',
-                    auteur: currentAdmin!
-                }
-            ]
-        });
+        editArticle({
+            ...donnee,
+            id: donnee.id,
+            ajouteLe: dateObject.toString(),
+            user: currentAdmin!,
+            statut: 'programme',
+            auteur: currentAdmin!
+        })
         queryClient.invalidateQueries({ queryKey: ["article"] });
         onOpenChange(false);
+        toast.success("Programmé avec succès");
         form.reset();
     }
 
     function onSubmit() {
-        addCategory({
-            nom: cateData.data!.find(x => x.nom === donnee.type)!.parent!.nom,
-            donnees: [
-                {
-                    id: Date.now(),
-                    type: donnee.type ? donnee.type : "",
-                    description: donnee.description ? donnee.description : "",
-                    titre: donnee.titre ? donnee.titre : "",
-                    extrait: donnee.extrait ? donnee.extrait : "",
-                    couverture: donnee.couverture ? donnee.couverture : "",
-                    media: donnee.media ? donnee.media : [],
-                    ajouteLe: Date.now().toString(),
-                    commentaire: [],
-                    like: [],
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 0,
-                        nom: "Basique",
-                        coutMois: 0,
-                        coutAn: 0
-                    },
-                    statut: 'publie',
-                    auteur: currentAdmin!
-                }
-            ]
-        });
+        editArticle({
+            ...donnee,
+            id: donnee.id,
+            ajouteLe: Date.now().toString(),
+            user: currentAdmin!,
+            statut: 'publie',
+            auteur: currentAdmin!
+        })
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
+        onOpenChange(false);
         toast.success("Ajouté avec succès");
         form.reset();
     }
@@ -247,4 +211,4 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
     );
 }
 
-export default DatePubli;
+export default Sharing;

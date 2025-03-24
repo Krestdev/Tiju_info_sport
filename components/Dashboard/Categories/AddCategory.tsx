@@ -26,14 +26,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { 
-    Dialog, 
-    DialogContent, 
-    DialogDescription, 
-    DialogHeader, 
-    DialogTitle, 
-    DialogTrigger 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
 } from "@/components/ui/dialog";
+import axiosConfig from "@/api/api";
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
@@ -49,6 +50,7 @@ const AddCategory = ({ children }: Props) => {
     const { dataCategorie, addCategorie } = useStore();
     const [parents, setParents] = useState<Categories[]>([]);
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const axiosClient = axiosConfig();
     const queryClient = useQueryClient();
 
     // Récupérer les catégories existantes
@@ -73,7 +75,8 @@ const AddCategory = ({ children }: Props) => {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+
         console.log(dataCategorie.find((cat) => cat.id === Number(values.parent)));
 
         const cate = {
@@ -82,11 +85,29 @@ const AddCategory = ({ children }: Props) => {
             description: values.description,
         }
         const id = values.parent ? dataCategorie.find((cat) => cat.id === Number(values.parent))?.id : undefined
-        addCategorie(cate, id);
+        // addCategorie(cate, id);
+        try {
+            const response = await axiosClient.post(`/api/category`, {
+                title: values.nom,
+                description: values.description
+            });
+
+            if (response.status === 201) {
+                toast.success("Ajouté avec succès");
+
+                // Invalider le cache pour recharger les utilisateurs
+                queryClient.invalidateQueries({ queryKey: ["category"] });
+
+                // Réinitialiser le formulaire
+                form.reset();
+            }
+        } catch (error: any) {
+            console.error("Erreur lors de la creation :", error.response?.data || error.message);
+            toast.error("Erreur lors de la creation !");
+        }
         console.log("Catégorie ajoutée:", cate);
         setDialogOpen(false);
         queryClient.invalidateQueries({ queryKey: ["category"] })
-        toast.success("Ajouté avec succès");
         form.reset();
     }
 

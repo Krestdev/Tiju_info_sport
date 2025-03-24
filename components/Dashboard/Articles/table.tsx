@@ -35,6 +35,8 @@ import { LuSend } from "react-icons/lu";
 import { LuUndo2 } from "react-icons/lu";
 import ShareWarning from "@/components/sharedWarning";
 import Link from "next/link";
+import DatePubli from "./DatePubli";
+import Sharing from "./Sharing";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -45,9 +47,19 @@ const FormSchema = z.object({
 function ArticleTable() {
     const { dataArticles, deleteArticle } = useStore();
     const queryClient = useQueryClient();
+
+
+    const fetchArticles = async (): Promise<Categorie[]> => {
+        const response = await fetch("https://tiju.krestdev.com/api/articles");
+        if (!response.ok) {
+            throw new Error("Erreur lors du chargement des articles");
+        }
+        return response.json();
+    };
+
     const articleData = useQuery({
         queryKey: ["articles"],
-        queryFn: async () => dataArticles,
+        queryFn: fetchArticles,
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -67,7 +79,6 @@ function ArticleTable() {
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Article[]>();
-    const [full, setFull] = useState(false);
     const [current, setCurrent] = useState("tous");
     const [article, setArticle] = useState<Categorie[]>();
 
@@ -75,6 +86,7 @@ function ArticleTable() {
     const [rein, setRein] = useState(false)
     const [selectedAuthor, setSelectedAuthor] = useState("none");
     const [auteur, setAuteur] = useState<string[] | undefined>()
+    const [dialog, setDialog] = React.useState(false);
     const itemsPerPage = 15;
 
     useEffect(() => {
@@ -155,6 +167,10 @@ function ArticleTable() {
         queryClient.invalidateQueries({ queryKey: ["article"] })
         toast.success("Article Restauré avec succès");
     }
+
+    const handleOpen = () => {
+        setDialog(true);
+    };
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -261,7 +277,12 @@ function ArticleTable() {
                                                                     <TableCell className="border">{item.auteur?.nom}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
                                                                     <TableCell className="border">{item.ajouteLe}</TableCell>
-                                                                    <TableCell className="border">{item.statut}</TableCell>
+                                                                    <TableCell className="border">{item.statut === "brouillon" ?
+                                                                        "Brouillon" :
+                                                                        item.statut === "publie" ? "Publié" :
+                                                                            item.statut === "programme" ? "Programmé" :
+                                                                                item.statut === "corbeille" ? "Corbeille" : ""
+                                                                    }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.titre}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
@@ -270,16 +291,21 @@ function ArticleTable() {
                                                                             <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                         </ModalWarning>
                                                                         {
-                                                                            item.statut === "brouillon" ?
-                                                                                <ShareWarning id={item.id} action={onPublishArticle} name={item.titre} message={"Vous etes sur le point de publier"} bouton={"Publier"}>
-                                                                                    <LuSend className="text-[#0128AE] size-5 cursor-pointer" />
-                                                                                </ShareWarning> :
+                                                                            item.statut === "brouillon" || item.statut === "programme" ?
+                                                                                <LuSend
+                                                                                    onClick={(e) => {
+                                                                                        e.preventDefault();
+                                                                                        handleOpen();
+                                                                                    }}
+                                                                                    className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                :
                                                                                 item.statut === "corbeille" ?
                                                                                     <ShareWarning id={0} action={onRestoreArticle} name={item.titre} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
                                                                                         <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
                                                                         }
+                                                                        <Sharing isOpen={dialog} onOpenChange={setDialog} donnee={item} />
                                                                     </TableCell>
                                                                 </TableRow>
                                                             )
@@ -293,7 +319,6 @@ function ArticleTable() {
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
                         ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
                             "No result"

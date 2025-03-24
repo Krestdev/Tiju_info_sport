@@ -78,7 +78,10 @@ function CommentsTable() {
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire && y.commentaire).filter(x => x.signals.length > 0)
+            // const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire && y.commentaire).filter(x => x.signals.length > 0)
+            const commentSignal = articleData.data.flatMap(x => x.donnees)
+                .flatMap(y => y.commentaire ? y.commentaire : [])  
+                .filter(x => x.signals.length > 0);
             const respenseSignal = articleData.data.flatMap(x => x.donnees)
                 .flatMap(x => x.commentaire && x.commentaire)
                 .filter(x => x.reponse.length > 0)
@@ -113,9 +116,9 @@ function CommentsTable() {
             setRein(false);
             return [];
         }
-    
+
         let filtered = comments;
-    
+
         // Filtrage par date
         if (!rein) {
             filtered = filtered.filter((item) => {
@@ -129,7 +132,7 @@ function CommentsTable() {
         } else {
             setRein(false);
         }
-    
+
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
@@ -140,20 +143,20 @@ function CommentsTable() {
                 )
             );
         }
-    
+
         // ✅ Filtrage par article sélectionné
         if (selectedArticle && selectedArticle !== "none") {
             filtered = filtered.filter((comment) =>
-                articles?.some(article => 
+                articles?.some(article =>
                     article.titre === selectedArticle && article.commentaire.some(c => c.id === comment.id)
                 )
             );
         }
-    
+
         return filtered;
     }, [rein, comments, dateRange, searchEntry, selectedArticle, articles]);
-    
-    
+
+
 
 
     //Delete function
@@ -201,7 +204,7 @@ function CommentsTable() {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
                 <Select onValueChange={setSelectedArticle}>
                     <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">

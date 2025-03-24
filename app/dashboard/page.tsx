@@ -11,12 +11,13 @@ import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import LinearChat from "@/components/Dashboard/Dash/LinearChar";
 import { CircChar } from "@/components/Dashboard/Dash/CircChar";
+import { DateRange } from "react-day-picker";
 
 
 export function getDateRange(value: string) {
   const today = new Date();
   let startDate: string;
-  let endDate: string = today.toISOString().split("T")[0]; 
+  let endDate: string = today.toISOString().split("T")[0];
 
   switch (value) {
     case "semaine":
@@ -24,7 +25,7 @@ export function getDateRange(value: string) {
       break;
 
     case "mois":
-      startDate = new Date(today.setDate(today.getDate() - 28)).toISOString().split("T")[0]; // 4 semaines
+      startDate = new Date(today.setDate(today.getDate() - 28)).toISOString().split("T")[0];
       break;
 
     case "annee":
@@ -46,6 +47,22 @@ const DashbordPage = () => {
   const [abonne, setAbonne] = useState<Record<string, number>>()
   const [user, setUser] = useState<Users[]>()
   const [likes, setLikes] = useState<number>(0)
+  const [dateRanges, setDateRanges] = useState<{ [key: string]: DateRange | undefined }>({
+    publication: undefined,
+    vuesSite: undefined,
+    vuesPeriode: undefined,
+    vuesCategorie: undefined,
+  });
+  const [values, setValues] = useState<{ [key: string]: string }>({
+    publication: "semaine",
+    vuesSite: "semaine",
+    vuesPeriode: "semaine",
+    vuesCategorie: "semaine",
+  });
+
+  const handleChange = (key: string, newValue: string) => {
+    setValues((prev) => ({ ...prev, [key]: newValue }));
+  };
 
   const articleData = useQuery({
     queryKey: ["articles"],
@@ -136,17 +153,6 @@ const DashbordPage = () => {
     },
   ]
 
-  const [values, setValues] = useState<{ [key: string]: string }>({
-    publication: "semaine",
-    vuesSite: "semaine",
-    vuesPeriode: "semaine",
-    vuesCategorie: "semaine",
-  });
-
-  const handleChange = (key: string, newValue: string) => {
-    setValues((prev) => ({ ...prev, [key]: newValue }));
-  };
-
   return (
     <div className="flex flex-col gap-5 px-7 py-10">
       <h1 className="uppercase text-[40px]">{"Tableau de bord"}</h1>
@@ -156,7 +162,12 @@ const DashbordPage = () => {
           page={"Tous les articles"}
           width={"w-full"}
           value={values.publication}
-          setValue={(val) => handleChange("publication", val)} link={""} isLink        >
+          setValue={(val) => handleChange("publication", val)}
+          link={""}
+          isLink
+          dateRanges={dateRanges.publication}
+          setDateRanges={setDateRanges}
+          rangeKey="publication">
           <GridDash tableau={grid} />
         </Compo>
         <Compo
@@ -164,8 +175,13 @@ const DashbordPage = () => {
           page={"Statistiques"}
           width={"max-w-[340px] w-full"}
           value={values.vuesSite}
-          setValue={(val) => handleChange("vuesSite", val)} link={""} isLink        >
-          <SemiCirc value={values.vuesSite} />
+          setValue={(val) => handleChange("vuesSite", val)}
+          link={""}
+          isLink
+          dateRanges={dateRanges.vuesSite}
+          setDateRanges={setDateRanges}
+          rangeKey="vuesSite">
+          <SemiCirc rangeKey={"vuesSite"} value={values.vuesSite} dateRanges={dateRanges} />
         </Compo>
       </div>
       <div className="flex flex-row gap-5">
@@ -174,16 +190,26 @@ const DashbordPage = () => {
           page={"Tous les articles"}
           width={"max-w-[400px] w-full"}
           value={values.vuesPeriode}
-          setValue={(val) => handleChange("vuesPeriode", val)} link={""} isLink        >
-          <LinearChat value={values.vuesPeriode} />
+          setValue={(val) => handleChange("vuesPeriode", val)}
+          link={""}
+          isLink
+          dateRanges={dateRanges.vuesPeriode}
+          setDateRanges={setDateRanges}
+          rangeKey="vuesPeriode">
+          <LinearChat rangeKey={"vuesPeriode"} value={values.vuesPeriode} dateRanges={dateRanges} />
         </Compo>
         <Compo
           texte={"Vues par catégorie"}
           page={"Catégories"}
           width={"w-full"}
           value={values.vuesCategorie}
-          setValue={(val) => handleChange("vuesCategorie", val)} link={""} isLink        >
-          <CircChar />
+          setValue={(val) => handleChange("vuesCategorie", val)}
+          link={""}
+          isLink
+          dateRanges={dateRanges.vuesCategorie}
+          setDateRanges={setDateRanges}
+          rangeKey="vuesCategorie">
+          <CircChar value={values.vuesCategorie} dateRanges={dateRanges} rangeKey={"vuesCategorie"} />
         </Compo>
       </div>
     </div>

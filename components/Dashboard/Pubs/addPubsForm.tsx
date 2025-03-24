@@ -72,7 +72,8 @@ function AddPubsForm({ addButton }: { addButton: string }) {
             type: values.type,
             dateDebut: "2024-03-12",
             dateFin: "2025-03-12",
-            statut: ""
+            statut: "",
+            nbClick: 0
         });
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
         setDialogOpen(false);
@@ -189,7 +190,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                             </Button>
                             <DialogClose asChild>
                                 <Button variant={"outline"} onClick={() => form.reset()}>
-                                    {"Close"}
+                                    {"Fermer"}
                                 </Button>
                             </DialogClose>
                         </span>

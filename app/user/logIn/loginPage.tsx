@@ -10,13 +10,16 @@ import useStore from "@/context/store"
 import { z } from "zod";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Users } from "@/data/temps"
 import { useRouter } from "next/navigation"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { GoogleLogin } from '@react-oauth/google';
 
 import { jwtDecode } from "jwt-decode";
+import axiosConfig from "@/api/api"
+import { toast, ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 
 const formSchema = z
   .object({
@@ -24,8 +27,6 @@ const formSchema = z
     password: z
       .string()
       .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
-      .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une lettre majuscule." })
-      .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
   });
 
 interface GoogleUser {
@@ -33,24 +34,31 @@ interface GoogleUser {
   email: string;
 }
 
-
 export default function LoginPage() {
 
-  const { dataUsers, login, currentUser } = useStore();
-  const [user, setUser] = useState<Users[]>()
   const router = useRouter();
   const queryClient = useQueryClient();
+  const axiosClient = axiosConfig();
 
-  const userData = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => dataUsers,
+  const logIn = useMutation({
+    mutationKey: ["login"],
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      return axiosClient.post("/users/signin", {
+        email: data.email,
+        password: data.password
+      });
+    },
   });
 
-  useEffect(() => {
-    if (userData.isSuccess) {
-      setUser(userData.data)
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      logIn.mutateAsync(data);
+      router.push("/")
+    } catch (error) {
+      toast.error("Erreur lors de la connexion");
+      console.error(error);
     }
-  }, [userData.data])
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,22 +69,7 @@ export default function LoginPage() {
   });
 
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const foundUser = login(values.email, values.password);
 
-      if (!foundUser) {
-        throw new Error("Email ou mot de passe incorrect.");
-      }
-
-      router.back();
-    } catch (error: any) {
-      form.setError("email", {
-        type: "manual",
-        message: error.message || "Une erreur est survenue.",
-      });
-    }
-  }
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     try {
@@ -161,6 +154,7 @@ export default function LoginPage() {
             {"Creer Un Compte"}
           </Link>
         </CardFooter>
+        <ToastContainer />
       </Card>
     </div>
   )

@@ -9,6 +9,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DateRange } from "react-day-picker";
+import { getDateRange } from "@/app/dashboard/page";
 
 const chartColors = [
   "hsl(var(--chart-1))",
@@ -24,13 +26,27 @@ interface CategoryData {
   fill: string;
 }
 
-export function CircChar() {
+interface Props {
+  value: string,
+  dateRanges: {
+    [key: string]: DateRange | undefined;
+  },
+  rangeKey: string
+}
+
+export function CircChar({ value, dateRanges, rangeKey }: Props) {
   const [chartData, setChartData] = useState<CategoryData[]>([]);
 
   useEffect(() => {
+
+    const range = dateRanges["vuesCategorie"];
+
+    const startDate = range?.from ? range.from.toISOString().split("T")[0] : getDateRange(value).startDate;
+    const endDate = range?.to ? range.to.toISOString().split("T")[0] : getDateRange(value).endDate;
+
     const fetchViews = async () => {
       try {
-        const response = await fetch("/api/page-view");
+        const response = await fetch(`/api/page-view?startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
 
         if (data.categories) {
@@ -70,7 +86,7 @@ export function CircChar() {
     const interval = setInterval(fetchViews, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [value, dateRanges]);
 
   const chartConfig: ChartConfig = {
     visiteurs: { label: "Nombre de vues" },

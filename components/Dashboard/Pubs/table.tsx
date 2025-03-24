@@ -177,7 +177,7 @@ function ArticleTable() {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
                 <Select onValueChange={setSelectedType}>
                     <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
@@ -260,8 +260,10 @@ function ArticleTable() {
                                                                 <TableCell className="border">{item.type}</TableCell>
                                                                 <TableCell className="border">{item.dateDebut}</TableCell>
                                                                 <TableCell className="border">{item.dateFin}</TableCell>
-                                                                <TableCell className="border">252</TableCell>
-                                                                <TableCell className="border">{item.statut}</TableCell>
+                                                                <TableCell className="border">{item.nbClick}</TableCell>
+                                                                <TableCell className="border">{
+                                                                item.statut === "active" ? "Active" : "Expirée"
+                                                                }</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditPubsForm selectedPubs={item} >
                                                                         <LuSquarePen className="size-5 cursor-pointer" />

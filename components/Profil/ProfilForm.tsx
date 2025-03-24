@@ -28,6 +28,8 @@ const formSchema1 = z.object({
     photo: z.any(),
 });
 
+const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
 const formSchema = z.object({
     nom: z.string().min(4, { message: "Le nom doit contenir au moins 4 caractères." }),
     sexe: z.string(),
@@ -115,7 +117,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
         <div className="max-w-[1280px] w-full flex flex-col md:flex-row gap-7">
             <div className="px-7 md:px-0 flex flex-col gap-5">
                 <div className="flex flex-col gap-8">
-                    <h1  className='uppercase'>{"Mon Compte"}</h1>
+                    <h1 className='uppercase'>{"Mon Compte"}</h1>
                     <Form {...form1}>
                         <form
                             onSubmit={form1.handleSubmit(onSubmit1)}
@@ -340,12 +342,12 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                             </form>
                         </Form>
                     </div>
+                    {token && <Button variant={'destructive'} onClick={handleLogout} className='flex w-fit'> {"Se déconnecter"}</Button>}
 
-                    <Button variant={'destructive'} onClick={handleLogout} className='flex w-fit'> {"Se déconnecter"}</Button>
                     <div className='flex flex-col gap-4'>
                         <h3 className='uppercase'>{"Mon abonnement"}</h3>
                         {
-                            currentUser?.abonnement?.cout === 0 ?
+                            currentUser?.abonnement?.coutMois === 0 ?
                                 <div className='flex flex-col md:flex-row gap-10'>
                                     <div className='flex flex-row items-center gap-4 px-4 py-2'>
                                         <p className='text-[16px]'>{"Aucun Abonnement actif"}</p>
@@ -370,11 +372,11 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
             </div>
             <div className="md:max-w-[360px] w-full gap-7">
                 <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
-                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={pub} affPub={false}/>
+                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={pub} affPub={false} />
                     <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.donnees.slice()).slice(0, 2)} pubs={pub?.slice().reverse()} affPub={true} />
                 </div>
                 {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
-                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'}  />}</div>
+                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
             </div>
         </div>
     );

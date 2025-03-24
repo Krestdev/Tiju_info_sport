@@ -17,7 +17,7 @@ import { MenuComp } from './menu'
 const Navbar = () => {
 
     const router = useRouter()
-    const { currentUser, dataArticles, logout, setSearch } = useStore()
+    const { currentUser, dataArticles, logout, setSearch, settings } = useStore()
     const [article, setArticle] = useState<Categorie[]>()
     const [showSearch, SetShowSearch] = useState(false);
     const [searchEntry, setSearchEntry] = useState("");
@@ -70,8 +70,8 @@ const Navbar = () => {
                 <MenuBar article={article} currentUser={currentUser} />
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
-                        <img src="/logo.png" alt="Logo" className='size-[50px]' />
-                        <p className='font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{"TYJU INFO SPORTS"}</p>
+                        <img src={settings.logo} alt="Logo" className='size-[50px]' />
+                        <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{settings.compagnyName}</p>
                     </Link>
                     {/* <div className='hidden md:flex md:flex-row items-center gap-3'>
                         <MenuComp />
@@ -96,7 +96,7 @@ const Navbar = () => {
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
                                     </Link>
                                     {
-                                        currentUser.abonnement?.cout && currentUser.abonnement?.cout > 0 ?
+                                        currentUser.abonnement && currentUser.abonnement?.coutMois > 0 ?
                                             <Link href={'/user/subscribe'} className='hover:underline'>
                                                 <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
                                                     {"Changer d'offre"}

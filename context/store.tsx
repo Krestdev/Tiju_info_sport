@@ -28,9 +28,13 @@ interface store {
   isFull: boolean | undefined
   favorite: Categorie[]
   search: Article[]
+  token: string | null;
 }
 
 interface actions {
+
+  editSettings: (newSettings: Partial<typeof initialData.settings>) => void;
+
   setIsFull: () => void;
   setSearch: (art: Article[] | undefined) => void
   setFavorite: (cate: Categorie[] | undefined) => void;
@@ -68,6 +72,7 @@ interface actions {
   addPub: (pub: Pubs) => void
   editPub: (pub: any) => void
   deletePub: (id: number) => void;
+  setClick: (pub: Pubs) => void;
 
   addSubscription: (subscription: Abonnement) => void
   editSubscription: (subscription: any) => void
@@ -89,6 +94,8 @@ const initialData: store = {
     description: "Tyju Info sport est un journal sportif"
   },
 
+
+
   //données initiales
   dataArticles: articles,
   favorite: articles,
@@ -99,13 +106,21 @@ const initialData: store = {
   currentAdmin: null,
   isFull: true,
   search: [],
-  dataCategorie: categories
+  dataCategorie: categories,
+  token: null
 };
 
 const useStore = create<store & actions>()(
   persist(
     (set, get) => ({
       ...initialData,
+
+      editSettings: (newSettings: Partial<typeof initialData.settings>) => {
+        set((state) => ({
+          settings: { ...state.settings, ...newSettings },
+        }));
+      },
+
 
       setSearch: (art: Article[] | undefined) =>
         set((state) => ({
@@ -333,7 +348,9 @@ const useStore = create<store & actions>()(
         return foundUser || null;
       },
 
-      logout: () => set({ currentUser: null }),
+      logout: () => {
+        localStorage.removeItem("token");
+      },
 
       loginAdmin: (email, password) => {
         const foundUser = get().dataUsers.find(
@@ -482,6 +499,16 @@ const useStore = create<store & actions>()(
         set((state) => ({
           dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el))
         })),
+
+      setClick: (updatedPub) =>
+        set((state) => ({
+          dataPubs: state.dataPubs.map((el) =>
+            el.id === updatedPub.id
+              ? { ...el, nbClick: (el.nbClick || 0) + 1 }
+              : el
+          ),
+        })),
+
 
       deletePub: (id) =>
         set((state) => ({

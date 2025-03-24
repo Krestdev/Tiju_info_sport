@@ -26,8 +26,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LuPlus } from "react-icons/lu";
 import ModalWarning from "@/components/modalWarning";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
+
+interface successRes {
+    data: User[];
+}
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -36,9 +41,15 @@ const FormSchema = z.object({
 function UserTable() {
     const { dataUsers, deleteArticle } = useStore();
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
+
     const userData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataUsers,
+        queryKey: ["users"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<User[]>>(
+                `/users`
+            );
+        },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -57,7 +68,7 @@ function UserTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [user, setUser] = useState<Users[]>();
+    const [user, setUser] = useState<User[]>();
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false);
@@ -67,8 +78,9 @@ function UserTable() {
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setUser(userData.data)
-            setStatut(userData.data.flatMap(x => x.statut))
+            console.log(userData.data)            
+            setUser(userData.data.data)
+            // setStatut(userData.data.flatMap(x => x.statut))
         }
     }, [userData.data])
 
@@ -94,7 +106,7 @@ function UserTable() {
         if (!rein) {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
-                const itemDate = toNormalDate(item.createdAt);
+                const itemDate = toNormalDate(item.created_at);
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -117,9 +129,9 @@ function UserTable() {
         }
 
         //Filtrage par statut
-        if (selectedStatus && selectedStatus !== "none") {
-            filtered = filtered.filter((el) => el.statut === selectedStatus);
-        }
+        // if (selectedStatus && selectedStatus !== "none") {
+        //     filtered = filtered.filter((el) => el.statut === selectedStatus);
+        // }
 
         return filtered;
     }, [rein, user, dateRange, searchEntry, selectedStatus]);
@@ -159,9 +171,9 @@ function UserTable() {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
-                <Select onValueChange={setSelectedStatus}>
+                {/* <Select onValueChange={setSelectedStatus}>
                     <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
                         <SelectValue placeholder="Filtrer par statut" />
                     </SelectTrigger>
@@ -173,7 +185,7 @@ function UserTable() {
                             </SelectItem>
                         ))}
                     </SelectContent>
-                </Select>
+                </Select> */}
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -203,6 +215,7 @@ function UserTable() {
                                                         <TableHead>{"Date d'inscription"}</TableHead>
                                                         {/* <TableHead>{"Statut"}</TableHead> */}
                                                         <TableHead>{"Dernière connexion"}</TableHead>
+                                                        <TableHead>{"Abonnement"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -224,11 +237,13 @@ function UserTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.pseudo}</TableCell>
+                                                                <TableCell className="border">{item.name}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
-                                                                <TableCell className="border">{item.createdAt}</TableCell>
+                                                                <TableCell className="border">{item.created_at}</TableCell>
                                                                 {/* <TableCell className="border">{item.statut}</TableCell> */}
                                                                 <TableCell className="border">28/06/2025</TableCell>
+                                                                <TableCell className="border">Abonnement</TableCell>
+                                                                {/* <TableCell className="border">{item.abonnement?.nom}</TableCell> */}
                                                                 <TableCell className="border">
                                                                     <Select onValueChange={field.onChange} >
                                                                         <div className="w-full flex justify-center">
@@ -242,16 +257,16 @@ function UserTable() {
                                                                             </SelectTrigger>
                                                                         </div>
                                                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
-                                                                            <ModalWarning id={item.id} name={item.nom} action={() => console.log("")
+                                                                            <ModalWarning id={item.id} name={item.name} action={() => console.log("")
                                                                             }>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Bannir"}
                                                                                 </Button>
                                                                             </ModalWarning>
                                                                             {/* <EditUser selectedUser={item}> */}
-                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-                                                                                    {"Modifier"}
-                                                                                </Button>
+                                                                            <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                {"Modifier"}
+                                                                            </Button>
                                                                             {/* </EditUser> */}
                                                                         </SelectContent>
                                                                     </Select>
@@ -270,17 +285,15 @@ function UserTable() {
                             />
 
                         </div>
-                    ) : userData.isSuccess && filterData.length < 1 && userData.data.length > 0 ? (
+                    ) : userData.isSuccess && filterData.length < 1 && user?.length && user?.length > 0 ? (
                         "No result"
-                    ) : userData.isSuccess && userData.data.length === 0 ? (
+                    ) : userData.isSuccess && user?.length === 0 ? (
                         "Empty table"
                     ) : (
                         userData.isError && (
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

@@ -11,36 +11,78 @@ if (!credentialsPath) {
 const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf8"));
 const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
 
+function formatDate(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+function generateMissingDates(startDate: string, endDate: string): string[] {
+  const dates: string[] = [];
+  let currentDate = new Date(startDate);
+  const end = new Date(endDate);
+
+  while (currentDate <= end) {
+    dates.push(formatDate(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return dates;
+}
+
+function getDateRange(interval: string, startDateParam: string | null) {
+  const today = new Date();
+  const endDate = formatDate(today);
+  let startDate: string;
+
+  if (startDateParam) {
+    startDate = startDateParam;
+  } else {
+    switch (interval) {
+      case "semaine":
+        startDate = formatDate(new Date(today.setDate(today.getDate() - 7)));
+        break;
+      case "mois":
+        startDate = formatDate(new Date(today.setDate(today.getDate() - 30)));
+        break;
+      case "annee":
+        startDate = formatDate(new Date(today.setFullYear(today.getFullYear() - 1)));
+        break;
+      default:
+        throw new Error("Intervalle invalide. Utiliser 'semaine', 'mois' ou 'annee'.");
+    }
+  }
+
+  return { startDate, endDate };
+}
+
 export async function GET(req: Request) {
+
+  const { searchParams } = new URL(req.url);
+  const interval = searchParams.get("interval");
+  const startDateParam = searchParams.get("startDate");
   const propertyId = process.env.GA_PROPERTY_ID;
+  const fromDateParam = searchParams.get("from");
+  const toDateParam = searchParams.get("to");
 
   console.log("Récupération des données des appareils...");
 
-  const url = new URL(req.url);
-  const value = url.searchParams.get("value");
-
-  let daysAgo;
-  switch (value) {
-    case "annee":
-      daysAgo = 365;
-      break;
-    case "mois":
-      daysAgo = 30;
-      break;
-    case "semaine":
-      daysAgo = 7;
-      break;
-    default:
-      return NextResponse.json(
-        { error: "Valeur invalide. Utiliser 'annee', 'mois' ou 'semaine'." },
-        { status: 400 }
-      );
+  if (!propertyId) {
+    return NextResponse.json({ error: "GA_PROPERTY_ID est manquant dans .env" }, { status: 500 });
   }
 
-  const startDate = format(subDays(new Date(), daysAgo), "yyyy-MM-dd");
-  const endDate = format(new Date(), "yyyy-MM-dd");
-
   try {
+
+    let startDate: string;
+    let endDate: string;
+
+    if (fromDateParam && toDateParam) {
+      startDate = formatDate(new Date(fromDateParam));
+      endDate = formatDate(new Date(toDateParam));
+    } else if (interval) {
+      ({ startDate, endDate } = getDateRange(interval, startDateParam));
+
+    } else {
+      return NextResponse.json({ error: "Veuillez fournir soit `interval`, soit `from` et `to`." }, { status: 400 });
+    }
+
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
       dateRanges: [{ startDate, endDate }],
@@ -70,7 +112,7 @@ export async function GET(req: Request) {
     ];
 
     console.log(deviceData);
-    
+
     return NextResponse.json(deviceData);
   } catch (error) {
     console.error("Erreur API Google Analytics :", error);

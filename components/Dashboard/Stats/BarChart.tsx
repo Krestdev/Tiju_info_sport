@@ -10,6 +10,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 
 const chartConfig: ChartConfig = {
   desktop: {
@@ -31,7 +32,11 @@ const chartConfig: ChartConfig = {
 };
 
 interface Props {
-  value: string;
+  value: string,
+  dateRanges: {
+    [key: string]: DateRange | undefined;
+  },
+  rangeKey: string
 }
 
 interface DeviceData {
@@ -46,7 +51,7 @@ const deviceMapping: Record<string, string> = {
   mobile: "Mobile",
 };
 
-const BarChar = ({ value }: Props) => {
+const BarChar = ({ value, dateRanges, rangeKey }: Props) => {
   const [chartData, setChartData] = useState<DeviceData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,8 +59,18 @@ const BarChar = ({ value }: Props) => {
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        setLoading(true);
-        const res = await fetch(`/api/devise-info?value=${value}`);
+
+        let queryParam = `interval=${value}`;
+
+        // Vérifie si dateRanges contient une plage valide
+
+        if (rangeKey && dateRanges[rangeKey]) {
+          const { from, to } = dateRanges[rangeKey]!;
+
+          queryParam = `from=${from?.toISOString() ?? ''}&to=${to?.toISOString() ?? ''}&interval=${value}`;
+        }
+
+        const res = await fetch(`/api/devise-info?${queryParam}`);
         if (!res.ok) throw new Error("Erreur lors du fetch des données");
 
         const result = await res.json();
@@ -74,14 +89,14 @@ const BarChar = ({ value }: Props) => {
     };
 
     fetchDevices();
-  }, [value]);
+  }, [value, dateRanges, rangeKey]);
 
   return (
     <div className="max-h-[208px]">
       <Card>
         <CardContent className="max-h-[208px]">
           <ChartContainer config={chartConfig}
-          className="h-[208px] w-full">
+            className="h-[208px] w-full">
             <BarChart data={chartData} layout="vertical" margin={{ left: 0 }}>
               <YAxis
                 dataKey="nom"
@@ -92,7 +107,7 @@ const BarChar = ({ value }: Props) => {
               />
               <XAxis dataKey="Vues" type="number" hide />
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-              
+
               {/* Une seule Bar avec couleur dynamique via Cell */}
               <Bar dataKey="Vues" radius={5}>
                 {chartData.map((entry) => (

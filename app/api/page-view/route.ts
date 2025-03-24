@@ -10,29 +10,40 @@ const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf8"));
 
 const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
 
-function getFormattedDate(monthsAgo: number): string {
-  const date = new Date();
-  date.setMonth(date.getMonth() - monthsAgo);
+function getFormattedDate(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const url = new URL(request.url);
   const propertyId = process.env.GA_PROPERTY_ID;
   if (!propertyId) {
     return NextResponse.json({ error: "GA_PROPERTY_ID est manquant dans .env" }, { status: 500 });
   }
 
+  const startDate = url.searchParams.get("startDate");
+  const endDate = url.searchParams.get("endDate");
+
+  if (!startDate || !endDate) {
+    return NextResponse.json({ error: "Les paramètres startDate et endDate sont requis" }, { status: 400 });
+  }
+
   try {
     console.log("📡 Récupération des données Google Analytics pour /category...");
 
-    const startDate = getFormattedDate(12);
-    const endDate = getFormattedDate(0);
+    // Si les dates ne sont pas au bon format, retourner une erreur
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return NextResponse.json({ error: "Les dates spécifiées sont invalides" }, { status: 400 });
+    }
 
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
       dimensions: [{ name: "pagePath" }, { name: "pageTitle" }],
       metrics: [{ name: "eventCount" }],
-      dateRanges: [{ startDate, endDate }],
+      dateRanges: [{ startDate: getFormattedDate(start), endDate: getFormattedDate(end) }],
     });
 
     const categoryViews: Record<string, number> = {};
@@ -41,7 +52,6 @@ export async function GET() {
       response.rows.forEach((row) => {
         const title = row.dimensionValues?.[1]?.value || "Unknown";
         const vues = Number(row.metricValues?.[0]?.value || 0);
-        
 
         if (title.includes("category ")) {
           categoryViews[title] = (categoryViews[title] || 0) + vues;

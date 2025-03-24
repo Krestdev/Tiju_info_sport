@@ -38,6 +38,7 @@ export interface Pubs {
     dateDebut: string;
     dateFin: string;
     statut: string;
+    nbClick: number;
 };
 
 export interface Users {
@@ -1645,6 +1646,7 @@ export const publicites: Pubs[] = [
         dateDebut: "2024-12-12",
         dateFin: "2025-03-12",
         statut: "active",
+        nbClick: 0
     },
     {
         id: 2,
@@ -1655,6 +1657,7 @@ export const publicites: Pubs[] = [
         dateDebut: "2024-12-12",
         dateFin: "2025-03-12",
         statut: "active",
+        nbClick: 0
     },
     {
         id: 2,
@@ -1665,6 +1668,7 @@ export const publicites: Pubs[] = [
         dateDebut: "2024-12-12",
         dateFin: "2024-03-12",
         statut: "expire",
+        nbClick: 0
     },
 ];
 

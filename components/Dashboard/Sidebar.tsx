@@ -71,7 +71,7 @@ const items = [
     },
     {
         title: "Catégories",
-        url: "/dashboard/comment",
+        url: "/dashboard/categories",
         icon: LuFolder,
         param: false,
         parametre: [
@@ -150,10 +150,10 @@ export function AppSidebar() {
                             sizes="20px"
                             className="w-full object-cover"
                             src={settings.logo}
-                            alt=""
+                            alt={settings.compagnyName}
                         />
                     </SidebarHeader>
-                    {isFull && <p className='font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{"TYJU INFO SPORTS"}</p>}
+                    {isFull && <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{settings.compagnyName}</p>}
                 </div>
                 <SidebarContent className="max-w-[320px] w-full">
                     <SidebarGroup>

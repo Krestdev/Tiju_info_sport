@@ -13,20 +13,25 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
+import { DateRange } from "react-day-picker"
 
 const chartConfig = {
   view: {
     label: "Vues",
     color: "hsl(173, 56%, 38%)"
-,
+    ,
   },
 } satisfies ChartConfig
 
 interface Props {
-  value: string
+  value: string,
+  dateRanges: {
+    [key: string]: DateRange | undefined;
+  },
+  rangeKey: string 
 }
 
-const LinearChat = ({value}: Props) => {
+const LinearChat = ({ value, dateRanges, rangeKey }: Props) => {
 
   function convertData(data: Record<string, Record<string, number>>, value: string) {
     if (value === "mois") {
@@ -51,39 +56,51 @@ const LinearChat = ({value}: Props) => {
     }
     return [];
   }
-  
-    
 
-  const [chartData, setChartData] = useState<{sem: string; vues: number; }[]>()
+
+
+  const [chartData, setChartData] = useState<{ sem: string; vues: number; }[]>()
 
 
 
   useEffect(() => {
     const fetchViews = async () => {
       try {
-        const response = await fetch(`/api/get-realtime-views?interval=${value}`)
-        const data = await response.json()
+        let queryParam = `interval=${value}`;
+
+        // Vérifie si dateRanges contient une plage valide
+
+        if (rangeKey && dateRanges[rangeKey]) {
+          const { from, to } = dateRanges[rangeKey]!;
+
+          queryParam = `from=${from?.toISOString() ?? ''}&to=${to?.toISOString() ?? ''}&interval=${value}`;
+        }
+
+        const response = await fetch(`/api/get-realtime-views?${queryParam}`);
+        const data = await response.json();
 
         if (data.articleStats) {
-          setChartData(convertData(data.articleStats, value))
+          setChartData(convertData(data.articleStats, value));
         }
       } catch (error) {
-        console.error("Erreur récupération v :", error)
+        console.error("Erreur récupération v :", error);
       }
-    }    
+    };
 
-    fetchViews()
-    const interval = setInterval(fetchViews, 10000)
+    fetchViews();
+    const interval = setInterval(fetchViews, 10000);
 
-    return () => clearInterval(interval)
-  }, [value])
+    return () => clearInterval(interval);
+  }, [value, dateRanges, rangeKey]);
+
+
 
   return (
     <div className="max-h-[208px]">
       <Card>
         <CardContent className="max-h-[208px]">
-          <ChartContainer config={chartConfig} 
-              className="h-fit">
+          <ChartContainer config={chartConfig}
+            className="h-fit">
             <AreaChart
               accessibilityLayer
               data={chartData}
@@ -98,7 +115,7 @@ const LinearChat = ({value}: Props) => {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={10}
-                interval={0} 
+                interval={0}
                 tickFormatter={(value) => value.slice(0, 3)}
               />
               <ChartTooltip

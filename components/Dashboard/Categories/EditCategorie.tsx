@@ -45,7 +45,7 @@ const formSchema = z.object({
 
 type Props = {
     children: ReactNode;
-    donnee: Categories;
+    donnee: Category;
     nom: string | undefined
 };
 
@@ -85,9 +85,9 @@ function EditCategorie({ children, donnee, nom }: Props) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: donnee.nom,
+            nom: donnee.title,
             description: donnee.description,
-            parent: String(donnee.parent?.id)
+            // parent: String(donnee.parent?.id)
         }
     })
 

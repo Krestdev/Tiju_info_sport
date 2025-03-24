@@ -8,13 +8,15 @@ import useStore from "@/context/store";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+import axiosConfig from "@/api/api";
 
 const formSchema = z
   .object({
@@ -25,14 +27,12 @@ const formSchema = z
       }),
     password: z
       .string()
-      .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
-      .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une lettre majuscule." })
-      .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
+      .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." }),
     cfpassword: z.string(),
   })
   .refine((data) => data.password === data.cfpassword, {
     message: "Les mots de passe ne correspondent pas.",
-    path: ["password", "cfpassword"],
+    path: ["cfpassword"],
   });
 
 interface GoogleUser {
@@ -42,14 +42,32 @@ interface GoogleUser {
 
 export default function SignupPage() {
 
-  const { registerUser, dataUsers, dataSubscription } = useStore();
+  const { registerUser, dataSubscription } = useStore();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const axiosClient = axiosConfig();
+
+  // const userData = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: async () => fetch(`${host}/api/users`)
+  //     .then((res) => res.json())
+  // })
 
   const subsData = useQuery({
     queryKey: ["abonnement"],
     queryFn: async () => dataSubscription
-  })
+  });
+
+  const signUp = useMutation({
+    mutationKey: ["register"],
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      return axiosClient.post("/users", {
+        email: data.email,
+        name: data.pseudo,
+        password: data.cfpassword,
+      });
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,39 +79,18 @@ export default function SignupPage() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log(data);
+    
     try {
-      // Inscription de l'utilisateur
-      registerUser({
-        id: Date.now(),
-        email: values.email,
-        pseudo: values.pseudo,
-        password: values.password,
-        createdAt: new Date(Date.now()).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
-        role: "user",
-        abonnement: subsData.data?.find(x => x.cout === 0),
-        phone: "",
-        nom: "",
-        statut: ""
-      });
-
-      // Invalider les données en cache
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-
-      toast.success("Inscription réussi avec succès")
-      // Réinitialiser le formulaire
-      form.reset();
-
-      // Naviguer vers la page de connexion
-      router.push('/logIn');
+      signUp.mutateAsync(data);
+      toast.success("Inscription réussie !");
+      router.push("/user/logIn");
     } catch (error) {
-      console.error("Erreur lors de l'inscription :", error);
+      toast.error("Erreur lors de l'inscription.");
+      console.error(error);
     }
-  }
+  };
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     try {
@@ -123,7 +120,7 @@ export default function SignupPage() {
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
         <CardHeader>
-        <CardTitle className="font-bold text-center pb-10"><h1 className="text-[52px] uppercase">{"Inscription"}</h1></CardTitle>
+          <CardTitle className="font-bold text-center pb-10"><h1 className="text-[52px] uppercase">{"Inscription"}</h1></CardTitle>
           <CardDescription className="flex flex-col items-center gap-4 text-center pb-5">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}

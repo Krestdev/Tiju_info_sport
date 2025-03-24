@@ -52,7 +52,7 @@ function getDateRange(interval: string, startDateParam: string | null) {
   return { startDate, endDate };
 }
 
-function groupByInterval(articleStats: Record<string, Record<string, number>>, interval: string) {
+function groupByInterval(articleStats: Record<string, Record<string, number>>, interval: string | null) {
   const groupedStats: Record<string, Record<string, number>> = {};
 
   switch (interval) {
@@ -61,22 +61,22 @@ function groupByInterval(articleStats: Record<string, Record<string, number>>, i
         Object.entries(articleStats)
           .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
       );
-    
+
     case "mois":
       Object.keys(articleStats).forEach((date) => {
         const dt = new Date(date);
         const year = dt.getFullYear();
-        
+
         const startDate = new Date(dt);
         startDate.setDate(dt.getDate() - dt.getDay() + 1); // Lundi de la semaine
         const startDay = startDate.getDate().toString().padStart(2, '0');
         const startMonth = (startDate.getMonth() + 1).toString().padStart(2, '0');
-        
+
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 6); // Dimanche de la semaine
         const endDay = endDate.getDate().toString().padStart(2, '0');
         const endMonth = (endDate.getMonth() + 1).toString().padStart(2, '0');
-        
+
         const key = `Sem ${startMonth}/${startDay} - ${endMonth}/${endDay}`;
         if (!groupedStats[key]) groupedStats[key] = {};
         Object.entries(articleStats[date]).forEach(([article, vues]) => {
@@ -87,7 +87,7 @@ function groupByInterval(articleStats: Record<string, Record<string, number>>, i
         Object.entries(groupedStats)
           .sort((a, b) => a[0].localeCompare(b[0]))
           .slice(-4)
-           // Garde uniquement les 4 dernières semaines
+        // Garde uniquement les 4 dernières semaines
       );
 
     case "annee":
@@ -103,7 +103,7 @@ function groupByInterval(articleStats: Record<string, Record<string, number>>, i
       return Object.fromEntries(
         Object.entries(groupedStats).sort((a, b) => a[0].localeCompare(b[0]))
       );
-    
+
     default:
       return articleStats;
   }
@@ -112,9 +112,11 @@ function groupByInterval(articleStats: Record<string, Record<string, number>>, i
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const interval = searchParams.get("interval") || "annee";
+  const interval = searchParams.get("interval");
   const startDateParam = searchParams.get("startDate");
   const propertyId = process.env.GA_PROPERTY_ID;
+  const fromDateParam = searchParams.get("from");
+  const toDateParam = searchParams.get("to");
 
   if (!propertyId) {
     return NextResponse.json({ error: "GA_PROPERTY_ID est manquant dans .env" }, { status: 500 });
@@ -123,7 +125,18 @@ export async function GET(req: Request) {
   try {
     console.log(`📡 Récupération des données pour l'intervalle : ${interval}...`);
 
-    const { startDate, endDate } = getDateRange(interval, startDateParam);
+    let startDate: string;
+    let endDate: string;
+
+    if (fromDateParam && toDateParam) {
+      startDate = formatDate(new Date(fromDateParam));
+      endDate = formatDate(new Date(toDateParam));
+    } else if (interval) {
+      ({ startDate, endDate } = getDateRange(interval, startDateParam));
+
+    } else {
+      return NextResponse.json({ error: "Veuillez fournir soit `interval`, soit `from` et `to`." }, { status: 400 });
+    }
 
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
@@ -166,7 +179,7 @@ export async function GET(req: Request) {
       }
     });
 
-    const groupedStats = groupByInterval(articleStats, interval); 
+    const groupedStats = groupByInterval(articleStats, interval);
 
     return NextResponse.json({ articleStats: groupedStats });
   } catch (error) {

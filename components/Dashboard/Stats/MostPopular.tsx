@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
+import { DateRange } from 'react-day-picker';
 
 interface Props {
-    value: string
+    value: string,
+    dateRanges: {
+        [key: string]: DateRange | undefined;
+    },
+    rangeKey: string
 }
 
-const MostPopular = ({ value }: Props) => {
+const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
 
-    const [chartData, setChartData] = useState<{ title: string; vues: number; }[]>()
+    const [chartData, setChartData] = useState<{ title: string; vues: number; }[]>([])
 
     interface ArticleViews {
         [title: string]: number;
@@ -21,28 +26,17 @@ const MostPopular = ({ value }: Props) => {
         vues: number;
     }
 
-    function getTopArticles(data: Articles, interval: string): TopArticle[] {
-        const now = new Date();
-        let startDate = new Date(now);
-
-        // Définir l'intervalle de temps
-        if (interval === "semaine") {
-            startDate.setDate(now.getDate() - 7);
-        } else if (interval === "mois") {
-            startDate.setMonth(now.getMonth() - 1);
-        } else if (interval === "annee") {
-            startDate.setFullYear(now.getFullYear() - 1);
-        } else {
-            throw new Error("Intervalle invalide");
-        }
-
-        let articleViews: ArticleViews = {};
+    function getTopArticlesInRange(
+        data: Record<string, Record<string, number>>,
+        startDate: string,
+        endDate: string
+    ) {
+        let articleViews: Record<string, number> = {};
 
         Object.entries(data).forEach(([date, articles]) => {
-            const currentDate = new Date(date);
-            if (currentDate >= startDate && currentDate <= now) {
+            if (date >= startDate && date <= endDate) {
                 Object.entries(articles).forEach(([title, views]) => {
-                    if (title !== "Aucun article") {
+                    if (title !== "Aucun article" && title !== "/detail-article") {
                         articleViews[title] = (articleViews[title] || 0) + views;
                     }
                 });
@@ -51,32 +45,68 @@ const MostPopular = ({ value }: Props) => {
 
         return Object.entries(articleViews)
             .map(([title, vues]) => ({ title, vues }))
-            .sort((a, b) => b.vues - a.vues)
-            .slice(0, 5);
+            .sort((a, b) => b.vues - a.vues) // Trier du plus grand au plus petit
+            .slice(0, 4); // Garder les 4 articles les plus vus
+    }
+
+    // Fonction pour calculer les dates selon `value`
+    const getDatesFromValue = (value: string) => {
+        const today = new Date();
+        let startDate = new Date(today);
+        let endDate = new Date(today);
+        
+        if (value === 'semaine') {
+            startDate.setDate(today.getDate() - 7); // 7 jours avant aujourd'hui
+        } else if (value === 'mois') {
+            startDate.setMonth(today.getMonth() - 1); // 30 jours avant aujourd'hui
+        } else if (value === 'année') {
+            startDate.setFullYear(today.getFullYear() - 1); // 1 an avant aujourd'hui
+        }
+        
+        return {
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: endDate.toISOString().split('T')[0]
+        };
     }
 
     useEffect(() => {
         const fetchViews = async () => {
             try {
-                const response = await fetch(`/api/get-realtime-views?interval=${value}`)
-                const data = await response.json()
-
-                if (data.articleStats) {
-                    setChartData(getTopArticles(data.articleStats, value))
+                let startDate = '', endDate = '';
+                
+                // Si un rangeKey est défini dans dateRanges, on donne la priorité à ces dates
+                if (rangeKey && dateRanges[rangeKey]) {
+                    const { from, to } = dateRanges[rangeKey]!;
+                    startDate = from?.toISOString().split('T')[0] ?? '';
+                    endDate = to?.toISOString().split('T')[0] ?? '';
+                } else {
+                    // Sinon, on utilise la valeur de `value` pour calculer les dates
+                    const { startDate: calculatedStartDate, endDate: calculatedEndDate } = getDatesFromValue(value);
+                    startDate = calculatedStartDate;
+                    endDate = calculatedEndDate;
                 }
+
+                let queryParam = `from=${startDate}&to=${endDate}&interval=${value}`;
+                const response = await fetch(`/api/get-realtime-views?${queryParam}`);
+                const data = await response.json();
+
+                if (data.articleStats && typeof data.articleStats === 'object') {
+                    setChartData(getTopArticlesInRange(data.articleStats, startDate, endDate));
+                }
+
             } catch (error) {
-                console.error("Erreur récupération v :", error)
+                console.error("Erreur récupération vues :", error);
             }
-        }
+        };
 
-        fetchViews()
-        const interval = setInterval(fetchViews, 10000)
+        fetchViews();
+        const interval = setInterval(fetchViews, 10000);
 
-        return () => clearInterval(interval)
-    }, [value])
+        return () => clearInterval(interval);
+    }, [value, dateRanges, rangeKey]);
 
     return (
-        <div className='flex flex-col px-5 py-3 gap-3'>
+        <div className='flex flex-col px-5 py-3 gap-3 h-[208px]'>
             {
                 chartData?.map((article, index) => (
                     <div key={index} className='flex flex-row justify-between items-center gap-2 h-[30.67px] p-3 bg-[#FAFAFA] rounded-[6px]'>

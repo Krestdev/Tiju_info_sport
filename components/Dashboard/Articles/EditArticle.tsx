@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -33,6 +32,8 @@ import { GrFormClose } from "react-icons/gr";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 import LexicalEditor from "./LexicalEditor";
 import { LuEye, LuPlus } from "react-icons/lu";
+import DatePubli from "./DatePubli";
+import Sharing from "./Sharing";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -80,7 +81,7 @@ type Props = {
 function EditArticle({ children, donnee }: Props) {
 
     const { dataSubscription, dataCategorie, } = useStore()
-    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [dialogO, setDialogO] = React.useState(false);
     const [images, setImages] = useState<string[] | undefined>(donnee.media);
     const [abon, setAbon] = useState<Abonnement[]>();
     const [photo, setPhoto] = useState<string>(donnee.couverture);
@@ -88,6 +89,7 @@ function EditArticle({ children, donnee }: Props) {
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
     const [cate, setCate] = useState<Categories[]>()
+    const [dialogOpen, setDialogOpen] = useState(false)
     const queryClient = useQueryClient();
 
     const subsData = useQuery({
@@ -127,13 +129,21 @@ function EditArticle({ children, donnee }: Props) {
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
         queryClient.invalidateQueries({ queryKey: ["article"] });
-        setDialogOpen(false);
+        setDialogO(false);
         toast.success("Modifié avec succès");
         form.reset();
     }
 
+    const handleOpen = () => {
+        if (formSchema.safeParse(form.getValues()).success) {
+            setDialogOpen(true);
+        } else {
+            toast.error("Veuillez remplir correctement le formulaire.");
+        }
+    };
+
     return (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogO} onOpenChange={setDialogO}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="w-screen h-screen max-w-none p-6 scrollbar">
                 <DialogHeader>
@@ -166,7 +176,7 @@ function EditArticle({ children, donnee }: Props) {
                             name="description"
                             render={({ field }) => {
                                 // console.log(field.value);
-                                
+
                                 return (
                                     <FormItem>
                                         <FormControl>
@@ -343,7 +353,17 @@ function EditArticle({ children, donnee }: Props) {
                         </div>
                         <div className='w-full flex flex-col gap-2'>
                             <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                            <Button type="submit" className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
+                            <Sharing donnee={donnee} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                            <Button
+                                type="submit"
+                                className="max-w-[384px] w-full rounded-none font-normal"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleOpen();
+                                }}
+                            >
+                                {"Publier"}
+                            </Button>
                         </div>
                     </form>
                 </Form>

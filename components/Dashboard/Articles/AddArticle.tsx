@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +20,7 @@ import { BiShow } from 'react-icons/bi';
 import { GrFormClose } from 'react-icons/gr';
 import { Categories } from '@/data/temps';
 import DatePubli from './DatePubli';
+import AddCategory from '../Categories/AddCategory';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -141,9 +142,8 @@ const AddArticle = () => {
                     abonArticle: {
                         id: 4,
                         nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
+                        coutMois: 0,
+                        coutAn: 0,
                     },
                     commentaire: [],
                     like: [],
@@ -158,23 +158,14 @@ const AddArticle = () => {
         form.reset();
     }
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEntry(e.target.value)
+    function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setEntry(event.target.value); // Mettre à jour l'entrée en fonction de la saisie
     }
 
-    // const filterData = useMemo(() => {
-    //     if (!article) return [];
-    //     if (entry === "") return article;
-    //     return article.filter((el) =>
-    //         Object.values(el).some((value) =>
-    //             String(value)
-    //                 .toLocaleLowerCase()
-    //                 .includes(entry.toLocaleLowerCase())
-    //         )
-    //     );
-    //     //to do: complete this code
-    // }, [entry, article]);
-
+    // Filtrer les catégories en fonction de la saisie
+    const filteredCategories = (cate || []).filter((x) =>
+        x.nom.toLowerCase().includes(entry.toLowerCase())
+    );
 
 
     return (
@@ -343,25 +334,34 @@ const AddArticle = () => {
                                                     <div>
                                                         <div className='h-10 flex gap-2 px-3 py-2 border border-[#A1A1A1] items-center'>
                                                             <LuPlus />
-                                                            {"Ajouter une Catégorie"}
+                                                            {"Sélectionner une Catégorie"}
                                                         </div>
                                                     </div>
-                                                } />
+                                                }
+                                            />
                                         </SelectTrigger>
                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
                                             <div>
                                                 <Input
-                                                    type='search'
-                                                    onChange={handleSearch}
+                                                    type="search"
+                                                    onChange={handleInputChange}
                                                     value={entry}
-                                                    placeholder='rechercher une catégorie'
-                                                    className='h-10 w-full'
+                                                    placeholder="Rechercher une catégorie"
+                                                    className="h-10 w-full"
+                                                    onKeyDown={(e) => e.stopPropagation()} // Empêche la fermeture lors de la saisie
                                                 />
-                                                {cate?.map((x, i) => (
-                                                    <SelectItem key={i} value={x.nom}>
-                                                        {x.nom}
-                                                    </SelectItem>
-                                                ))}
+                                                {filteredCategories.length > 0 ? (
+                                                    filteredCategories.map((x, i) => (
+                                                        <SelectItem key={i} value={x.nom}>
+                                                            {x.nom}
+                                                        </SelectItem>
+                                                    ))
+                                                ) : (
+                                                    <p className="p-2 text-gray-500">Aucune catégorie trouvée</p>
+                                                )}
+                                                <AddCategory>
+                                                    <Button className="rounded-none w-full">{"Ajouter une catégorie"}</Button>
+                                                </AddCategory>
                                             </div>
                                         </SelectContent>
                                     </Select>
