@@ -88,7 +88,7 @@ const Mobile = ({ abonId, setActive }: Props) => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    <h3 className='text-[#012BAE]'>{`Offre: ${subs?.nom} ${subs?.cout} FCFA`}</h3>
+                                    <h3 className='text-[#012BAE]'>{`Offre: ${subs?.nom} ${subs?.coutMois} FCFA`}</h3>
                                     <h3>{"Entrez votre numéro de téléphone"}</h3>
                                 </FormLabel>
                                 <FormControl>
