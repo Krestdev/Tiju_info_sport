@@ -15,31 +15,6 @@ import BarChar from "@/components/Dashboard/Stats/BarChart";
 import MostPopular from "@/components/Dashboard/Stats/MostPopular";
 import { DateRange } from "react-day-picker";
 
-
-export function getDateRange(value: string) {
-    const today = new Date();
-    let startDate: string;
-    let endDate: string = today.toISOString().split("T")[0]; // Date du jour au format YYYY-MM-DD
-
-    switch (value) {
-        case "semaine":
-            startDate = new Date(today.setDate(today.getDate() - 7)).toISOString().split("T")[0];
-            break;
-
-        case "mois":
-            startDate = new Date(today.setDate(today.getDate() - 28)).toISOString().split("T")[0]; // 4 semaines
-            break;
-
-        case "annee":
-            startDate = new Date(today.setFullYear(today.getFullYear() - 1)).toISOString().split("T")[0];
-            break;
-        default:
-            throw new Error("Valeur non valide. Utiliser 'semaine', 'mois' ou 'annee'.");
-    }
-
-    return { startDate, endDate };
-}
-
 const DashbordPage = () => {
     const { logoutAdmin, dataArticles, dataUsers } = useStore()
     const pathname = usePathname();
