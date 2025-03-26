@@ -178,8 +178,8 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     </div>
                 </div>
                 <div className={`${tail} md:max-h-full h-full overflow-hidden max-w-[360px] w-full flex flex-col gap-7 px-7 py-5 md:py-0 md:sticky md:top-0`}>
-                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={favorite?.slice(0, 2).flatMap(cat => cat.articles.slice(0, 1))} pubs={ad} />
-                    <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={favorite?.slice().flatMap(cat => cat.articles.slice()).slice(0, 8)} pubs={ad?.slice().reverse()} />
+                    {ad && <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={favorite?.slice(0, 2).flatMap(cat => cat.articles).slice(0, 1)} pubs={ad} />}
+                    {ad && <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={favorite?.slice().flatMap(cat => cat.articles).slice(0, 8)} pubs={ad.slice().reverse()} />}
                 </div>
                 {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none w-fit mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
                 <div className='flex md:hidden px-7 mt-7'>{ad && <PubsComp pub={ad} taille={'h-[300px]'} clip={'clip-custom'} />}</div>

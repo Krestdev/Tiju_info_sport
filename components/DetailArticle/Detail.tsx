@@ -116,9 +116,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         commenter.mutate(id);
     };
 
-    console.log(currentUser.id);
-
-
     React.useEffect(() => {
         if (commenter.isSuccess) {
             queryClient.invalidateQueries({ queryKey: ["comment"] });
@@ -131,10 +128,11 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const repondre = useMutation({
         mutationKey: ["comment"],
         mutationFn: ({ idA, idC }: { idA: string, idC: string }) => {
+            const idU = String(currentUser.id)
             return axiosClient.post(`/comments/${idA}/${idC}`,
                 {
-                    user_id: currentUser.id,
-                    message: commentaire
+                    user_id: idU,
+                    message: response
                 }
             )
         }
