@@ -25,10 +25,10 @@ const GridAll = ({ article }: Props) => {
                         article.map(x => (
                             <Link key={x.id} href={`/user/detail-article/${x.id}`} className='max-w-[400px] w-full flex flex-col items-center gap-3'>
                                 {x.images && (
-                                    isImage(x.images[0] ? x.images[0].url : settings.noImage) ? (
+                                    isImage(x.images[0] ? x.images[0] : settings.noImage) ? (
                                         <img
                                             className='max-w-[400px] w-full h-auto aspect-video object-cover rounded-lg'
-                                            src={x.images[0] ? x.images[0].url : settings.noImage}
+                                            src={x.images[0] ? x.images[0] : settings.noImage}
                                             alt={`${x.type} - ${x.title}`}
                                         />
                                     ) : (
@@ -38,7 +38,7 @@ const GridAll = ({ article }: Props) => {
                                             autoPlay
                                             muted
                                             loop
-                                            src={x.images[0] ? x.images[0].url : settings.noImage}
+                                            src={x.images[0] ? x.images[0] : settings.noImage}
                                         >
                                             Votre navigateur ne supporte pas la lecture de cette vidéo.
                                         </video>
