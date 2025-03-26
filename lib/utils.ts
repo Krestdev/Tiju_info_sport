@@ -16,11 +16,11 @@ export const getUserFavoriteCategories = (
     // Vérifier les interactions de l'utilisateur (like ou commentaire)
     const aHasInteraction = a.articles.some(article =>
       article.likes ||
-      article.comments.some(comment => comment.user?.id === userId)
+      article.comments.some(comment => comment.author.id === userId)
     );
     const bHasInteraction = b.articles.some(article =>
       article.likes ||
-      article.comments.some(comment => comment.user?.id === userId)
+      article.comments.some(comment => comment.author.id === userId)
     );
 
     if (aHasInteraction && !bHasInteraction) return -1; // Catégorie avec interaction en premier
@@ -35,8 +35,8 @@ export const getUserFavoriteCategories = (
 
       const aUserLiked = a.likes
       const bUserLiked = b.likes
-      const aUserCommented = a.comments.some(comment => comment.user?.id === userId) ? 1 : 0;
-      const bUserCommented = b.comments.some(comment => comment.user?.id === userId) ? 1 : 0;
+      const aUserCommented = a.comments.some(comment => comment.author.id === userId) ? 1 : 0;
+      const bUserCommented = b.comments.some(comment => comment.author.id === userId) ? 1 : 0;
 
       if ((aUserLiked || aUserCommented) !== (bUserLiked || bUserCommented)) {
         return (bUserLiked + bUserCommented) - (aUserLiked + aUserCommented);
