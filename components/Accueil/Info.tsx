@@ -15,11 +15,11 @@ const Info = ({ article, taille, couleur }: Props) => {
     return (
         <Link href={`/user/detail-article/${article?.id}`} className={`relative ${taille} h-full w-full`}>
             {article?.images && (
-                isImage(article?.images[0] ? article?.images[0].url : settings.noImage) ? (
+                isImage(article?.images[0] ? article?.images[0] : settings.noImage) ? (
                     <img
                         className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                        src={article?.images[0] ? article?.images[0].url : settings.noImage}
-                        alt={`${article?.images[0].alt}`}
+                        src={article?.images[0] ? article?.images[0] : settings.noImage}
+                        alt={`${article?.images[0]}`}
                     />
                 ) : (
                     <video
@@ -27,7 +27,7 @@ const Info = ({ article, taille, couleur }: Props) => {
                         controls
                         muted
                         loop
-                        src={article?.images[0] ? article?.images[0].url : settings.noImage}
+                        src={article?.images[0] ? article?.images[0] : settings.noImage}
                     >
                         Votre navigateur ne supporte pas la lecture de cette vidéo.
                     </video>

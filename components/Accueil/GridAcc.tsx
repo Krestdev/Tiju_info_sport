@@ -16,11 +16,11 @@ const GridAcc = ({ gridAff }: Props) => {
                 gridAff.slice(0, 6).map(x => (
                     <Link href={`/user/detail-article/${x.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                         {x.images && (
-                            isImage(x?.images[0] ? x?.images[0].url : settings.noImage) ? (
+                            isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                 <img
                                     className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
-                                    src={x?.images[0] ? x?.images[0].url : settings.noImage}
-                                    alt={`${x.images[0].alt}`}
+                                    src={x?.images[0] ? x?.images[0] : settings.noImage}
+                                    alt={`${x.images[0]}`}
                                 />
                             ) : (
                                 <video
@@ -28,7 +28,7 @@ const GridAcc = ({ gridAff }: Props) => {
                                     controls
                                     muted
                                     loop
-                                    src={x?.images[0] ? x?.images[0].url : settings.noImage}
+                                    src={x?.images[0] ? x?.images[0] : settings.noImage}
                                 >
                                     Votre navigateur ne supporte pas la lecture de cette vidéo.
                                 </video>

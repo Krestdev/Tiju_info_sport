@@ -32,7 +32,7 @@ const UnePubs = ({ titre, couleur, article, pubs, affPub=false }: Props) => {
             if ((index + 1) % groupSize === 0 || (article.length <= groupSize && index === article.length - 1)) {
                 result.push(
                     <div key={`ad-${index}`} className={`hidden md:flex ${(article.length <= groupSize && index === article.length - 1) ? "mb-4" : ""}`}>
-                        {affPub === true || affPub === undefined ? "" : <PubsComp pub={pubs} taille={'h-[300px]'} clip={'clip-custom'} />}
+                        {affPub === true || affPub === undefined ? "" : pubs && <PubsComp pub={pubs} taille={'h-[300px]'} clip={'clip-custom'} />}
                     </div>
                 );
             }

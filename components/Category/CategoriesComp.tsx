@@ -48,11 +48,11 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                             return (
                                 <Link href={path === '/user/' ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                                     {x.images && (
-                                        isImage(x?.images[0] ? x?.images[0].url : settings.noImage) ? (
+                                        isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                             <img
                                                 className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
-                                                src={x?.images[0] ? x?.images[0].url : settings.noImage}
-                                                alt={`${x?.images[0].alt}`}
+                                                src={x?.images[0] ? x?.images[0] : settings.noImage}
+                                                alt={`${x?.images[0]}`}
                                             />
                                         ) : (
                                             <video
@@ -60,7 +60,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                                                 controls
                                                 muted
                                                 loop
-                                                src={x?.images[0] ? x?.images[0].url : settings.noImage}
+                                                src={x?.images[0] ? x?.images[0] : settings.noImage}
                                             >
                                                 Votre navigateur ne supporte pas la lecture de cette vidéo.
                                             </video>
@@ -146,11 +146,11 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         <Link href={path === '/user' ? `/user/${sim1?.title}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7'>
                             <div key={premier?.id} className={`relative max-w-[824px] max-h-[320px] h-full w-full`}>
                                 {premier?.images && (
-                                    isImage(premier?.images[0] ? premier?.images[0].url : settings.noImage) ? (
+                                    isImage(premier?.images[0] ? premier?.images[0] : settings.noImage) ? (
                                         <img
                                             className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                                            src={premier?.images[0] ? premier?.images[0].url : settings.noImage}
-                                            alt={`${premier.images[0].alt}`}
+                                            src={premier?.images[0] ? premier?.images[0] : settings.noImage}
+                                            alt={`${premier.images[0]}`}
                                         />
                                     ) : (
                                         <video
@@ -158,7 +158,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                                             controls
                                             muted
                                             loop
-                                            src={premier?.images[0] ? premier?.images[0].url : settings.noImage}
+                                            src={premier?.images[0] ? premier?.images[0] : settings.noImage}
                                         >
                                             Votre navigateur ne supporte pas la lecture de cette vidéo.
                                         </video>
