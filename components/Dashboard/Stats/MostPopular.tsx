@@ -13,19 +13,6 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
 
     const [chartData, setChartData] = useState<{ title: string; vues: number; }[]>([])
 
-    interface ArticleViews {
-        [title: string]: number;
-    }
-
-    interface Articles {
-        [date: string]: ArticleViews;
-    }
-
-    interface TopArticle {
-        title: string;
-        vues: number;
-    }
-
     function getTopArticlesInRange(
         data: Record<string, Record<string, number>>,
         startDate: string,
@@ -45,8 +32,8 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
 
         return Object.entries(articleViews)
             .map(([title, vues]) => ({ title, vues }))
-            .sort((a, b) => b.vues - a.vues) // Trier du plus grand au plus petit
-            .slice(0, 4); // Garder les 4 articles les plus vus
+            .sort((a, b) => b.vues - a.vues) 
+            .slice(0, 4); 
     }
 
     // Fonction pour calculer les dates selon `value`
@@ -56,11 +43,11 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
         let endDate = new Date(today);
         
         if (value === 'semaine') {
-            startDate.setDate(today.getDate() - 7); // 7 jours avant aujourd'hui
+            startDate.setDate(today.getDate() - 7); 
         } else if (value === 'mois') {
-            startDate.setMonth(today.getMonth() - 1); // 30 jours avant aujourd'hui
+            startDate.setMonth(today.getMonth() - 1); 
         } else if (value === 'année') {
-            startDate.setFullYear(today.getFullYear() - 1); // 1 an avant aujourd'hui
+            startDate.setFullYear(today.getFullYear() - 1); 
         }
         
         return {
@@ -89,7 +76,6 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
                 let queryParam = `from=${startDate}&to=${endDate}&interval=${value}`;
                 const response = await fetch(`/api/get-realtime-views?${queryParam}`);
                 const data = await response.json();
-
                 if (data.articleStats && typeof data.articleStats === 'object') {
                     setChartData(getTopArticlesInRange(data.articleStats, startDate, endDate));
                 }

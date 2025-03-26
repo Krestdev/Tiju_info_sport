@@ -20,7 +20,7 @@ import {
 import useStore from "@/context/store";
 import { Categories } from "@/data/temps";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -39,7 +39,7 @@ import axiosConfig from "@/api/api";
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
     description: z.string().min(10, { message: "La description doit avoir au moins 10 caractères" }),
-    parent: z.string().optional().nullable(),
+    parent: z.string().optional(),
 });
 
 type Props = {
@@ -49,67 +49,57 @@ type Props = {
 const AddCategory = ({ children }: Props) => {
     const { dataCategorie, addCategorie } = useStore();
     const [parents, setParents] = useState<Categories[]>([]);
-    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const axiosClient = axiosConfig();
     const queryClient = useQueryClient();
 
-    // Récupérer les catégories existantes
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie,
-    });
+    // // Récupérer les catégories existantes
+    // const cateData = useQuery({
+    //     queryKey: ["category"],
+    //     queryFn: async () => dataCategorie,
+    // });
+
+    const addCategory = useMutation({
+        mutationKey: ["category"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            return axiosClient.post("/category",
+                {
+                    user_id: "3",
+                    title: data.nom,
+                    image: "image",
+                    description: data.description
+                })
+        },
+    })
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        addCategory.mutate(data);
+    }
+    React.useEffect(() => {
+        if (addCategory.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["category"] });
+            setDialogOpen(prev => !prev);
+        } else if (addCategory.isError) {
+            toast.error("Erreur lors de la création de la catégorie");
+            console.log(addCategory.error)
+        }
+    }, [addCategory.isError, addCategory.isSuccess, addCategory.error])
 
     // Filtrer les catégories parents
-    useEffect(() => {
-        if (cateData.isSuccess) {
-            setParents(cateData.data.filter((x) => !x.parent));
-        }
-    }, [cateData.data, cateData.isSuccess]);
+    // useEffect(() => {
+    //     if (cateData.isSuccess) {
+    //         setParents(cateData.data.filter((x) => !x.parent));
+    //     }
+    // }, [cateData.data, cateData.isSuccess]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
-            description: "",
-            parent: null,
+            description: ""
         },
     });
-
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-
-        console.log(dataCategorie.find((cat) => cat.id === Number(values.parent)));
-
-        const cate = {
-            id: Date.now(),
-            nom: values.nom,
-            description: values.description,
-        }
-        const id = values.parent ? dataCategorie.find((cat) => cat.id === Number(values.parent))?.id : undefined
-        // addCategorie(cate, id);
-        try {
-            const response = await axiosClient.post(`/api/category`, {
-                title: values.nom,
-                description: values.description
-            });
-
-            if (response.status === 201) {
-                toast.success("Ajouté avec succès");
-
-                // Invalider le cache pour recharger les utilisateurs
-                queryClient.invalidateQueries({ queryKey: ["category"] });
-
-                // Réinitialiser le formulaire
-                form.reset();
-            }
-        } catch (error: any) {
-            console.error("Erreur lors de la creation :", error.response?.data || error.message);
-            toast.error("Erreur lors de la creation !");
-        }
-        console.log("Catégorie ajoutée:", cate);
-        setDialogOpen(false);
-        queryClient.invalidateQueries({ queryKey: ["category"] })
-        form.reset();
-    }
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -184,12 +174,10 @@ const AddCategory = ({ children }: Props) => {
                             )}
                         />
 
-                        {/* Bouton Ajouter */}
                         <Button type="submit" className="rounded-none max-w-[384px] w-full">
                             {"Ajouter"}
                         </Button>
                     </form>
-                    <ToastContainer />
                 </Form>
             </DialogContent>
             <ToastContainer />

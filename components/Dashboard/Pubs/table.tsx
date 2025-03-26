@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -10,7 +9,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +30,8 @@ import AddPubsForm from "./addPubsForm";
 import EditPubsForm from "./editPubsForm";
 import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
+import { AxiosResponse } from "axios";
+import axiosConfig from "@/api/api";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -39,9 +40,15 @@ const FormSchema = z.object({
 function ArticleTable() {
     const { dataPubs, deleteArticle } = useStore();
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
+
     const pubsData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataPubs,
+        queryKey: ["advertisement"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
+                `/advertisement`
+            );
+        },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -60,7 +67,7 @@ function ArticleTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Pubs[]>();
+    const [sport, setSport] = useState<Advertisement[]>();
     const [selectedType, setSelectedType] = useState("none");
     const [type, setType] = useState<string[] | undefined>()
     const [selectedStatut, setSelectedStatut] = useState("none");
@@ -71,8 +78,8 @@ function ArticleTable() {
 
     useEffect(() => {
         if (pubsData.isSuccess) {
-            setSport(pubsData.data)
-            setType(pubsData.data.flatMap(x => x.type))
+            setSport(pubsData.data.data)
+            // setType(pubsData.data.flatMap(x => x.type))
         }
     }, [pubsData.data])
 
@@ -101,8 +108,8 @@ function ArticleTable() {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
 
-                const itemDebut = new Date(toNormalDate(item.dateDebut)).setHours(0, 0, 0, 0);
-                const itemFin = new Date(toNormalDate(item.dateFin)).setHours(23, 59, 59, 999);
+                const itemDebut = new Date(toNormalDate(item.createdAt)).setHours(0, 0, 0, 0);
+                const itemFin = new Date(toNormalDate(item.createdAt)).setHours(23, 59, 59, 999);
                 const rangeDebut = new Date(dateRange.from).setHours(0, 0, 0, 0);
                 const rangeFin = dateRange.to
                     ? new Date(dateRange.to).setHours(23, 59, 59, 999)
@@ -129,15 +136,15 @@ function ArticleTable() {
         }
 
         //Filtrage par type
-        if (selectedType && selectedType !== "none") {
-            filtered = filtered.filter((el) => el.type === selectedType);
-        }
+        // if (selectedType && selectedType !== "none") {
+        //     filtered = filtered.filter((el) => el.type === selectedType);
+        // }
 
         //Filtrage par statut
         if (selectedStatut && selectedStatut !== "none") {
             selectedStatut === "Active" ?
-                filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) > Date.now()) :
-                filtered = filtered.filter((el) => (new Date(el.dateFin).getTime()) <= Date.now())
+                filtered = filtered.filter((el) => (new Date(365 - Number(el.createdAt)).getTime()) > Date.now()) :
+                filtered = filtered.filter((el) => (new Date(365 - Number(el.createdAt)).getTime()) <= Date.now())
         }
         return filtered;
     }, [rein, sport, dateRange, searchEntry, selectedType, selectedStatut]);
@@ -150,6 +157,15 @@ function ArticleTable() {
         queryClient.invalidateQueries({ queryKey: ["users"] })
         toast.success("Supprimé avec succès");
     }
+
+    const { mutate: deletePubs } = useMutation({
+        mutationFn: async (categoryId: number) => {
+            return axiosClient.delete(`/advertisement/${categoryId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["advertisement"] });
+        },
+    });
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -256,19 +272,22 @@ function ArticleTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.nom}</TableCell>
-                                                                <TableCell className="border">{item.type}</TableCell>
-                                                                <TableCell className="border">{item.dateDebut}</TableCell>
-                                                                <TableCell className="border">{item.dateFin}</TableCell>
-                                                                <TableCell className="border">{item.nbClick}</TableCell>
-                                                                <TableCell className="border">{
+                                                                <TableCell className="border">{item.title}</TableCell>
+                                                                {/* <TableCell className="border">{item.type}</TableCell> */}
+                                                                <TableCell className="border">{item.description}</TableCell>
+                                                                <TableCell className="border">{item.createdAt}</TableCell>
+                                                                <TableCell className="border">{"Date fin"}</TableCell>
+                                                                <TableCell className="border">{"Nombres Clicks"}</TableCell>
+                                                                <TableCell className="border">{"Statuts"}</TableCell>
+                                                                {/* <TableCell className="border">{item.nbClick}</TableCell> */}
+                                                                {/* <TableCell className="border">{
                                                                 item.statut === "active" ? "Active" : "Expirée"
-                                                                }</TableCell>
+                                                                }</TableCell> */}
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditPubsForm selectedPubs={item} >
                                                                         <LuSquarePen className="size-5 cursor-pointer" />
                                                                     </EditPubsForm>
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
+                                                                    <ModalWarning id={item.id} action={deletePubs} name={item.title}>
                                                                         <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
                                                                 </TableCell>
@@ -286,9 +305,9 @@ function ArticleTable() {
                             />
 
                         </div>
-                    ) : pubsData.isSuccess && filterData.length < 1 && pubsData.data.length > 0 ? (
+                    ) : pubsData.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
                         "No result"
-                    ) : pubsData.isSuccess && pubsData.data.length === 0 ? (
+                    ) : pubsData.isSuccess && sport?.length === 0 ? (
                         "Empty table"
                     ) : (
                         pubsData.isError && (

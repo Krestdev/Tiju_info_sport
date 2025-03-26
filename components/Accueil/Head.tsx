@@ -1,4 +1,4 @@
-import { Article } from '@/data/temps';
+
 import React from 'react'
 import Info from './Info';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';

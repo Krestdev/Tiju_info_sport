@@ -6,21 +6,21 @@ import { usePathname } from "next/navigation";
 import useStore from "@/context/store";
 import GridDash from "@/components/Dashboard/Dash/GridDash";
 import { useQuery } from "@tanstack/react-query";
-import { Article, Categorie, comment, Users } from "@/data/temps";
+import { Users } from "@/data/temps";
 import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import LinearChat from "@/components/Dashboard/Dash/LinearChar";
 import { CircChar } from "@/components/Dashboard/Dash/CircChar";
 import { DateRange } from "react-day-picker";
+import { AxiosResponse } from "axios";
+import axiosConfig from "@/api/api";
 
 
 const DashbordPage = () => {
   const { logoutAdmin, dataArticles, dataUsers } = useStore()
   const pathname = usePathname();
   const [art, setArt] = useState<Article[]>()
-  const [comment, setComment] = useState<comment[]>()
-  const [abonne, setAbonne] = useState<Record<string, number>>()
-  const [user, setUser] = useState<Users[]>()
+  const [comment, setComment] = useState<number>(0)
   const [likes, setLikes] = useState<number>(0)
   const [dateRanges, setDateRanges] = useState<{ [key: string]: DateRange | undefined }>({
     publication: undefined,
@@ -34,6 +34,7 @@ const DashbordPage = () => {
     vuesPeriode: "semaine",
     vuesCategorie: "semaine",
   });
+  const axiosClient = axiosConfig();
 
   const handleChange = (key: string, newValue: string) => {
     setValues((prev) => ({ ...prev, [key]: newValue }));
@@ -41,40 +42,38 @@ const DashbordPage = () => {
 
   const articleData = useQuery({
     queryKey: ["articles"],
-    queryFn: async () => dataArticles
-  })
+    queryFn: () => {
+      return axiosClient.get<any, AxiosResponse<Article[]>>(
+        `/articles`
+      );
+    },
+  });
 
-  const userData = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => dataUsers
-  })
+  
 
-  const countTotalLikes = (categories: Categorie[]): number => {
-    return categories.reduce((totalLikes, category) => {
-      return totalLikes + category.donnees.reduce((sum, article) => sum + article.like.length, 0);
+  const countTotalLikes = (articles: Article[]): number => {
+    return articles.reduce((totalLikes, article) => {
+      return totalLikes + article.likes;
     }, 0);
   };
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      setArt(articleData.data.flatMap(x => x.donnees))
-      setComment(art?.flatMap(x => x.commentaire))
-      const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire).filter(x => x.signals.length > 0)
-      const respenseSignal = articleData.data.flatMap(x => x.donnees)
-        .flatMap(x => x.commentaire && x.commentaire)
-        .filter(x => x.reponse.length > 0)
-        .flatMap(x => x.reponse)
-        .filter(x => x.signals.length > 0)
-      setComment([...commentSignal, ...respenseSignal])
-      setLikes(countTotalLikes(articleData.data))
+      setArt(articleData.data.data)
+      setComment((art || []).reduce((total, article) => total + article.comments.length, 0))
+      console.log(comment);
+      
+      // const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire).filter(x => x.signals.length > 0)
+      // const respenseSignal = articleData.data.flatMap(x => x.donnees)
+      //   .flatMap(x => x.commentaire && x.commentaire)
+      //   .filter(x => x.reponse.length > 0)
+      //   .flatMap(x => x.reponse)
+      //   .filter(x => x.signals.length > 0)
+      // setComment([...commentSignal, ...respenseSignal])
+      setLikes(countTotalLikes(articleData.data.data))
     }
-  }, [articleData.data])
-
-  useEffect(() => {
-    if (userData.isSuccess) {
-      setUser(userData.data)
-    }
-  }, [userData.data])
+  }, [articleData.data?.data])
+  
 
   const groupUsersBySubscriptionType = (users: Users[]) => {
     return users.reduce((acc, user) => {
@@ -86,11 +85,6 @@ const DashbordPage = () => {
     }, {} as Record<string, number>);
   };
 
-  useEffect(() => {
-    if (userData.isSuccess) {
-      setAbonne(groupUsersBySubscriptionType(userData.data))
-    }
-  }, [userData.data])
   useEffect(() => {
     const handleRouteChange = () => {
       if (!window.location.pathname.startsWith("/dashboard")) {
@@ -121,11 +115,17 @@ const DashbordPage = () => {
       color: "text-[#FF0068]"
     },
     {
-      value: comment?.length,
-      category: "Commentaires Signalés",
+      value: comment,
+      category: "Tous Les Commentaires",
       bgColor: "bg-[#01AE35]/10",
       color: "text-[#01AE35]"
     },
+    {
+      value: comment,
+      category: "Commentaires Signalés",
+      bgColor: "bg-[#FFA500]/10", 
+      color: "text-[#FFA500]" 
+    }
   ]
 
   return (

@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -37,6 +37,7 @@ const FormSchema = z.object({
 
 interface successRes {
     data: Category[];
+    hb: string
 }
 
 function CategoryTable() {
@@ -48,24 +49,31 @@ function CategoryTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Category[]>();
     const [rein, setRein] = useState(false)
+    const itemsPerPage = 15;
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
-    const itemsPerPage = 15;
 
     const articleCate = useQuery({
         queryKey: ["categoryv"],
         queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<successRes>>(
-                `/api/category`
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
             );
+        },
+    });
+
+    const { mutate: deleteCategory } = useMutation({
+        mutationFn: async (categoryId: number) => {
+            return axiosClient.delete(`/category/${categoryId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         },
     });
 
     useEffect(() => {
         if (articleCate.isSuccess) {
-            console.log(articleCate.data);
-            
-            // setSport(articleCate.data.data)
+            setSport(articleCate.data.data)
         }
     }, [articleCate.data])
 
@@ -190,13 +198,13 @@ function CategoryTable() {
                                                                     />
                                                                 </TableCell>
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
-                                                                <TableCell className="border">{"252"}</TableCell>
-                                                                {/* <TableCell className="border">{item.parent !== undefined ? item.parent.nom : "Aucun"}</TableCell> */}
+                                                                <TableCell className="border">{item.articles.length}</TableCell>
+                                                                <TableCell className="border">{"parents"}</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditCategorie donnee={item} nom={item.title}>
                                                                         <LuSquarePen className="size-5 cursor-pointer" />
                                                                     </EditCategorie>
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.title}>
+                                                                    <ModalWarning id={item.id} action={deleteCategory} name={item.title}>
                                                                         <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
                                                                 </TableCell>

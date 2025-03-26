@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ModalWarning from "@/components/modalWarning";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import Test from "./test";
 
 interface successRes {
     data: User[];
@@ -39,12 +40,20 @@ const FormSchema = z.object({
 });
 
 function UserTable() {
-    const { dataUsers, deleteArticle } = useStore();
+    const { token } = useStore();
     const queryClient = useQueryClient();
-    const axiosClient = axiosConfig();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
+
+    // const axiosClient2 = axiosConfig({
+    //     Authorization: `Bearer ${token}`,
+    //     "x-api-key": "abc123"
+    // });
 
     const userData = useQuery({
-        queryKey: ["users"],
+        queryKey: ["users1233"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<User[]>>(
                 `/users`
@@ -55,6 +64,15 @@ function UserTable() {
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
+
+    const { mutate: deleteUser } = useMutation({
+        mutationFn: async (userId: number) => {
+            return axiosClient.delete(`/users/${userId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users1233"] });
+        },
+    });
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -77,8 +95,8 @@ function UserTable() {
     const itemsPerPage = 15;
 
     useEffect(() => {
+        Test()
         if (userData.isSuccess) {
-            console.log(userData.data)            
             setUser(userData.data.data)
             // setStatut(userData.data.flatMap(x => x.statut))
         }
@@ -138,12 +156,12 @@ function UserTable() {
 
 
 
-    //Delete function
-    function onDeleteArticle(id: number) {
-        deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
-        toast.success("Supprimé avec succès");
-    }
+    // //Delete function
+    // function onDeleteArticle(id: number) {
+    //     deleteArticle(id)
+    //     queryClient.invalidateQueries({ queryKey: ["users"] })
+    //     toast.success("Supprimé avec succès");
+    // }
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -257,8 +275,7 @@ function UserTable() {
                                                                             </SelectTrigger>
                                                                         </div>
                                                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
-                                                                            <ModalWarning id={item.id} name={item.name} action={() => console.log("")
-                                                                            }>
+                                                                            <ModalWarning id={item.id} name={item.name} action={deleteUser}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Bannir"}
                                                                                 </Button>

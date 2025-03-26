@@ -1,15 +1,9 @@
-import useStore from "@/context/store";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
-const axiosConfig = () => {
-  const { token, logout } = useStore();
-
+const axiosConfig = (headers?: AxiosRequestConfig['headers']) => {
   const axiosClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "x-api-key": "abc123"
-    },
+    headers: headers,
   });
 
   axiosClient.interceptors.response.use(
@@ -17,7 +11,7 @@ const axiosConfig = () => {
     (error) => {
       if (error.response) {
         if (error.response.status === 401) {
-          logout();
+          console.log('Non autorisé');
         }
       } else {
         console.error("Erreur inconnue :", error);

@@ -1,26 +1,25 @@
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import useStore from '@/context/store';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ToastContainer, toast } from 'react-toastify';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Input } from '@/components/ui/input';
 import LexicalEditor from './LexicalEditor';
-import { Textarea } from '@/components/ui/textarea';
 import { LuEye, LuPlus } from 'react-icons/lu';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { IoMdAdd, IoMdClose } from 'react-icons/io';
-import { BiShow } from 'react-icons/bi';
 import { GrFormClose } from 'react-icons/gr';
-import { Categories } from '@/data/temps';
 import DatePubli from './DatePubli';
 import AddCategory from '../Categories/AddCategory';
+import axiosConfig from '@/api/api';
+import { AxiosResponse } from 'axios';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -28,12 +27,7 @@ const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
-    // nom: z.string().min(4, {
-    //     message: "Name must be at least 4 characters.",
-    // }),
-    type: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
+    type: z.string(),
     titre: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
@@ -44,13 +38,6 @@ const formSchema = z.object({
         message: "Name must be at least 10 characters.",
     }),
     couverture: z.any(),
-    // .custom<File>((file) => file instanceof File, {
-    //     message: "Veuillez sélectionner un fichier valide.",
-    // })
-    // .refine((file) => file.size < MAX_FILE_SIZE, {
-    //     message: "Le fichier est trop volumineux (max 5MB).",
-    // }),
-
     media: z
         .any()
         .refine(
@@ -58,47 +45,81 @@ const formSchema = z.object({
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ).optional(),
-    // ajouteLe: z.string(),
-    // abonArticle: z.string(),
 
 });
 
 
 const AddArticle = () => {
 
-    const { addCategory, currentAdmin, dataArticles, dataCategorie } = useStore();
+    const { token } = useStore();
     const queryClient = useQueryClient();
     const [article, setArticle] = useState<string[]>()
     const [entry, setEntry] = useState<string>("")
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
-    const [cate, setCate] = useState<Categories[]>()
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [categorie, setCategorie] = useState<Category[]>()
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    });
 
-    const articleData = useQuery({
-        queryKey: ["articles"],
-        queryFn: async () => dataArticles
+    const decodeHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
+
+    const addArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const decodedText = decodeHtml(data.description)
+            return axiosClient.post("/articles",
+                {
+                    user_id: "3",
+                    category_id: categorie?.find(x => x.title === data.type)?.id,
+                    title: data.titre,
+                    summary: data.extrait,
+                    description: decodedText,
+                    type: data.type,
+                    // created_at: "",
+                    // images: [data.couverture, ...data.media]
+                    images: data.media
+                }
+            )
+        }
     })
 
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie
-    })
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        addArticle.mutate(data);
+    }
+
+    React.useEffect(() => {
+        if (addArticle.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            setDialogOpen(prev => !prev);
+        } else if (addArticle.isError) {
+            toast.error("Erreur lors de la création de l'article");
+            console.log(addArticle.error)
+        }
+    }, [addArticle.isError, addArticle.isSuccess, addArticle.error])
+
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
 
     useEffect(() => {
-        if (cateData.isSuccess) {
-            setCate(cateData.data.filter(x => x.parent))
+        if (articleCate.isSuccess) {
+            setCategorie(articleCate.data.data)
         }
-    }, [cateData.data])
-
-    useEffect(() => {
-        if (articleData.isSuccess) {
-            setArticle([...new Set(articleData.data.flatMap(x => x.donnees).flatMap(x => x.type))])
-        }
-    }, [articleData.data])
-
-
+    }, [articleCate.data])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -121,50 +142,13 @@ const AddArticle = () => {
         }
     };
 
-
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        addCategory({
-            nom: cateData.data!.find(x => x.nom === values.type)!.parent!.nom,
-            donnees: [
-                {
-                    id: Date.now(),
-                    type: values.type,
-                    titre: values.titre,
-                    extrait: values.extrait,
-                    description: values.description,
-                    ajouteLe: new Date(Date.now()).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                    }),
-                    media: values.media,
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        coutMois: 0,
-                        coutAn: 0,
-                    },
-                    commentaire: [],
-                    like: [],
-                    statut: "brouillon",
-                    auteur: currentAdmin!,
-                    couverture: values.couverture
-                }
-            ]
-        });
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        toast.success("Ajouté avec succès");
-        form.reset();
-    }
-
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setEntry(event.target.value); // Mettre à jour l'entrée en fonction de la saisie
+        setEntry(event.target.value);
     }
 
     // Filtrer les catégories en fonction de la saisie
-    const filteredCategories = (cate || []).filter((x) =>
-        x.nom.toLowerCase().includes(entry.toLowerCase())
+    const filteredCategories = (categorie || []).filter((x) =>
+        x.title.toLowerCase().includes(entry.toLowerCase())
     );
 
 
@@ -352,8 +336,8 @@ const AddArticle = () => {
                                                 />
                                                 {filteredCategories.length > 0 ? (
                                                     filteredCategories.map((x, i) => (
-                                                        <SelectItem key={i} value={x.nom}>
-                                                            {x.nom}
+                                                        <SelectItem key={i} value={x.title}>
+                                                            {x.title}
                                                         </SelectItem>
                                                     ))
                                                 ) : (
@@ -380,16 +364,6 @@ const AddArticle = () => {
                         onClick={() => form.handleSubmit(onSubmit)()}>
                         {"Enregistrer"}
                     </Button>
-
-                    {/* <DatePubli donnee={form.getValues()} >
-                        <Button
-                            type="submit"
-                            className="max-w-[384px] w-full rounded-none font-normal"
-                            onClick={() => form.setValue("action", "publish")}
-                        >
-                            {"Publier"}
-                        </Button>
-                    </DatePubli> */}
                     <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
                     <Button
                         type="submit"

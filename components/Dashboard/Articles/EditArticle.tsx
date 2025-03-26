@@ -18,22 +18,22 @@ import {
 import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { string, z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Abonnement, Article, Categories } from "@/data/temps";
-import FullScreen from "../FullScreen";
+import { Abonnement } from "@/data/temps";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { GrFormClose } from "react-icons/gr";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 import LexicalEditor from "./LexicalEditor";
 import { LuEye, LuPlus } from "react-icons/lu";
 import DatePubli from "./DatePubli";
 import Sharing from "./Sharing";
+import { AxiosResponse } from "axios";
+import axiosConfig from "@/api/api";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -41,10 +41,8 @@ const formSchema = z.object({
     // nom: z.string().min(4, {
     //     message: "Name must be at least 4 characters.",
     // }),
-    type: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
-    titre: z.string().min(10, {
+    type: z.string(),
+    title: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
     extrait: z.string().min(10, {
@@ -54,21 +52,13 @@ const formSchema = z.object({
         message: "Name must be at least 10 characters.",
     }),
     couverture: z.any(),
-    // .custom<File>((file) => file instanceof File, {
-    //     message: "Veuillez sélectionner un fichier valide.",
-    // })
-    // .refine((file) => file.size < MAX_FILE_SIZE, {
-    //     message: "Le fichier est trop volumineux (max 5MB).",
-    // }),
     media: z
         .any()
         .refine(
             (files) =>
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
-        ),
-    // abonArticle: z.string(),
-
+        ).optional(),
 });
 
 
@@ -80,26 +70,30 @@ type Props = {
 
 function EditArticle({ children, donnee }: Props) {
 
-    const { dataSubscription, dataCategorie, } = useStore()
+    const { dataSubscription, token } = useStore()
     const [dialogO, setDialogO] = React.useState(false);
-    const [images, setImages] = useState<string[] | undefined>(donnee.media);
+    const [images, setImages] = useState<string[]>(donnee.images);
     const [abon, setAbon] = useState<Abonnement[]>();
-    const [photo, setPhoto] = useState<string>(donnee.couverture);
+    const [photo, setPhoto] = useState<string>(donnee.images[0]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
-    const [cate, setCate] = useState<Categories[]>()
+    const [cate, setCate] = useState<Category[]>()
     const [dialogOpen, setDialogOpen] = useState(false)
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
+
+    const decodeHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
 
     const subsData = useQuery({
         queryKey: ["abonnement"],
         queryFn: async () => dataSubscription
-    })
-
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie
     })
 
     useEffect(() => {
@@ -108,31 +102,67 @@ function EditArticle({ children, donnee }: Props) {
         }
     }, [subsData.data])
 
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
+
     useEffect(() => {
-        if (cateData.isSuccess) {
-            setCate(cateData.data.filter(x => x.parent))
+        if (articleCate.isSuccess) {
+            setCate(articleCate.data.data)
         }
-    }, [cateData.data])
+    }, [articleCate.data])
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEntry(e.target.value)
     }
 
+    const editArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            return axiosClient.patch(`/articles/${id}`, {
+                user_id: "3",
+                title: data.title,
+                summary: data.extrait,
+                description: decodeHtml(data.description),
+                type: data.type,
+                images: data.media
+            });
+        },
+    });
+
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        editArticle.mutate({ data: data, id: donnee.id.toString() });
+    }
+
+    React.useEffect(() => {
+        if (editArticle.isSuccess) {
+            toast.success("Modifiée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            setDialogO(false);
+            form.reset();
+        } else if (editArticle.isError) {
+            toast.error("Erreur lors de la modification de la catégorie");
+            console.log(editArticle.error)
+        }
+    }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
+
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            ...donnee,
+            title: donnee.title,
+            type: donnee.type,
+            extrait: donnee.summery,
+            description: donnee.description,
+            couverture: donnee.images[0],
+            media: donnee.images,
         },
     });
-
-    //Submit function
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        queryClient.invalidateQueries({ queryKey: ["article"] });
-        setDialogO(false);
-        toast.success("Modifié avec succès");
-        form.reset();
-    }
 
     const handleOpen = () => {
         if (formSchema.safeParse(form.getValues()).success) {
@@ -145,7 +175,7 @@ function EditArticle({ children, donnee }: Props) {
     return (
         <Dialog open={dialogO} onOpenChange={setDialogO}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="w-screen h-screen max-w-none p-6 scrollbar">
+            <DialogContent className="w-[95vh] h-[95vh] max-w-none p-6 scrollbar">
                 <DialogHeader>
                     <DialogTitle>{"Modifier une Publicité"}</DialogTitle>
                     <DialogDescription>
@@ -161,7 +191,7 @@ function EditArticle({ children, donnee }: Props) {
 
                         <FormField
                             control={form.control}
-                            name="titre"
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
@@ -216,7 +246,7 @@ function EditArticle({ children, donnee }: Props) {
                                                 if (file) {
                                                     const reader = new FileReader();
                                                     reader.onload = () => {
-                                                        setPhoto(reader.result as string);
+                                                        // setPhoto(reader.result as string);
                                                         field.onChange(reader.result);
                                                     };
                                                     reader.readAsDataURL(file);
@@ -300,7 +330,6 @@ function EditArticle({ children, donnee }: Props) {
                                                         </div>
                                                     ))}
                                             </div>
-
                                         </div>
                                     </FormControl>
                                     <FormMessage />
@@ -338,8 +367,8 @@ function EditArticle({ children, donnee }: Props) {
                                                             className='h-10 w-full'
                                                         />
                                                         {cate?.map((x, i) => (
-                                                            <SelectItem key={i} value={x.nom}>
-                                                                {x.nom}
+                                                            <SelectItem key={i} value={x.title}>
+                                                                {x.title}
                                                             </SelectItem>
                                                         ))}
                                                     </div>

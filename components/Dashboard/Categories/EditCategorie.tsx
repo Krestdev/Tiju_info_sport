@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,10 +29,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Abonnement, Article, Categories } from "@/data/temps";
 import FullScreen from "../FullScreen";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { GrFormClose } from "react-icons/gr";
-import { IoMdAdd, IoMdClose } from "react-icons/io";
-import { LuEye, LuPlus } from "react-icons/lu";
+import axiosConfig from "@/api/api";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -56,6 +53,7 @@ function EditCategorie({ children, donnee, nom }: Props) {
     const [cate, setCate] = useState<Categories[]>()
     const queryClient = useQueryClient();
     const [parent, setParent] = useState<Categories[]>();
+    const axiosClient = axiosConfig();
 
 
     const subsData = useQuery({
@@ -87,29 +85,40 @@ function EditCategorie({ children, donnee, nom }: Props) {
         defaultValues: {
             nom: donnee.title,
             description: donnee.description,
-            // parent: String(donnee.parent?.id)
         }
     })
+
+    const editCategory = useMutation({
+        mutationKey: ["category"],
+        mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            return axiosClient.patch(`/category/${id}`, {
+                user_id: "3",
+                title: data.nom,
+                image: "defaultImage",
+                description: data.description
+            });
+        },
+    });
+
 
     // console.log((donnee));
 
 
     //Submit function
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const update = {
-            nom: values.nom,
-            description: values.description
-        };
-        const idP = values.parent ? dataCategorie.find((cat) => cat.id === Number(values.parent))?.id : undefined;
-
-        console.log(idP);
-
-        editCategorie(donnee.id, update, idP);
-        queryClient.invalidateQueries({ queryKey: ["category"] });
-        setDialogOpen(false);
-        toast.success("Modifié avec succès");
-        form.reset();
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        editCategory.mutate({ data: data, id: donnee.id.toString() });
     }
+
+    React.useEffect(() => {
+        if (editCategory.isSuccess) {
+            toast.success("Modifiée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["category"] });
+            setDialogOpen(prev => !prev);
+        } else if (editCategory.isError) {
+            toast.error("Erreur lors de la modification de la catégorie");
+            console.log(editCategory.error)
+        }
+    }, [editCategory.isError, editCategory.isSuccess, editCategory.error])
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -184,7 +193,6 @@ function EditCategorie({ children, donnee, nom }: Props) {
                             </Button>
                         </DialogClose>
                     </form>
-
                 </Form>
             </DialogContent>
             <ToastContainer />

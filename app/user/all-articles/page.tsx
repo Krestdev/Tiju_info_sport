@@ -1,27 +1,31 @@
 "use client"
 
+import axiosConfig from '@/api/api';
 import GridAll from '@/components/All/GridAll'
 import PubsComp from '@/components/PubsComp'
 import useStore from '@/context/store';
-import { Article, Pubs } from '@/data/temps';
-import withAuth from '@/lib/withAuth';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 import React, { useEffect, useState } from 'react'
 
 const page = () => {
 
-    const { dataPubs, dataArticles, search } = useStore()
-    const [pub1, setPu1] = useState<Pubs[]>();
-    
-    
+    const { search } = useStore()
+    const [pub1, setPu1] = useState<Advertisement[]>();
+    const axiosClient = axiosConfig();
+
     const pubData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataPubs,
+        queryKey: ["advertisement"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
+                `/advertisement`
+            );
+        },
     });
     
     useEffect(() => {
         if (pubData.isSuccess) {
-            setPu1(pubData.data)
+            setPu1(pubData.data.data)
         }
     }, [pubData.data])
 

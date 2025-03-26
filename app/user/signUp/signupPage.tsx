@@ -42,10 +42,12 @@ interface GoogleUser {
 
 export default function SignupPage() {
 
-  const { registerUser, dataSubscription } = useStore();
+  const { token, dataSubscription } = useStore();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const axiosClient = axiosConfig();
+  const axiosClient = axiosConfig({
+    Authorization: `Bearer ${token}`,
+  });
 
   // const userData = useQuery({
   //   queryKey: ["users"],
@@ -61,13 +63,34 @@ export default function SignupPage() {
   const signUp = useMutation({
     mutationKey: ["register"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post("/users", {
-        email: data.email,
-        name: data.pseudo,
-        password: data.cfpassword,
-      });
+      try {
+        return axiosClient.post("/users", {
+          email: data.email,
+          name: data.pseudo,
+          password: data.cfpassword,
+          nick_name: "default",
+          phone: "default",
+          sex: "default",
+          town: "default",
+          country: "default",
+          photo: "default",
+          role: "user"
+        });
+      } catch (error) {
+        throw new Error("Validation échouée : " + error);
+      }
+    },
+    onSuccess: (response) => {
+      toast.success("Inscription réussie !");
+      localStorage.setItem("token", response.data.token);
+      router.push("/user/logIn");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de l'inscription.");
+      console.error(error);
     },
   });
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,13 +104,9 @@ export default function SignupPage() {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    
     try {
       signUp.mutateAsync(data);
-      toast.success("Inscription réussie !");
-      router.push("/user/logIn");
     } catch (error) {
-      toast.error("Erreur lors de l'inscription.");
       console.error(error);
     }
   };

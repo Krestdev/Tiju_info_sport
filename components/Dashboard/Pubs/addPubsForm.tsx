@@ -19,16 +19,16 @@ import {
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { string, z } from "zod";
+import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/context/store";
-import { useQueryClient } from "@tanstack/react-query";
-import { TbUserPlus } from "react-icons/tb";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LuPlus } from "react-icons/lu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import axiosConfig from "@/api/api";
 
 const formSchema = z.object({
     nom: z.string().min(1, {
@@ -49,9 +49,14 @@ const formSchema = z.object({
 
 function AddPubsForm({ addButton }: { addButton: string }) {
 
-    const { addPub } = useStore();
+    const { addPub, token } = useStore();
     const [dialogOpen, setDialogOpen] = useState(false);
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    });
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -62,24 +67,36 @@ function AddPubsForm({ addButton }: { addButton: string }) {
         },
     });
 
-    // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        addPub({
-            id: Date.now(),
-            nom: values.nom,
-            lien: values.lien,
-            image: values.image,
-            type: values.type,
-            dateDebut: "2024-03-12",
-            dateFin: "2025-03-12",
-            statut: "",
-            nbClick: 0
-        });
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        setDialogOpen(false);
-        toast.success("Ajouté avec succès");
-        form.reset();
+
+    const addAdvertisement = useMutation({
+        mutationKey: ["advertisement"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            return axiosClient.post("/advertisement",
+                {
+                    user_id: "3",
+                    title: data.nom,
+                    description: data.type,
+                    image: data.image,
+                    url: data.lien
+                }
+            )
+        }
+    })
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        addAdvertisement.mutate(data);
     }
+
+    React.useEffect(() => {
+        if (addAdvertisement.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            setDialogOpen(prev => !prev);
+        } else if (addAdvertisement.isError) {
+            toast.error("Erreur lors de la création de l'article");
+            console.log(addAdvertisement.error)
+        }
+    }, [addAdvertisement.isError, addAdvertisement.isSuccess, addAdvertisement.error])
 
     const type = ["large", "petit"]
 
@@ -182,7 +199,6 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                                 </FormItem>
                             )}
                         />
-
 
                         <span className="flex items-center gap-3 flex-wrap">
                             <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">

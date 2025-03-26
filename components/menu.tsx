@@ -1,33 +1,34 @@
 
 "use client"
 
-import {
-    Menubar,
-    MenubarMenu,
-    MenubarTrigger,
-} from "@/components/ui/menubar"
 import useStore from "@/context/store"
 import { Categorie } from "@/data/temps"
-import { getUserFavoriteCategories } from "@/lib/utils"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
-import { Button } from "./ui/button"
 import { usePathname } from "next/navigation"
+import axiosConfig from "@/api/api"
+import { AxiosResponse } from "axios"
 
 export function MenuComp() {
 
-    const { dataArticles } = useStore()
-    const [cate, setCate] = useState<Categorie[]>()
+    const [cate, setCate] = useState<Category[]>()
+
+    const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
 
     const articleData = useQuery({
-        queryKey: ["articles"],
-        queryFn: async () => dataArticles
-    })
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            setCate(articleData.data)
+            setCate(articleData.data.data.filter(x => x.articles.length > 0))
         }
     }, [articleData.data])
 
@@ -46,7 +47,7 @@ export function MenuComp() {
     }, [pathname]);
 
     const checkUserCategory = () => {
-        return cate?.flatMap(x => x.nom).includes(selected);
+        return cate?.flatMap(x => x.title).includes(selected);
     };
 
     return (
@@ -55,7 +56,7 @@ export function MenuComp() {
                 <div className="md:max-w-[1280px] mx-20 w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
                     {
                         cate?.map((x, i) => (
-                            <Link className={`${selected === x.nom ? "bg-[#0128AE] text-white" : ""} font-oswald h-10 flex items-center px-3 py-2 gap-2`} key={i} href={`/user/${x.nom}`}>{x.nom}</Link>
+                            <Link className={`${selected === x.title ? "bg-[#0128AE] text-white" : ""} font-oswald h-10 flex items-center px-3 py-2 gap-2`} key={i} href={`/user/${x.title}`}>{x.title}</Link>
                         ))
                     }
                 </div>

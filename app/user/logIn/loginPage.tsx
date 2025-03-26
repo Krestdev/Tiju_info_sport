@@ -36,9 +36,12 @@ interface GoogleUser {
 
 export default function LoginPage() {
 
+  const { token, currentUser } = useStore()
   const router = useRouter();
   const queryClient = useQueryClient();
-  const axiosClient = axiosConfig();
+  const axiosClient = axiosConfig({
+    Authorization: `Bearer ${token}`,
+  });
 
   const logIn = useMutation({
     mutationKey: ["login"],
@@ -48,12 +51,21 @@ export default function LoginPage() {
         password: data.password
       });
     },
+    onSuccess: (response) => {
+      toast.success("Connexion réussie !");
+      // localStorage.setItem("token", response.data.token);
+      useStore.getState().setCurrentUser(response.data);
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la connexion.");
+      console.error(error);
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       logIn.mutateAsync(data);
-      router.push("/")
     } catch (error) {
       toast.error("Erreur lors de la connexion");
       console.error(error);

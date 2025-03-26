@@ -10,11 +10,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, Categorie } from "@/data/temps";
+import { Categorie } from "@/data/temps";
 import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
@@ -25,42 +25,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TbH3 } from "react-icons/tb";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
 import EditArticle from "./EditArticle";
 import { LuSquarePen } from "react-icons/lu";
-import { LuSend } from "react-icons/lu";
-import { LuUndo2 } from "react-icons/lu";
-import ShareWarning from "@/components/sharedWarning";
 import Link from "next/link";
-import DatePubli from "./DatePubli";
 import Sharing from "./Sharing";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const FormSchema = z.object({
-    items: z.array(z.number()).refine((value) => value.length > 0, {
-        message: "You have to select at least one item.",
-    }),
+    items: z.array(z.number()),
 });
 
 function ArticleTable() {
-    const { dataArticles, deleteArticle } = useStore();
+    // const { deleteArticle } = useStore();
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
 
 
-    const fetchArticles = async (): Promise<Categorie[]> => {
-        const response = await fetch("https://tiju.krestdev.com/api/articles");
-        if (!response.ok) {
-            throw new Error("Erreur lors du chargement des articles");
-        }
-        return response.json();
-    };
-
-    const articleData = useQuery({
+    const articleCate = useQuery({
         queryKey: ["articles"],
-        queryFn: fetchArticles,
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Article[]>>(
+                `/articles`
+            );
+        },
     });
+
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            setSport(articleCate.data.data)
+        }
+    }, [articleCate.data])
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
@@ -89,13 +87,6 @@ function ArticleTable() {
     const [dialog, setDialog] = React.useState(false);
     const itemsPerPage = 15;
 
-    useEffect(() => {
-        if (articleData.isSuccess) {
-            setSport(articleData.data.flatMap(x => x.donnees))
-            setArticle(articleData.data)
-            setAuteur(articleData.data?.flatMap(x => x.donnees).map(x => x.auteur ? x.auteur.nom : ""))
-        }
-    }, [articleData.data])
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -105,6 +96,12 @@ function ArticleTable() {
     const toNormalDate = (dateStr: string): Date => {
         const [day, month, year] = dateStr.split("/").map(Number);
         return new Date(year, month - 1, day);
+    };
+
+
+    const decodeHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
     };
 
     const filterData = useMemo(() => {
@@ -119,7 +116,7 @@ function ArticleTable() {
         if (!rein) {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
-                const itemDate = toNormalDate(item.ajouteLe);
+                const itemDate = toNormalDate(item.created_at);
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -142,21 +139,28 @@ function ArticleTable() {
 
         // Filtrage par auteur
         if (selectedAuthor && selectedAuthor !== "none") {
-            filtered = filtered.filter((el) => el.auteur?.nom === selectedAuthor);
+            filtered = filtered.filter((el) => el.author?.name === selectedAuthor);
         }
 
         return filtered;
     }, [rein, sport, dateRange, searchEntry, selectedAuthor]);
 
 
+    const { mutate: deleteArticle } = useMutation({
+        mutationFn: async (articleId: number) => {
+            return axiosClient.delete(`/articles/${articleId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+    });
 
-
-    //Delete function
-    function onDeleteArticle(id: number) {
-        deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["article"] })
-        toast.success("Supprimé avec succès");
-    }
+    // //Delete function
+    // function onDeleteArticle(id: number) {
+    //     deleteArticle(id)
+    //     queryClient.invalidateQueries({ queryKey: ["article"] })
+    //     toast.success("Supprimé avec succès");
+    // }
 
     function onPublishArticle(id: number) {
         queryClient.invalidateQueries({ queryKey: ["article"] })
@@ -175,8 +179,8 @@ function ArticleTable() {
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = current === "tous" ?
-        filterData.slice(startIndex, startIndex + itemsPerPage) :
-        filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.statut === current);
+        filterData.slice(startIndex, startIndex + itemsPerPage) : []
+    // :filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.statut === current);
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -227,8 +231,8 @@ function ArticleTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleData.isLoading ? <h3>{"Loading"}</h3> :
-                        articleData.isSuccess && filterData.length > 0 ? (
+                    {articleCate.isLoading ? <h3>{"Loading"}</h3> :
+                        articleCate.isSuccess && filterData.length > 0 ? (
                             <div className="min-h-[70vh] overflow-y-auto w-full">
                                 <FormField
                                     control={form.control}
@@ -273,24 +277,25 @@ function ArticleTable() {
                                                                             }}
                                                                         />
                                                                     </TableCell>
-                                                                    <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.titre}</TableCell>
-                                                                    <TableCell className="border">{item.auteur?.nom}</TableCell>
+                                                                    <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
+                                                                    <TableCell className="border">{item.author?.name}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
-                                                                    <TableCell className="border">{item.ajouteLe}</TableCell>
-                                                                    <TableCell className="border">{item.statut === "brouillon" ?
+                                                                    <TableCell className="border">{item.created_at}</TableCell>
+                                                                    <TableCell className="border">{"Statut"}</TableCell>
+                                                                    {/* <TableCell className="border">{item.statut === "brouillon" ?
                                                                         "Brouillon" :
                                                                         item.statut === "publie" ? "Publié" :
                                                                             item.statut === "programme" ? "Programmé" :
                                                                                 item.statut === "corbeille" ? "Corbeille" : ""
-                                                                    }</TableCell>
+                                                                    }</TableCell> */}
                                                                     <TableCell className="flex gap-4 justify-center">
-                                                                        <EditArticle donnee={item} nom={item.titre}>
+                                                                        <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <ModalWarning id={item.id} action={onDeleteArticle} name={item.titre}>
+                                                                        <ModalWarning id={item.id} action={deleteArticle} name={item.title}>
                                                                             <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                         </ModalWarning>
-                                                                        {
+                                                                        {/* {
                                                                             item.statut === "brouillon" || item.statut === "programme" ?
                                                                                 <LuSend
                                                                                     onClick={(e) => {
@@ -304,7 +309,7 @@ function ArticleTable() {
                                                                                         <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
-                                                                        }
+                                                                        } */}
                                                                         <Sharing isOpen={dialog} onOpenChange={setDialog} donnee={item} />
                                                                     </TableCell>
                                                                 </TableRow>
@@ -320,12 +325,12 @@ function ArticleTable() {
                                     )}
                                 />
                             </div>
-                        ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
+                        ) : articleCate.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
                             "No result"
-                        ) : articleData.isSuccess && articleData.data.length === 0 ? (
+                        ) : articleCate.isSuccess && sport?.length === 0 ? (
                             "Empty table"
                         ) : (
-                            articleData.isError && (
+                            articleCate.isError && (
                                 "Some error occured"
                             )
                         )}

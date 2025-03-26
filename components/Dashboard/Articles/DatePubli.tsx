@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { z } from 'zod';
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
@@ -6,17 +6,17 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { LuCalendarDays, LuChevronDown } from 'react-icons/lu';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Article } from '@/data/temps';
 import useStore from '@/context/store';
+import axiosConfig from '@/api/api';
+import { AxiosResponse } from 'axios';
 const formSchema = z.object({
     date: z.coerce.date(),
     heure: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format invalide (HH:mm)"),
@@ -25,23 +25,97 @@ const formSchema = z.object({
 interface Props {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-    donnee: Partial<Article>;
+    donnee: {
+        type: string;
+        description: string;
+        titre: string;
+        extrait: string;
+        media?: any;
+        couverture?: any;
+    };
 }
 
 const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
 
-    const { editArticle, addCategory, currentAdmin, addArticle, dataCategorie } = useStore();
+    console.log(donnee);
+
+
+    const { dataCategorie, token } = useStore();
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [selectedHour, setSelectedHour] = useState<number | null>(null);
     const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
     const [submitFunction, setSubmitFunction] = useState(() => onSubmit);
-    const [programmer, setProgrammer] = useState(false)
+    const [programmer, setProgrammer] = useState(false);
+    const [categorie, setCategorie] = useState<Category[]>()
 
     const cateData = useQuery({
         queryKey: ["category"],
         queryFn: async () => dataCategorie
     })
+
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
+
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            setCategorie(articleCate.data.data)
+        }
+    }, [articleCate.data])
+
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    });
+
+    const decodeHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
+
+    const addArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const decodedText = decodeHtml(donnee.description)
+            return axiosClient.post("/articles",
+                {
+                    user_id: "3",
+                    category_id: categorie?.find(x => x.title === donnee.type)?.id,
+                    title: donnee.titre,
+                    summary: donnee.extrait,
+                    description: decodedText,
+                    type: donnee.type,
+                    created_at: new Date(`${format(data.date, "yyyy-MM-dd")}T${data.heure}:00`)
+                        .toString(),
+                    images: donnee.media
+                }
+            )
+        }
+    })
+
+    function onSubmit (data: z.infer<typeof formSchema>) {
+        addArticle.mutate(data);
+    }
+
+    React.useEffect(() => {
+        if (addArticle.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            // setDialogOpen(prev => !prev);
+            setOpen(prev => !prev)
+            queryClient.invalidateQueries({ queryKey: ["pubs"] })
+        } else if (addArticle.isError) {
+            toast.error("Erreur lors de la création de l'article");
+            console.log(addArticle.error)
+        }
+    }, [addArticle.isError, addArticle.isSuccess, addArticle.error])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -58,75 +132,7 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
         setOpen(false);
     }
 
-    function onSubmit1(values: z.infer<typeof formSchema>) {
-
-        const dateString = format(values.date, "yyyy-MM-dd");
-        const dateTimeString = `${dateString}T${values.heure}:00`;
-        const dateObject = new Date(dateTimeString);
-
-        addCategory({
-            nom: cateData.data!.find(x => x.nom === donnee.type)!.parent!.nom,
-            donnees: [
-                {
-                    id: Date.now(),
-                    type: donnee.type ? donnee.type : "",
-                    description: donnee.description ? donnee.description : "",
-                    titre: donnee.titre ? donnee.titre : "",
-                    extrait: donnee.extrait ? donnee.extrait : "",
-                    couverture: donnee.couverture ? donnee.couverture : "",
-                    media: donnee.media ? donnee.media : [],
-                    ajouteLe: dateObject.toString(),
-                    commentaire: [],
-                    like: [],
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 0,
-                        nom: "Basique",
-                        coutMois: 0,
-                        coutAn: 0
-                    },
-                    statut: 'programme',
-                    auteur: currentAdmin!
-                }
-            ]
-        });
-        queryClient.invalidateQueries({ queryKey: ["article"] });
-        onOpenChange(false);
-        form.reset();
-    }
-
-    function onSubmit() {
-        addCategory({
-            nom: cateData.data!.find(x => x.nom === donnee.type)!.parent!.nom,
-            donnees: [
-                {
-                    id: Date.now(),
-                    type: donnee.type ? donnee.type : "",
-                    description: donnee.description ? donnee.description : "",
-                    titre: donnee.titre ? donnee.titre : "",
-                    extrait: donnee.extrait ? donnee.extrait : "",
-                    couverture: donnee.couverture ? donnee.couverture : "",
-                    media: donnee.media ? donnee.media : [],
-                    ajouteLe: Date.now().toString(),
-                    commentaire: [],
-                    like: [],
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 0,
-                        nom: "Basique",
-                        coutMois: 0,
-                        coutAn: 0
-                    },
-                    statut: 'publie',
-                    auteur: currentAdmin!
-                }
-            ]
-        });
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        toast.success("Ajouté avec succès");
-        form.reset();
-    }
-
+    
     const heure = Array.from({ length: 24 }, (_, i) => i)
     const minute = Array.from({ length: 60 }, (_, i) => i)
 
@@ -234,7 +240,7 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
                                 variant={"outline"}
                                 type="submit"
                                 className='rounded-none w-full mt-4'
-                                onClick={() => setSubmitFunction(() => onSubmit1)}
+                                onClick={() => setSubmitFunction(() => onSubmit)}
                             >
                                 {"Valider"}
                             </Button>

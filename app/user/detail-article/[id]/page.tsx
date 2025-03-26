@@ -4,8 +4,9 @@ import { useEffect, useState, use } from "react";
 import Detail from "@/components/DetailArticle/Detail";
 import PubsComp from "@/components/PubsComp";
 import useStore from "@/context/store";
-import { Article, Pubs } from "@/data/temps";
 import { useQuery } from "@tanstack/react-query";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 declare global {
   interface Window {
@@ -17,32 +18,44 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   // ✅ Utilisation de `use()` pour extraire l'ID
   const { id } = use(params);
 
-  const { dataArticles, dataPubs, favorite } = useStore();
-  const [article, setArticle] = useState<Article | undefined>();
-  const [pub, setPub] = useState<Pubs[]>();
-  const [similaire, setSimilaire] = useState<Article[] | undefined>();
+  const { favorite } = useStore();
+  const [article, setArticle] = useState<Article>();
+  const [pub, setPub] = useState<Advertisement[]>();
+  const [similaire, setSimilaire] = useState<Article[]>();
+  const [cate, setCate] = useState<Category[]>()
+  const axiosClient = axiosConfig();
+
+    const pubData = useQuery({
+        queryKey: ["advertisement"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
+                `/advertisement`
+            );
+        },
+    });
 
   const articleData = useQuery({
-    queryKey: ["articles"],
-    queryFn: async () => dataArticles,
-  });
-
-  const pubData = useQuery({
-    queryKey: ["pubs"],
-    queryFn: async () => dataPubs,
-  });
+          queryKey: ["categoryv"],
+          queryFn: () => {
+              return axiosClient.get<any, AxiosResponse<Category[]>>(
+                  `/category`
+              );
+          },
+      });
 
   useEffect(() => {
     if (pubData.isSuccess) {
-      setPub(pubData.data);
+      setPub(pubData.data.data);
     }
   }, [pubData.data, pubData.isSuccess]);
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      const articles = articleData.data.flatMap((cate) => cate.donnees);
+      setCate(articleData.data.data)
+      const articles = articleData.data.data.flatMap((cate) => cate.articles);
       const foundArticle = articles.find((x) => x.id === Number(id));
       setArticle(foundArticle);
+
       setSimilaire(
         articles
           .filter((x) => x.type === foundArticle?.type && x.id !== foundArticle.id)
@@ -63,12 +76,15 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Chargement ou article introuvable...</div>;
   }
 
+  console.log(article);
+  
+
   return (
     <div className="containerBloc gap-3">
       <div className="px-7">
         {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
       </div>
-      <Detail details={article} similaire={similaire} pub={pub} dataArticle={articleData.data} favorite={favorite} />
+      <Detail details={article} similaire={similaire} pub={pub} dataArticle={cate} favorite={favorite} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Article, Pubs } from '@/data/temps';
+import { Pubs } from '@/data/temps';
 import React from 'react';
 import PubsComp from '../PubsComp';
 import Link from 'next/link';
@@ -7,7 +7,7 @@ interface Props {
     titre: string;
     couleur: string;
     article: Article[] | undefined;
-    pubs: Pubs[] | undefined;
+    pubs: Advertisement[] | undefined;
     affPub?: boolean
 }
 
@@ -26,7 +26,7 @@ const UnePubs = ({ titre, couleur, article, pubs, affPub=false }: Props) => {
                     <p className="uppercase font-oswald font-medium text-[14px] leading-[18.2px] text-[#A1A1A1]">
                         {x.type}
                     </p>
-                    <h4 className="first-letter:uppercase line-clamp-2">{x.titre}</h4>
+                    <h4 className="first-letter:uppercase line-clamp-2">{x.title}</h4>
                 </Link>
             )
             if ((index + 1) % groupSize === 0 || (article.length <= groupSize && index === article.length - 1)) {

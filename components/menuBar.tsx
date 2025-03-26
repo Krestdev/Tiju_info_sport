@@ -9,7 +9,7 @@ import {
 } from "./ui/sheet";
 import { Button } from "@/components/ui/button";
 import { BarChart, Menu, Minus, Plus, User } from "lucide-react";
-import { Article, Users } from "@/data/temps";
+import { Users } from "@/data/temps";
 import {
     Accordion,
     AccordionContent,
@@ -31,20 +31,17 @@ export interface Categorie {
 }
 
 interface Donnee {
-    article: Categorie[] | undefined,
-    currentUser: Users | null,
+    article: Category[] | undefined,
 }
 
 
 
-function MenuBar({ article, currentUser }: Donnee) {
+function MenuBar({ article }: Donnee) {
 
-    const { logout, settings, favorite } = useStore()
+    const { logout, settings, favorite, currentUser } = useStore()
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false);
     const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
-
-    const closeSheet = () => setIsOpen(false);
 
     const handleLogin = () => {
         setIsOpen(false)
@@ -84,17 +81,21 @@ function MenuBar({ article, currentUser }: Donnee) {
                     </DrawerTitle>
                 </DrawerHeader>
                 <Button className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">{"S'abonner"}</Button>
-                <Button onClick={handleLogin} variant={"outline"} className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">
-                    <div className='hidden md:flex border-black border rounded-full'>
-                        <User />
-                    </div> {"SE CONNECTER"}
-                </Button>
+                {currentUser ?
+                    <Button variant={"outline"} onClick={() => router.push("/user/profil")} className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">
+                        {"PROFIL"}
+                    </Button> :
+                    <Button onClick={handleLogin} variant={"outline"} className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">
+                        <div className='hidden md:flex border-black border rounded-full'>
+                            <User />
+                        </div> {"SE CONNECTER"}
+                    </Button>}
                 <div className="flex flex-col">
                     <div className="flex px-2 py-4 gap-2 bg-[#EEEEEE] justify-center">
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#545454]">{"À la une"}</p>
                     </div>
                     {
-                        article?.flatMap(x => x.donnees).slice(0, 4).map((x, i) => (
+                        article?.flatMap(x => x.articles).slice(0, 4).map((x, i) => (
                             <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
                                 <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.type}</p>
                             </div>
@@ -106,7 +107,7 @@ function MenuBar({ article, currentUser }: Donnee) {
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"À la une"}</p>
                     </div>
                     {
-                        article?.flatMap(x => x.donnees).slice(0, 4).map((x, i) => (
+                        article?.flatMap(x => x.articles).slice(0, 4).map((x, i) => (
                             <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
                                 <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFFZ]">{x.type}</p>
                             </div>
@@ -120,7 +121,7 @@ function MenuBar({ article, currentUser }: Donnee) {
                     {
                         article?.slice(0, 4).map((x, i) => (
                             <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
-                                <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.nom}</p>
+                                <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.title}</p>
                             </div>
                         ))
                     }

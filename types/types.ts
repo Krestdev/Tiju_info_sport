@@ -13,6 +13,7 @@ type User = {
     signals: number;
     created_at: string;
     updated_at: string;
+    photo?: string
 };
 
 // Type pour un utilisateur avec API Key
@@ -63,9 +64,9 @@ type Advertisement = {
     title: string;
     description: string;
     url: string;
-    image: string | null;
-    created_at: string;
-    updated_at: string;
+    image: string | undefined;
+    createdAt: string;
+    updatedAt: string;
 };
 
 // Type pour la création d'une annonce
@@ -80,17 +81,22 @@ type AdvertisementCreation = {
 // Type pour un commentaire
 type Comments = {
     id: number;
-    user: User;
-    content: string;
+    author: User;
+    article_id: number;
+    message: string;
+    likes: number;
+    response: Comments[]; 
+    signals: number;
     created_at: string;
-};
+    updated_at: string;
+  };
 
 // Type pour la création d'un article
 type ArticleCreation = {
     user_id: number;
     category_id: number;
     title: string;
-    summary: string;
+    summery: string;
     description: string;
     type: string;
 };
@@ -100,11 +106,11 @@ type Article = {
     id: number;
     type: string;
     title: string;
-    summary: string;
+    summery: string;
     description: string;
-    images: { url: string; alt?: string }[]; // Liste d'images
+    images: string[]; 
     author: User;
-    comments: Comment[]; // Liste des commentaires
+    comments: Comments[]; 
     likes: number;
     created_at: string;
     updated_at: string;

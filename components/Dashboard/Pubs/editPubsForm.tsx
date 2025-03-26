@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,6 +28,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Pubs } from "@/data/temps";
 import FullScreen from "../FullScreen";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import axiosConfig from "@/api/api";
 
 const formSchema = z.object({
     nom: z.string().min(1, {
@@ -49,46 +50,79 @@ const formSchema = z.object({
 
 type Props = {
     children: ReactNode;
-    selectedPubs: Pubs;
+    selectedPubs: Advertisement;
 };
 
 function EditPubsForm({ children, selectedPubs }: Props) {
-    const { editPub } = useStore();
+    const { editPub, token } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: selectedPubs.nom,
-            lien: selectedPubs.lien,
+            nom: selectedPubs.title,
+            lien: selectedPubs.url,
             image: selectedPubs.image,
-            type: selectedPubs.type,
-            dateFin: selectedPubs.dateFin
+            // type: selectedPubs.type,
+            dateFin: new Date(365 - Number(selectedPubs.createdAt)).toString()
         },
     });
+
+    const editAdvertisement = useMutation({
+        mutationKey: ["advertisement"],
+        mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            return axiosClient.patch(`/advertisement/${id}`, {
+                user_id: "3",
+                title: data.nom,
+                description: data.type,
+                image: data.image,
+                url: data.lien
+            });
+        },
+    });
+
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        editAdvertisement.mutate({ data: data, id: selectedPubs.id.toString() });
+    }
+
+    React.useEffect(() => {
+        if (editAdvertisement.isSuccess) {
+            toast.success("Modifiée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["advertisement"] });
+            setDialogOpen(prev => !prev);
+            form.reset();
+        } else if (editAdvertisement.isError) {
+            toast.error("Erreur lors de la modification de la catégorie");
+            console.log(editAdvertisement.error)
+        }
+    }, [editAdvertisement.isError, editAdvertisement.isSuccess, editAdvertisement.error])
+
 
 
 
     //Submit function
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        editPub({
-            id: selectedPubs.id,
-            nom: values.nom,
-            lien: values.lien,
-            image: values.image,
-            type: values.type,
-            dateDebut: selectedPubs.dateDebut,
-            dateFin: selectedPubs.dateFin,
-            statut: selectedPubs.statut
-        });
-        console.log(values);
-        queryClient.invalidateQueries({ queryKey: ["client"] });
-        setDialogOpen(false);
-        toast.success("Modifié avec succès");
-        form.reset();
-    }
+    // function onSubmit(values: z.infer<typeof formSchema>) {
+    //     editPub({
+    //         id: selectedPubs.id,
+    //         nom: values.nom,
+    //         lien: values.lien,
+    //         image: values.image,
+    //         type: values.type,
+    //         dateDebut: selectedPubs.createdAt,
+    //         dateFin: new Date(365 - Number(selectedPubs.createdAt)).toString(),
+    //         // statut: selectedPubs.statut
+    //     });
+    //     queryClient.invalidateQueries({ queryKey: ["client"] });
+    //     setDialogOpen(false);
+    //     toast.success("Modifié avec succès");
+    //     form.reset();
+    // }
 
     const type = ["large", "petit"]
 

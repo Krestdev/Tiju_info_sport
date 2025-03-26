@@ -1,4 +1,4 @@
-import { Categorie } from "@/data/temps";
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -7,20 +7,20 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getUserFavoriteCategories = (
-  categories: Categorie[],
+  categories: Category[],
   userId: number
-): Categorie[] => {
+): Category[] => {
   // Étape 1 : Trier les catégories selon la présence d'un nouvel article
-  const sortedCategories = categories.sort((a, b) => {
+  const sortedCategories = categories.filter(x => x.articles.length > 0).sort((a, b) => {
 
     // Vérifier les interactions de l'utilisateur (like ou commentaire)
-    const aHasInteraction = a.donnees.some(article =>
-      article.like.some(user => user.id === userId) ||
-      article.commentaire.some(comment => comment.user?.id === userId)
+    const aHasInteraction = a.articles.some(article =>
+      article.likes ||
+      article.comments.some(comment => comment.user?.id === userId)
     );
-    const bHasInteraction = b.donnees.some(article =>
-      article.like.some(user => user.id === userId) ||
-      article.commentaire.some(comment => comment.user?.id === userId)
+    const bHasInteraction = b.articles.some(article =>
+      article.likes ||
+      article.comments.some(comment => comment.user?.id === userId)
     );
 
     if (aHasInteraction && !bHasInteraction) return -1; // Catégorie avec interaction en premier
@@ -31,19 +31,19 @@ export const getUserFavoriteCategories = (
 
   // Étape 2 : Trier les articles à l'intérieur de chaque catégorie
   return sortedCategories.map(categorie => {
-    const sortedDonnees = categorie.donnees.sort((a, b) => {
+    const sortedDonnees = categorie.articles.sort((a, b) => {
 
-      const aUserLiked = a.like.some(user => user.id === userId) ? 1 : 0;
-      const bUserLiked = b.like.some(user => user.id === userId) ? 1 : 0;
-      const aUserCommented = a.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
-      const bUserCommented = b.commentaire.some(comment => comment.user?.id === userId) ? 1 : 0;
+      const aUserLiked = a.likes
+      const bUserLiked = b.likes
+      const aUserCommented = a.comments.some(comment => comment.user?.id === userId) ? 1 : 0;
+      const bUserCommented = b.comments.some(comment => comment.user?.id === userId) ? 1 : 0;
 
       if ((aUserLiked || aUserCommented) !== (bUserLiked || bUserCommented)) {
         return (bUserLiked + bUserCommented) - (aUserLiked + aUserCommented);
       }
 
-      const aPopularity = a.like.length + a.commentaire.length;
-      const bPopularity = b.like.length + b.commentaire.length;
+      const aPopularity = a.likes + a.comments.length;
+      const bPopularity = b.likes + b.comments.length;
 
       return bPopularity - aPopularity; // Les articles les plus populaires en premier
     });

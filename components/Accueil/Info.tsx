@@ -1,4 +1,5 @@
-import { Article } from '@/data/temps';
+
+import useStore from '@/context/store';
 import { isImage } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
@@ -10,14 +11,15 @@ interface Props {
 }
 
 const Info = ({ article, taille, couleur }: Props) => {
+    const {settings} = useStore()
     return (
         <Link href={`/user/detail-article/${article?.id}`} className={`relative ${taille} h-full w-full`}>
-            {article?.media && (
-                isImage(article?.media[0]) ? (
+            {article?.images && (
+                isImage(article?.images[0] ? article?.images[0].url : settings.noImage) ? (
                     <img
                         className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                        src={article?.media[0]}
-                        alt={`${article?.type} - ${article?.titre}`}
+                        src={article?.images[0] ? article?.images[0].url : settings.noImage}
+                        alt={`${article?.images[0].alt}`}
                     />
                 ) : (
                     <video
@@ -25,7 +27,7 @@ const Info = ({ article, taille, couleur }: Props) => {
                         controls
                         muted
                         loop
-                        src={article?.media[0]}
+                        src={article?.images[0] ? article?.images[0].url : settings.noImage}
                     >
                         Votre navigateur ne supporte pas la lecture de cette vidéo.
                     </video>
@@ -36,7 +38,7 @@ const Info = ({ article, taille, couleur }: Props) => {
                     <div className={`flex px-3 py-2 gap-2 ${couleur} w-fit`}>
                         {article?.type}
                     </div>
-                    <h1 className='line-clamp-2'>{article?.titre}</h1>
+                    <h1 className='line-clamp-2'>{article?.title}</h1>
                 </div>
             </div>
         </Link>

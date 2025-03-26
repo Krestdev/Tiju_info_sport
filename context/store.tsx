@@ -1,7 +1,6 @@
 import {
   abonnement,
   Abonnement,
-  Article,
   articles,
   Categorie,
   categories,
@@ -23,10 +22,10 @@ interface store {
   dataPubs: Pubs[];
   dataUsers: Users[];
   dataSubscription: Abonnement[]
-  currentUser: Users | null;
+  currentUser: any | null;
   currentAdmin: Users | null;
   isFull: boolean | undefined
-  favorite: Categorie[]
+  favorite: Category[] | null
   search: Article[]
   token: string | null;
 }
@@ -37,14 +36,16 @@ interface actions {
 
   setIsFull: () => void;
   setSearch: (art: Article[] | undefined) => void
-  setFavorite: (cate: Categorie[] | undefined) => void;
+  setFavorite: (cate: Category[] | undefined) => void;
+
+  setCurrentUser: (user: any) => void;
 
   addCategorie: (categorie: Categories, parentId?: number) => void,
   editCategorie: (id: number, updatedCategory: Partial<Categories>, parentId?: number) => void,
   deleteCategorie: (id: number) => void;
 
   addCategory: (category: Categorie) => void;
-  addArticle: (article: Article) => void;
+  // addArticle: (article: Article) => void;
   editArticle: (article: Article) => void;
   deleteArticle: (id: number) => void;
 
@@ -91,6 +92,7 @@ const initialData: store = {
     x: "",
     pub: "Tyju Publicité",
     noPhoto: "/images/no-user.jpg",
+    noImage: "/images/no-image.jpg",
     description: "Tyju Info sport est un journal sportif"
   },
 
@@ -98,7 +100,7 @@ const initialData: store = {
 
   //données initiales
   dataArticles: articles,
-  favorite: articles,
+  favorite: null,
   dataPubs: publicites,
   dataUsers: users,
   dataSubscription: abonnement,
@@ -128,7 +130,7 @@ const useStore = create<store & actions>()(
           search: art || state.search
         })),
 
-      setFavorite: (cate: Categorie[] | undefined) =>
+      setFavorite: (cate: Category[] | undefined) =>
         set((state) => ({
           ...state,
           favorite: cate || state.favorite,
@@ -249,14 +251,14 @@ const useStore = create<store & actions>()(
             donnees: article.donnees.filter((art) => art.id !== id)
           })),
         })),
-      addArticle: (article: Article) =>
-        set((state) => ({
-          dataArticles: state.dataArticles.map((categorie) =>
-            categorie.nom === article.type
-              ? { ...categorie, donnees: [...categorie.donnees, article] }
-              : categorie
-          ),
-        })),
+      // addArticle: (article: Article) =>
+      //   set((state) => ({
+      //     dataArticles: state.dataArticles.map((categorie) =>
+      //       categorie.nom === article.type
+      //         ? { ...categorie, donnees: [...categorie.donnees, article] }
+      //         : categorie
+      //     ),
+      //   })),
       editArticle: (article: Article) =>
         set((state) => ({
           dataArticles: state.dataArticles.map((categorie) => ({
@@ -350,7 +352,11 @@ const useStore = create<store & actions>()(
 
       logout: () => {
         localStorage.removeItem("token");
+        set({ token: null, currentUser: null });
       },
+
+      user: null,
+      setCurrentUser: (user) => set({ currentUser: user }),
 
       loginAdmin: (email, password) => {
         const foundUser = get().dataUsers.find(

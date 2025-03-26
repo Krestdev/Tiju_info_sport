@@ -15,7 +15,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { LuCalendarDays, LuChevronDown } from 'react-icons/lu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Article } from '@/data/temps';
 import useStore from '@/context/store';
 const formSchema = z.object({
     date: z.coerce.date(),
@@ -62,14 +61,14 @@ const Sharing = ({ isOpen, onOpenChange, donnee }: Props) => {
         const dateString = format(values.date, "yyyy-MM-dd");
         const dateTimeString = `${dateString}T${values.heure}:00`;
         const dateObject = new Date(dateTimeString);
-        editArticle({
-            ...donnee,
-            id: donnee.id,
-            ajouteLe: dateObject.toString(),
-            user: currentAdmin!,
-            statut: 'programme',
-            auteur: currentAdmin!
-        })
+        // editArticle({
+        //     ...donnee,
+        //     id: donnee.id,
+        //     ajouteLe: dateObject.toString(),
+        //     user: currentAdmin!,
+        //     statut: 'programme',
+        //     auteur: currentAdmin!
+        // })
         queryClient.invalidateQueries({ queryKey: ["article"] });
         onOpenChange(false);
         toast.success("Programmé avec succès");
@@ -77,14 +76,6 @@ const Sharing = ({ isOpen, onOpenChange, donnee }: Props) => {
     }
 
     function onSubmit() {
-        editArticle({
-            ...donnee,
-            id: donnee.id,
-            ajouteLe: Date.now().toString(),
-            user: currentAdmin!,
-            statut: 'publie',
-            auteur: currentAdmin!
-        })
         queryClient.invalidateQueries({ queryKey: ["pubs"] })
         onOpenChange(false);
         toast.success("Ajouté avec succès");
