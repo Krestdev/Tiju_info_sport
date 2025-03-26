@@ -22,7 +22,7 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
 
     useEffect(()=>{
         setArticle(gridAff.flatMap(x => x.articles))
-    },[])
+    },[gridAff])
 
 
     return (
