@@ -95,10 +95,10 @@ function MenuBar({ article }: Donnee) {
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#545454]">{"À la une"}</p>
                     </div>
                     {
-                        article?.flatMap(x => x.articles).slice(0, 4).map((x, i) => (
-                            <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
-                                <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.type}</p>
-                            </div>
+                        article?.map((x, i) => (
+                            <Link onClick={()=> setIsOpen(false)} href={`/user/${x.title}`} key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
+                                <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.title}</p>
+                            </Link>
                         ))
                     }
                 </div>
@@ -107,10 +107,10 @@ function MenuBar({ article }: Donnee) {
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"À la une"}</p>
                     </div>
                     {
-                        article?.flatMap(x => x.articles).slice(0, 4).map((x, i) => (
-                            <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
-                                <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFFZ]">{x.type}</p>
-                            </div>
+                        article?.map((x, i) => (
+                            <Link onClick={()=> setIsOpen(false)} href={`/user/${x.title}`} key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
+                                <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFFZ]">{x.title}</p>
+                            </Link>
                         ))
                     }
                 </div>
@@ -120,9 +120,9 @@ function MenuBar({ article }: Donnee) {
                     </div>
                     {
                         article?.slice(0, 4).map((x, i) => (
-                            <div key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
+                            <Link onClick={()=> setIsOpen(false)} href={`/user/${x.title}`} key={i} className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center">
                                 <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">{x.title}</p>
-                            </div>
+                            </Link>
                         ))
                     }
                 </div>

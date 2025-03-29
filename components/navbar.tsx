@@ -125,15 +125,15 @@ const Navbar = () => {
                                 </ div> :
                                 <>
                                     <Button variant={'ghost'} onClick={handleLogin}>
-                                        <div className='hidden md:flex border-black border rounded-full'>
+                                        <div className='flex border-black border rounded-full'>
                                             <User />
                                         </div> {"SE CONNECTER"}
                                     </Button>
-                                    <Link href={'/user/subscribe'} className='hover:underline'>
+                                    {/* <Link href={'/user/subscribe'} className='hover:underline '>
                                         <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
                                             {"S'ABONNER"}
                                         </div>
-                                    </Link>
+                                    </Link> */}
                                 </>
                         }
                         {/* <Link href={"/user/contact"} className='flex flex-row items-center gap-0 hover:bg-blue-100 px-2'><IoIosMail className='size-10' /> <h3>{"Contacter"}</h3></Link> */}
