@@ -108,7 +108,7 @@ const Navbar = () => {
                                     <Link href={'/user/profil'} className='hidden md:flex flex-row items-center gap-2'>
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
                                     </Link>
-                                    {
+                                    {/* {
                                         currentUser && currentUser.abonnement && currentUser.abonnement?.coutMois > 0 ?
                                             <Link href={'/user/subscribe'} className='hover:underline'>
                                                 <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
@@ -121,7 +121,7 @@ const Navbar = () => {
                                                     {"S'ABONNER"}
                                                 </div>
                                             </Link>
-                                    }
+                                    } */}
                                 </ div> :
                                 <>
                                     <Button variant={'ghost'} onClick={handleLogin}>
