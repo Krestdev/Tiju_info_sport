@@ -123,7 +123,6 @@ const DashbordPage = () => {
         <div className="flex flex-col gap-5 px-7 py-10">
             <h1 className="uppercase text-[40px]">{"Statistiques"}</h1>
             <div className="flex flex-row gap-5">
-
                 <Compo
                     texte={"Publication"}
                     page={"Tous les articles"}
@@ -152,9 +151,8 @@ const DashbordPage = () => {
                 </Compo>
             </div>
             <div className="grid grid-cols-3 gap-5">
-
                 <Compo
-                    texte={"Vues par période"}
+                    texte={"Vues"}
                     page={"Tous les articles"}
                     width={"max-w-[400px] w-full"}
                     value={values.vuesPeriode}
@@ -167,7 +165,7 @@ const DashbordPage = () => {
                     <LineChar value={values.vuesPeriode} dateRanges={dateRanges} rangeKey={"vuesPeriode"} />
                 </Compo>
                 <Compo
-                    texte={"Vues par période"}
+                    texte={"Vues par plateforme"}
                     page={"Tous les articles"}
                     width={"max-w-[400px] w-full"}
                     value={values.vuesPlateforme}
@@ -180,7 +178,7 @@ const DashbordPage = () => {
                     <BarChar value={values.vuesPlateforme} dateRanges={dateRanges} rangeKey={"vuesPlateforme"} />
                 </Compo>
                 <Compo
-                    texte={"Vues par période"}
+                    texte={"Les plus vues"}
                     page={"Tous les articles"}
                     width={"max-w-[400px] w-full"}
                     value={values.plusVues}
@@ -209,7 +207,7 @@ const DashbordPage = () => {
                     <LineChar value={values.vuesPeriode} dateRanges={dateRanges} rangeKey={"vuesPeriode"} />
                 </Compo> */}
                 <Compo
-                    texte={"Vues par période"}
+                    texte={"Vues par catégorie"}
                     page={"Tous les articles"}
                     width={"w-full"}
                     value={values.vuesCategorie}

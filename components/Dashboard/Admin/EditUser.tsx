@@ -36,7 +36,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { abonnement, Abonnement, Users } from "@/data/temps";
 import axiosConfig from "@/api/api";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
     .object({
@@ -59,47 +59,80 @@ type Props = {
 };
 
 function EditUser({ children, selectedUser }: Props) {
-    const { editUser, dataSubscription, token } = useStore();
+    const { dataSubscription, token } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [abon, setAbon] = useState<Abonnement[]>()
 
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
+        // "Content-Type": "application/json"
     });
     const router = useRouter();
 
-
-    const signUp = useMutation({
-        mutationKey: ["regiuserster"],
+    const editUser = useMutation({
+        mutationKey: ["user"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            try {
-                return axiosClient.post("/users", {
+            console.log(data);
+            
+            const idU = String(selectedUser.id)
+            return axiosClient.patch(`/users/${selectedUser.id}`,
+                {
+                    user_id: idU,
                     email: data.email,
                     name: data.nom,
                     password: data.password,
-                    nick_name: "",
-                    phone: "",
-                    sex: "",
-                    town: "",
-                    country: "",
-                    photo: "",
-                    role: "user"
-                });
-            } catch (error) {
-                throw new Error("Validation échouée : " + error);
-            }
-        },
-        onSuccess: (response) => {
-            toast.success("Inscription réussie !");
-            // localStorage.setItem("token", response.data.token);
-            router.push("/dashboard/admin");
-        },
-        onError: (error) => {
-            toast.error("Erreur lors de l'inscription.");
-            console.error(error);
+                    nick_name: "default",
+                    phone: "default",
+                    sex: "default",
+                    town: "default",
+                    country: "default",
+                    photo: "default",
+                    role: data.role
+                }
+            );
         },
     });
+
+    useEffect(() => {
+        if (editUser.isSuccess) {
+            toast.success("Modifié avec succès");
+            queryClient.invalidateQueries({ queryKey: ["user"] });
+            setDialogOpen(false);
+            form.reset();
+        }
+    }, [editUser.data])
+
+    // const signUp = useMutation({
+    //     mutationKey: ["regiuserster"],
+    //     mutationFn: (data: z.infer<typeof formSchema>) => {
+    //         try {
+    //             return axiosClient.post("/users", {
+    //                 email: data.email,
+    //                 name: data.nom,
+    //                 password: data.password,
+    //                 nick_name: "",
+    //                 phone: "",
+    //                 sex: "",
+    //                 town: "",
+    //                 country: "",
+    //                 photo: "",
+    //                 role: "user"
+    //             });
+    //         } catch (error) {
+    //             throw new Error("Validation échouée : " + error);
+    //         }
+    //     },
+    //     onSuccess: (response) => {
+    //         toast.success("Inscription réussie !");
+    //         // localStorage.setItem("token", response.data.token);
+    //         // router.push("/dashboard/admin");
+    //     },
+    //     onError: (error) => {
+    //         toast.error("Erreur lors de l'inscription.");
+    //         console.error(error);
+    //     },
+    // });
 
 
     // 1. Define your form.
@@ -113,23 +146,9 @@ function EditUser({ children, selectedUser }: Props) {
         },
     });
 
-
-
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        editUser({
-            id: selectedUser.id,
-            nom: values.nom,
-            email: values.email,
-            password: values.password,
-            role: values.role,
-            createdAt: selectedUser.created_at,
-        });
-        console.log(values);
-        queryClient.invalidateQueries({ queryKey: ["user"] });
-        setDialogOpen(false);
-        toast.success("Modifié avec succès");
-        form.reset();
+        editUser.mutate(values);
     }
 
     const role = ["admin", "user"]
@@ -146,7 +165,7 @@ function EditUser({ children, selectedUser }: Props) {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-5 px-7 py-10'>
-                        <h1 className='uppercase text-[40px]'>{"Créer un utilisateur"}</h1>
+                        <h1 className='uppercase text-[40px]'>{"Modifier un utilisateur"}</h1>
                         <FormField
                             control={form.control}
                             name='nom'
@@ -210,13 +229,12 @@ function EditUser({ children, selectedUser }: Props) {
                                 </FormItem>
                             )}
                         />
-                        <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Créer un utilisateur"}</Button>
+                        <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Modifier un utilisateur"}</Button>
 
                     </form>
 
                 </Form>
             </DialogContent>
-            <ToastContainer />
         </Dialog>
     );
 }

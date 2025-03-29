@@ -82,13 +82,13 @@ const items = [
             },
         ],
     },
-    {
-        title: "Abonnements",
-        url: "/dashboard/subscription",
-        icon: LucideCircleDollarSign,
-        param: false,
-        parametre: [],
-    },
+    // {
+    //     title: "Abonnements",
+    //     url: "/dashboard/subscription",
+    //     icon: LucideCircleDollarSign,
+    //     param: false,
+    //     parametre: [],
+    // },
     {
         title: "Publicités",
         url: "/dashboard/pubs",

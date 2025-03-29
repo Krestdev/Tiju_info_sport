@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { GrFormClose } from 'react-icons/gr';
 import { IoMdAdd, IoMdClose } from 'react-icons/io';
 import { LuEye, LuPlus } from 'react-icons/lu';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
@@ -137,16 +137,12 @@ const AddArticle = () => {
                 }
             )
         },
-        // onSuccess(data) {
-        //     art && editArticle.mutate({ data: art, imageId: data.data.id });
-        // },
     })
 
     React.useEffect(() => {
         if (addImage.isSuccess) {
-            console.log(addImage);
-
-
+            toast.success("Article ajouté avec succès")
+            form.reset()
         } else if (addImage.isError) {
             console.log(addImage.error)
         }
@@ -263,7 +259,7 @@ const AddArticle = () => {
                         </FormItem>
                     )}
                 />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="couverture"
                     render={({ field }) => (
@@ -289,7 +285,7 @@ const AddArticle = () => {
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
 
                 <FormField
                     control={form.control}
@@ -369,7 +365,6 @@ const AddArticle = () => {
                         </FormItem>
                     )}
                 />
-
                 <div className='flex flex-col gap-2'>
                     <FormField
                         control={form.control}
@@ -425,14 +420,14 @@ const AddArticle = () => {
 
                 <div className='w-full flex flex-col gap-2'>
                     <Button
-                        variant="outline"
+                        variant="default"
                         className="max-w-[384px] w-full font-normal rounded-none"
                         type="button"
                         onClick={() => form.handleSubmit(onSubmit)()}>
-                        {"Enregistrer"}
+                        {"Publier"}
                     </Button>
                     {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}
-                    <Button
+                    {/* <Button
                         type="submit"
                         className="max-w-[384px] w-full rounded-none font-normal"
                         onClick={(e) => {
@@ -441,9 +436,10 @@ const AddArticle = () => {
                         }}
                     >
                         {"Publier"}
-                    </Button>
+                    </Button> */}
                 </div>
             </form>
+            <ToastContainer />
         </Form>
     )
 }
