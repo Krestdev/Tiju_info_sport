@@ -104,7 +104,7 @@ function MenuBar({ article }: Donnee) {
                 </div>
                 <div className="flex flex-col">
                     <div className="flex px-2 py-4 gap-2 bg-[#FF0068] justify-center">
-                        <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"À la une"}</p>
+                        <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"Favoris"}</p>
                     </div>
                     {
                         article?.map((x, i) => (
@@ -116,7 +116,7 @@ function MenuBar({ article }: Donnee) {
                 </div>
                 <div className="flex flex-col">
                     <div className="flex px-2 py-4 gap-2 bg-[#182067] justify-center">
-                        <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"À la une"}</p>
+                        <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"Sport"}</p>
                     </div>
                     {
                         article?.slice(0, 4).map((x, i) => (
