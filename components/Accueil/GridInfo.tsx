@@ -54,7 +54,7 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
                                     // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                         <img
                                             className={`max-w-[160px] max-h-[97px] w-full h-full aspect-video rounded-[6px] object-cover`}
-                                            src={x.images ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
+                                            src={x.images && x.images[0].id ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
                                             alt={`${x.images}`}
                                         />
                                     // ) : (
