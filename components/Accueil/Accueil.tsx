@@ -109,9 +109,9 @@ const Accueil = () => {
                         </div>
                     </div>
                     <div>
-                        <GridInfo gridAff={une} couleur={'bg-[#0A0E93]'} />
+                        {une && <GridInfo gridAff={une} couleur={'bg-[#0A0E93]'} />}
                         <div className='hidden md:flex'>{pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}</div>
-                        <GridInfo gridAff={une} couleur={'bg-[#0180F8]'} />
+                        {une && <GridInfo gridAff={une} couleur={'bg-[#0180F8]'} />}
                     </div>
                 </div>}
         </div>

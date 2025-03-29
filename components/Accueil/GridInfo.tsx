@@ -45,18 +45,18 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
             </div>
 
             <div className='w-full flex flex-row items-center gap-10 px-7'>
-                <Info article={article && article[0]} taille={'max-w-[592px] max-h-[333px]'} couleur={couleur} />
+                {article && <Info article={article[0]} taille={'max-w-[592px] max-h-[333px]'} couleur={couleur} />}
                 <div className='flex flex-col items-center justify-between gap-5'>
                     {
                         article?.slice(0, 3).map((x, i) => (
                             <Link href={`/user/detail-article/${x.id}`} key={i} className='flex flex-row gap-7'>
                                 {x.images && (
                                     // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
-                                        <img
-                                            className={`max-w-[160px] max-h-[97px] w-full h-full aspect-video rounded-[6px] object-cover`}
-                                            src={x.images && x.images[0].id ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
-                                            alt={`${x.images}`}
-                                        />
+                                    <img
+                                        className={`max-w-[160px] max-h-[97px] w-full h-full aspect-video rounded-[6px] object-cover`}
+                                        src={x.images && x.images[0].id ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : ""}
+                                        alt={`${x.images}`}
+                                    />
                                     // ) : (
                                     //     <video
                                     //         className={`max-w-[160px] max-h-[90px] w-full h-full aspect-video rounded-[6px] object-cover`}

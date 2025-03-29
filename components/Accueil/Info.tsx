@@ -5,22 +5,25 @@ import Link from 'next/link';
 import React from 'react';
 
 interface Props {
-    article: Article | undefined;
+    article: Article;
     taille: string;
     couleur: string;
 }
 
 const Info = ({ article, taille, couleur }: Props) => {
-    const {settings} = useStore()
+    const { settings } = useStore()
+
+    console.log(article);
+    
     return (
-        <Link href={`/user/detail-article/${article?.id}`} className={`relative ${taille} h-full w-full`}>
+        <Link href={`/user/detail-article/${article.id}`} className={`relative ${taille} h-full w-full`}>
             {article?.images && (
                 // isImage(article?.images[0] ? article?.images[0] : settings.noImage) ? (
-                    <img
-                        className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                        src={article.images ? `https://tiju.krestdev.com/api/image/${article.images[0].id}` : settings.noImage}
-                        alt={`${article?.images[0]}`}
-                    />
+                <img
+                    className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
+                    src={ `https://tiju.krestdev.com/api/image/${article.images[0].id}`}
+                    alt={`Image`}
+                />
                 // ) : (
                 //     <video
                 //         className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
