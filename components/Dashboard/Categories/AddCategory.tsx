@@ -47,7 +47,7 @@ type Props = {
 };
 
 const AddCategory = ({ children }: Props) => {
-    const { dataCategorie, addCategorie } = useStore();
+    const { currentUser } = useStore();
     const [parents, setParents] = useState<Categories[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const axiosClient = axiosConfig();
@@ -60,11 +60,12 @@ const AddCategory = ({ children }: Props) => {
     // });
 
     const addCategory = useMutation({
-        mutationKey: ["category"],
+        mutationKey: ["categoryv"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = String(currentUser.id)
             return axiosClient.post("/category",
                 {
-                    user_id: "3",
+                    user_id: idU,
                     title: data.nom,
                     image: "image",
                     description: data.description
@@ -78,7 +79,7 @@ const AddCategory = ({ children }: Props) => {
     React.useEffect(() => {
         if (addCategory.isSuccess) {
             toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["category"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
             setDialogOpen(prev => !prev);
         } else if (addCategory.isError) {
             toast.error("Erreur lors de la création de la catégorie");
@@ -179,8 +180,8 @@ const AddCategory = ({ children }: Props) => {
                         </Button>
                     </form>
                 </Form>
-            </DialogContent>
             <ToastContainer />
+            </DialogContent>
         </Dialog>
     );
 };

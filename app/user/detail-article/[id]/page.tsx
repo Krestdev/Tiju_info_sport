@@ -76,9 +76,6 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Chargement ou article introuvable...</div>;
   }
 
-  console.log(article);
-  
-
   return (
     <div className="containerBloc gap-3">
       <div className="px-7">

@@ -42,6 +42,7 @@ const Accueil = () => {
     });
 
 
+
     const handleVoirtout = () => {
         setTail("");
     }
@@ -51,55 +52,70 @@ const Accueil = () => {
         }
     }, [pubData.data])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (articleData.isSuccess) {
             setUne(articleData.data.data.filter(x => x.articles.length > 0))
         }
     }, [articleData.data])
 
-
     useEffect(() => {
         if (une) {
             const articles = une.slice().flatMap(cate => cate.articles)
-            // setGrid1(une.slice(0))
-            setGrid2(favorite ? favorite.slice(1) : une.slice(1))
+            setGrid2(une)
             setCarrHero(articles.slice())
-        };
-        if (currentUser && une) {
-            setFavorite(getUserFavoriteCategories(une.slice(), currentUser.id))
+            if (currentUser) {
+                setFavorite(getUserFavoriteCategories(une.slice(), currentUser.id))
+            }
         }
-    }, [une])
+    }, [une, articleData.isSuccess, articleData.isError, articleData.data])
+
+    // useEffect(() => {
+    //     if (une) {
+    //         const articles = une.slice().flatMap(cate => cate.articles)
+    //         setGrid2(une)
+    //         setCarrHero(articles.slice())
+    //         // setGrid1(une.slice(0))
+    //     };
+    //     if (currentUser && une) {
+    //         setFavorite(getUserFavoriteCategories(une.slice(), currentUser.id))
+    //     }
+    // }, [une, favorite, articleData.data])
 
     return (
-        <div className='containerBloc flex flex-col justify-center py-8 gap-[10px]'>
-            <div className='w-full flex flex-col-reverse  md:flex-row gap-10 md:px-7'>
-                <div className='max-w-[824px] w-full flex flex-col gap-10'>
-                    <div className='w-full flex flex-col gap-10'>
-                        <div className='hidden md:flex'>
-                            {carrHero && <Head gridAff={carrHero} />}
+        <div>
+            {articleData.isLoading && <div>{"Chargement ..."}</div>}
+            {articleData.isSuccess &&
+                <div className='containerBloc flex flex-col justify-center py-8 gap-[10px]'>
+                    <div className='w-full flex flex-col-reverse  md:flex-row gap-10 md:px-7'>
+                        <div className='max-w-[824px] w-full flex flex-col gap-10'>
+                            <div className='w-full flex flex-col gap-10'>
+                                <div className='hidden md:flex'>
+                                    {carrHero && <Head gridAff={carrHero} />}
+                                </div>
+                                <div className='px-7 md:px-0'>{carrHero && <GridAcc gridAff={carrHero} />}</div>
+                                <div className='hidden md:flex'>{pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}</div>
+                            </div>
                         </div>
-                        <div className='px-7 md:px-0'>{carrHero && <GridAcc gridAff={carrHero} />}</div>
+                        <div className='md:max-w-[360px] w-full md:px-7 gap-7'>
+                            <div className='flex pb-7 !px-0 md:hidden'>
+                                {carrHero && <Head gridAff={carrHero} />}
+                            </div>
+                            <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
+                                <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.articles.slice(0, 1))} pubs={pub} />
+                                <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.articles.slice()).slice(0, 8)} pubs={pub?.slice().reverse()} />
+                            </div>
+                            {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
+                            <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <GridInfo gridAff={une} couleur={'bg-[#0A0E93]'} />
                         <div className='hidden md:flex'>{pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}</div>
+                        <GridInfo gridAff={une} couleur={'bg-[#0180F8]'} />
                     </div>
-                </div>
-                <div className='md:max-w-[360px] w-full md:px-7 gap-7'>
-                    <div className='flex pb-7 !px-0 md:hidden'>
-                        {carrHero && <Head gridAff={carrHero} />}
-                    </div>
-                    <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
-                        <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.articles.slice(0, 1))} pubs={pub} />
-                        <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.articles.slice()).slice(0, 8)} pubs={pub?.slice().reverse()} />
-                    </div>
-                    {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
-                    <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
-                </div>
-            </div>
-            <div>
-                {grid2 && <GridInfo gridAff={grid2} couleur={'bg-[#0A0E93]'} />}
-                <div className='hidden md:flex'>{pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}</div>
-                {grid2 && <GridInfo gridAff={grid2} couleur={'bg-[#0180F8]'} />}
-            </div>
+                </div>}
         </div>
+
     )
 }
 

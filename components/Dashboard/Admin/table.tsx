@@ -10,44 +10,60 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, Categorie, Pubs, Users } from "@/data/temps";
 import { DateRange } from "react-day-picker";
-import { DatePick } from "../DatePick";
-import { SlRefresh } from "react-icons/sl";
 import Pagination from "../Pagination";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LuUserRoundPlus } from "react-icons/lu";
-import AddUserForm from "../User/addUserForm";
 import Link from "next/link";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ModalWarning from "@/components/modalWarning";
-import { SelectItem } from "@radix-ui/react-select";
 import EditUser from "./EditUser";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function AdminTable() {
-    const { dataUsers, deleteArticle, editUser } = useStore();
+    const { token, deleteArticle, editUser } = useStore();
     const queryClient = useQueryClient();
+
+
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "x-api-key": "abc123"
+    });
+
     const userData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataUsers,
+        queryKey: ["users1233"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<User[]>>(
+                `/users`
+            );
+        },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
+
+    const { mutate: deleteUser } = useMutation({
+        mutationFn: async (userId: number) => {
+            return axiosClient.delete(`/users/${userId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users1233"] });
+        },
+    });
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -61,7 +77,7 @@ function AdminTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Users[]>();
+    const [user, setUser] = useState<User[]>();
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
@@ -69,7 +85,7 @@ function AdminTable() {
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setSport(userData.data)
+            setUser(userData.data.data.filter(x => x.role === "admin"))
         }
     }, [userData.data])
 
@@ -84,18 +100,18 @@ function AdminTable() {
     };
 
     const filterData = useMemo(() => {
-        if (!sport) {
+        if (!user) {
             setRein(false);
             return [];
         }
 
-        let filtered = sport;
+        let filtered = user;
 
         // Filtrage par date
         if (!rein) {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
-                const itemDate = toNormalDate(item.createdAt);
+                const itemDate = toNormalDate(item.created_at);
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -118,7 +134,7 @@ function AdminTable() {
         }
 
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
+    }, [rein, user, dateRange, searchEntry]);
 
 
 
@@ -201,7 +217,7 @@ function AdminTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.nom}</TableCell>
+                                                                <TableCell className="border">{item.name}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.role}</TableCell>
                                                                 <TableCell className="border">25/02/2025</TableCell>
@@ -218,7 +234,7 @@ function AdminTable() {
                                                                             </SelectTrigger>
                                                                         </div>
                                                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
-                                                                            <ModalWarning id={item.id} name={item.nom} action={() => onDelete(item.id)}>
+                                                                            <ModalWarning id={item.id} name={item.name} action={() => deleteUser(item.id)}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Bannir"}
                                                                                 </Button>
@@ -245,9 +261,9 @@ function AdminTable() {
                             />
 
                         </div>
-                    ) : userData.isSuccess && filterData.length < 1 && userData.data.length > 0 ? (
+                    ) : userData.isSuccess && filterData.length < 1 && user && user.length > 0 ? (
                         "No result"
-                    ) : userData.isSuccess && userData.data.length === 0 ? (
+                    ) : userData.isSuccess && user?.length === 0 ? (
                         "Empty table"
                     ) : (
                         userData.isError && (

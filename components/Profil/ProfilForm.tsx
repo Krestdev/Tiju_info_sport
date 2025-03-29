@@ -22,7 +22,7 @@ import axiosConfig from '@/api/api';
 
 const formSchema1 = z.object({
     email: z.string(),
-    pseudo: z.string(),
+    // pseudo: z.string(),
     password: z
         .string()
         .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
@@ -30,8 +30,6 @@ const formSchema1 = z.object({
         .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une lettre minuscule." }),
     photo: z.any(),
 });
-
-const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
 const formSchema = z.object({
     name: z.string().min(4, { message: "Le nom doit contenir au moins 4 caractères." }),
@@ -43,6 +41,10 @@ const formSchema = z.object({
         .regex(/^\d{9}$/, { message: "Le numéro de téléphone doit contenir exactement 9 chiffres." }),
 });
 
+
+const combinedSchema = z.intersection(formSchema, formSchema1);
+
+const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 interface Props {
     pub: Advertisement[] | undefined;
     une: Category[] | null
@@ -52,10 +54,18 @@ const ProfilForm = ({ pub, une }: Props) => {
     const { currentUser, settings, logout } = useStore();
     const queryClient = useQueryClient();
     const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
+    const [fichier, setFichier] = useState(null)
     const sexe = ["Homme", "Femme"]
     const router = useRouter();
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
+    });
+
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
     });
 
     const [tail, setTail] = useState("max-h-[379px]")
@@ -71,7 +81,7 @@ const ProfilForm = ({ pub, une }: Props) => {
             photo: currentUser?.photo || null,
             password: currentUser?.password || '',
             email: currentUser?.email,
-            pseudo: currentUser?.pseudo,
+            // pseudo: currentUser?.pseudo,
 
         },
     });
@@ -88,30 +98,66 @@ const ProfilForm = ({ pub, une }: Props) => {
     })
 
 
+    const updateImage = useMutation({
+        mutationKey: ["user"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            console.log(data);
 
-    const updateUserProfile = useMutation({
-        mutationKey: ["updateProfile"],
-        mutationFn: (data: z.infer<typeof formSchema>) => {
-            return axiosClient.patch(`/users/${currentUser?.id}`, data);
+            return axiosClient1.post(`/image/${currentUser.images.id}`,
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
         },
-        onSuccess: (response: { data: typeof currentUser }) => {
-            toast.success("Profil mis à jour avec succès !");
-            useStore.getState().setCurrentUser(response.data);
-            queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        onSuccess(data) {
+
         },
-        onError: (error) => {
-            toast.error("Erreur lors de la mise à jour du profil.");
-            console.error(error);
+    })
+
+    const addImage = useMutation({
+        mutationKey: ["user"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient1.post("/image",
+                {
+                    file: data,
+                    user_id: id
+                }
+            )
         },
-    });
-    
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        try {
-            updateUserProfile.mutateAsync(data);
-        } catch (error) {
-            toast.error("Erreur lors de la connexion");
-            console.error(error);
-        }
+    })
+
+
+    const editUser = useMutation({
+            mutationKey: ["user"],
+            mutationFn: ({ data, dataI }: { data: z.infer<typeof combinedSchema>, dataI: any },) => {
+                const idU = String(currentUser.id)
+                return axiosClient.patch(`/articles/${dataI.id}`, 
+                    {
+                        user_id: currentUser.id,
+                        email: data.email,
+                        name: data.name,
+                        password: data.password,
+                        nick_name: "default",
+                        phone: data.phone,
+                        sex: data.sex,
+                        town: data.town,
+                        country: data.country,
+                        photo: data.photo,
+                        role: "user"
+                    }
+                );
+            },
+        });
+
+    const onSubmit = (data: z.infer<typeof combinedSchema>) => {
+        console.log(data);
+        setFichier(data.photo)
+        currentUser.image ?
+            // updateImage.mutate({ data: fichier, id: currentUser.id })
+            console.log("Hello world")
+            :
+            addImage.mutate({ data: fichier, id: currentUser.id })
     };
 
     return (
@@ -184,7 +230,7 @@ const ProfilForm = ({ pub, une }: Props) => {
 
 
                             {/* Champ pseudo */}
-                            <FormField
+                            {/* <FormField
                                 control={form1.control}
                                 name="pseudo"
                                 render={({ field }) => (
@@ -201,7 +247,7 @@ const ProfilForm = ({ pub, une }: Props) => {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
                             {/* Champ mot de passe */}
                             <FormField
@@ -242,7 +288,7 @@ const ProfilForm = ({ pub, une }: Props) => {
                         <h3 className='uppercase'>{"Informations personnelles"}</h3>
                         <Form {...form}>
                             <form
-                                onSubmit={form.handleSubmit(onSubmit)}
+                                // onSubmit={form.handleSubmit(onSubmit)}
                                 className="flex flex-col gap-4"
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[836px]">
@@ -339,11 +385,23 @@ const ProfilForm = ({ pub, une }: Props) => {
                                         )}
                                     />
                                 </div>
-                                <Button
-                                    type='submit' className='w-full max-w-[398px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
+                                {/* <Button type='submit' className='w-full max-w-[398px] h-[40px] rounded-none'>{"Enregistrer"}</Button> */}
                             </form>
                         </Form>
                     </div>
+
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            form1.handleSubmit((data1) => {
+                                form.handleSubmit((data2) => {
+                                    onSubmit({ ...data1, ...data2 });
+                                })();
+                            })();
+                        }}
+                    >
+                        Soumettre les formulaires
+                    </Button>
                     {currentUser && <Button variant={'destructive'} onClick={logout} className='flex w-fit'> {"Se déconnecter"}</Button>}
 
                     <div className='flex flex-col gap-4'>

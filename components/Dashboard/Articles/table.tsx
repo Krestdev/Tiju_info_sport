@@ -43,6 +43,21 @@ function ArticleTable() {
     // const { deleteArticle } = useStore();
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
+    //Search value
+    const [searchEntry, setSearchEntry] = useState("");
+
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sport, setSport] = useState<Article[]>();
+    const [current, setCurrent] = useState("tous");
+    const [article, setArticle] = useState<Categorie[]>();
+
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
+    const [rein, setRein] = useState(false)
+    const [selectedAuthor, setSelectedAuthor] = useState("none");
+    const [auteur, setAuteur] = useState<string[] | undefined>()
+    const [dialog, setDialog] = React.useState(false);
+    const itemsPerPage = 15;
 
 
     const articleCate = useQuery({
@@ -71,23 +86,7 @@ function ArticleTable() {
         },
     })
 
-    //Search value
-    const [searchEntry, setSearchEntry] = useState("");
-
-    //Pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Article[]>();
-    const [current, setCurrent] = useState("tous");
-    const [article, setArticle] = useState<Categorie[]>();
-
-    const [dateRange, setDateRange] = useState<DateRange | undefined>();
-    const [rein, setRein] = useState(false)
-    const [selectedAuthor, setSelectedAuthor] = useState("none");
-    const [auteur, setAuteur] = useState<string[] | undefined>()
-    const [dialog, setDialog] = React.useState(false);
-    const itemsPerPage = 15;
-
-
+    
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setSearchEntry(event.target.value);
@@ -154,13 +153,6 @@ function ArticleTable() {
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
     });
-
-    // //Delete function
-    // function onDeleteArticle(id: number) {
-    //     deleteArticle(id)
-    //     queryClient.invalidateQueries({ queryKey: ["article"] })
-    //     toast.success("Supprimé avec succès");
-    // }
 
     function onPublishArticle(id: number) {
         queryClient.invalidateQueries({ queryKey: ["article"] })

@@ -64,7 +64,7 @@ type Advertisement = {
     title: string;
     description: string;
     url: string;
-    image: string | undefined;
+    image: ImageA;
     createdAt: string;
     updatedAt: string;
 };
@@ -108,13 +108,20 @@ type Article = {
     title: string;
     summery: string;
     description: string;
-    images: string[]; 
+    images: ImageA[]; 
     author: User;
     comments: Comments[]; 
     likes: number;
     created_at: string;
     updated_at: string;
 };
+
+type ImageA = {
+    id: number,
+    size: number,
+    created_at: string;
+    updated_at: string;
+}
 
 // Type pour la mise à jour d'un article (optionnel)
 type ArticleUpdate = Partial<ArticleCreation>;
@@ -124,3 +131,8 @@ type UserMessage = {
     user_id: number;
     message: string;
 };
+
+type ImageUser = {
+    user_id: number;
+    file: File[]
+}

@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
@@ -54,12 +54,20 @@ type Props = {
 };
 
 function EditPubsForm({ children, selectedPubs }: Props) {
-    const { editPub, token } = useStore();
-    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const { token, currentUser } = useStore();
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [fichier, setFichier] = useState(null)
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
+    });
+
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
     });
 
     // 1. Define your form.
@@ -74,22 +82,43 @@ function EditPubsForm({ children, selectedPubs }: Props) {
         },
     });
 
+    const updateImage = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            console.log(data);
+
+            return axiosClient1.post(`/image/${selectedPubs.image.id}`,
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+        onSuccess(data) {
+            editAdvertisement.mutate({
+                data: {
+                    nom: selectedPubs.title,
+                    lien: selectedPubs.url,
+                    type: selectedPubs.description,
+                    dateFin: ""
+                }, dataI: data
+            })
+        },
+    })
+
     const editAdvertisement = useMutation({
         mutationKey: ["advertisement"],
-        mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
-            return axiosClient.patch(`/advertisement/${id}`, {
-                user_id: "3",
+        mutationFn: ({ data, dataI }: { data: z.infer<typeof formSchema>, dataI: any },) => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/advertisement/${dataI.id}`, {
+                user_id: idU,
                 title: data.nom,
                 description: data.type,
-                image: data.image,
                 url: data.lien
             });
         },
     });
 
-    function onSubmit(data: z.infer<typeof formSchema>) {
-        editAdvertisement.mutate({ data: data, id: selectedPubs.id.toString() });
-    }
 
     React.useEffect(() => {
         if (editAdvertisement.isSuccess) {
@@ -103,27 +132,10 @@ function EditPubsForm({ children, selectedPubs }: Props) {
         }
     }, [editAdvertisement.isError, editAdvertisement.isSuccess, editAdvertisement.error])
 
-
-
-
-    //Submit function
-    // function onSubmit(values: z.infer<typeof formSchema>) {
-    //     editPub({
-    //         id: selectedPubs.id,
-    //         nom: values.nom,
-    //         lien: values.lien,
-    //         image: values.image,
-    //         type: values.type,
-    //         dateDebut: selectedPubs.createdAt,
-    //         dateFin: new Date(365 - Number(selectedPubs.createdAt)).toString(),
-    //         // statut: selectedPubs.statut
-    //     });
-    //     queryClient.invalidateQueries({ queryKey: ["client"] });
-    //     setDialogOpen(false);
-    //     toast.success("Modifié avec succès");
-    //     form.reset();
-    // }
-
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        setFichier(data.image)
+        fichier && updateImage.mutate({ data: fichier, id: selectedPubs.image.id });
+    }
     const type = ["large", "petit"]
 
 
@@ -198,8 +210,8 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                             )}
                         />
                         <div className="flex flex-row gap-2">
-                            <FullScreen image={selectedPubs.image} >
-                                <img src={selectedPubs.image} alt="" className="size-16 object-cover cursor-pointer" />
+                            <FullScreen image={`https://tiju.krestdev.com/api/image/${selectedPubs.image.id}`} >
+                                <img src={`https://tiju.krestdev.com/api/image/${selectedPubs.image.id}`} alt="" className="size-16 object-cover cursor-pointer" />
                             </FullScreen>
                             <FormField
                                 control={form.control}
@@ -248,8 +260,8 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                         </span>
                     </form>
                 </Form>
+                <ToastContainer />
             </DialogContent>
-            <ToastContainer />
         </Dialog>
     );
 }

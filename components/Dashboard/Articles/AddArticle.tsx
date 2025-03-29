@@ -1,25 +1,24 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import axiosConfig from '@/api/api';
+import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import useStore from '@/context/store';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { GrFormClose } from 'react-icons/gr';
+import { IoMdAdd, IoMdClose } from 'react-icons/io';
+import { LuEye, LuPlus } from 'react-icons/lu';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Input } from '@/components/ui/input';
-import LexicalEditor from './LexicalEditor';
-import { LuEye, LuPlus } from 'react-icons/lu';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { IoMdAdd, IoMdClose } from 'react-icons/io';
-import { GrFormClose } from 'react-icons/gr';
-import DatePubli from './DatePubli';
+import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
-import axiosConfig from '@/api/api';
-import { AxiosResponse } from 'axios';
+import LexicalEditor from './LexicalEditor';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -51,19 +50,40 @@ const formSchema = z.object({
 
 const AddArticle = () => {
 
-    const { token } = useStore();
+    const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
-    const [article, setArticle] = useState<string[]>()
     const [entry, setEntry] = useState<string>("")
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [categorie, setCategorie] = useState<Category[]>()
+    const [articleAjout, setArticleAjout] = useState<Article>()
+    const [fichier, setFichier] = useState(null)
+
+    const [art, setArt] = useState<Article | null>(null)
+
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
         "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
+    });
+
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            type: "",
+            titre: "",
+            extrait: "",
+            description: "",
+            media: "",
+        },
     });
 
     const decodeHtml = (html: string) => {
@@ -75,36 +95,62 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const decodedText = decodeHtml(data.description)
+            const idU = String(currentUser.id)
             return axiosClient.post("/articles",
                 {
-                    user_id: "3",
+                    user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
                     title: data.titre,
                     summary: data.extrait,
                     description: decodedText,
                     type: data.type,
-                    // created_at: "",
-                    // images: [data.couverture, ...data.media]
-                    images: data.media
                 }
             )
-        }
+        },
+        onSuccess(data) {
+            setArt(data.data);
+            fichier && addImage.mutate({ data: fichier[0], id: data.data.id })
+        },
     })
-
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        addArticle.mutate(data);
-    }
 
     React.useEffect(() => {
         if (addArticle.isSuccess) {
             toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["articles"] });
+
+
+
             setDialogOpen(prev => !prev);
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
         } else if (addArticle.isError) {
             toast.error("Erreur lors de la création de l'article");
             console.log(addArticle.error)
         }
-    }, [addArticle.isError, addArticle.isSuccess, addArticle.error])
+    }, [addArticle.isError, addArticle.isSuccess, addArticle.error, addArticle.data])
+
+    const addImage = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient.post("/image",
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+        // onSuccess(data) {
+        //     art && editArticle.mutate({ data: art, imageId: data.data.id });
+        // },
+    })
+
+    React.useEffect(() => {
+        if (addImage.isSuccess) {
+            console.log(addImage);
+
+
+        } else if (addImage.isError) {
+            console.log(addImage.error)
+        }
+    }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
     const articleCate = useQuery({
         queryKey: ["categoryv"],
@@ -121,18 +167,39 @@ const AddArticle = () => {
         }
     }, [articleCate.data])
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            // nom: "",
-            type: "",
-            titre: "",
-            extrait: "",
-            description: "",
-            media: "",
-            // abonArticle: ""
+    const editArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
+            const idU = String(currentUser.id)
+            return axiosClient1.patch(`/articles/${data.id}`, {
+                user_id: idU,
+                title: data.title,
+                summary: data.summery,
+                description: data.description,
+                type: data.type,
+                images: `https://tiju.krestdev.com/api/image/${imageId}`
+            });
         },
+        retry: 5,
+        retryDelay: 5000
     });
+
+    React.useEffect(() => {
+        if (editArticle.isSuccess) {
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            form.reset();
+        } else if (editArticle.isError) {
+            console.log(editArticle.error)
+        }
+    }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
+
+
+    // Soumission du formulaire
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setFichier(data.media)
+        addArticle.mutate(data);
+    }
 
     const handleOpen = () => {
         if (formSchema.safeParse(form.getValues()).success) {
@@ -332,7 +399,7 @@ const AddArticle = () => {
                                                     value={entry}
                                                     placeholder="Rechercher une catégorie"
                                                     className="h-10 w-full"
-                                                    onKeyDown={(e) => e.stopPropagation()} // Empêche la fermeture lors de la saisie
+                                                    onKeyDown={(e) => e.stopPropagation()}
                                                 />
                                                 {filteredCategories.length > 0 ? (
                                                     filteredCategories.map((x, i) => (
@@ -341,7 +408,7 @@ const AddArticle = () => {
                                                         </SelectItem>
                                                     ))
                                                 ) : (
-                                                    <p className="p-2 text-gray-500">Aucune catégorie trouvée</p>
+                                                    <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
                                                 )}
                                                 <AddCategory>
                                                     <Button className="rounded-none w-full">{"Ajouter une catégorie"}</Button>
@@ -364,7 +431,7 @@ const AddArticle = () => {
                         onClick={() => form.handleSubmit(onSubmit)()}>
                         {"Enregistrer"}
                     </Button>
-                    <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                    {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}
                     <Button
                         type="submit"
                         className="max-w-[384px] w-full rounded-none font-normal"

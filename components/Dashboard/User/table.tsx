@@ -42,15 +42,11 @@ const FormSchema = z.object({
 function UserTable() {
     const { token } = useStore();
     const queryClient = useQueryClient();
+
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "x-api-key": "abc123"
     });
-
-    // const axiosClient2 = axiosConfig({
-    //     Authorization: `Bearer ${token}`,
-    //     "x-api-key": "abc123"
-    // });
 
     const userData = useQuery({
         queryKey: ["users1233"],
@@ -97,7 +93,7 @@ function UserTable() {
     useEffect(() => {
         Test()
         if (userData.isSuccess) {
-            setUser(userData.data.data)
+            setUser(userData.data.data.filter(x => x.role === "user"))
             // setStatut(userData.data.flatMap(x => x.statut))
         }
     }, [userData.data])

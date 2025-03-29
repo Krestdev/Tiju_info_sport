@@ -17,7 +17,7 @@ import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 
 const DashbordPage = () => {
-    const { logoutAdmin, dataArticles, dataUsers } = useStore()
+    const { logoutAdmin } = useStore()
     const pathname = usePathname();
     const [art, setArt] = useState<Article[]>()
     const [comment, setComment] = useState<number>()
@@ -36,10 +36,10 @@ const DashbordPage = () => {
     };
 
     const articleData = useQuery({
-        queryKey: ["articles"],
+        queryKey: ["categoryv"],
         queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Article[]>>(
-                `/articles`
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
             );
         },
     });
@@ -54,18 +54,16 @@ const DashbordPage = () => {
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            setArt(articleData.data.data)
-            setComment((art || []).reduce((total, article) => total + article.comments.length, 0))
-            // const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire).filter(x => x.signals.length > 0)
-            // const respenseSignal = articleData.data.flatMap(x => x.donnees)
-            //   .flatMap(x => x.commentaire && x.commentaire)
-            //   .filter(x => x.reponse.length > 0)
-            //   .flatMap(x => x.reponse)
-            //   .filter(x => x.signals.length > 0)
-            // setComment([...commentSignal, ...respenseSignal])
-            setLikes(countTotalLikes(articleData.data.data))
+            setArt(articleData.data.data.flatMap(x => x.articles))
         }
-    }, [articleData.data?.data])
+    }, [articleData.data])
+
+    useEffect(() => {
+        if (art) {
+            setComment((art || []).reduce((total, article) => total + article.comments.length, 0))
+            setLikes(countTotalLikes(art))
+        }
+    }, [art])
 
 
     useEffect(() => {
@@ -103,12 +101,12 @@ const DashbordPage = () => {
             bgColor: "bg-[#01AE35]/10",
             color: "text-[#01AE35]"
         },
-        {
-            value: comment,
-            category: "Commentaires Signalés",
-            bgColor: "bg-[#FFA500]/10",
-            color: "text-[#FFA500]"
-        }
+        // {
+        //     value: comment,
+        //     category: "Commentaires Signalés",
+        //     bgColor: "bg-[#FFA500]/10",
+        //     color: "text-[#FFA500]"
+        // }
     ]
 
     const [values, setValues] = useState<{ [key: string]: string }>({

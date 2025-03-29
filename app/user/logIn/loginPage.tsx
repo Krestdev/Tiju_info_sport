@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Users } from "@/data/temps"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { GoogleLogin } from '@react-oauth/google';
 
@@ -43,6 +43,8 @@ export default function LoginPage() {
     Authorization: `Bearer ${token}`,
   });
 
+  // const pathname = usePathname();
+
   const logIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
@@ -53,7 +55,6 @@ export default function LoginPage() {
     },
     onSuccess: (response) => {
       toast.success("Connexion réussie !");
-      // localStorage.setItem("token", response.data.token);
       useStore.getState().setCurrentUser(response.data);
       router.push("/");
     },

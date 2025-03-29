@@ -312,6 +312,8 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
 
     const isImage = (media: string | undefined): boolean => {
+        console.log(media);
+        
         if (!media) return false;
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
@@ -370,27 +372,28 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 <h1 className='text-[40px]'>{details.title}</h1>
                             </div>
                             {details.images &&
-                                <FullScreen image={details.images[0] ? details.images[0] : settings.noImage}>
+                                <FullScreen image={details.images ? details.images : settings.noImage}>
                                     {details.images && (
-                                        isImage(details.images[0] ? details.images[0] : settings.noImage) ? (
+                                        // isImage(details.images ? details.images : settings.noImage) ? (
                                             <img
                                                 className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
-                                                src={details.images[0] ? details.images[0] : settings.noImage}
-                                                alt={details.images[0]}
+                                                src={details.images ? `https://tiju.krestdev.com/api/image/${details.images[0].id}` : settings.noImage}
+                                                alt={""}
                                             />
-                                        ) : (
-                                            <video
-                                                className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
-                                                controls
-                                                autoPlay
-                                                muted
-                                                loop
-                                                src={details.images[0] ? details.images[0] : settings.noImage}
-                                            >
-                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                            </video>
-                                        )
-                                    )}
+                                    //     ) : (
+                                    //         <video
+                                    //             className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                    //             controls
+                                    //             autoPlay
+                                    //             muted
+                                    //             loop
+                                    //             src={details.images ? details.images : settings.noImage}
+                                    //         >
+                                    //             Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                    //         </video>
+                                    //     )
+                                    )
+                                    }
                                 </FullScreen>}
                             <div className='flex flex-col gap-4'>
                                 <p className='text-[18px] text-[#545454] font-bold'>{details.summery}</p>
@@ -578,9 +581,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                         <div>
                             {/* {peutConsulter(currentUser, details) ? */}
                             {masquerCom ?
-                                < div className='flex flex-col pt-8'>
+                                < div className='flex flex-col '>
                                     {
-                                        details.comments.map(x => {
+                                        details.comments.filter(comment => !(details.comments.flatMap(comment => comment.response.map(rep => rep.id)).includes(comment.id))).map(x => {
                                             return (
                                                 <div key={x.id} className='flex flex-row py-3 gap-3'>
                                                     <img src={x.author?.photo ? x.author?.photo : '/images/no-user.jpg'} alt="" className='size-10 object-cover rounded-full' />
@@ -790,7 +793,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                             {/* : ""
                                 } */}
                         </div>
-                        <div className='hidden md:flex'>{sim?.articles && <GridAcc gridAff={sim?.articles} />}</div>
+                        <div className='hidden md:flex'>{sim?.articles && <GridAcc gridAff={sim?.articles.filter(x => x.id !== details.id)} />}</div>
                         {/* <GridSport liste={sim?.articles} /> */}
                     </div>
                     <div className='md:max-w-[360px] w-full md:px-7 flex flex-col gap-7'>

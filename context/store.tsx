@@ -23,7 +23,7 @@ interface store {
   dataUsers: Users[];
   dataSubscription: Abonnement[]
   currentUser: any | null;
-  currentAdmin: Users | null;
+  currentAdmin: any | null;
   isFull: boolean | undefined
   favorite: Category[] | null
   search: Article[]
@@ -367,7 +367,7 @@ const useStore = create<store & actions>()(
         }
         return foundUser || null;
       },
-      logoutAdmin: () => set({ currentAdmin: null }),
+      logoutAdmin: () => set({ currentUser: null }),
 
       addLike: (id: number, user: Omit<Users, "password">) =>
         set((state) => ({

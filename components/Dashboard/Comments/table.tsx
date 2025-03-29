@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/table";
 import useStore from "@/context/store";
 import { Search, Trash2 } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ModalWarning from "@/components/modalWarning";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, comment } from "@/data/temps";
 import Pagination from "../Pagination";
 import { SlRefresh } from "react-icons/sl";
 import { DatePick } from "../DatePick";
@@ -32,6 +31,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LuTrash2 } from "react-icons/lu";
 import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AxiosResponse } from "axios";
+import axiosConfig from "@/api/api";
 
 const FormSchema = z.object({
     items: z.array(z.number()).refine((value) => value.length > 0, {
@@ -54,14 +55,17 @@ function CommentsTable() {
     }, [tab]);
 
 
-    const [commentsData, setCommentsData] = useState<comment[]>([])
-    const [comments, setComments] = useState<comment[]>([])
+    const [commentsData, setCommentsData] = useState<Comments[]>([])
+    const [comments, setComments] = useState<Comments[]>([])
     const [current, setCurrent] = useState("tous");
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
     const [selectedArticle, setSelectedArticle] = useState("none");
     const [articles, setArticles] = useState<Article[]>()
-
+    const [searchEntry, setSearchEntry] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [article, setArticle] = useState<Article[]>()
+    const axiosClient = axiosConfig();
     const itemsPerPage = 15;
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -73,33 +77,47 @@ function CommentsTable() {
 
     const articleData = useQuery({
         queryKey: ["articles"],
-        queryFn: async () => dataArticles,
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Article[]>>(
+                `/articles`
+            );
+        },
+    });
+
+    const { mutate: onDeleteComment } = useMutation({
+        mutationFn: async (commentId: number) => {
+            return axiosClient.delete(`/comments/${commentId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            toast.success("Supprimé avec succès");
+        },
     });
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            // const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire && y.commentaire).filter(x => x.signals.length > 0)
-            const commentSignal = articleData.data.flatMap(x => x.donnees)
-                .flatMap(y => y.commentaire ? y.commentaire : [])  
-                .filter(x => x.signals.length > 0);
-            const respenseSignal = articleData.data.flatMap(x => x.donnees)
-                .flatMap(x => x.commentaire && x.commentaire)
-                .filter(x => x.reponse.length > 0)
-                .flatMap(x => x.reponse)
-                .filter(x => x.signals.length > 0)
-
-            setCommentsData([...commentSignal, ...respenseSignal])
-            setComments(articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire))
-            setArticles(articleData.data?.flatMap(x => x.donnees))
+            setArticle(articleData.data.data)
         }
     }, [articleData.data])
 
 
-    //Search value
-    const [searchEntry, setSearchEntry] = useState("");
+    useEffect(() => {
+        if (article) {
+            const commentSignal = article
+                .flatMap(y => y.comments ? y.comments : [])
+                .filter(x => x.signals > 0);
 
-    //Pagination
-    const [currentPage, setCurrentPage] = useState(1);
+            const respenseSignal = article
+                .flatMap(x => x.comments && x.comments)
+                .filter(x => x.response.length > 0)
+                .flatMap(x => x.response)
+                .filter(x => x.signals > 0)
+
+            setCommentsData([...commentSignal, ...respenseSignal])
+            setComments(article.flatMap(y => y.comments))
+            setArticles(article)
+        }
+    }, [article])
 
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setSearchEntry(event.target.value);
@@ -123,7 +141,7 @@ function CommentsTable() {
         if (!rein) {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
-                const itemDate = toNormalDate(item.date);
+                const itemDate = toNormalDate(item.created_at);
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -148,7 +166,7 @@ function CommentsTable() {
         if (selectedArticle && selectedArticle !== "none") {
             filtered = filtered.filter((comment) =>
                 articles?.some(article =>
-                    article.titre === selectedArticle && article.commentaire.some(c => c.id === comment.id)
+                    article.title === selectedArticle && article.comments.some(c => c.id === comment.id)
                 )
             );
         }
@@ -160,11 +178,6 @@ function CommentsTable() {
 
 
     //Delete function
-    function onDeleteComment(id: number) {
-        deleteComment(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
-        toast.success("Supprimé avec succès");
-    }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
@@ -173,10 +186,8 @@ function CommentsTable() {
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = current === "tous" ?
-        filterData.filter(x => x.delete === false).slice(startIndex, startIndex + itemsPerPage) :
-        current === "signale" ?
-            filterData.filter(x => x.signals.length > 0).slice(startIndex, startIndex + itemsPerPage) :
-            filterData.filter(x => x.delete === true).slice(startIndex, startIndex + itemsPerPage);
+        filterData.slice(startIndex, startIndex + itemsPerPage) :
+        filterData.filter(x => x.signals > 0).slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -212,9 +223,9 @@ function CommentsTable() {
                     </SelectTrigger>
                     <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
                         <SelectItem value="none">{"Tous les articles"}</SelectItem>
-                        {[...new Set(articles)].map((x, i) => (
-                            <SelectItem key={i} value={x.titre} className="max-w-[200px] line-clamp-1 truncate">
-                                {x.titre}
+                        {[...new Set(articles?.filter(x => x.comments.length > 0))].map((x, i) => (
+                            <SelectItem key={i} value={x.title} className="max-w-[200px] line-clamp-1 truncate">
+                                {x.title}
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -268,9 +279,9 @@ function CommentsTable() {
                                                                     />
                                                                 </TableCell>
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.message}</TableCell>
-                                                                <TableCell className="border">{item.user?.nom}</TableCell>
-                                                                <TableCell className="border">{item.date}</TableCell>
-                                                                <TableCell className="border">{item.signals.length > 0 ? "Signalé" : "Normal"}</TableCell>
+                                                                <TableCell className="border">{item.author?.name}</TableCell>
+                                                                <TableCell className="border">{item.created_at}</TableCell>
+                                                                <TableCell className="border">{item.signals > 0 ? "Signalé" : "Normal"}</TableCell>
                                                                 <TableCell className="flex gap-2 items-center justify-center">
                                                                     <ModalWarning id={item.id} action={onDeleteComment} name={item.message}>
                                                                         <LuTrash2 size={20} className="text-red-500 flex items-center justify-center" />
@@ -290,9 +301,9 @@ function CommentsTable() {
                             />
 
                         </div>
-                    ) : articleData.isSuccess && filterData.length < 1 && articleData.data.length > 0 ? (
+                    ) : articleData.isSuccess && filterData.length < 1 && article && article.length > 0 ? (
                         "No result"
-                    ) : articleData.isSuccess && articleData.data.length === 0 ? (
+                    ) : articleData.isSuccess && article?.length === 0 ? (
                         "Empty table"
                     ) : (
                         articleData.isError && (

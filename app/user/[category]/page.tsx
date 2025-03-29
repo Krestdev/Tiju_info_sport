@@ -60,7 +60,7 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
     return (
         <div className='containerBloc items-center pb-[60px]'>
             <div className='px-7 py-5 md:py-10'>
-                {pub && <PubsComp pub={pub} taille={'h-[180px]'} clip={''} />}
+                {pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}
             </div>
             <CategoryComp article={article} ad={pub} categorie={cate} />
         </div>

@@ -17,11 +17,12 @@ import axiosConfig from "@/api/api";
 
 
 const DashbordPage = () => {
-  const { logoutAdmin, dataArticles, dataUsers } = useStore()
+  const { logoutAdmin } = useStore()
   const pathname = usePathname();
   const [art, setArt] = useState<Article[]>()
   const [comment, setComment] = useState<number>(0)
   const [likes, setLikes] = useState<number>(0)
+  const [signal, setSignal] = useState<number>(0)
   const [dateRanges, setDateRanges] = useState<{ [key: string]: DateRange | undefined }>({
     publication: undefined,
     vuesSite: undefined,
@@ -41,15 +42,15 @@ const DashbordPage = () => {
   };
 
   const articleData = useQuery({
-    queryKey: ["articles"],
+    queryKey: ["categoryv"],
     queryFn: () => {
-      return axiosClient.get<any, AxiosResponse<Article[]>>(
-        `/articles`
+      return axiosClient.get<any, AxiosResponse<Category[]>>(
+        `/category`
       );
     },
   });
 
-  
+
 
   const countTotalLikes = (articles: Article[]): number => {
     return articles.reduce((totalLikes, article) => {
@@ -59,21 +60,16 @@ const DashbordPage = () => {
 
   useEffect(() => {
     if (articleData.isSuccess) {
-      setArt(articleData.data.data)
-      setComment((art || []).reduce((total, article) => total + article.comments.length, 0))
-      console.log(comment);
-      
-      // const commentSignal = articleData.data.flatMap(x => x.donnees).flatMap(y => y.commentaire).filter(x => x.signals.length > 0)
-      // const respenseSignal = articleData.data.flatMap(x => x.donnees)
-      //   .flatMap(x => x.commentaire && x.commentaire)
-      //   .filter(x => x.reponse.length > 0)
-      //   .flatMap(x => x.reponse)
-      //   .filter(x => x.signals.length > 0)
-      // setComment([...commentSignal, ...respenseSignal])
-      setLikes(countTotalLikes(articleData.data.data))
+      setArt(articleData.data.data.flatMap(x => x.articles))
     }
-  }, [articleData.data?.data])
-  
+  }, [articleData.data])
+
+  useEffect(() => {
+    if (art) {
+      setComment(art.flatMap(x => x.comments).length)
+      setLikes(countTotalLikes(art))
+    }
+  }, [art])
 
   const groupUsersBySubscriptionType = (users: Users[]) => {
     return users.reduce((acc, user) => {
@@ -119,13 +115,13 @@ const DashbordPage = () => {
       category: "Tous Les Commentaires",
       bgColor: "bg-[#01AE35]/10",
       color: "text-[#01AE35]"
-    },
-    {
-      value: comment,
-      category: "Commentaires Signalés",
-      bgColor: "bg-[#FFA500]/10", 
-      color: "text-[#FFA500]" 
-    }
+  },
+    // {
+    //   value: comment,
+    //   category: "Commentaires Signalés",
+    //   bgColor: "bg-[#FFA500]/10", 
+    //   color: "text-[#FFA500]" 
+    // }
   ]
 
   return (

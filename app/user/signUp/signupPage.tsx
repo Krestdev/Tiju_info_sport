@@ -49,16 +49,6 @@ export default function SignupPage() {
     Authorization: `Bearer ${token}`,
   });
 
-  // const userData = useQuery({
-  //   queryKey: ["users"],
-  //   queryFn: async () => fetch(`${host}/api/users`)
-  //     .then((res) => res.json())
-  // })
-
-  const subsData = useQuery({
-    queryKey: ["abonnement"],
-    queryFn: async () => dataSubscription
-  });
 
   const signUp = useMutation({
     mutationKey: ["register"],
@@ -103,7 +93,6 @@ export default function SignupPage() {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     try {
       signUp.mutateAsync(data);
     } catch (error) {

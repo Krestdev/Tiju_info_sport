@@ -101,8 +101,6 @@ function CategoryTable() {
 
         let filtered = sport;
 
-
-
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
@@ -116,7 +114,6 @@ function CategoryTable() {
 
         return filtered;
     }, [rein, sport, searchEntry]);
-
 
 
     //Delete function

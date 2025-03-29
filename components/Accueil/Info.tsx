@@ -15,23 +15,23 @@ const Info = ({ article, taille, couleur }: Props) => {
     return (
         <Link href={`/user/detail-article/${article?.id}`} className={`relative ${taille} h-full w-full`}>
             {article?.images && (
-                isImage(article?.images[0] ? article?.images[0] : settings.noImage) ? (
+                // isImage(article?.images[0] ? article?.images[0] : settings.noImage) ? (
                     <img
                         className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                        src={article?.images[0] ? article?.images[0] : settings.noImage}
+                        src={article.images ? `https://tiju.krestdev.com/api/image/${article.images[0].id}` : settings.noImage}
                         alt={`${article?.images[0]}`}
                     />
-                ) : (
-                    <video
-                        className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                        controls
-                        muted
-                        loop
-                        src={article?.images[0] ? article?.images[0] : settings.noImage}
-                    >
-                        Votre navigateur ne supporte pas la lecture de cette vidéo.
-                    </video>
-                )
+                // ) : (
+                //     <video
+                //         className={`${taille} w-full h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
+                //         controls
+                //         muted
+                //         loop
+                //         src={article?.images[0] ? article?.images[0] : settings.noImage}
+                //     >
+                //         Votre navigateur ne supporte pas la lecture de cette vidéo.
+                //     </video>
+                // )
             )}
             <div className="absolute flex flex-col justify-end top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent rounded-none md:rounded-[6px]">
                 <div className='flex flex-col px-5 py-7 gap-2 max-w-[824px] w-full  font-oswald uppercase text-white'>

@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Button } from '../ui/button';
 
 export function NavAdmin() {
-    const { currentAdmin, logoutAdmin, setIsFull } = useStore()
+    const { currentUser, logoutAdmin, setIsFull } = useStore()
 
     const handleLogout = () => {
         logoutAdmin()
@@ -21,7 +21,7 @@ export function NavAdmin() {
             </Button>
             <div className='max-h-[40px] h-full flex flex-row items-center justify-center'>
                 <div className='flex px-3 gap-2'>
-                    <p className='capitalize font-bold text-[16px] leading-[20.2px]'>{currentAdmin?.nom}</p>
+                    <p className='capitalize font-bold text-[16px] leading-[20.2px]'>{currentUser?.name}</p>
                 </div>
                 <Button variant={"ghost"} className='py-1 px-2' onClick={() => handleLogout()}>
                     <LuLogOut />

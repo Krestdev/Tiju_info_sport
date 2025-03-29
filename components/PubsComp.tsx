@@ -39,26 +39,40 @@ const PubsComp = ({ pub, clip, taille }: PubProps) => {
           delay: 5000,
         }),
       ]}
+      className='w-full'
     >
-      <CarouselContent>
-        {pub?.map((x, i) => {
+      <CarouselContent className='w-full'>
+        {pub.map((x, i) => {
           return (
-            <CarouselItem key={i}>
+            <CarouselItem key={i} className='w-full'>
               <Link
                 // onClick={() => handleClick(x)}
                 href={x.url}
                 target="_blank"
+                className='w-full'
               >
-                <div className="w-full flex items-center justify-center">
-                  <img
-                    src={x.image}
-                    alt={settings?.pub || "Publicité"}
-                    className={`w-full object-cover ${taille} ${clip}`}
-                  />
+                <div
+                  className={`w-full flex items-center justify-center ${taille === 'h-[200px]' ? 'bg-repeat' : ''}`}
+                  style={taille === 'h-[200px]' ? { backgroundImage: `url(https://tiju.krestdev.com/api/image/${x.image.id})`, height: 200} : {}}
+                  // style={{
+                  //   backgroundImage: `url(https://tiju.krestdev.com/api/image/${x.image.id})`,
+                  //   height: 200,
+                  //   // width: "100%",
+                  // }}
+                >
+                  {taille === 'h-[200px]' ? "" : (
+                    <img
+                      src={`https://tiju.krestdev.com/api/image/${x.image.id}`}
+                      alt={settings?.pub || "Publicité"}
+                      className={`w-full object-cover ${taille} ${clip}`}
+                    />
+                  )}
                 </div>
+
               </Link>
             </CarouselItem>
-          )})}
+          )
+        })}
       </CarouselContent>
     </Carousel>
   );

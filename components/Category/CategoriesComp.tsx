@@ -48,23 +48,23 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                             return (
                                 <Link href={path === '/user/' ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                                     {x.images && (
-                                        isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
+                                        // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                             <img
                                                 className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
-                                                src={x?.images[0] ? x?.images[0] : settings.noImage}
+                                                src={x.images ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
                                                 alt={`${x?.images[0]}`}
                                             />
-                                        ) : (
-                                            <video
-                                                className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
-                                                controls
-                                                muted
-                                                loop
-                                                src={x?.images[0] ? x?.images[0] : settings.noImage}
-                                            >
-                                                Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                            </video>
-                                        )
+                                        // ) : (
+                                        //     <video
+                                        //         className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
+                                        //         controls
+                                        //         muted
+                                        //         loop
+                                        //         src={x?.images[0] ? x?.images[0] : settings.noImage}
+                                        //     >
+                                        //         Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                        //     </video>
+                                        // )
                                     )}
                                     <div>
                                         <p className='text-[#A1A1A1] text-[20px] uppercase font-medium leading-[26px] font-oswald'>{path === '/user' ? cat?.title : x.type}</p>
@@ -82,7 +82,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                     result.push(
                         <div key={`ad-${i}`} className='px-7 md:px-0'>
                             {
-                                ad && <PubsComp pub={ad} taille={'h-[154px]'} clip={''} />
+                                ad && <PubsComp pub={ad} taille={'h-[200px]'} clip={''} />
                             }
                         </div>
                     );
@@ -94,7 +94,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                 result.push(
                     <div key={'final'} className='px-7 md:px-0'>
                         {
-                            ad && <PubsComp pub={ad} taille={'h-[154px]'} clip={''} />
+                            ad && <PubsComp pub={ad} taille={'h-[200px]'} clip={''} />
                         }
                     </div>
                 );
@@ -125,7 +125,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         </div> :
                         <div className='flex items-center gap-4 px-7 py-4'>
                             <h1 className='uppercase'>{sim1?.title}</h1>
-                            <Button className=' flex gap-2 bg-[#FF0068] rounded-none'><LuPlus className='size-5' />{"Ajouter aux favoris"}</Button>
+                            <Button className='flex gap-2 bg-[#FF0068] rounded-none'><LuPlus className='size-5' />{"Ajouter aux favoris"}</Button>
                         </div>
                     }
                 </div>
@@ -146,23 +146,23 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         <Link href={path === '/user' ? `/user/${sim1?.title}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7'>
                             <div key={premier?.id} className={`relative max-w-[824px] max-h-[320px] h-full w-full`}>
                                 {premier?.images && (
-                                    isImage(premier?.images[0] ? premier?.images[0] : settings.noImage) ? (
+                                    // isImage(premier?.images[0] ? premier?.images[0] : settings.noImage) ? (
                                         <img
                                             className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                                            src={premier?.images[0] ? premier?.images[0] : settings.noImage}
+                                            src={premier.images ? `https://tiju.krestdev.com/api/image/${premier.images[0].id}` : settings.noImage}
                                             alt={`${premier.images[0]}`}
                                         />
-                                    ) : (
-                                        <video
-                                            className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                                            controls
-                                            muted
-                                            loop
-                                            src={premier?.images[0] ? premier?.images[0] : settings.noImage}
-                                        >
-                                            Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                        </video>
-                                    )
+                                    // ) : (
+                                    //     <video
+                                    //         className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
+                                    //         controls
+                                    //         muted
+                                    //         loop
+                                    //         src={premier?.images[0] ? premier?.images[0] : settings.noImage}
+                                    //     >
+                                    //         Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                    //     </video>
+                                    // )
                                 )}
                                 <div className="absolute flex flex-col justify-end top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent rounded-none md:rounded-[6px]">
                                     <div className='flex flex-col px-5 py-7 gap-2 max-w-[824px] w-full  font-oswald uppercase text-white'>

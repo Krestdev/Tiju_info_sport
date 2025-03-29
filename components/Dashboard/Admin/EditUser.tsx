@@ -28,13 +28,15 @@ import {
 } from "@/components/ui/select";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { abonnement, Abonnement, Users } from "@/data/temps";
+import axiosConfig from "@/api/api";
+import { useRouter } from "next/router";
 
 const formSchema = z
     .object({
@@ -53,31 +55,58 @@ const formSchema = z
 
 type Props = {
     children: ReactNode;
-    selectedUser: Users;
+    selectedUser: User;
 };
 
 function EditUser({ children, selectedUser }: Props) {
-    const { editUser, dataSubscription } = useStore();
+    const { editUser, dataSubscription, token } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [abon, setAbon] = useState<Abonnement[]>()
 
     const queryClient = useQueryClient();
-    const abonData = useQuery({
-        queryKey: ["abonnement"],
-        queryFn: async () => dataSubscription
-    })
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+    });
+    const router = useRouter();
 
-    useEffect(() => {
-        if (abonData.isSuccess) {
-            setAbon(abonData.data)
-        }
-    }, [abonData.data])
+
+    const signUp = useMutation({
+        mutationKey: ["regiuserster"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            try {
+                return axiosClient.post("/users", {
+                    email: data.email,
+                    name: data.nom,
+                    password: data.password,
+                    nick_name: "",
+                    phone: "",
+                    sex: "",
+                    town: "",
+                    country: "",
+                    photo: "",
+                    role: "user"
+                });
+            } catch (error) {
+                throw new Error("Validation échouée : " + error);
+            }
+        },
+        onSuccess: (response) => {
+            toast.success("Inscription réussie !");
+            // localStorage.setItem("token", response.data.token);
+            router.push("/dashboard/admin");
+        },
+        onError: (error) => {
+            toast.error("Erreur lors de l'inscription.");
+            console.error(error);
+        },
+    });
+
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: selectedUser.nom,
+            nom: selectedUser.name,
             email: selectedUser.email,
             password: selectedUser.password,
             role: selectedUser.role,
@@ -88,18 +117,16 @@ function EditUser({ children, selectedUser }: Props) {
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Hello");
-
         editUser({
             id: selectedUser.id,
             nom: values.nom,
             email: values.email,
             password: values.password,
             role: values.role,
-            createdAt: selectedUser.createdAt,
+            createdAt: selectedUser.created_at,
         });
         console.log(values);
-        queryClient.invalidateQueries({ queryKey: ["client"] });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
         setDialogOpen(false);
         toast.success("Modifié avec succès");
         form.reset();
