@@ -80,7 +80,7 @@ function MenuBar({ article }: Donnee) {
                         </DrawerClose>
                     </DrawerTitle>
                 </DrawerHeader>
-                <Button className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">{"S'abonner"}</Button>
+                {/* <Button className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">{"S'abonner"}</Button> */}
                 {currentUser ?
                     <Button variant={"outline"} onClick={() => router.push("/user/profil")} className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">
                         {"PROFIL"}
