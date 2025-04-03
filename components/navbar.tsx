@@ -84,7 +84,7 @@ const Navbar = () => {
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src={settings.logo} alt="Logo" className='size-[50px]' />
-                        <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] flex'>{settings.compagnyName}</p>
+                        <p className='uppercase font-semibold font-oswald text-[14px] leading-[26.68px] flex'>{settings.compagnyName}</p>
                     </Link>
                     {/* <div className='hidden md:flex md:flex-row items-center gap-3'>
                         <MenuComp />
@@ -127,7 +127,7 @@ const Navbar = () => {
                                     <Button variant={'ghost'} onClick={handleLogin}>
                                         <div className='flex border-black border rounded-full'>
                                             <User />
-                                        </div> {"SE CONNECTER"}
+                                        </div> <p className='hidden md:flex'>{"SE CONNECTER"}</p>
                                     </Button>
                                     {/* <Link href={'/user/subscribe'} className='hover:underline '>
                                         <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
