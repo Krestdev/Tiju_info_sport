@@ -12,8 +12,6 @@ interface Props {
 
 const Info = ({ article, taille, couleur }: Props) => {
     const { settings } = useStore()
-
-    console.log(article);
     
     return (
         <Link href={`/user/detail-article/${article.id}`} className={`relative ${taille} h-full w-full`}>

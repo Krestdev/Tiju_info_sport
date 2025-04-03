@@ -30,11 +30,8 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
         }
     }, [gridAff])
 
-    console.log(gridAff);
-    
-
     return (
-
+        gridAff.length > 0 ?
         <div className='containerBloc w-full hidden md:flex flex-col items-center py-[60px] gap-6'>
             <div className='flex flex-row w-full items-center justify-between px-5 gap-4'>
                 {gridAff && gridAff.length > 1 && (
@@ -88,7 +85,8 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
                     }
                 </div>
             </div>
-        </div>
+        </div>:
+        ""
     )
 }
 

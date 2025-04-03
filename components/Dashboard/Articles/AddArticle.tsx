@@ -20,7 +20,7 @@ import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
 import LexicalEditor from './LexicalEditor';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
@@ -57,10 +57,10 @@ const AddArticle = () => {
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [categorie, setCategorie] = useState<Category[]>()
-    const [articleAjout, setArticleAjout] = useState<Article>()
-    const [fichier, setFichier] = useState(null)
-
+    const [categorie, setCategorie] = useState<Category[]>();
+    const [articleAjout, setArticleAjout] = useState<Article>();
+    const [fichier, setFichier] = useState(null);
+    const [artId, setArtId] = useState(0);
     const [art, setArt] = useState<Article | null>(null)
 
     const axiosClient = axiosConfig({
@@ -115,10 +115,6 @@ const AddArticle = () => {
 
     React.useEffect(() => {
         if (addArticle.isSuccess) {
-            toast.success("Ajoutée avec succès");
-
-
-
             setDialogOpen(prev => !prev);
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         } else if (addArticle.isError) {
@@ -127,9 +123,19 @@ const AddArticle = () => {
         }
     }, [addArticle.isError, addArticle.isSuccess, addArticle.error, addArticle.data])
 
+    const { mutate: deleteArticle } = useMutation({
+        mutationFn: async (articleId: number) => {
+            return axiosClient.delete(`/articles/${articleId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+    });
+
     const addImage = useMutation({
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
+            setArtId(id)
             return axiosClient.post("/image",
                 {
                     file: data,
@@ -137,15 +143,20 @@ const AddArticle = () => {
                 }
             )
         },
+        onError(error : any) {
+            console.log(error.status);
+            if (error.status === 500) {
+                toast.error("La taille maximale de l'image est de 2Mo")
+            }
+            deleteArticle(artId)
+        },
     })
 
     React.useEffect(() => {
         if (addImage.isSuccess) {
             toast.success("Article ajouté avec succès")
-            form.reset()
-        } else if (addImage.isError) {
-            console.log(addImage.error)
-        }
+            form.reset();
+        } 
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
     const articleCate = useQuery({
@@ -292,7 +303,7 @@ const AddArticle = () => {
                     name="media"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{"Ajouter des images"}</FormLabel>
+                            <FormLabel>{"Image (max 2Mo)"}</FormLabel>
                             <FormControl>
                                 <div className="flex flex-col gap-2">
                                     <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
