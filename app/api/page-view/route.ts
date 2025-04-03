@@ -1,12 +1,26 @@
 import { NextResponse } from "next/server";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
-import fs from "fs";
+import { credentialsPath } from "../keysConfig";
 
-const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-if (!credentialsPath || !fs.existsSync(credentialsPath)) {
+// const credentialsPath = {
+//   "type": process.env.TYPE,
+//   "project_id": process.env.PROJECT_ID,
+//   "private_key_id": process.env.PRIVATE_KEY_ID,
+//   "private_key": process.env.PRIVATE_KEY,
+//   "client_email": process.env.CLIENT_EMAIL,
+//   "client_id": process.env.CLIENT_ID,
+//   "auth_uri": process.env.AUTH_URI,
+//   "token_uri": process.env.TOKEN_URI,
+//   "auth_provider_x509_cert_url": process.env.AUTH_PROVIDER_X509_CERT_URL,
+//   "client_x509_cert_url": process.env.CLIENT_X509_CERT_URL,
+//   "universe_domain": process.env.UNIVERSE_DOMAIN,
+// };
+
+if (!credentialsPath) {
   throw new Error("GOOGLE_APPLICATION_CREDENTIALS est invalide ou manquant dans .env");
 }
-const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf8"));
+const credentials = credentialsPath;
+
 
 const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
 
