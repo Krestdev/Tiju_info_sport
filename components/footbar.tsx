@@ -39,7 +39,7 @@ const Footbar = () => {
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                     <img src={settings.logo} alt="Logo" className='size-[50px]' />
-                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] flex uppercase'>{settings.compagnyName}</p>
+                    <p className='font-semibold font-oswald text-[16px] leading-[26.68px] flex uppercase'>{settings.compagnyName}</p>
                 </Link>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
