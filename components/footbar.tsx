@@ -34,6 +34,7 @@ const Footbar = () => {
     }, [articleData.data])
 
     return (
+        categorie && categorie.length > 0 ?
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
@@ -88,7 +89,8 @@ const Footbar = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>:
+        ""
     )
 }
 

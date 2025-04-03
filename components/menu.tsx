@@ -53,13 +53,14 @@ export function MenuComp() {
     return (
         <div className="flex items-start md:items-center justify-center border-y my-3">
             <div className="overflow-x-auto scrollbar-hide">
-                <div className="md:max-w-[1280px] mx-20 w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
-                    {
-                        cate?.map((x, i) => (
-                            <Link className={`${selected === x.title ? "bg-[#0128AE] text-white" : ""} font-oswald h-10 flex items-center px-3 py-2 gap-2`} key={i} href={`/user/${x.title}`}>{x.title}</Link>
-                        ))
-                    }
-                </div>
+                {cate ?
+                    <div className="md:max-w-[1280px] mx-20 w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
+                        {
+                            cate?.map((x, i) => (
+                                <Link className={`${selected === x.title ? "bg-[#0128AE] text-white" : ""} font-oswald h-10 flex items-center px-3 py-2 gap-2`} key={i} href={`/user/${x.title}`}>{x.title}</Link>
+                            ))
+                        }
+                    </div> : ""}
             </div>
         </div>
     )
