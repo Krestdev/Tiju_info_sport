@@ -143,11 +143,11 @@ const AddArticle = () => {
                 }
             )
         },
-        onError(error : any) {
+        onError(error: any) {
             console.log(error.status);
-            if (error.status === 500) {
-                toast.error("La taille maximale de l'image est de 2Mo")
-            }
+            // if (error.status === 500) {
+            toast.error("La taille maximale de l'image doit être de 2Mo")
+            // }
             deleteArticle(artId)
         },
     })
@@ -156,7 +156,7 @@ const AddArticle = () => {
         if (addImage.isSuccess) {
             toast.success("Article ajouté avec succès")
             form.reset();
-        } 
+        }
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
     const articleCate = useQuery({
