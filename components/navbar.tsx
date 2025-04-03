@@ -84,7 +84,7 @@ const Navbar = () => {
                 <div className='flex flex-row items-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src={settings.logo} alt="Logo" className='size-[50px]' />
-                        <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] hidden md:flex'>{settings.compagnyName}</p>
+                        <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] flex'>{settings.compagnyName}</p>
                     </Link>
                     {/* <div className='hidden md:flex md:flex-row items-center gap-3'>
                         <MenuComp />
