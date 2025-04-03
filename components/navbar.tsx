@@ -105,7 +105,7 @@ const Navbar = () => {
                         {
                             currentUser ?
                                 <div className='flex flex-row items-center gap-4'>
-                                    <Link href={'/user/profil'} className='hidden md:flex flex-row items-center gap-2'>
+                                    <Link href={'/user/profil'} className='flex flex-row items-center gap-2'>
                                         <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
                                     </Link>
                                     {/* {
@@ -127,7 +127,8 @@ const Navbar = () => {
                                     <Button variant={'ghost'} onClick={handleLogin}>
                                         <div className='flex border-black border rounded-full'>
                                             <User />
-                                        </div> <p className='hidden md:flex'>{"SE CONNECTER"}</p>
+                                        </div> 
+                                        <p className='hidden md:flex'>{"SE CONNECTER"}</p>
                                     </Button>
                                     {/* <Link href={'/user/subscribe'} className='hover:underline '>
                                         <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>

@@ -34,7 +34,7 @@ interface actions {
 
   editSettings: (newSettings: Partial<typeof initialData.settings>) => void;
 
-  setIsFull: () => void;
+  setIsFull: (prev: boolean) => void;
   setSearch: (art: Article[] | undefined) => void
   setFavorite: (cate: Category[] | undefined) => void;
 
@@ -136,10 +136,7 @@ const useStore = create<store & actions>()(
           favorite: cate || state.favorite,
         })),
 
-      setIsFull: () =>
-        set((state) => ({
-          isFull: !state.isFull,
-        })),
+        setIsFull: (open) => set({ isFull: open }),
 
       addCategorie: (category: Categories, parentId?: number) =>
         set((state) => ({

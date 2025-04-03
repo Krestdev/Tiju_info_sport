@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Button } from '../ui/button';
 
 export function NavAdmin() {
-    const { currentUser, logoutAdmin, setIsFull } = useStore()
+    const { currentUser, logoutAdmin, setIsFull, isFull } = useStore()
 
     const handleLogout = () => {
         logoutAdmin()
@@ -15,7 +15,7 @@ export function NavAdmin() {
 
     return (
         <div className='w-full flex flex-row justify-between px-7 py-2 '>
-            <Button variant={"ghost"} onClick={setIsFull} className='flex flex-row items-center gap-2 px-3 py-2 max-h-10 h-full'>
+            <Button variant={"ghost"} onClick={() => setIsFull(!isFull)} className='flex flex-row items-center gap-2 px-3 py-2 max-h-10 h-full'>
                 <LuMenu />
                 <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Menu"}</p>
             </Button>

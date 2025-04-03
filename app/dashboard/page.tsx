@@ -123,16 +123,16 @@ const DashbordPage = () => {
   ]
 
   return (
-    <div className="flex flex-col gap-5 px-7 py-10">
+    <div className="flex flex-col gap-5 px-0 md:px-7 py-10">
       <h1 className="uppercase text-[40px]">{"Tableau de bord"}</h1>
-      <div className="flex flex-row gap-5">
+      <div className="flex flex-col md:flex-row gap-5">
         <Compo
           texte={"Publication"}
           page={"Tous les articles"}
           width={"w-full"}
           value={values.publication}
           setValue={(val) => handleChange("publication", val)}
-          link={""}
+          link={"/dashboard/articles"}
           isLink
           dateRanges={dateRanges.publication}
           setDateRanges={setDateRanges}
@@ -142,10 +142,10 @@ const DashbordPage = () => {
         <Compo
           texte={"Vues sur le site"}
           page={"Statistiques"}
-          width={"max-w-[340px] w-full"}
+          width={"md:max-w-[340px] w-full"}
           value={values.vuesSite}
           setValue={(val) => handleChange("vuesSite", val)}
-          link={""}
+          link={"/dashboard/statistiques"}
           isLink
           dateRanges={dateRanges.vuesSite}
           setDateRanges={setDateRanges}
@@ -153,14 +153,14 @@ const DashbordPage = () => {
           <SemiCirc rangeKey={"vuesSite"} value={values.vuesSite} dateRanges={dateRanges} />
         </Compo>
       </div>
-      <div className="flex flex-row gap-5">
+      <div className="flex flex-col md:flex-row gap-5">
         <Compo
           texte={"Vues par période"}
           page={"Tous les articles"}
           width={"max-w-[400px] w-full"}
           value={values.vuesPeriode}
           setValue={(val) => handleChange("vuesPeriode", val)}
-          link={""}
+          link={"/dashboard/statistiques"}
           isLink
           dateRanges={dateRanges.vuesPeriode}
           setDateRanges={setDateRanges}
@@ -173,7 +173,7 @@ const DashbordPage = () => {
           width={"w-full"}
           value={values.vuesCategorie}
           setValue={(val) => handleChange("vuesCategorie", val)}
-          link={""}
+          link={"/dashboard/statistiques"}
           isLink
           dateRanges={dateRanges.vuesCategorie}
           setDateRanges={setDateRanges}
