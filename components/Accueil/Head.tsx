@@ -1,4 +1,4 @@
-import { Article } from '@/data/temps';
+
 import React from 'react'
 import Info from './Info';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
@@ -17,7 +17,7 @@ const Head = ({ gridAff }: Aff) => {
     return (
         <div>
             <Carousel
-                ref={emblaRef} // ✅ Attache le carrousel
+                ref={emblaRef} 
                 plugins={[
                     Autoplay({
                         delay: 10000,

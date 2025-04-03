@@ -31,14 +31,14 @@ const formSchema = z.object({
     nom: z.string().min(4, {
         message: "Le nom doit contenir au moins 4 caractères.",
     }),
-    cout: z.number({
+    coutMois: z.number({
         required_error: "Le coût doit être un nombre valide.",
         invalid_type_error: "Le coût doit être un nombre valide.",
     }).positive("Le coût doit être un nombre positif."),
-    validite: z.number({
-        required_error: "La validité doit être un nombre valide.",
-        invalid_type_error: "La validité doit être un nombre valide.",
-    }).int("La validité doit être un nombre entier.").positive("La validité doit être un nombre positif."),
+    coutAn: z.number({
+        required_error: "Le coût doit être un nombre valide.",
+        invalid_type_error: "Le coût doit être un nombre valide.",
+    }).positive("Le coût doit être un nombre positif."),
 });
 
 
@@ -57,8 +57,8 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: selectedPubs.nom,
-            cout: selectedPubs.cout,
-            validite: selectedPubs.validite,
+            coutMois: selectedPubs.coutMois,
+            coutAn: selectedPubs.coutAn,
         },
     });
 
@@ -68,8 +68,8 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
     function onSubmit(values: z.infer<typeof formSchema>) {
         editSubscription({
             nom: values.nom,
-            cout: values.cout,
-            validite: values.validite
+            coutMois: values.coutMois,
+            coutAn: values.coutAn
         });
         console.log(values);
         queryClient.invalidateQueries({ queryKey: ["client"] });
@@ -83,9 +83,9 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{"Modifier l'abonnement"}</DialogTitle>
+                    <DialogTitle>{"Ajouter un nouvel abonnement"}</DialogTitle>
                     <DialogDescription>
-                        {"Remplissez le formulaire pour modifier l'abonnement"}
+                        {"remplir ce formulaire pour ajouter un nouvel abonnement"}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -98,7 +98,7 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
                             name="nom"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Nom"}</FormLabel>
+                                    <FormLabel>{"Titre"}</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Nom" />
                                     </FormControl>
@@ -106,17 +106,18 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
-                            name="cout"
+                            name="coutMois"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Coût (en FCFA)"}</FormLabel>
+                                    <FormLabel>{"Prix Mois (en FCFA)"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             {...field}
-                                            placeholder="Coût de l'abonnement en FCFA"
+                                            placeholder="Coût de l'abonnement sur 1 mois FCFA"
                                             onChange={(e) => field.onChange(Number(e.target.value))}
                                         />
                                     </FormControl>
@@ -124,17 +125,18 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
-                            name="validite"
+                            name="coutAn"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Validité (en Mois)"}</FormLabel>
+                                    <FormLabel>{"Prix An (en FCFA)"}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             {...field}
-                                            placeholder="Validité de l'abonnement en FCFA"
+                                            placeholder="Coût de l'abonnement sur 1 an en FCFA"
                                             onChange={(e) => field.onChange(Number(e.target.value))}
                                         />
                                     </FormControl>
@@ -142,13 +144,14 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
                                 </FormItem>
                             )}
                         />
+
                         <span className="flex items-center gap-3 flex-wrap">
                             <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
-                                {"Modifier l'abonnement"}
+                                {"Ajouter un nouvel abonnement"}
                             </Button>
                             <DialogClose asChild>
-                                <Button variant={"outline"} onClick={() => form.reset()}>
-                                    {"Annuler"}
+                                <Button className="rounded-none" variant={"outline"} onClick={() => form.reset()}>
+                                    {"Close"}
                                 </Button>
                             </DialogClose>
                         </span>

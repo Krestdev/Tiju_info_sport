@@ -22,7 +22,7 @@ import { ChevronDown, ChevronRight, ChevronUp, LucideCircleDollarSign } from "lu
 import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuFolderOpen, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuSettings } from "react-icons/lu";
+import { LuChartColumnDecreasing, LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuFolderOpen, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuMessageSquareText, LuSettings, LuUserRound, LuUsersRound } from "react-icons/lu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useState } from "react";
 
@@ -54,7 +54,7 @@ const items = [
     {
         title: "Commentaires",
         url: "/dashboard/comment",
-        icon: LuMessageSquare,
+        icon: LuMessageSquareText,
         param: false,
         parametre: [
             {
@@ -71,15 +71,10 @@ const items = [
     },
     {
         title: "Catégories",
-        url: "/dashboard/comment",
+        url: "/dashboard/categories",
         icon: LuFolder,
-        param: true,
+        param: false,
         parametre: [
-            {
-                nom: "Ajouter une catégorie",
-                lien: "/dashboard/categories/add-category",
-                icon: LuFolderOpen
-            },
             {
                 nom: "Toutes les catégories",
                 lien: "/dashboard/categories",
@@ -87,52 +82,43 @@ const items = [
             },
         ],
     },
-    {
-        title: "Abonnements",
-        url: "/dashboard/subscription",
-        icon: LucideCircleDollarSign,
-        param: true,
-        parametre: [],
-    },
+    // {
+    //     title: "Abonnements",
+    //     url: "/dashboard/subscription",
+    //     icon: LucideCircleDollarSign,
+    //     param: false,
+    //     parametre: [],
+    // },
     {
         title: "Publicités",
         url: "/dashboard/pubs",
         icon: LuMegaphone,
-        param: true,
-        parametre: [
-            {
-                nom: "Toutes les publicité",
-                lien: "/dashboard/pubs",
-                icon: LuFolderOpen
-            },
-            {
-                nom: "Ajouter une publicité",
-                lien: "/dashboard/categories",
-                icon: LuFolder
-            },
-        ],
+        param: false,
+        parametre: [],
+    },
+    {
+        title: "Statistiques",
+        url: "/dashboard/statistiques",
+        icon: LuChartColumnDecreasing,
+        param: false,
     },
     {
         title: "Utilisateurs",
         url: "/dashboard/users",
         icon: LuCircleUser,
-        param: true,
-        parametre: [
-            {
-                nom: "Utilisateurs",
-                lien: "/dashboard/users",
-                icon: LuFolderOpen
-            },
-            {
-                nom: "Administration",
-                lien: "/dashboard/admin",
-                icon: LuFolder
-            },
-        ],
+        param: false,
+        parametre: [],
+    },
+    {
+        title: "Administration",
+        url: "/dashboard/admin",
+        icon: LuUsersRound,
+        param: false,
+        parametre: [],
     },
     {
         title: "Paramètre du site",
-        url: "/dashboard/subscription",
+        url: "/dashboard/settings",
         icon: LuSettings,
         param: false,
     },
@@ -164,12 +150,12 @@ export function AppSidebar() {
                             sizes="20px"
                             className="w-full object-cover"
                             src={settings.logo}
-                            alt=""
+                            alt={settings.compagnyName}
                         />
                     </SidebarHeader>
-                    {isFull && <p className='font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{"TYJU INFO SPORTS"}</p>}
+                    {isFull && <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{settings.compagnyName}</p>}
                 </div>
-                <SidebarContent>
+                <SidebarContent className="max-w-[320px] w-full">
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
@@ -190,7 +176,7 @@ export function AppSidebar() {
                                                         </SidebarMenuButton>
                                                     </CollapsibleTrigger>
                                                     <CollapsibleContent>
-                                                        <SidebarMenuSub className="mx-0">
+                                                        <SidebarMenuSub className="mx-0 pl-2">
                                                             {item.parametre?.map(a => {
                                                                 const isSubActive = currentPath === a.lien;
                                                                 return (
@@ -220,10 +206,10 @@ export function AppSidebar() {
                                         )
                                     );
                                 })}
-                                <Button onClick={setIsFull} variant="ghost" size={!isFull ? "icon" : "default"} className={`h-10 mt-4 hover:!bg-blue-50 ${isFull ? "w-full justify-start gap-4 rounded-md" : "justify-start size-[30px] pl-2"}`}>
+                                {/* <Button onClick={setIsFull} variant="ghost" size={!isFull ? "icon" : "default"} className={`h-10 mt-4 hover:!bg-blue-50 ${isFull ? "w-full justify-start gap-4 rounded-md" : "justify-start size-[30px] pl-2"}`}>
                                     <ChevronRight size={20} className={`transition-all duration-300 ease-linear ${isFull ? " scale-x-[-1]" : "scale-x-[1]"}`} />
                                     {isFull && <span>{"Réduire"}</span>}
-                                </Button>
+                                </Button> */}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>

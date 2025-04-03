@@ -1,7 +1,6 @@
 import {
   abonnement,
   Abonnement,
-  Article,
   articles,
   Categorie,
   categories,
@@ -23,19 +22,31 @@ interface store {
   dataPubs: Pubs[];
   dataUsers: Users[];
   dataSubscription: Abonnement[]
-  currentUser: Users | null;
-  currentAdmin: Users | null;
+  currentUser: any | null;
+  currentAdmin: any | null;
   isFull: boolean | undefined
-  favorite: Categorie[]
+  favorite: Category[] | null
   search: Article[]
+  token: string | null;
 }
 
 interface actions {
+
+  editSettings: (newSettings: Partial<typeof initialData.settings>) => void;
+
   setIsFull: () => void;
   setSearch: (art: Article[] | undefined) => void
-  setFavorite: (cate: Categorie[] | undefined) => void;
+  setFavorite: (cate: Category[] | undefined) => void;
+
+  setCurrentUser: (user: any) => void;
+
+  addCategorie: (categorie: Categories, parentId?: number) => void,
+  editCategorie: (id: number, updatedCategory: Partial<Categories>, parentId?: number) => void,
+  deleteCategorie: (id: number) => void;
 
   addCategory: (category: Categorie) => void;
+  // addArticle: (article: Article) => void;
+  editArticle: (article: Article) => void;
   deleteArticle: (id: number) => void;
 
   registerUser: (user: Users) => void;
@@ -62,6 +73,7 @@ interface actions {
   addPub: (pub: Pubs) => void
   editPub: (pub: any) => void
   deletePub: (id: number) => void;
+  setClick: (pub: Pubs) => void;
 
   addSubscription: (subscription: Abonnement) => void
   editSubscription: (subscription: any) => void
@@ -70,18 +82,25 @@ interface actions {
 
 const initialData: store = {
   settings: {
-    compagnyName: "Tyju Info Sport",
+    compagnyName: "Tyju Info Sports",
     logo: "/logo.png",
     email: "",
     phone: "",
     address: "",
+    facebook: "",
+    instagram: "",
+    x: "",
     pub: "Tyju Publicité",
-    noPhoto: "/images/no-user.jpg"
+    noPhoto: "/images/no-user.jpg",
+    noImage: "/images/no-image.jpg",
+    description: "Tyju Info sport est un journal sportif"
   },
+
+
 
   //données initiales
   dataArticles: articles,
-  favorite: articles,
+  favorite: null,
   dataPubs: publicites,
   dataUsers: users,
   dataSubscription: abonnement,
@@ -89,7 +108,8 @@ const initialData: store = {
   currentAdmin: null,
   isFull: true,
   search: [],
-  dataCategorie: categories
+  dataCategorie: categories,
+  token: null
 };
 
 const useStore = create<store & actions>()(
@@ -97,13 +117,20 @@ const useStore = create<store & actions>()(
     (set, get) => ({
       ...initialData,
 
+      editSettings: (newSettings: Partial<typeof initialData.settings>) => {
+        set((state) => ({
+          settings: { ...state.settings, ...newSettings },
+        }));
+      },
+
+
       setSearch: (art: Article[] | undefined) =>
         set((state) => ({
           ...state,
           search: art || state.search
         })),
 
-      setFavorite: (cate: Categorie[] | undefined) =>
+      setFavorite: (cate: Category[] | undefined) =>
         set((state) => ({
           ...state,
           favorite: cate || state.favorite,
@@ -113,6 +140,37 @@ const useStore = create<store & actions>()(
         set((state) => ({
           isFull: !state.isFull,
         })),
+
+      addCategorie: (category: Categories, parentId?: number) =>
+        set((state) => ({
+          dataCategorie: [
+            ...state.dataCategorie,
+            { ...category, parent: parentId ? state.dataCategorie.find(cat => cat.id === parentId) || undefined : undefined }
+          ]
+        })),
+
+      editCategorie: (id: number, updatedCategory: Partial<Categories>, parentId?: number) =>
+        set((state) => ({
+          dataCategorie: state.dataCategorie.map(cat =>
+            cat.id === id
+              ? {
+                ...cat,
+                ...updatedCategory,
+                parent: parentId ? state.dataCategorie.find(c => c.id === parentId) || undefined : undefined
+              }
+              : cat
+          )
+        })),
+
+      deleteCategorie: (id: number) =>
+        set((state) => ({
+          dataCategorie: state.dataCategorie
+            .filter((cat) => cat.id !== id)
+            .map((cat) =>
+              cat.parent?.id === id ? { ...cat, parent: undefined } : cat
+            ),
+        })),
+
 
       addCategory: (category: Categorie) =>
         set((state) => {
@@ -193,6 +251,24 @@ const useStore = create<store & actions>()(
             donnees: article.donnees.filter((art) => art.id !== id)
           })),
         })),
+      // addArticle: (article: Article) =>
+      //   set((state) => ({
+      //     dataArticles: state.dataArticles.map((categorie) =>
+      //       categorie.nom === article.type
+      //         ? { ...categorie, donnees: [...categorie.donnees, article] }
+      //         : categorie
+      //     ),
+      //   })),
+      editArticle: (article: Article) =>
+        set((state) => ({
+          dataArticles: state.dataArticles.map((categorie) => ({
+            ...categorie,
+            donnees: categorie.donnees.map((el) =>
+              el.id === article.id ? { ...el, ...article } : el
+            ),
+          })),
+        })),
+
 
       editComment: (id: number, message: string) =>
         set((state) => ({
@@ -274,7 +350,13 @@ const useStore = create<store & actions>()(
         return foundUser || null;
       },
 
-      logout: () => set({ currentUser: null }),
+      logout: () => {
+        localStorage.removeItem("token");
+        set({ token: null, currentUser: null });
+      },
+
+      user: null,
+      setCurrentUser: (user) => set({ currentUser: user }),
 
       loginAdmin: (email, password) => {
         const foundUser = get().dataUsers.find(
@@ -285,7 +367,7 @@ const useStore = create<store & actions>()(
         }
         return foundUser || null;
       },
-      logoutAdmin: () => set({ currentAdmin: null }),
+      logoutAdmin: () => set({ currentUser: null }),
 
       addLike: (id: number, user: Omit<Users, "password">) =>
         set((state) => ({
@@ -423,6 +505,16 @@ const useStore = create<store & actions>()(
         set((state) => ({
           dataPubs: state.dataPubs.map((el) => (el.id === pub.id ? pub : el))
         })),
+
+      setClick: (updatedPub) =>
+        set((state) => ({
+          dataPubs: state.dataPubs.map((el) =>
+            el.id === updatedPub.id
+              ? { ...el, nbClick: (el.nbClick || 0) + 1 }
+              : el
+          ),
+        })),
+
 
       deletePub: (id) =>
         set((state) => ({

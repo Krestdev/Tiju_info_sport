@@ -12,15 +12,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 interface DatePickerWithRangeProps {
   onChange?: (date: DateRange | undefined) => void;
+  show: boolean;
 }
 
-export function DatePick({ onChange }: DatePickerWithRangeProps) {
+export function DatePick({ onChange, show }: DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>();
 
   return (
     <div className={cn("grid gap-2")}>
-      <Popover>
-        <PopoverTrigger asChild>
+      <Popover >
+        <PopoverTrigger asChild className="w-fit z-50">
           <Button
             id="date"
             variant={"outline"}
@@ -35,12 +36,12 @@ export function DatePick({ onChange }: DatePickerWithRangeProps) {
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Filtrer par date</span>
+              show && <span>Filtrer par date</span>
             )}
             <CalendarIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0 z-50" align="start">
           <Calendar
             initialFocus
             mode="range"
@@ -48,7 +49,7 @@ export function DatePick({ onChange }: DatePickerWithRangeProps) {
             selected={date}
             onSelect={(newDate) => {
               setDate(newDate);
-              if (onChange) onChange(newDate); // Appel de la fonction passée en props
+              if (onChange) onChange(newDate); 
             }}
             numberOfMonths={2}
           />

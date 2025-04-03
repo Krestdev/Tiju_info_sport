@@ -1,21 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import useStore from "@/context/store"
 import { z } from "zod";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Users } from "@/data/temps"
+import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-
-import { jwtDecode } from "jwt-decode";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import axiosConfig from "@/api/api"
+import { toast, ToastContainer } from "react-toastify"
 
 const formSchema = z
   .object({
@@ -32,24 +28,45 @@ interface GoogleUser {
   email: string;
 }
 
-
 export default function AdminLogin() {
 
-  const { dataUsers, loginAdmin, currentUser } = useStore();
-  const [user, setUser] = useState<Users[]>()
+  const { token } = useStore();
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const userData = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => dataUsers,
+  const axiosClient = axiosConfig({
+    Authorization: `Bearer ${token}`,
   });
 
-  useEffect(() => {
-    if (userData.isSuccess) {
-      setUser(userData.data)
+  const logIn = useMutation({
+    mutationKey: ["login"],
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      return axiosClient.post("/users/signin", {
+        email: data.email,
+        password: data.password
+      });
+    },
+    onSuccess: (response) => {
+      if (response.data.role === "admin") {
+        toast.success("Connexion réussie !");
+        useStore.getState().setCurrentUser(response.data);
+        router.push("/dashboard");
+      }else{
+        toast.error("ce compte n'exixte pas !")
+      }
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la connexion.");
+      console.error(error);
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      logIn.mutateAsync(data);
+    } catch (error) {
+      toast.error("Erreur lors de la connexion");
+      console.error(error);
     }
-  }, [userData.data])
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,25 +75,6 @@ export default function AdminLogin() {
       password: ""
     },
   });
-
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const foundUser = loginAdmin(values.email, values.password);
-
-      if (!foundUser) {
-        throw new Error("Email ou mot de passe incorrect.");
-      }
-
-      router.back();
-    } catch (error: any) {
-      form.setError("email", {
-        type: "manual",
-        message: error.message || "Une erreur est survenue.",
-      });
-    }
-  }
-
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -117,6 +115,7 @@ export default function AdminLogin() {
           </Form>
         </CardContent>
       </Card>
+      <ToastContainer />
     </div>
   )
 }

@@ -1,4 +1,5 @@
-import { Article } from '@/data/temps'
+
+import useStore from '@/context/store';
 import Link from 'next/link'
 import React from 'react'
 
@@ -12,6 +13,7 @@ const isImage = (media: string | undefined): boolean => {
 };
 
 const GridAll = ({ article }: Props) => {
+    const { settings } = useStore()
     return (
         <div className='containerBloc pt-5'>
             <div className='w-full flex items-center justify-start py-5 gap-3'>
@@ -22,12 +24,12 @@ const GridAll = ({ article }: Props) => {
                     article.length > 0 ?
                         article.map(x => (
                             <Link key={x.id} href={`/user/detail-article/${x.id}`} className='max-w-[400px] w-full flex flex-col items-center gap-3'>
-                                {x.media && (
-                                    isImage(x.media[0]) ? (
+                                {x.images && (
+                                    isImage(x.images[0] ? x.images[0] : settings.noImage) ? (
                                         <img
                                             className='max-w-[400px] w-full h-auto aspect-video object-cover rounded-lg'
-                                            src={x.media[0]}
-                                            alt={`${x.type} - ${x.titre}`}
+                                            src={x.images[0] ? x.images[0] : settings.noImage}
+                                            alt={`${x.type} - ${x.title}`}
                                         />
                                     ) : (
                                         <video
@@ -36,7 +38,7 @@ const GridAll = ({ article }: Props) => {
                                             autoPlay
                                             muted
                                             loop
-                                            src={x.media[0]}
+                                            src={x.images[0] ? x.images[0] : settings.noImage}
                                         >
                                             Votre navigateur ne supporte pas la lecture de cette vidéo.
                                         </video>
@@ -44,7 +46,7 @@ const GridAll = ({ article }: Props) => {
                                 )}
                                 <div>
                                     <p className='text-[#545454]'>{x.type}</p>
-                                    <h3 className='line-clamp-2'>{x.titre}</h3>
+                                    <h3 className='line-clamp-2'>{x.title}</h3>
                                 </div>
                             </Link>
                         )) :

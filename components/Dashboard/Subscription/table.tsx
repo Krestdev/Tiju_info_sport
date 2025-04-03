@@ -32,8 +32,18 @@ import { SlRefresh } from "react-icons/sl";
 import AddSubscriptionForm from "./addSubscriptionForm";
 import EditSubscriptionForm from "./editSubscriptionForm";
 import Pagination from "../Pagination";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
+const FormSchema = z.object({
+    items: z.array(z.number()).refine((value) => value.length > 0, {
+        message: "You have to select at least one item.",
+    }),
+});
 
 function SubscritionTable() {
     const { dataSubscription, deleteArticle } = useStore();
@@ -43,6 +53,17 @@ function SubscritionTable() {
         queryKey: ["subscriptions"],
         queryFn: async () => dataSubscription,
     });
+
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log(data);
+    }
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            items: [],
+        },
+    })
 
     //Search value
     const [searchEntry, setSearchEntry] = useState("");
@@ -120,8 +141,9 @@ function SubscritionTable() {
 
     return (
         <div className="w-full">
+            <h1 className="uppercase text-[40px]">{"Abonnements"}</h1>
             <span className="flex flex-wrap items-center justify-end gap-5 mb-10">
-                <span className="relative max-w-sm w-full">
+                {/* <span className="relative max-w-sm w-full">
                     <Input
                         type="search"
                         onChange={handleInputChange}
@@ -134,68 +156,103 @@ function SubscritionTable() {
                         className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 ${searchEntry != "" && "hidden"
                             }`}
                     />
-                </span>
+                </span> */}
                 <AddSubscriptionForm addButton={"Ajouter un abonnement"} />
             </span>
-            {subscritionData.isLoading && "Loading"}
-            {subscritionData.isSuccess && filterData.length > 0 ? (
-                <div className="min-h-[70vh] overflow-y-auto w-full">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="text-[18px]">
-                                <TableHead>{"ID"}</TableHead>
-                                <TableHead>{"Nom de l'abonnement"}</TableHead>
-                                <TableHead>{"Ajouté le"}</TableHead>
-                                <TableHead>{"Coût de l'abonnement"}</TableHead>
-                                <TableHead>{"Validité de l'abonnement"}</TableHead>
-                                <TableHead>{"Nombre d'abonnés"}</TableHead>
-                                <TableHead>{"Actions"}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {currentItems.map((item, id) => {
-                                return (
-                                    <TableRow className="text-[16px]" key={id}>
-                                        <TableCell>{item.id}</TableCell>
-                                        <TableCell>{item.nom}</TableCell>
-                                        <TableCell>{item.date}</TableCell>
-                                        <TableCell>{item.cout} FCFA</TableCell>
-                                        <TableCell>{item.validite} Mois</TableCell>
-                                        <TableCell>{"A compter"}</TableCell>
-                                        <TableCell className="flex gap-2 items-center">
-                                            <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
-                                                <Button
-                                                    variant={"destructive"}
-                                                    size={"icon"}
-                                                >
-                                                    <Trash2 size={20} />
-                                                </Button>
-                                            </ModalWarning>
-                                            <EditSubscriptionForm selectedPubs={item}>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm">
-                                                    <FiEdit size={"20px"} />
-                                                </Button>
-                                            </EditSubscriptionForm>
-                                            <FaRegEye size={"20px"} />
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            }
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            ) : subscritionData.isSuccess && filterData.length < 1 && subscritionData.data.length > 0 ? (
-                "No result"
-            ) : subscritionData.isSuccess && subscritionData.data.length === 0 ? (
-                "Empty table"
-            ) : (
-                subscritionData.isError && (
-                    "Some error occured"
-                )
-            )}
+
+
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                    {subscritionData.isLoading && "Loading"}
+                    {subscritionData.isSuccess && filterData.length > 0 ? (
+                        <div className="min-h-[70vh] overflow-y-auto w-full">
+                            <FormField
+                                control={form.control}
+                                name="items"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow className="text-[18px]">
+                                                        <TableHead>
+                                                            <Checkbox
+                                                                checked={currentItems.length > 0 && field.value?.length === currentItems.length}
+                                                                onCheckedChange={(checked) => {
+                                                                    field.onChange(checked ? currentItems.map((item) => item.id) : []);
+                                                                }}
+                                                            />
+                                                        </TableHead>
+                                                        <TableHead>{"Titre"}</TableHead>
+                                                        <TableHead>{"Prix mois"}</TableHead>
+                                                        <TableHead>{"Prix année"}</TableHead>
+                                                        <TableHead>{"Nombre d'abonnés"}</TableHead>
+                                                        <TableHead>{"Actions"}</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {currentItems.map((item, id) => {
+                                                        return (
+                                                            <TableRow className="text-[16px]" key={id}>
+                                                                <TableCell className="border">
+                                                                    <Checkbox
+                                                                        checked={field.value?.includes(item.id)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            return checked
+                                                                                ? field.onChange([...field.value, item.id])
+                                                                                : field.onChange(
+                                                                                    field.value?.filter(
+                                                                                        (value) => value !== item.id
+                                                                                    )
+                                                                                )
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell className="border">{item.nom}</TableCell>
+                                                                <TableCell className="border">{item.coutMois}</TableCell>
+                                                                <TableCell className="border">{item.coutAn}</TableCell>
+                                                                {/* <TableCell className="border">{item.validite} Mois</TableCell> */}
+                                                                <TableCell className="border">{"A compter"}</TableCell>
+                                                                <TableCell className="border flex gap-2 items-center">
+                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.nom}>
+                                                                        <Button
+                                                                            variant={"destructive"}
+                                                                            size={"icon"}
+                                                                        >
+                                                                            <Trash2 size={20} />
+                                                                        </Button>
+                                                                    </ModalWarning>
+                                                                    <EditSubscriptionForm selectedPubs={item}>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm">
+                                                                            <FiEdit size={"20px"} />
+                                                                        </Button>
+                                                                    </EditSubscriptionForm>
+                                                                    {/* <FaRegEye size={"20px"} /> */}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    ) : subscritionData.isSuccess && filterData.length < 1 && subscritionData.data.length > 0 ? (
+                        "No result"
+                    ) : subscritionData.isSuccess && subscritionData.data.length === 0 ? (
+                        "Empty table"
+                    ) : (
+                        subscritionData.isError && (
+                            "Some error occured"
+                        )
+                    )}
+
+                </form>
+            </Form>
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
             <ToastContainer />
         </div>

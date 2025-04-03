@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -10,11 +9,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Article, Categorie, Pubs } from "@/data/temps";
+import { Categorie, Pubs } from "@/data/temps";
 import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
@@ -25,6 +24,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LuSquarePen } from "react-icons/lu";
+import AddPubsForm from "./addPubsForm";
+import EditPubsForm from "./editPubsForm";
+import ModalWarning from "@/components/modalWarning";
+import { Trash2 } from "lucide-react";
+import { AxiosResponse } from "axios";
+import axiosConfig from "@/api/api";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -33,9 +40,15 @@ const FormSchema = z.object({
 function ArticleTable() {
     const { dataPubs, deleteArticle } = useStore();
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig();
+
     const pubsData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataPubs,
+        queryKey: ["advertisement"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
+                `/advertisement`
+            );
+        },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -54,10 +67,10 @@ function ArticleTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Pubs[]>();
-    const [full, setFull] = useState(false);
-    const [current, setCurrent] = useState("tous");
-    const [article, setArticle] = useState<Categorie[]>();
+    const [sport, setSport] = useState<Advertisement[]>();
+    const [selectedType, setSelectedType] = useState("none");
+    const [type, setType] = useState<string[] | undefined>()
+    const [selectedStatut, setSelectedStatut] = useState("none");
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
@@ -65,7 +78,8 @@ function ArticleTable() {
 
     useEffect(() => {
         if (pubsData.isSuccess) {
-            setSport(pubsData.data)
+            setSport(pubsData.data.data)
+            // setType(pubsData.data.flatMap(x => x.type))
         }
     }, [pubsData.data])
 
@@ -78,6 +92,8 @@ function ArticleTable() {
         const [day, month, year] = dateStr.split("/").map(Number);
         return new Date(year, month - 1, day);
     };
+
+    const statut = ["Active", "Expiré"]
 
     const filterData = useMemo(() => {
         if (!sport) {
@@ -92,8 +108,8 @@ function ArticleTable() {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
 
-                const itemDebut = new Date(toNormalDate(item.dateDebut)).setHours(0, 0, 0, 0);
-                const itemFin = new Date(toNormalDate(item.dateFin)).setHours(23, 59, 59, 999);
+                const itemDebut = new Date(toNormalDate(item.createdAt)).setHours(0, 0, 0, 0);
+                const itemFin = new Date(toNormalDate(item.createdAt)).setHours(23, 59, 59, 999);
                 const rangeDebut = new Date(dateRange.from).setHours(0, 0, 0, 0);
                 const rangeFin = dateRange.to
                     ? new Date(dateRange.to).setHours(23, 59, 59, 999)
@@ -119,8 +135,19 @@ function ArticleTable() {
             );
         }
 
+        //Filtrage par type
+        // if (selectedType && selectedType !== "none") {
+        //     filtered = filtered.filter((el) => el.type === selectedType);
+        // }
+
+        //Filtrage par statut
+        if (selectedStatut && selectedStatut !== "none") {
+            selectedStatut === "Active" ?
+                filtered = filtered.filter((el) => (new Date(365 - Number(el.createdAt)).getTime()) > Date.now()) :
+                filtered = filtered.filter((el) => (new Date(365 - Number(el.createdAt)).getTime()) <= Date.now())
+        }
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
+    }, [rein, sport, dateRange, searchEntry, selectedType, selectedStatut]);
 
 
 
@@ -131,9 +158,18 @@ function ArticleTable() {
         toast.success("Supprimé avec succès");
     }
 
+    const { mutate: deletePubs } = useMutation({
+        mutationFn: async (categoryId: number) => {
+            return axiosClient.delete(`/advertisement/${categoryId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["advertisement"] });
+        },
+    });
+
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage) 
+    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -146,23 +182,49 @@ function ArticleTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Titre de la Publicité"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
+                <AddPubsForm addButton={"Ajouter"} />
                 <div className="flex gap-2 items-center">
                     <SlRefresh className="cursor-pointer size-5"
                         onClick={() => {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
-
+                <Select onValueChange={setSelectedType}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par type" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les types"}</SelectItem>
+                        {[...new Set(type)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Select onValueChange={setSelectedStatut}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par statut" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les statuts"}</SelectItem>
+                        {[...new Set(statut)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {pubsData.isLoading && "Loading"}
+                    {pubsData.isLoading && <h3>{"Loading"}</h3>}
                     {pubsData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -188,6 +250,7 @@ function ArticleTable() {
                                                         <TableHead>{"Date de debut"}</TableHead>
                                                         <TableHead>{"Date de fin"}</TableHead>
                                                         <TableHead>{"Nombre clics"}</TableHead>
+                                                        <TableHead>{"Statuts"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -209,50 +272,25 @@ function ArticleTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.nom}</TableCell>
-                                                                <TableCell className="border">{item.type}</TableCell>
-                                                                <TableCell className="border">{item.dateDebut}</TableCell>
-                                                                <TableCell className="border">{item.dateFin}</TableCell>
-                                                                <TableCell className="border">252</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
-
-
-
-                                                                {/* <TableCell onClick={() => setFull(!full)} className="cursor-pointer border">
-                                                                    {item.media &&
-                                                                        <FullScreen image={item.media[0]}>
-                                                                            <img src={item.media[0]} alt={item.type} className="size-12 object-cover" />
-                                                                        </FullScreen>}
-                                                                </TableCell> */}
-                                                                {/* <TableCell className="border">{item.like.length}</TableCell>
-                                                                <TableCell className="border">{item.commentaire.length}</TableCell>
-                                                                <TableCell className="border">{item.abonArticle.nom}</TableCell>
-                                                                <TableCell className="flex gap-2 items-center">
-                                                                    <ModalWarning id={item.id} action={onDeleteArticle} name={item.type}>
-                                                                        <Button
-                                                                            variant={"destructive"}
-                                                                            size={"icon"}
-                                                                        >
-                                                                            <Trash2 size={20} />
-                                                                        </Button>
+                                                                <TableCell className="border">{item.title}</TableCell>
+                                                                {/* <TableCell className="border">{item.type}</TableCell> */}
+                                                                <TableCell className="border">{item.description}</TableCell>
+                                                                <TableCell className="border">{item.createdAt}</TableCell>
+                                                                <TableCell className="border">{"Date fin"}</TableCell>
+                                                                <TableCell className="border">{"Nombres Clicks"}</TableCell>
+                                                                <TableCell className="border">{"Statuts"}</TableCell>
+                                                                {/* <TableCell className="border">{item.nbClick}</TableCell> */}
+                                                                {/* <TableCell className="border">{
+                                                                item.statut === "active" ? "Active" : "Expirée"
+                                                                }</TableCell> */}
+                                                                <TableCell className="flex gap-4 justify-center">
+                                                                    <EditPubsForm selectedPubs={item} >
+                                                                        <LuSquarePen className="size-5 cursor-pointer" />
+                                                                    </EditPubsForm>
+                                                                    <ModalWarning id={item.id} action={deletePubs} name={item.title}>
+                                                                        <Trash2 className="text-red-400 size-5 cursor-pointer" />
                                                                     </ModalWarning>
-                                                                    <EditArticleForm donnee={item} nom={pubsData.data.find(x => x.donnees.some(x => x === item))?.nom}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FiEdit size={"20px"} />
-                                                                        </Button>
-                                                                    </EditArticleForm>
-                                                                    <ShowArticle id={item.id} type={item.type} titre={item.titre} extrait={item.extrait} description={item.description} media={item.media} ajouteLe={item.ajouteLe} commentaire={item.commentaire} like={item.like} user={item.user} abonArticle={item.abonArticle}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm">
-                                                                            <FaRegEye size={"20px"} />
-                                                                        </Button>
-                                                                    </ShowArticle>
-                                                                </TableCell> */}
-
-
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }
@@ -267,17 +305,15 @@ function ArticleTable() {
                             />
 
                         </div>
-                    ) : pubsData.isSuccess && filterData.length < 1 && pubsData.data.length > 0 ? (
+                    ) : pubsData.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
                         "No result"
-                    ) : pubsData.isSuccess && pubsData.data.length === 0 ? (
+                    ) : pubsData.isSuccess && sport?.length === 0 ? (
                         "Empty table"
                     ) : (
                         pubsData.isError && (
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

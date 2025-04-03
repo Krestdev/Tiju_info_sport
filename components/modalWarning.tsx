@@ -13,30 +13,30 @@ import {
 type Props = {
   children: React.ReactNode;
   id: number;
-  action: (id:number)=>void;
+  action: (id: number) => void;
   name?: string;
 };
 
-function  ModalWarning({ children, id, action, name="an element" }: Props) {
-  
+function ModalWarning({ children, id, action, name = "an element" }: Props) {
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{"Are you sure ?"}</DialogTitle>
+          <DialogTitle>{"Etes-vous sûre ?"}</DialogTitle>
           <DialogDescription>
-            {`You are about to delete ${name}`}
+              {`Vous etes sur le point de supprimer ${name}`}
           </DialogDescription>
         </DialogHeader>
         <span className="flex gap-3 flex-wrap items-center justify-center">
           <DialogClose asChild>
-            <Button variant={"destructive"} onClick={()=>action(id)}>
-              {"Delete"}
+            <Button variant={"destructive"} onClick={() => action(id)}>
+              {"Supprimer"}
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button variant={"outline"}>{"Cancel"}</Button>
+            <Button variant={"outline"}>{"Annuler"}</Button>
           </DialogClose>
         </span>
       </DialogContent>

@@ -6,24 +6,30 @@ import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { Categorie } from '@/data/temps';
 import useStore from '@/context/store';
 import { useQuery } from '@tanstack/react-query';
+import axiosConfig from '@/api/api';
+import { AxiosResponse } from 'axios';
 
 
 const Footbar = () => {
 
-    const { dataArticles } = useStore()
-    const [categorie, setCategorie] = useState<Categorie[]>()
+    const { dataArticles, settings } = useStore()
+    const [categorie, setCategorie] = useState<Category[]>()
+    const axiosClient = axiosConfig();
 
     const articleData = useQuery({
-        queryKey: ["articles"],
-        queryFn: async () => dataArticles
-    })
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            setCategorie(articleData.data)
+            setCategorie(articleData.data.data)
         }
     }, [articleData.data])
 
@@ -31,8 +37,8 @@ const Footbar = () => {
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
                 <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
-                    <img src="/logo.png" alt="Logo" className='size-[50px]' />
-                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] flex'>{"TYJU INFO SPORTS"}</p>
+                    <img src={settings.logo} alt="Logo" className='size-[50px]' />
+                    <p className='font-semibold font-oswald text-[18px] leading-[26.68px] flex uppercase'>{settings.compagnyName}</p>
                 </Link>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
@@ -56,17 +62,17 @@ const Footbar = () => {
                         <div className='flex flex-col gap-3'>
                             {
                                 categorie?.slice(0, 6).map((x, i) => (
-                                    <Link href={`/user/category/${x.nom}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.nom}</Link>
+                                    <Link href={`/user/category/${x.title}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.title}</Link>
                                 ))
                             }
                         </div>
                     </div>
                     {categorie && <div className='max-w-[320px] flex flex-col w-full gap-4'>
-                        <h4 className='uppercase text-[#A1A1A1]'>{categorie[0].nom}</h4>
+                        <h4 className='uppercase text-[#A1A1A1]'>{categorie[0].title}</h4>
                         <div className='flex flex-col gap-2'>
                             {
-                                [...new Set(categorie[0].donnees?.map(x => x.type))].map((x, i) => (
-                                    <Link href={`/user/${categorie[0].nom}/${x}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
+                                [...new Set(categorie[0].articles?.map(x => x.type))].map((x, i) => (
+                                    <Link href={`/user/${categorie[0].title}/${x}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
                                 ))
                             }
                         </div>

@@ -1,37 +1,32 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import useStore from '@/context/store';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Input } from '@/components/ui/input';
-import LexicalEditor from './LexicalEditor';
-import { Textarea } from '@/components/ui/textarea';
-import { LuEye, LuPlus } from 'react-icons/lu';
+import axiosConfig from '@/api/api';
 import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { IoMdAdd, IoMdClose } from 'react-icons/io';
-import { BiShow } from 'react-icons/bi';
+import useStore from '@/context/store';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { GrFormClose } from 'react-icons/gr';
-import { Categories } from '@/data/temps';
+import { IoMdAdd, IoMdClose } from 'react-icons/io';
+import { LuEye, LuPlus } from 'react-icons/lu';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { z } from 'zod';
+import AddCategory from '../Categories/AddCategory';
+import LexicalEditor from './LexicalEditor';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
-    type: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
-    }),
+    type: z.string(),
     titre: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
@@ -41,138 +36,188 @@ const formSchema = z.object({
     description: z.string().min(10, {
         message: "Name must be at least 10 characters.",
     }),
-    couverture: z
-        .custom<File>((file) => file instanceof File, {
-            message: "Veuillez sélectionner un fichier valide.",
-        })
-        .refine((file) => file.size < MAX_FILE_SIZE, {
-            message: "Le fichier est trop volumineux (max 5MB).",
-        }),
-
+    couverture: z.any(),
     media: z
         .any()
         .refine(
             (files) =>
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
-        ),
-    abonArticle: z.string(),
+        ).optional(),
 
 });
 
 
 const AddArticle = () => {
 
-
-    const { addCategory, currentAdmin, dataArticles, dataCategorie } = useStore();
+    const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
-    const [article, setArticle] = useState<string[]>()
     const [entry, setEntry] = useState<string>("")
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
-    const [cate, setCate] = useState<Categories[]>()
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [categorie, setCategorie] = useState<Category[]>()
+    const [articleAjout, setArticleAjout] = useState<Article>()
+    const [fichier, setFichier] = useState(null)
 
-    const articleData = useQuery({
-        queryKey: ["articles"],
-        queryFn: async () => dataArticles
-    })
+    const [art, setArt] = useState<Article | null>(null)
 
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie
-    })
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
+    });
 
-    useEffect(()=> {
-        if (cateData.isSuccess) {
-            setCate(cateData.data.filter(x => x.parent))
-        }
-    }, [cateData.data])
-
-    useEffect(() => {
-        if (articleData.isSuccess) {
-            setArticle([...new Set(articleData.data.flatMap(x => x.donnees).flatMap(x => x.type))])
-        }
-    }, [articleData.data])
-
-
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: "",
             type: "",
             titre: "",
             extrait: "",
             description: "",
             media: "",
-            abonArticle: ""
         },
     });
 
+    const decodeHtml = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Hello");
-
-        addCategory({
-            nom: values.nom,
-            donnees: [
+    const addArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const decodedText = decodeHtml(data.description)
+            const idU = String(currentUser.id)
+            return axiosClient.post("/articles",
                 {
-                    id: Date.now(),
-                    type: values.type,
-                    titre: values.titre,
-                    extrait: values.extrait,
-                    description: values.description,
-                    ajouteLe: new Date(Date.now()).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                    }),
-                    media: values.media,
-                    user: currentAdmin!,
-                    abonArticle: {
-                        id: 4,
-                        nom: "Bouquet normal",
-                        cout: 0,
-                        validite: 12,
-                        date: "28/01/2025"
-                    },
-                    commentaire: [],
-                    like: [],
-                    statut: "",
-                    auteur: currentAdmin
+                    user_id: idU,
+                    category_id: categorie?.find(x => x.title === data.type)?.id,
+                    title: data.titre,
+                    summary: data.extrait,
+                    description: decodedText,
+                    type: data.type,
                 }
-            ]
-        });
-
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        toast.success("Ajouté avec succès");
-        form.reset();
-    }
-
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEntry(e.target.value)
-    }
-
-    const filterData = useMemo(() => {
-        if (!article) return [];
-        if (entry === "") return article;
-        return article.filter((el) =>
-            Object.values(el).some((value) =>
-                String(value)
-                    .toLocaleLowerCase()
-                    .includes(entry.toLocaleLowerCase())
             )
-        );
-        //to do: complete this code
-    }, [entry, article]);
+        },
+        onSuccess(data) {
+            setArt(data.data);
+            fichier && addImage.mutate({ data: fichier[0], id: data.data.id })
+        },
+    })
 
+    React.useEffect(() => {
+        if (addArticle.isSuccess) {
+            toast.success("Ajoutée avec succès");
+
+
+
+            setDialogOpen(prev => !prev);
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        } else if (addArticle.isError) {
+            toast.error("Erreur lors de la création de l'article");
+            console.log(addArticle.error)
+        }
+    }, [addArticle.isError, addArticle.isSuccess, addArticle.error, addArticle.data])
+
+    const addImage = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient.post("/image",
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+    })
+
+    React.useEffect(() => {
+        if (addImage.isSuccess) {
+            toast.success("Article ajouté avec succès")
+            form.reset()
+        } else if (addImage.isError) {
+            console.log(addImage.error)
+        }
+    }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
+
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
+
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            setCategorie(articleCate.data.data)
+        }
+    }, [articleCate.data])
+
+    const editArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
+            const idU = String(currentUser.id)
+            return axiosClient1.patch(`/articles/${data.id}`, {
+                user_id: idU,
+                title: data.title,
+                summary: data.summery,
+                description: data.description,
+                type: data.type,
+                images: `https://tiju.krestdev.com/api/image/${imageId}`
+            });
+        },
+        retry: 5,
+        retryDelay: 5000
+    });
+
+    React.useEffect(() => {
+        if (editArticle.isSuccess) {
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+            form.reset();
+        } else if (editArticle.isError) {
+            console.log(editArticle.error)
+        }
+    }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
+
+
+    // Soumission du formulaire
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setFichier(data.media)
+        addArticle.mutate(data);
+    }
+
+    const handleOpen = () => {
+        if (formSchema.safeParse(form.getValues()).success) {
+            setDialogOpen(true);
+        } else {
+            toast.error("Veuillez remplir correctement le formulaire.");
+        }
+    };
+
+    function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setEntry(event.target.value);
+    }
+
+    // Filtrer les catégories en fonction de la saisie
+    const filteredCategories = (categorie || []).filter((x) =>
+        x.title.toLowerCase().includes(entry.toLowerCase())
+    );
 
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-5 px-7 py-10"
             >
                 <h1 className='uppercase text-[40px]'>{"Ajouter un article"}</h1>
@@ -214,7 +259,7 @@ const AddArticle = () => {
                         </FormItem>
                     )}
                 />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="couverture"
                     render={({ field }) => (
@@ -240,7 +285,7 @@ const AddArticle = () => {
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
 
                 <FormField
                     control={form.control}
@@ -320,7 +365,6 @@ const AddArticle = () => {
                         </FormItem>
                     )}
                 />
-
                 <div className='flex flex-col gap-2'>
                     <FormField
                         control={form.control}
@@ -336,25 +380,34 @@ const AddArticle = () => {
                                                     <div>
                                                         <div className='h-10 flex gap-2 px-3 py-2 border border-[#A1A1A1] items-center'>
                                                             <LuPlus />
-                                                            {"Ajouter une Catégorie"}
+                                                            {"Sélectionner une Catégorie"}
                                                         </div>
                                                     </div>
-                                                } />
+                                                }
+                                            />
                                         </SelectTrigger>
                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
                                             <div>
                                                 <Input
-                                                    type='search'
-                                                    onChange={handleSearch}
+                                                    type="search"
+                                                    onChange={handleInputChange}
                                                     value={entry}
-                                                    placeholder='rechercher une catégorie'
-                                                    className='h-10 w-full'
+                                                    placeholder="Rechercher une catégorie"
+                                                    className="h-10 w-full"
+                                                    onKeyDown={(e) => e.stopPropagation()}
                                                 />
-                                                {cate?.map((x, i) => (
-                                                    <SelectItem key={i} value={x.nom}>
-                                                        {x.nom}
-                                                    </SelectItem>
-                                                ))}
+                                                {filteredCategories.length > 0 ? (
+                                                    filteredCategories.map((x, i) => (
+                                                        <SelectItem key={i} value={x.title}>
+                                                            {x.title}
+                                                        </SelectItem>
+                                                    ))
+                                                ) : (
+                                                    <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
+                                                )}
+                                                <AddCategory>
+                                                    <Button className="rounded-none w-full">{"Ajouter une catégorie"}</Button>
+                                                </AddCategory>
                                             </div>
                                         </SelectContent>
                                     </Select>
@@ -364,11 +417,29 @@ const AddArticle = () => {
                         )}
                     />
                 </div>
+
                 <div className='w-full flex flex-col gap-2'>
-                    <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                    <Button onClick={() => console.log(form.getValues())} className='max-w-[384px] w-full rounded-none font-normal'>{"Publier"}</Button>
+                    <Button
+                        variant="default"
+                        className="max-w-[384px] w-full font-normal rounded-none"
+                        type="button"
+                        onClick={() => form.handleSubmit(onSubmit)()}>
+                        {"Publier"}
+                    </Button>
+                    {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}
+                    {/* <Button
+                        type="submit"
+                        className="max-w-[384px] w-full rounded-none font-normal"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleOpen();
+                        }}
+                    >
+                        {"Publier"}
+                    </Button> */}
                 </div>
             </form>
+            <ToastContainer />
         </Form>
     )
 }

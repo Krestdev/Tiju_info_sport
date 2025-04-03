@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import useStore from "@/context/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,22 +25,50 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ModalWarning from "@/components/modalWarning";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
+import Test from "./test";
+
+interface successRes {
+    data: User[];
+}
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function UserTable() {
-    const { dataUsers, deleteArticle } = useStore();
+    const { token } = useStore();
     const queryClient = useQueryClient();
+
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "x-api-key": "abc123"
+    });
+
     const userData = useQuery({
-        queryKey: ["pubs"],
-        queryFn: async () => dataUsers,
+        queryKey: ["users1233"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<User[]>>(
+                `/users`
+            );
+        },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
+
+    const { mutate: deleteUser } = useMutation({
+        mutationFn: async (userId: number) => {
+            return axiosClient.delete(`/users/${userId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users1233"] });
+        },
+    });
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -54,15 +82,19 @@ function UserTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Users[]>();
+    const [user, setUser] = useState<User[]>();
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
-    const [rein, setRein] = useState(false)
+    const [rein, setRein] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState("none");
+    const [statut, setStatut] = useState<string[] | undefined>()
     const itemsPerPage = 15;
 
     useEffect(() => {
+        Test()
         if (userData.isSuccess) {
-            setSport(userData.data)
+            setUser(userData.data.data.filter(x => x.role === "user"))
+            // setStatut(userData.data.flatMap(x => x.statut))
         }
     }, [userData.data])
 
@@ -77,26 +109,26 @@ function UserTable() {
     };
 
     const filterData = useMemo(() => {
-        if (!sport) {
+        if (!user) {
             setRein(false);
             return [];
         }
 
-        let filtered = sport;
+        let filtered = user;
 
         // Filtrage par date
         if (!rein) {
-          filtered = filtered.filter((item) => {
-              if (!dateRange?.from) return true;
-              const itemDate = toNormalDate(item.createdAt);
-              return (
-                  itemDate >= dateRange.from &&
-                  (dateRange.to ? itemDate <= dateRange.to : true)
-              );
-          });
-      } else {
-          setRein(false);
-      }
+            filtered = filtered.filter((item) => {
+                if (!dateRange?.from) return true;
+                const itemDate = toNormalDate(item.created_at);
+                return (
+                    itemDate >= dateRange.from &&
+                    (dateRange.to ? itemDate <= dateRange.to : true)
+                );
+            });
+        } else {
+            setRein(false);
+        }
 
 
         // Filtrage par recherche
@@ -110,23 +142,29 @@ function UserTable() {
             );
         }
 
+        //Filtrage par statut
+        // if (selectedStatus && selectedStatus !== "none") {
+        //     filtered = filtered.filter((el) => el.statut === selectedStatus);
+        // }
+
         return filtered;
-    }, [rein, sport, dateRange, searchEntry]);
+    }, [rein, user, dateRange, searchEntry, selectedStatus]);
 
 
 
-    //Delete function
-    function onDeleteArticle(id: number) {
-        deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
-        toast.success("Supprimé avec succès");
-    }
+    // //Delete function
+    // function onDeleteArticle(id: number) {
+    //     deleteArticle(id)
+    //     queryClient.invalidateQueries({ queryKey: ["users"] })
+    //     toast.success("Supprimé avec succès");
+    // }
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage) 
+    const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
+    const action = ["Bannir", "Modifier"]
 
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
@@ -137,7 +175,7 @@ function UserTable() {
                         type="search"
                         onChange={handleInputChange}
                         value={searchEntry}
-                        placeholder="Nom de l'article"
+                        placeholder="Nom de l'utilisateur"
                         className="max-w-lg h-[40px] rounded-none"
                     />
                 </span>
@@ -147,9 +185,21 @@ function UserTable() {
                             setDateRange(undefined);
                             setRein(true);
                         }} />
-                    <DatePick onChange={(range) => setDateRange(range)} />
+                    <DatePick onChange={(range) => setDateRange(range)} show={true} />
                 </div>
-
+                {/* <Select onValueChange={setSelectedStatus}>
+                    <SelectTrigger className="border border-[#A1A1A1] max-w-[180px] w-full h-[40px] flex items-center p-2 rounded-none">
+                        <SelectValue placeholder="Filtrer par statut" />
+                    </SelectTrigger>
+                    <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
+                        <SelectItem value="none">{"Tous les statuts"}</SelectItem>
+                        {[...new Set(statut)].map((x, i) => (
+                            <SelectItem key={i} value={x}>
+                                {x}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select> */}
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -177,7 +227,9 @@ function UserTable() {
                                                         <TableHead>{"Pseudonyme"}</TableHead>
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Date d'inscription"}</TableHead>
-                                                        <TableHead>{"Statut"}</TableHead>
+                                                        {/* <TableHead>{"Statut"}</TableHead> */}
+                                                        <TableHead>{"Dernière connexion"}</TableHead>
+                                                        <TableHead>{"Abonnement"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -199,11 +251,39 @@ function UserTable() {
                                                                         }}
                                                                     />
                                                                 </TableCell>
-                                                                <TableCell className="border">{item.pseudo}</TableCell>
+                                                                <TableCell className="border">{item.name}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
-                                                                <TableCell className="border">{item.createdAt}</TableCell>
-                                                                <TableCell className="border">Online</TableCell>
-                                                                <TableCell className="border">Action</TableCell>
+                                                                <TableCell className="border">{item.created_at}</TableCell>
+                                                                {/* <TableCell className="border">{item.statut}</TableCell> */}
+                                                                <TableCell className="border">28/06/2025</TableCell>
+                                                                <TableCell className="border">Abonnement</TableCell>
+                                                                {/* <TableCell className="border">{item.abonnement?.nom}</TableCell> */}
+                                                                <TableCell className="border">
+                                                                    <Select onValueChange={field.onChange} >
+                                                                        <div className="w-full flex justify-center">
+                                                                            <SelectTrigger className='border border-[#A1A1A1] h-7 flex items-center justify-center w-fit p-2'>
+                                                                                <SelectValue
+                                                                                    placeholder={
+                                                                                        <div className='h-7 max-w-[78px] w-full flex px-2 gap-2 items-center justify-center'>
+                                                                                            {"Actions"}
+                                                                                        </div>
+                                                                                    } />
+                                                                            </SelectTrigger>
+                                                                        </div>
+                                                                        <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
+                                                                            <ModalWarning id={item.id} name={item.name} action={deleteUser}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Bannir"}
+                                                                                </Button>
+                                                                            </ModalWarning>
+                                                                            {/* <EditUser selectedUser={item}> */}
+                                                                            <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                {"Modifier"}
+                                                                            </Button>
+                                                                            {/* </EditUser> */}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }
@@ -218,17 +298,15 @@ function UserTable() {
                             />
 
                         </div>
-                    ) : userData.isSuccess && filterData.length < 1 && userData.data.length > 0 ? (
+                    ) : userData.isSuccess && filterData.length < 1 && user?.length && user?.length > 0 ? (
                         "No result"
-                    ) : userData.isSuccess && userData.data.length === 0 ? (
+                    ) : userData.isSuccess && user?.length === 0 ? (
                         "Empty table"
                     ) : (
                         userData.isError && (
                             "Some error occured"
                         )
                     )}
-
-                    <Button type="submit">Soumetre</Button>
                 </form>
             </Form>
 

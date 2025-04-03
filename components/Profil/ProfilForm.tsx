@@ -1,4 +1,4 @@
-import { Categorie, Pubs, Users } from '@/data/temps';
+
 import React, { useEffect, useState } from 'react';
 import Similaire from '../DetailArticle/Similaire';
 import PubsComp from '../PubsComp';
@@ -9,17 +9,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../ui/input';
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Phone } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { BiRadioCircleMarked } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
 import FullScreen from '../Dashboard/FullScreen';
 import UnePubs from '../Accueil/UnePubs';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axiosConfig from '@/api/api';
 
 const formSchema1 = z.object({
     email: z.string(),
-    pseudo: z.string(),
+    // pseudo: z.string(),
     password: z
         .string()
         .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." })
@@ -29,28 +32,41 @@ const formSchema1 = z.object({
 });
 
 const formSchema = z.object({
-    nom: z.string().min(4, { message: "Le nom doit contenir au moins 4 caractères." }),
-    sexe: z.string(),
-    ville: z.string(),
-    pays: z.string(),
+    name: z.string().min(4, { message: "Le nom doit contenir au moins 4 caractères." }),
+    sex: z.string(),
+    town: z.string(),
+    country: z.string(),
     phone: z
         .string()
         .regex(/^\d{9}$/, { message: "Le numéro de téléphone doit contenir exactement 9 chiffres." }),
 });
 
+
+const combinedSchema = z.intersection(formSchema, formSchema1);
+
+const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 interface Props {
-    currentUser: Users | null;
-    category: Categorie[] | undefined;
-    pub: Pubs[] | undefined;
-    une: Categorie[] | undefined
+    pub: Advertisement[] | undefined;
+    une: Category[] | null
 }
 
-const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
-    const { settings, editUser, logout } = useStore();
+const ProfilForm = ({ pub, une }: Props) => {
+    const { currentUser, settings, logout } = useStore();
     const queryClient = useQueryClient();
     const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
+    const [fichier, setFichier] = useState(null)
     const sexe = ["Homme", "Femme"]
     const router = useRouter();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+    });
+
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
+    });
 
     const [tail, setTail] = useState("max-h-[379px]")
 
@@ -58,8 +74,6 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
     const handleVoirtout = () => {
         setTail("");
     }
-    const sec1 = category?.flatMap((x) => x.donnees).filter((x) => x)[0];
-    const sim1 = category && category[0];
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
@@ -67,58 +81,93 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
             photo: currentUser?.photo || null,
             password: currentUser?.password || '',
             email: currentUser?.email,
-            pseudo: currentUser?.pseudo,
+            // pseudo: currentUser?.pseudo,
+
         },
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nom: currentUser?.nom,
-            sexe: currentUser?.sexe,
-            ville: currentUser?.ville,
-            pays: currentUser?.pays,
+            name: currentUser?.name,
+            sex: currentUser?.sex,
+            town: currentUser?.town,
+            country: currentUser?.country,
             phone: currentUser?.phone
         }
     })
 
-    function onSubmit1(values: z.infer<typeof formSchema1>) {
-        editUser({
-            ...currentUser,
-            photo: values.photo,
-            password: values.password,
-            email: values.email,
+
+    const updateImage = useMutation({
+        mutationKey: ["user"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            console.log(data);
+
+            return axiosClient1.post(`/image/${currentUser.images.id}`,
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+        onSuccess(data) {
+
+        },
+    })
+
+    const addImage = useMutation({
+        mutationKey: ["user"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient1.post("/image",
+                {
+                    file: data,
+                    user_id: id
+                }
+            )
+        },
+    })
+
+
+    const editUser = useMutation({
+            mutationKey: ["user"],
+            mutationFn: ({ data, dataI }: { data: z.infer<typeof combinedSchema>, dataI: any },) => {
+                const idU = String(currentUser.id)
+                return axiosClient.patch(`/articles/${dataI.id}`, 
+                    {
+                        user_id: currentUser.id,
+                        email: data.email,
+                        name: data.name,
+                        password: data.password,
+                        nick_name: "default",
+                        phone: data.phone,
+                        sex: data.sex,
+                        town: data.town,
+                        country: data.country,
+                        photo: data.photo,
+                        role: "user"
+                    }
+                );
+            },
         });
-        queryClient.invalidateQueries({ queryKey: ['users'] });
-    }
 
-    function onSubmit2(values: z.infer<typeof formSchema>) {
-        editUser({
-            ...currentUser,
-            nom: values.nom,
-            sexe: values.sexe,
-            ville: values.ville,
-            pays: values.pays,
-            phone: values.phone,
-        });
-        console.log("Updated");
-
-        queryClient.invalidateQueries({ queryKey: ['users'] });
-    }
-
-    const handleLogout = () => {
-        logout();
-        router.push("/logIn");
+    const onSubmit = (data: z.infer<typeof combinedSchema>) => {
+        console.log(data);
+        setFichier(data.photo)
+        currentUser.image ?
+            // updateImage.mutate({ data: fichier, id: currentUser.id })
+            console.log("Hello world")
+            :
+            addImage.mutate({ data: fichier, id: currentUser.id })
     };
 
     return (
-        <div className="max-w-[1280px] w-full flex flex-col md:flex-row gap-7">
+        <div className="max-w-[1280px] w-full px-10 flex flex-col md:flex-row gap-7">
             <div className="px-7 md:px-0 flex flex-col gap-5">
                 <div className="flex flex-col gap-8">
-                    <h1  className='uppercase'>{"Mon Compte"}</h1>
+                    <h1 className='uppercase'>{"Mon Compte"}</h1>
                     <Form {...form1}>
                         <form
-                            onSubmit={form1.handleSubmit(onSubmit1)}
+                            // onSubmit={form1.handleSubmit(onSubmit1)}
                             className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[836px]"
                         >
                             {/* Champ email */}
@@ -181,7 +230,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
 
 
                             {/* Champ pseudo */}
-                            <FormField
+                            {/* <FormField
                                 control={form1.control}
                                 name="pseudo"
                                 render={({ field }) => (
@@ -198,7 +247,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
                             {/* Champ mot de passe */}
                             <FormField
@@ -210,9 +259,10 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                         <FormControl>
                                             <div className="relative flex items-center">
                                                 <Input
-                                                    type="password"
+                                                    type="text"
                                                     className="w-full max-w-lg rounded-none pr-20"
                                                     placeholder="Votre mot de passe"
+                                                    hidden={false}
                                                     {...field}
                                                 />
                                                 <Button
@@ -238,13 +288,13 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                         <h3 className='uppercase'>{"Informations personnelles"}</h3>
                         <Form {...form}>
                             <form
-                                onSubmit={form.handleSubmit(onSubmit2)}
+                                // onSubmit={form.handleSubmit(onSubmit)}
                                 className="flex flex-col gap-4"
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[836px]">
                                     <FormField
                                         control={form.control}
-                                        name="nom"
+                                        name="name"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>{"Nom"}</FormLabel>
@@ -261,7 +311,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                     />
                                     <FormField
                                         control={form.control}
-                                        name="pays"
+                                        name="country"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>{"Pays"}</FormLabel>
@@ -278,7 +328,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                     />
                                     <FormField
                                         control={form.control}
-                                        name="sexe"
+                                        name="sex"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>{"Sexe"}</FormLabel>
@@ -302,7 +352,7 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                     />
                                     <FormField
                                         control={form.control}
-                                        name="ville"
+                                        name="town"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>{"Ville"}</FormLabel>
@@ -335,17 +385,29 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
                                         )}
                                     />
                                 </div>
-                                <Button
-                                    type='submit' className='w-full max-w-[398px] h-[40px] rounded-none'>{"Enregistrer"}</Button>
+                                {/* <Button type='submit' className='w-full max-w-[398px] h-[40px] rounded-none'>{"Enregistrer"}</Button> */}
                             </form>
                         </Form>
                     </div>
 
-                    <Button variant={'destructive'} onClick={handleLogout} className='flex w-fit'> {"Se déconnecter"}</Button>
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            form1.handleSubmit((data1) => {
+                                form.handleSubmit((data2) => {
+                                    onSubmit({ ...data1, ...data2 });
+                                })();
+                            })();
+                        }}
+                    >
+                        Soumettre les formulaires
+                    </Button>
+                    {currentUser && <Button variant={'destructive'} onClick={logout} className='flex w-fit'> {"Se déconnecter"}</Button>}
+
                     <div className='flex flex-col gap-4'>
                         <h3 className='uppercase'>{"Mon abonnement"}</h3>
                         {
-                            currentUser?.abonnement?.cout === 0 ?
+                            currentUser?.abonnement === undefined ?
                                 <div className='flex flex-col md:flex-row gap-10'>
                                     <div className='flex flex-row items-center gap-4 px-4 py-2'>
                                         <p className='text-[16px]'>{"Aucun Abonnement actif"}</p>
@@ -370,12 +432,13 @@ const ProfilForm = ({ currentUser, category, pub, une }: Props) => {
             </div>
             <div className="md:max-w-[360px] w-full gap-7">
                 <div className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}>
-                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.donnees.slice(0, 1))} pubs={pub} affPub={false}/>
-                    <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.donnees.slice()).slice(0, 2)} pubs={pub?.slice().reverse()} affPub={true} />
+                    <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.articles.slice(0, 1))} pubs={pub} affPub={false} />
+                    <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.articles.slice()).slice(0, 2)} pubs={pub?.slice().reverse()} affPub={true} />
                 </div>
                 {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
-                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'}  />}</div>
+                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

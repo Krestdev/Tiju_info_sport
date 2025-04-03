@@ -9,29 +9,98 @@ import {
 import {
   ChartConfig,
   ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
+import { useEffect, useState } from "react"
+import { DateRange } from "react-day-picker"
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+  view: {
+    label: "Vues",
+    color: "hsl(173, 56%, 38%)"
+    ,
   },
 } satisfies ChartConfig
 
-const LinearChat = () => {
+interface Props {
+  value: string,
+  dateRanges: {
+    [key: string]: DateRange | undefined;
+  },
+  rangeKey: string 
+}
+
+const LinearChat = ({ value, dateRanges, rangeKey }: Props) => {
+
+  function convertData(data: Record<string, Record<string, number>>, value: string) {
+    if (value === "mois") {
+      return Object.entries(data).map(([key, articles]) => {
+        const sem = key.match(/\d{2}\/\d{2}/)?.[0] || key;
+        const vues = Object.values(articles).reduce((sum, v) => sum + v, 0);
+        return { sem: `Sem ${sem}`, vues };
+      });
+    } else if (value === "semaine") {
+      return Object.entries(data).map(([key, articles]) => {
+        const date = new Date(key);
+        const sem = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+        const vues = Object.values(articles).reduce((sum, v) => sum + v, 0);
+        return { sem, vues };
+      });
+    } else if (value === "annee") {
+      return Object.entries(data).map(([key, articles]) => {
+        const mois = new Date(`${key}-01`).toLocaleDateString('fr-FR', { month: 'short' });
+        const vues = Object.values(articles).reduce((sum, v) => sum + v, 0);
+        return { sem: mois.charAt(0).toUpperCase() + mois.slice(1), vues };
+      });
+    }
+    return [];
+  }
+
+
+
+  const [chartData, setChartData] = useState<{ sem: string; vues: number; }[]>()
+
+
+
+  useEffect(() => {
+    const fetchViews = async () => {
+      try {
+        let queryParam = `interval=${value}`;
+
+        // Vérifie si dateRanges contient une plage valide
+
+        if (rangeKey && dateRanges[rangeKey]) {
+          const { from, to } = dateRanges[rangeKey]!;
+
+          queryParam = `from=${from?.toISOString() ?? ''}&to=${to?.toISOString() ?? ''}&interval=${value}`;
+        }
+
+        const response = await fetch(`/api/get-realtime-views?${queryParam}`);
+        const data = await response.json();
+
+        if (data.articleStats) {
+          setChartData(convertData(data.articleStats, value));
+        }
+      } catch (error) {
+        console.error("Erreur récupération v :", error);
+      }
+    };
+
+    fetchViews();
+    const interval = setInterval(fetchViews, 10000);
+
+    return () => clearInterval(interval);
+  }, [value, dateRanges, rangeKey]);
+
+
+
   return (
-    <div  className="h-[208px]">
-      <Card className="h-[208px]">
-        <CardContent>
-          <ChartContainer config={chartConfig}>
+    <div className="max-h-[208px]">
+      <Card>
+        <CardContent className="max-h-[208px]">
+          <ChartContainer config={chartConfig}
+            className="h-fit">
             <AreaChart
               accessibilityLayer
               data={chartData}
@@ -39,26 +108,26 @@ const LinearChat = () => {
                 left: 12,
                 right: 12,
               }}
-              className="h-[208px]"
             >
               <CartesianGrid vertical={false} />
               <XAxis
-                dataKey="month"
+                dataKey="sem"
                 tickLine={false}
                 axisLine={false}
-                tickMargin={8}
+                tickMargin={10}
+                interval={0}
                 tickFormatter={(value) => value.slice(0, 3)}
               />
-              {/* <ChartTooltip
+              <ChartTooltip
                 cursor={false}
                 content={<ChartTooltipContent indicator="dot" hideLabel />}
-              /> */}
+              />
               <Area
-                dataKey="desktop"
+                dataKey="vues"
                 type="linear"
-                fill="var(--color-desktop)"
+                fill="var(--color-view)"
                 fillOpacity={0.4}
-                stroke="var(--color-desktop)"
+                stroke="var(--color-view)"
                 className="h-[208px]"
               />
             </AreaChart>

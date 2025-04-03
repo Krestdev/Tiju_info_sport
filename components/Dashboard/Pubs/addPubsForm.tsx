@@ -16,76 +16,168 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/context/store";
-import { useQueryClient } from "@tanstack/react-query";
-import { TbUserPlus } from "react-icons/tb";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LuPlus } from "react-icons/lu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const formSchema = z.object({
-    nom: z.string().min(4, {
-        message: "Name must be at least 4 characters.",
+    nom: z.string().min(1, {
+        message: "Vous devez taper au moins 1 caractère",
     }),
+    type: z.string(),
     lien: z.string({
-        message: "Lien must be a valid URL.",
+        message: "LE lien doit etre une URL",
     }),
     image: z
-    .any()
-    .refine(
-        (file) => !file || file instanceof File,
-        { message: "Image must be a file." }
-    )
+        .any()
+        .refine(
+            (file) => !file || file instanceof File,
+            { message: "Image must be a file." }
+        )
 });
 
 
 function AddPubsForm({ addButton }: { addButton: string }) {
 
-    const { addPub } = useStore();
+    const { token, currentUser } = useStore();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [image, setImage] = useState("")
+    const [artId, setArtId] = useState("")
+    const [articleAjout, setArticleAjout] = useState<Advertisement>()
+    const [ads, setAds] = useState<Advertisement | null>(null)
+    const [fichier, setFichier] = useState(null)
     const queryClient = useQueryClient();
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
+    });
+
+    const axiosClient1 = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+    });
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
+            type: "",
             lien: "",
-            // image: undefined
+            image: ""
         },
     });
 
-    // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Hello");
-        
-        addPub({
-            id: Date.now(),
-            nom: values.nom,
-            lien: values.lien,
-            image: values.image,
-            date: new Date(Date.now()).toLocaleDateString("fr-FR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            }),
-        });
-        queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        setDialogOpen(false);
-        toast.success("Ajouté avec succès");
-        form.reset();
+
+    const addAdvertisement = useMutation({
+        mutationKey: ["advertisement"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = currentUser.id
+            return axiosClient.post("/advertisement",
+                {
+                    user_id: idU,
+                    title: data.nom,
+                    description: data.type,
+                    image: "default",
+                    url: data.lien
+                }
+            )
+        },
+        onSuccess(data) {
+            setAds(data.data);
+            console.log(fichier);
+            fichier && addImage.mutate({ data: fichier, id: data.data.id })
+        },
+    })
+
+    React.useEffect(() => {
+        if (addAdvertisement.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["advertisement"] });
+            setImage(addAdvertisement.data.data.id)
+            setDialogOpen(prev => !prev);
+        } else if (addAdvertisement.isError) {
+            toast.error("Erreur lors de la création de l'article");
+            console.log(addAdvertisement.error)
+        }
+    }, [addAdvertisement.isError, addAdvertisement.isSuccess, addAdvertisement.error])
+
+    const addImage = useMutation({
+        mutationKey: ["advertisement"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient.post("/image",
+                {
+                    file: data,
+                    ads_id: id
+                }
+            )
+        },
+        // onSuccess(data) { 
+        //    ads &&  editAdvertisement.mutate({ data: ads, id: data.data.id });
+        // },
+    })
+
+    React.useEffect(() => {
+        if (addImage.isSuccess) {
+            setImage(addImage.data.data.id)
+        } else if (addImage.isError) {
+            console.log(addImage.error)
+        }
+    }, [addImage.isError, addImage.isSuccess, addImage.error, addAdvertisement.data, addAdvertisement.isSuccess])
+
+    const editAdvertisement = useMutation({
+        mutationKey: ["advertisement"],
+        mutationFn: ({ data, id }: { data: Advertisement, id: string },) => {
+            const idU = String(currentUser.id)
+            return axiosClient1.patch(`/advertisement/${data.id}`, {
+                user_id: idU,
+                title: data.title,
+                description: data.description,
+                url: data.url,
+                image: `https://tiju.krestdev.com/api/image/${id}`,
+            });
+        },
+    });
+
+
+    React.useEffect(() => {
+        if (editAdvertisement.isSuccess) {
+            toast.success("Modifiée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["advertisement"] });
+            setDialogOpen(prev => !prev);
+            form.reset();
+        } else if (editAdvertisement.isError) {
+            toast.error("Erreur lors de la modification de la catégorie");
+            console.log(editAdvertisement.error)
+        }
+    }, [editAdvertisement.isError, editAdvertisement.isSuccess, editAdvertisement.error])
+
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setFichier(data.image)
+        addAdvertisement.mutate(data);
     }
+
+    const type = ["large", "petit"]
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant={"default"}>
-                    <TbUserPlus size={20} />
+                <Button className="rounded-none font-ubuntu" variant={"default"}>
+                    <LuPlus />
                     {addButton}
                 </Button>
             </DialogTrigger>
@@ -106,9 +198,61 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                             name="nom"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Nom"}</FormLabel>
+                                    <FormLabel>{"Titre"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Nom" />
+                                        <Input {...field} placeholder="Titre de la publicité" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Type d'image"}</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className="rounded-none">
+                                                <SelectValue
+                                                    placeholder={
+                                                        <div>
+                                                            {"Type d'image"}
+                                                        </div>
+                                                    } />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {type.map((x, i) => (
+                                                    <SelectItem key={i} value={x}>
+                                                        {x}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Image"}</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    field.onChange(e.target.files[0]);
+                                                }
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -129,42 +273,20 @@ function AddPubsForm({ addButton }: { addButton: string }) {
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="image"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Image</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files[0]) {
-                                                    field.onChange(e.target.files[0]);
-                                                }
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         <span className="flex items-center gap-3 flex-wrap">
-                            <Button onClick={() => console.log(form.getValues())} type="submit" className="w-fit">
+                            <Button type="submit" className="w-fit">
                                 {"Ajouter une nouvele Publicité"}
                             </Button>
                             <DialogClose asChild>
                                 <Button variant={"outline"} onClick={() => form.reset()}>
-                                    {"Close"}
+                                    {"Fermer"}
                                 </Button>
                             </DialogClose>
                         </span>
                     </form>
                 </Form>
+                <ToastContainer />
             </DialogContent>
-            <ToastContainer />
         </Dialog>
     );
 }

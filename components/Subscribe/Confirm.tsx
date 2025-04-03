@@ -34,7 +34,7 @@ const Confirm = ({abonId}: Props) => {
                 <div className='rounded-full bg-green-500 text-white'><FaCheck className='size-10 p-2' /></div>
                 <div>
                     <h3 className='text-green-500'>{"Abonnement effectué avec succès à l'offre "}</h3>
-                    <h3 className='text-[#012BAE]'>{`${subsData.data?.find(x => x.id === abonId)?.nom} ${subsData.data?.find(x => x.id === abonId)?.cout} FCFA`}</h3>
+                    <h3 className='text-[#012BAE]'>{`${subsData.data?.find(x => x.id === abonId)?.nom} ${subsData.data?.find(x => x.id === abonId)?.coutMois} FCFA`}</h3>
                 </div>
             </div>
             <Button onClick={() => router.push('/')}>{"Revenir à la page d'accueil"}</Button>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { DateRange } from 'react-day-picker';
 
 interface Props {
     tableau: {
@@ -7,6 +8,11 @@ interface Props {
         bgColor: string;
         color: string;
     }[],
+    value: string;
+    dateRanges: {
+        [key: string]: DateRange | undefined; 
+    },
+    rangeKey: string;
 }
 
 const GridDash = ({ tableau }: Props) => {

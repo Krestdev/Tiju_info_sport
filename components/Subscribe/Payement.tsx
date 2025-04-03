@@ -35,7 +35,7 @@ const Payement = ({ setActive, setMethode, abonId }: Props) => {
 
     return (
         <div className='containerBloc flex flex-col items-center gap-5'>
-            <h3 className='text-[#012BAE]'>{`Offre: ${subsData.data?.find(x => x.id === abonId)?.nom} ${subsData.data?.find(x => x.id === abonId)?.cout} FCFA`}</h3>
+            <h3 className='text-[#012BAE]'>{`Offre: ${subsData.data?.find(x => x.id === abonId)?.nom} ${subsData.data?.find(x => x.id === abonId)?.coutMois} FCFA`}</h3>
             <h3>{"Selectionnez le moyen de payement"}</h3>
             <div className='flex flex-row gap-3 items-center justify-center'>
                 <div onClick={() => handlePay("mobile")} className='flex flex-col items-center justify-center gap-3 p-5 cursor-pointer hover:bg-blue-50'>

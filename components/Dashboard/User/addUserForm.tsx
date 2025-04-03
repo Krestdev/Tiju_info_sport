@@ -95,7 +95,8 @@ function AddUserForm({ addButton }: { addButton: string }) {
             }),
             password: values.password,
             pseudo: values.pseudo,
-            abonnement: abon?.find(x => x.nom === values.abonnement)
+            abonnement: abon?.find(x => x.nom === values.abonnement),
+            statut: ""
         });
         queryClient.invalidateQueries({ queryKey: ["articles"] })
         setDialogOpen(false);
