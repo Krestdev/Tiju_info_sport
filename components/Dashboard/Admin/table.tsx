@@ -220,7 +220,7 @@ function AdminTable() {
                                                                 <TableCell className="border">{item.name}</TableCell>
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.role}</TableCell>
-                                                                <TableCell className="border">25/02/2025</TableCell>
+                                                                <TableCell className="border">{item.created_at}</TableCell>
                                                                 <TableCell className="border">
                                                                     <Select onValueChange={field.onChange} >
                                                                         <div className="w-full flex justify-center">

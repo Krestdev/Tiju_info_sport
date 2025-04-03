@@ -50,8 +50,6 @@ const DashbordPage = () => {
     },
   });
 
-
-
   const countTotalLikes = (articles: Article[]): number => {
     return articles.reduce((totalLikes, article) => {
       return totalLikes + article.likes;

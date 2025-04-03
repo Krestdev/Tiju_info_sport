@@ -60,15 +60,6 @@ const Compo = ({ children, texte, page, width, setValue, isLink, link, setDateRa
           </Select>
 
           <div className="relative">
-            {/* {dateRanges && (
-              <button
-                onClick={resetDateRange}
-                className="absolute -right-6 top-1/2 transform -translate-y-1/2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
-                title="Réinitialiser la sélection"
-              >
-                <X size={16} />
-              </button>
-            )} */}
             <DatePick
               onChange={(range) => handleChange(rangeKey, range)} 
               show={false}
