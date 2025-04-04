@@ -3,11 +3,15 @@ import "./globals.css";
 import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
 import Script from "next/script";
+import { Metadata } from "next";
 
 const oswald = Oswald({ subsets: ["latin"] });
 const ubuntu = Ubuntu({ subsets: ["latin"], weight: "500" });
 
-
+export const metadata: Metadata = {
+  title: "Tyju Info Sport",
+  description: "",
+}
 
 
 export default async function RootLayout({

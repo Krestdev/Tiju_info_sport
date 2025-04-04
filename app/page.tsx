@@ -1,8 +1,5 @@
-"use client"
-
 import Accueil from "@/components/Accueil/Accueil";
 import Footbar from "@/components/footbar";
-import { MenuComp } from "@/components/menu";
 import Navbar from "@/components/navbar";
 
 
@@ -12,7 +9,6 @@ export default function HomePage() {
     <div>
       <Navbar />
       <div className="pt-[65px] md:pt-0">
-        <MenuComp />
         <Accueil />
       </div>
       <Footbar />

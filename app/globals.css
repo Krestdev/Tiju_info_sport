@@ -142,7 +142,7 @@
 
 @layer base {
   .containerBloc {
-    @apply container max-w-[1280px] px-0;
+    @apply mx-auto w-full max-w-7xl px-7;
   }
 
   .clip-custom {
