@@ -110,27 +110,24 @@ export default function LoginPage() {
 
 
   return (
-    <div className="bg-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <Card className="w-full border-0 rounded-none shadow-none bg-transparent max-w-md">
-        <CardHeader>
-          <CardTitle className="font-bold text-center pb-10"><h1 className="text-[52px] uppercase">{"Connexion"}</h1></CardTitle>
-          <CardDescription className="flex flex-col items-center justify-center gap-4 text-center pb-5">
+    <main>
+      <div className="mx-auto w-full max-w-md py-20 px-7 grid gap-10">
+          <h1 className="dashboard-heading text-center">{"Connexion"}</h1>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}
+              className="grid gap-5">
+                <div className="flex flex-col items-center gap-4 text-center">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
-              width={384}
+              width={"280"}
             />
-            <div className="flex flex-row gap-2">
-              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
-              <p className="text-[14px] text-[#545454]">ou</p>
-              <div className="h-[1px] border border-[#E4E4E4] w-[176px]" />
+            <div className="w-full flex flex-row gap-2 items-center">
+              <div className="h-[1px] border border-gray-200 w-full" />
+              <p className="text-[14px] text-gray-600">ou</p>
+              <div className="h-[1px] border border-gray-200 w-full" />
             </div>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-5">
+          </div>
               <FormField
                 control={form.control}
                 name="email"
@@ -156,19 +153,22 @@ export default function LoginPage() {
                 )}
               />
               <Button type="submit" className="w-full rounded-none uppercase">{"Se connecter"}</Button>
+              <div className="flex flex-row flex-wrap justify-between items-center gap-3">
+          <Link href="/user/restaure-password">
+          <Button variant={"main"}>
+            {"Mot De Passe Oublié"}
+          </Button>
+          </Link>
+          <Link href="/user/signUp">
+          <Button variant={"main"}>
+            {"Creer Un Compte"}
+          </Button>
+          </Link>
+        </div>
             </form>
           </Form>
-        </CardContent>
-        <CardFooter className="flex flex-row justify-between items-center space-y-2">
-          <Link href="/user/restaure-password" className=" font-oswald font-medium text-[14px] leading-[18.2px] uppercase hover:underline">
-            {"Mot De Passe Oublié"}
-          </Link>
-          <Link href="/user/signUp" className=" font-oswald font-medium text-[14px] leading-[18.2px] uppercase hover:underline">
-            {"Creer Un Compte"}
-          </Link>
-        </CardFooter>
         <ToastContainer />
-      </Card>
-    </div>
+      </div>
+    </main>
   )
 }

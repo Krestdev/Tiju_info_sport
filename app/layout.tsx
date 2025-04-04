@@ -6,11 +6,11 @@ import Script from "next/script";
 import { Metadata } from "next";
 
 const oswald = Oswald({ subsets: ["latin"] });
-const ubuntu = Ubuntu({ subsets: ["latin"], weight: "500" });
+const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"] });
 
 export const metadata: Metadata = {
   title: "Tyju Info Sport",
-  description: "",
+  description: "Votre source d'infos sportives. Actualités, résultats, interviews et analyses sur le football, basket, athlétisme et bien d'autres sports.",
 }
 
 

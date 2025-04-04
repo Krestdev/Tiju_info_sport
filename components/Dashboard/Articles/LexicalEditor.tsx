@@ -37,11 +37,11 @@ export default function LexicalEditor({ value, onChange }: LexicalEditorProps) {
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <LoadInitialContent value={value} />
-      <div className="border border-black rounded-none">
+      <div className="border border-gray-600 rounded-none">
         <Toolbar />
         <RichTextPlugin
           contentEditable={<ContentEditable className="min-h-[280px] p-2 outline-none" />}
-          placeholder={<p className="text-gray-400">Description de l'article...</p>}
+          placeholder={<p className="font-light text-gray-400 px-5 py-2">Description de l'article</p>}
           ErrorBoundary={LexicalErrorBoundary}
         />
         <LexicalHtmlConverter onChange={onChange} />
