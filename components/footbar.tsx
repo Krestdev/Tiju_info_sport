@@ -44,13 +44,13 @@ const Footbar = () => {
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
                         <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
-                            <Button variant={'ghost'} className='p-2 border border-black rounded-none'>
-                                <FaFacebook className='size-5' />
+                            <Button variant={"outline"} size={"icon"}>
+                                <FaFacebook size={20} />
                             </Button>
                         </Link>
                         <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
-                            <Button variant={'ghost'} className='p-2 border border-black rounded-none'>
-                                <FaXTwitter className='size-5' />
+                            <Button variant={"outline"} size={"icon"}>
+                                <FaXTwitter size={20} />
                             </Button>
                         </Link>
                     </div>

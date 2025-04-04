@@ -169,7 +169,7 @@ const AddArticle = () => {
     }, [articleCate.data])
 
     const editArticle = useMutation({
-        mutationKey: ["articles"],
+        mutationKey: ["pictures"],
         mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
             const idU = String(currentUser.id)
             return axiosClient1.patch(`/articles/${data.id}`, {
@@ -198,7 +198,8 @@ const AddArticle = () => {
     // Soumission du formulaire
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
-        setFichier(data.media)
+        setFichier(data.media);
+        console.log(data)
         addArticle.mutate(data);
     }
 
@@ -215,9 +216,9 @@ const AddArticle = () => {
     }
 
     // Filtrer les catégories en fonction de la saisie
-    const filteredCategories = (categorie || []).filter((x) =>
+    const filteredCategories = categorie ? categorie.filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
-    );
+    ) : [];
 
 
     return (
@@ -225,7 +226,7 @@ const AddArticle = () => {
             <form
                 className="flex flex-col gap-5 px-7 py-10"
             >
-                <h1 className='uppercase text-[40px]'>{"Ajouter un article"}</h1>
+                <h1 className='dashboard-heading'>{"Ajouter un article"}</h1>
 
                 <FormField
                     control={form.control}
@@ -233,7 +234,7 @@ const AddArticle = () => {
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <Input {...field} className='h-[60px] border-[#A1A1A1]' placeholder="Titre de l'article" />
+                                <Input {...field} className='h-[60px] !text-2xl border-[#A1A1A1]' placeholder="Titre de l'article" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

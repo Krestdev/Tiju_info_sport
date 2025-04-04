@@ -6,9 +6,7 @@ import AdminLogin from './adminLogin';
 const page = () => {
   return (
     <div>
-      <GoogleOAuthProvider clientId="989294578052-3ivn5kb22fde9il85bchirfuunl7aba5.apps.googleusercontent.com">
         <AdminLogin />
-      </GoogleOAuthProvider>;
     </div>
   )
 }

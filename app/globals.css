@@ -65,7 +65,7 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
+    
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -78,6 +78,9 @@
 
 /* Styles de base */
 @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
   body {
     @apply bg-background text-foreground text-[18px] font-ubuntu leading-[23.4px] tracking-[-2%];
   }
@@ -138,9 +141,9 @@
     scrollbar-width: none;
     /* Pour Firefox */
   }
-}
-
-@layer base {
+  .dashboard-heading {
+    @apply font-oswald uppercase tracking-[-2%] leading-[130%] font-medium text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
+  }
   .containerBloc {
     @apply mx-auto w-full max-w-7xl px-7;
   }
@@ -155,42 +158,5 @@
 
   .text-strikethrough {
     text-decoration: line-through;
-  }
-
-}
-
-@layer base {
-  :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground;
   }
 }
