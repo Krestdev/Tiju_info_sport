@@ -16,7 +16,7 @@ export default async function RootLayout({
     <Providers>
       <HydrationZustand>
         <Navbar />
-        <div className="pt-[50px] md:pt-0">
+        <div className="min-h-[calc(80vh-100px)]">
         {children}
         </div>
         <Footbar />
