@@ -42,22 +42,6 @@ export function MenuComp() {
     };    
 
     return (
-<<<<<<< HEAD
-        <div className="flex items-start md:items-center justify-center border-y my-3">
-            <div className="overflow-x-auto scrollbar-hide">
-                {isSuccess && data.data.length > 0 &&
-                    <div className="md:max-w-[1280px] mx-20 w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
-                        {
-                           data.data.filter(x => x.parent === null).map((x, i) => {
-                                return (
-                                    <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-oswald h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
-                                        <span>{x.title}</span>
-                                    </Link>
-                                )
-                            })
-                        }
-                    </div>}
-=======
         <section className="grid place-items-center border-y overflow-x-auto scrollbar-hide">
             <div className="inline-flex  gap-3">
                     {isSuccess && data.data.length > 0 &&
@@ -69,7 +53,6 @@ export function MenuComp() {
                                     )
                                 })
                             }
->>>>>>> 71ba8f59ef1c7e09bf253ccfb19e267daf921e6c
             </div>
         </section>
     )

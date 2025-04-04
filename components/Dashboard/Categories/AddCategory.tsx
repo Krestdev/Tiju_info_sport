@@ -54,12 +54,6 @@ const AddCategory = ({ children }: Props) => {
     const axiosClient = axiosConfig();
     const queryClient = useQueryClient();
 
-    // // Récupérer les catégories existantes
-    // const cateData = useQuery({
-    //     queryKey: ["category"],
-    //     queryFn: async () => dataCategorie,
-    // });
-
     const addCategory = useMutation({
         mutationKey: ["categoryv"],
         mutationFn: (data: z.infer<typeof formSchema>) => {

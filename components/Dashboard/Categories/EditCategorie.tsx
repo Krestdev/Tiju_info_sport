@@ -97,15 +97,6 @@ function EditCategorie({ children, donnee }: Props) {
         },
     });
 
-    const { mutate: onDeleteComment } = useMutation({
-        mutationFn: async (categoryId: number) => {
-            return axiosClient.delete(`/category/${categoryId}`);
-        },
-        onSuccess: () => {
-            addSubCategory.mutate(par)
-        },
-    });
-
     const addSubCategory = useMutation({
             mutationKey: ["categoryv"],
             mutationFn: (data: z.infer<typeof formSchema>) => {
@@ -133,7 +124,7 @@ function EditCategorie({ children, donnee }: Props) {
 
     //Submit function
     function onSubmit(data: z.infer<typeof formSchema>) {
-        data.parent ?(setPar(data), onDeleteComment(donnee.id)) : editCategory.mutate({ data: data, id: donnee.id.toString() });
+        editCategory.mutate({ data: data, id: donnee.id.toString() });
     }
 
     React.useEffect(() => {
