@@ -19,6 +19,7 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
     const [cate, setCate] = useState<Category[]>()
     const axiosClient = axiosConfig();
 
+
     const articleData = useQuery({
         queryKey: ["categoryv"],
         queryFn: () => {
@@ -37,32 +38,33 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
         },
     });
 
-
     useEffect(() => {
         if (articleData.isSuccess) {
-            setCate(articleData.data.data.filter(x => x.articles.length > 0))
+            setCate(articleData.data.data.filter((x) => x.parent !== null));
         }
-    }, [articleData.data])
+    }, [articleData.data]);
 
     useEffect(() => {
-        if (cate) {
-            setArticle(cate.find(x => x.title === param.category)?.articles)
+        if (cate && articleData.isSuccess) {
+            setArticle(cate.find(x => x.parent === articleData.data.data.find(x => x.title === param.category)?.id)?.articles)
         }
-    }, [cate, param.category, param.id]);
+    }, [cate, param.category, param.id, articleData.data]);
 
     useEffect(() => {
         if (pubData.isSuccess) {
             setPub(pubData.data.data)
         }
-    }, [pubData.data])
+    }, [pubData.data])    
 
+    // console.log(cate);
+    
 
     return (
         <div className='containerBloc items-center pb-[60px]'>
             <div className='px-7 py-5 md:py-10'>
                 {pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}
             </div>
-            <CategoryComp article={article} ad={pub} categorie={cate} />
+            <CategoryComp categoriesList={articleData.data?.data} article={article} ad={pub} categorie={cate} />
         </div>
     )
 }

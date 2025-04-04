@@ -62,6 +62,13 @@ function CategoryTable() {
         },
     });
 
+    
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            setSport(articleCate.data.data)
+        }
+    }, [articleCate.data])
+    
     const { mutate: deleteCategory } = useMutation({
         mutationFn: async (categoryId: number) => {
             return axiosClient.delete(`/category/${categoryId}`);
@@ -70,13 +77,7 @@ function CategoryTable() {
             queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         },
     });
-
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setSport(articleCate.data.data)
-        }
-    }, [articleCate.data])
-
+    
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
@@ -178,6 +179,7 @@ function CategoryTable() {
                                                 </TableHeader>
                                                 <TableBody>
                                                     {currentItems.map((item, id) => {
+                                                        const parent = item.parent ? sport?.find((x) => x.id === item.parent)?.title : "Aucun parent";
                                                         return (
                                                             <TableRow className="text-[16px]" key={id}>
                                                                 <TableCell className="border">
@@ -196,7 +198,7 @@ function CategoryTable() {
                                                                 </TableCell>
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
                                                                 <TableCell className="border">{item.articles.length}</TableCell>
-                                                                <TableCell className="border">{"parents"}</TableCell>
+                                                                <TableCell className="border">{parent}</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditCategorie donnee={item} nom={item.title}>
                                                                         <LuSquarePen className="size-5 cursor-pointer" />

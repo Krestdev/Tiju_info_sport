@@ -363,6 +363,31 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         }
     }
 
+    const formatDate = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMinutes / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        const diffMonths = Math.floor(diffDays / 30);
+        const diffYears = Math.floor(diffDays / 365);
+    
+        if (diffMinutes < 60) {
+            return `Il y a ${diffMinutes} min`;
+        } else if (diffHours < 24) {
+            return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
+        } else if (diffDays < 3) {
+            return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+        } else if (diffDays <= 60) {  // 2 mois approximatifs
+            return `Le ${date.toLocaleDateString()}`;
+        } else if (diffMonths < 12) {
+            return `Il y a ${diffMonths} mois`;
+        } else {
+            return `Il y a ${diffYears} an${diffYears > 1 ? 's' : ''}`;
+        }
+    };    
+
     // function peutConsulter(utilisateur: Users | null, article: Article): boolean {
     //     // Si l'article est gratuit (coutMois et coutAn à 0), tout le monde peut le lire
     //     if (article.abonArticle.coutMois === 0 && article.abonArticle.coutAn === 0) {
@@ -437,7 +462,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                     </Link>
                                 </div>
                                 <div>
-                                    <p className='font-normal text-[18px] font-ubuntu text-[#545454]'>{`Publié le ${details.created_at} par ${details.author.name}`}</p>
+                                    <p className='font-normal text-[18px] font-ubuntu text-[#545454]'>{`Publié ${formatDate(details.created_at)} par ${details.author.name}`}</p>
                                 </div>
                             </div>
                             <div className='flex flex-col gap-6' >

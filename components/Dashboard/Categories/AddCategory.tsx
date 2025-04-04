@@ -35,6 +35,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
@@ -48,7 +49,7 @@ type Props = {
 
 const AddCategory = ({ children }: Props) => {
     const { currentUser } = useStore();
-    const [parents, setParents] = useState<Categories[]>([]);
+    const [parents, setParents] = useState<Category[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const axiosClient = axiosConfig();
     const queryClient = useQueryClient();
@@ -73,9 +74,6 @@ const AddCategory = ({ children }: Props) => {
         },
     })
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        addCategory.mutate(data);
-    }
     React.useEffect(() => {
         if (addCategory.isSuccess) {
             toast.success("Ajoutée avec succès");
@@ -85,14 +83,53 @@ const AddCategory = ({ children }: Props) => {
             toast.error("Erreur lors de la création de la catégorie");
             console.log(addCategory.error)
         }
-    }, [addCategory.isError, addCategory.isSuccess, addCategory.error])
+    }, [addCategory.isError, addCategory.isSuccess, addCategory.error]);
 
+
+    const addSubCategory = useMutation({
+        mutationKey: ["categoryv"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = String(currentUser.id)
+            return axiosClient.post(`/category/sub/${data.parent}`,
+                {
+                    user_id: idU,
+                    title: data.nom,
+                    image: "image",
+                    description: data.description
+                })
+        },
+    })
+
+    React.useEffect(() => {
+        if (addSubCategory.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            setDialogOpen(prev => !prev);
+        } else if (addSubCategory.isError) {
+            toast.error("Erreur lors de la création de la catégorie");
+            console.log(addSubCategory.error)
+        }
+    }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
+
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
     // Filtrer les catégories parents
-    // useEffect(() => {
-    //     if (cateData.isSuccess) {
-    //         setParents(cateData.data.filter((x) => !x.parent));
-    //     }
-    // }, [cateData.data, cateData.isSuccess]);
+    useEffect(() => {
+        if (articleCate.isSuccess) {
+            setParents(articleCate.data.data.filter((x) => x.parent === null));
+        }
+    }, [articleCate.data, articleCate.isSuccess]);
+
+
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        data.parent ? addSubCategory.mutate(data) : addCategory.mutate(data);
+    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -164,7 +201,7 @@ const AddCategory = ({ children }: Props) => {
                                                 <SelectItem value="none">{"Aucun parent"}</SelectItem>
                                                 {parents.map((x) => (
                                                     <SelectItem key={x.id} value={String(x.id)}>
-                                                        {x.nom}
+                                                        {x.title}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -180,7 +217,7 @@ const AddCategory = ({ children }: Props) => {
                         </Button>
                     </form>
                 </Form>
-            <ToastContainer />
+                <ToastContainer />
             </DialogContent>
         </Dialog>
     );

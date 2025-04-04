@@ -81,9 +81,9 @@ function MenuBar({ article }: Donnee) {
               href={"/"}
               className="flex flex-row items-center gap-4 text-[#182067]"
             >
-              <img src="/logo.png" alt="Logo" className="size-[50px]" />
+              <img src={settings.logo} alt="Logo" className="size-[50px]" />
               <p className="font-semibold font-oswald text-[18px] leading-[26.68px] flex">
-                {"TYJU INFO SPORTS"}
+                {settings.compagnyName}
               </p>
             </Link>
             <DrawerClose asChild>

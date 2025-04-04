@@ -10,12 +10,13 @@ import SideBarMobile from "@/components/Dashboard/SIdeBarMobile";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { isFull, setIsFull } = useStore();
+  const [show, setShow] = React.useState(false);
   console.log(isFull);
 
   return (
     <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
       <AppSidebar />
-      {isFull && <SideBarMobile />}
+      <SideBarMobile />
       <main className="flex-1 overflow-auto">
         <NavAdmin />
         <div className="relative gap-5 px-5 md:px-7 py-10">

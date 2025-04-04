@@ -25,17 +25,18 @@ export function MenuComp() {
 
     const [selected, setSelected] = useState("");
 
+    
     const pathname = usePathname();
-
+    
     useEffect(() => {
         const segments = pathname.split("/");
-
+        
         if (segments.length > 2 && segments[1] === "user") {
             const userCategory = segments[2];
             setSelected(userCategory);
         }
     }, [pathname]);
-
+    
     const checkUserCategory = () => {
         return isSuccess ? data.data.flatMap(x => x.title).includes(selected) : false;
     };    
@@ -46,7 +47,7 @@ export function MenuComp() {
                 {isSuccess && data.data.length > 0 &&
                     <div className="md:max-w-[1280px] mx-20 w-full flex flex-row items-start md:items-center justify-center gap-3 font-medium text-[14px] uppercase">
                         {
-                           data.data.map((x, i) => {
+                           data.data.filter(x => x.parent === null).map((x, i) => {
                                 return (
                                     <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-oswald h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
                                         <span>{x.title}</span>

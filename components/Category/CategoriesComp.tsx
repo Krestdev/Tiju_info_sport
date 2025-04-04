@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Similaire from '../DetailArticle/Similaire';
 import PubsComp from '../PubsComp';
 import Info from '../Accueil/Info';
@@ -14,9 +14,10 @@ interface Props {
     categorie: Category[] | undefined
     article: Article[] | undefined
     ad: Advertisement[] | undefined
+    categoriesList: Category[] | undefined
 }
 
-const CategoryComp = ({ article, ad, categorie }: Props) => {
+const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
 
     const { favorite, settings } = useStore()
     const [tail, setTail] = useState("max-h-[379px]")
@@ -49,11 +50,11 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                                 <Link href={path === '/user/' ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                                     {x.images && (
                                         // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
-                                            <img
-                                                className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
-                                                src={x.images ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
-                                                alt={`${x?.images[0]}`}
-                                            />
+                                        <img
+                                            className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
+                                            src={x.images ? `https://tiju.krestdev.com/api/image/${x.images[0].id}` : settings.noImage}
+                                            alt={`${x?.images[0]}`}
+                                        />
                                         // ) : (
                                         //     <video
                                         //         className="max-w-[398px] w-full h-auto aspect-video rounded-[6px] object-cover"
@@ -103,17 +104,25 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
         }
     };
 
-    const sim1 = categorie?.find(x => x.articles?.some(x => x.id === premier?.id))
+    const sim1 = categoriesList?.find(x => x.articles?.some(x => x.id === premier?.id))
+
+    console.log(sim1);
+    
 
     const pathname = usePathname();
-
-
 
     const selected = useMemo(() => {
         return decodeURIComponent(pathname?.split('/').pop()!);
     }, [pathname]);
 
-    const liste = article && categorie?.find(x => x.articles.find(x => x.type === article[0]?.type))
+    console.log(selected);
+
+    const selectedCat = categorie?.find(x => x.id === categorie?.find(x => x.title === selected)?.parent)
+    const [liste, setListe] = useState<Category[] | undefined>([])
+
+    useEffect(() => {
+        setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id))
+    }, [article, categorie, selected, categoriesList])
 
     return (
         <div className='flex flex-col'>
@@ -132,10 +141,10 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
             } */}
             <div className='flex flex-row gap-1 px-7 py-3 overflow-x-auto scrollbar-hide'>
                 {
-                    [...new Set(liste?.articles.map(a => a.type))]
+                    [...new Set(liste?.map(a => a.title))]
                         .map((x, i) => (
                             <Button variant={"outline"} className={`rounded-none ${selected === x ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white" : ""}`} key={i}>
-                                <Link href={`/user/${sim1?.title}/${x}`}>{x}</Link>
+                                <Link href={`/user/${selected}/${x}`}>{x}</Link>
                             </Button>
                         ))
                 }
@@ -147,11 +156,11 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                             <div key={premier?.id} className={`relative max-w-[824px] max-h-[320px] h-full w-full`}>
                                 {premier?.images && (
                                     // isImage(premier?.images[0] ? premier?.images[0] : settings.noImage) ? (
-                                        <img
-                                            className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
-                                            src={premier.images ? `https://tiju.krestdev.com/api/image/${premier.images[0].id}` : settings.noImage}
-                                            alt={`${premier.images[0]}`}
-                                        />
+                                    <img
+                                        className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}
+                                        src={premier.images ? `https://tiju.krestdev.com/api/image/${premier.images[0].id}` : settings.noImage}
+                                        alt={`${premier.images[0]}`}
+                                    />
                                     // ) : (
                                     //     <video
                                     //         className={`max-w-[824px] w-full max-h-[320px] h-auto aspect-video rounded-none md:rounded-[6px] object-cover`}

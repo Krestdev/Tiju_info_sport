@@ -30,6 +30,7 @@ import { Abonnement, Article, Categories } from "@/data/temps";
 import FullScreen from "../FullScreen";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axiosConfig from "@/api/api";
+import { AxiosResponse } from "axios";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -46,38 +47,32 @@ type Props = {
     nom: string | undefined
 };
 
-function EditCategorie({ children, donnee, nom }: Props) {
+function EditCategorie({ children, donnee }: Props) {
 
-    const { dataSubscription, dataCategorie, editCategorie } = useStore()
+    const { currentUser } = useStore()
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [cate, setCate] = useState<Categories[]>()
     const queryClient = useQueryClient();
-    const [parent, setParent] = useState<Categories[]>();
     const axiosClient = axiosConfig();
+    const [parents, setParents] = useState<Category[]>([]);
+    const [par, setPar] = useState<any>()
 
 
-    const subsData = useQuery({
-        queryKey: ["abonnement"],
-        queryFn: async () => dataSubscription
-    })
-
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie
-    })
-
-
+    const articleCate = useQuery({
+        queryKey: ["categoryv"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Category[]>>(
+                `/category`
+            );
+        },
+    });
+    // Filtrer les catégories parents
     useEffect(() => {
-        if (cateData.isSuccess) {
-            setCate(cateData.data.filter(x => x.parent))
+        if (articleCate.isSuccess) {
+            setParents(articleCate.data.data.filter((x) => x.parent === null));
         }
-    }, [cateData.data])
+    }, [articleCate.data, articleCate.isSuccess]);
 
-    useEffect(() => {
-        if (cateData.isSuccess) {
-            setParent(cateData.data.filter(x => !x.parent))
-        }
-    }, [cateData.data])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -85,6 +80,7 @@ function EditCategorie({ children, donnee, nom }: Props) {
         defaultValues: {
             nom: donnee.title,
             description: donnee.description,
+            parent: donnee.parent ? donnee.parent.toString() : undefined
         }
     })
 
@@ -95,18 +91,49 @@ function EditCategorie({ children, donnee, nom }: Props) {
                 user_id: "3",
                 title: data.nom,
                 image: "defaultImage",
-                description: data.description
+                description: data.description,
+                parent: data.parent
             });
         },
     });
 
+    const { mutate: onDeleteComment } = useMutation({
+        mutationFn: async (categoryId: number) => {
+            return axiosClient.delete(`/category/${categoryId}`);
+        },
+        onSuccess: () => {
+            addSubCategory.mutate(par)
+        },
+    });
 
-    // console.log((donnee));
-
+    const addSubCategory = useMutation({
+            mutationKey: ["categoryv"],
+            mutationFn: (data: z.infer<typeof formSchema>) => {
+                const idU = String(currentUser.id)
+                return axiosClient.post(`/category/sub/${data.parent}`,
+                    {
+                        user_id: idU,
+                        title: data.nom,
+                        image: "image",
+                        description: data.description
+                    })
+            },
+        })
+    
+        React.useEffect(() => {
+            if (addSubCategory.isSuccess) {
+                toast.success("Ajoutée avec succès");
+                queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+                setDialogOpen(prev => !prev);
+            } else if (addSubCategory.isError) {
+                toast.error("Erreur lors de la création de la catégorie");
+                console.log(addSubCategory.error)
+            }
+        }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
 
     //Submit function
     function onSubmit(data: z.infer<typeof formSchema>) {
-        editCategory.mutate({ data: data, id: donnee.id.toString() });
+        data.parent ?(setPar(data), onDeleteComment(donnee.id)) : editCategory.mutate({ data: data, id: donnee.id.toString() });
     }
 
     React.useEffect(() => {
@@ -174,9 +201,9 @@ function EditCategorie({ children, donnee, nom }: Props) {
                                             </SelectTrigger>
                                             <SelectContent className="border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2">
                                                 <SelectItem value="none">{"Sélectionner une catégorie"}</SelectItem>
-                                                {parent?.map((x, i) => (
+                                                {parents?.map((x, i) => (
                                                     <SelectItem key={i} value={String(x.id)}>
-                                                        {x.nom}
+                                                        {x.title}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

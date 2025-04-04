@@ -52,6 +52,7 @@ type Category = {
     author: Author;
     description: string;
     image: string;
+    parent: number
     articles: Article[]; // Liste d'articles liés à la catégorie
     created_at: string;
     updated_at: string;

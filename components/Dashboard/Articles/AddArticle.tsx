@@ -165,7 +165,7 @@ const AddArticle = () => {
 
     useEffect(() => {
         if (articleCate.isSuccess) {
-            setCategorie(articleCate.data.data)
+            setCategorie(articleCate.data.data.filter(x => x.parent !== null));
         }
     }, [articleCate.data])
 
