@@ -33,8 +33,8 @@ export const getUserFavoriteCategories = (
   return sortedCategories.map(categorie => {
     const sortedDonnees = categorie.articles.sort((a, b) => {
 
-      const aUserLiked = a.likes
-      const bUserLiked = b.likes
+      const aUserLiked = a.likes.length
+      const bUserLiked = b.likes.length
       const aUserCommented = a.comments.some(comment => comment.author.id === userId) ? 1 : 0;
       const bUserCommented = b.comments.some(comment => comment.author.id === userId) ? 1 : 0;
 
@@ -42,8 +42,8 @@ export const getUserFavoriteCategories = (
         return (bUserLiked + bUserCommented) - (aUserLiked + aUserCommented);
       }
 
-      const aPopularity = a.likes + a.comments.length;
-      const bPopularity = b.likes + b.comments.length;
+      const aPopularity = a.likes.length + a.comments.length;
+      const bPopularity = b.likes.length + b.comments.length;
 
       return bPopularity - aPopularity; // Les articles les plus populaires en premier
     });
