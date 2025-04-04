@@ -60,8 +60,11 @@ const Navbar = () => {
                         {
                             currentUser ?
                                 <div className='flex flex-row items-center gap-4'>
-                                    <Link href={'/user/profil'} className='flex flex-row items-center gap-2'>
-                                        <img src={currentUser?.photo ? currentUser?.photo : '/images/no-user.jpg'} alt="" className='size-7 object-cover rounded-full' />
+                                    <Link href={'/user/profil'}>
+                                    <Button variant={"outline"}>
+                                        <User/>
+                                        {currentUser?.nom ?? "Profil"}
+                                    </Button>
                                     </Link>
                                     {/* {
                                         currentUser && currentUser.abonnement && currentUser.abonnement?.coutMois > 0 ?
@@ -97,6 +100,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
+            {/* Categories are displayed here */}
             <MenuComp/>
         </div>
     )

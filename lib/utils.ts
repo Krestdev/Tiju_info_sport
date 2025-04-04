@@ -82,3 +82,7 @@ export function getDateRange(value: string) {
 
   return { startDate, endDate };
 }
+
+export function defineTitle(title:string) {
+  return `${title} - Tyju Info Sport`
+}
