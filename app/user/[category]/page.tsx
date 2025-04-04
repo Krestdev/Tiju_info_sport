@@ -46,7 +46,7 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
 
     useEffect(() => {
         if (cate && articleData.isSuccess) {
-            setArticle(cate.find(x => x.parent === articleData.data.data.find(x => x.title === param.category)?.id)?.articles)
+            setArticle(cate.filter(x => x.parent === articleData.data.data.find(x => x.title === param.category)?.id).flatMap(x => x.articles))
         }
     }, [cate, param.category, param.id, articleData.data]);
 
@@ -64,7 +64,7 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
             <div className='px-7 py-5 md:py-10'>
                 {pub && <PubsComp pub={pub} taille={'h-[200px]'} clip={''} />}
             </div>
-            <CategoryComp categoriesList={articleData.data?.data} article={article} ad={pub} categorie={cate} />
+            <CategoryComp categoriesList={articleData.data?.data} article={article} ad={pub} categorie={cate} setArticle={setArticle} />
         </div>
     )
 }

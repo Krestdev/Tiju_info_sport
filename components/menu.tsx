@@ -41,17 +41,30 @@ export function MenuComp() {
         return isSuccess ? data.data.flatMap(x => x.title).includes(selected) : false;
     };
 
+    function filterCategoriesWithChildren(categories: Category[]): Category[] {
+        // Filtrer les catégories parent (qui ont parent === null)
+        const parentCategories = categories.filter(category => category.parent === null);
+
+        // Filtrer les catégories parent ayant au moins un enfant avec des articles
+        return parentCategories.filter(parent =>
+            categories.some(child =>
+                child.parent === parent.id && Array.isArray(child.articles) && child.articles.length > 0
+            )
+        );
+    }
+
+
     return (
         <section className="grid place-items-center border-y overflow-x-auto scrollbar-hide">
             <div className="inline-flex  gap-3">
-                {isSuccess && data.data.length > 0 &&
-                    data.data.filter(x => x.parent === null).map((x, i) => {
+                {isSuccess ?
+                    filterCategoriesWithChildren(data.data).map((x, i) => {
                         return (
                             <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-oswald h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
                                 <span className="font-medium text-[14px] uppercase">{x.title}</span>
                             </Link>
                         )
-                    })
+                    }) : <p>{"Chargement..."}</p>
                 }
             </div>
         </section>

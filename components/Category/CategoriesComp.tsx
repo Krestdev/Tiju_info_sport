@@ -15,12 +15,18 @@ interface Props {
     article: Article[] | undefined
     ad: Advertisement[] | undefined
     categoriesList: Category[] | undefined
+    setArticle: React.Dispatch<React.SetStateAction<Article[] | undefined>>
 }
 
-const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
+const CategoryComp = ({ article, ad, categorie, categoriesList, setArticle }: Props) => {
 
     const { favorite, settings } = useStore()
     const [tail, setTail] = useState("max-h-[379px]")
+    const [liste, setListe] = useState<Category[] | undefined>([])
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [allArticles, setAllArticles] = useState<Article[]>(article || []);
+    const [filteredArticles, setFilteredArticles] = useState<Article[]>(article || []);
+
 
 
     const handleVoirtout = () => {
@@ -30,24 +36,30 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
         if (!media) return false;
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
-    const premier = article && article[0]
-
+    const premier = filteredArticles && filteredArticles[0]
     const path = window.location.pathname
+
+    const isUserAtSecondLastSegment = (path: string): boolean => {
+        const segments = path.split("/").filter(Boolean);
+        return segments.length === 2 && segments[0] === "user";
+    };
+
     const groupSize = 5;
 
     // Fonction pour générer la liste avec les publicités
     const renderList = () => {
-        if (article) {
+        if (filteredArticles) {
             const result = [];
-            for (let i = 0; i < article?.length; i += groupSize) {
+            for (let i = 0; i < filteredArticles?.length; i += groupSize) {
                 // Extraire un groupe de 4 éléments
-                const group = article?.slice(i, i + groupSize)
+                const group = filteredArticles?.slice(i, i + groupSize)
                 result.push(
                     <div key={`group-${i}`} className='group grid grid-cols-1 md:grid-cols-2 px-7 md:px-0 w-full gap-7'>
                         {group?.filter(a => a.id !== premier?.id).map((x) => {
                             const cat = categorie?.find(a => a.articles.some(b => b.id === x?.id))
+
                             return (
-                                <Link href={path === '/user/' ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
+                                <Link href={isUserAtSecondLastSegment(path) ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                                     {x.images && (
                                         // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                         <img
@@ -68,7 +80,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
                                         // )
                                     )}
                                     <div>
-                                        <p className='text-[#A1A1A1] text-[20px] uppercase font-medium leading-[26px] font-oswald'>{path === '/user' ? cat?.title : x.type}</p>
+                                        <p className='text-[#A1A1A1] text-[20px] uppercase font-medium leading-[26px] font-oswald'>{isUserAtSecondLastSegment(path) ? cat?.title : x.type}</p>
                                         <p className='text-[28px] font-medium leading-[36.4px] line-clamp-2 font-oswald'>{x.title}</p>
                                     </div>
                                 </Link>
@@ -79,7 +91,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
                 );
 
                 // Ajouter une publicité après chaque groupe (sauf le dernier)
-                if (i + groupSize < article!.length) {
+                if (i + groupSize < filteredArticles!.length) {
                     result.push(
                         <div key={`ad-${i}`} className='px-7 md:px-0'>
                             {
@@ -91,7 +103,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
             }
 
             // Ajouter une publicité après tous les éléments si la liste est <= 4
-            if (article?.length <= groupSize) {
+            if (filteredArticles?.length <= groupSize) {
                 result.push(
                     <div key={'final'} className='px-7 md:px-0'>
                         {
@@ -106,19 +118,19 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
 
     const sim1 = categoriesList?.find(x => x.articles?.some(x => x.id === premier?.id))
 
-    console.log(sim1);
-    
-
     const pathname = usePathname();
 
     const selected = useMemo(() => {
         return decodeURIComponent(pathname?.split('/').pop()!);
     }, [pathname]);
 
-    console.log(selected);
-
-    const selectedCat = categorie?.find(x => x.id === categorie?.find(x => x.title === selected)?.parent)
-    const [liste, setListe] = useState<Category[] | undefined>([])
+    // Mise à jour initiale si article vient de props
+    useEffect(() => {
+        if (article) {
+            setAllArticles(article);
+            setFilteredArticles(article);
+        }
+    }, [article]);
 
     useEffect(() => {
         setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id))
@@ -139,15 +151,44 @@ const CategoryComp = ({ article, ad, categorie, categoriesList }: Props) => {
                     }
                 </div>
             } */}
-            <div className='flex flex-row gap-1 px-7 py-3 overflow-x-auto scrollbar-hide'>
-                {
-                    [...new Set(liste?.map(a => a.title))]
-                        .map((x, i) => (
-                            <Button variant={"outline"} className={`rounded-none ${selected === x ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white" : ""}`} key={i}>
-                                <Link href={`/user/${selected}/${x}`}>{x}</Link>
-                            </Button>
-                        ))
-                }
+            <div className='flex flex-row gap-1 py-3 overflow-x-auto scrollbar-hide'>
+                {/* Bouton pour tout afficher */}
+                <Button
+                    onClick={() => {
+                        setSelectedTag(null);
+                        setArticle(article); 
+                        setFilteredArticles(allArticles)
+                    }}
+                    variant={"outline"}
+                    className={`rounded-none ${selectedTag === null ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white" : ""}`}
+                >
+                    <p>Tout</p>
+                </Button>
+
+                {/* Boutons dynamiques des tags */}
+                {[...new Set(liste?.map(a => a.title))].map((x, i) => (
+                    <Button
+                        key={i}
+                        onClick={() => {
+                            if (selectedTag === x) {
+                                // Si on clique à nouveau sur le même tag, on réinitialise le filtre
+                                setSelectedTag(null);
+                                setFilteredArticles(allArticles);
+                            } else {
+                                setSelectedTag(x);
+                                const filtered = allArticles.filter(a => a.type === x);
+                                setFilteredArticles(filtered);
+                            }
+                        }}
+                        variant={"outline"}
+                        className={`rounded-none ${selectedTag === x
+                            ? "bg-[#0128AE] hover:bg-[#0128AE] hover:text-white text-white"
+                            : ""
+                            }`}
+                    >
+                        <p>{x}</p>
+                    </Button>
+                ))}
             </div>
             <div className='flex flex-col md:flex-row gap-7'>
                 <div className='max-w-[824px] w-full h-fit flex flex-col md:sticky md:top-0'>

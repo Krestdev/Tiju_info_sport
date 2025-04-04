@@ -79,7 +79,7 @@ const Page = ({ params }: { params: Promise<{ sous: string; id: string }> }) => 
       <div className="px-7 py-5 md:py-10">
         {pub && <PubsComp pub={pub} taille={"h-[180px]"} clip={""} />}
       </div>
-      <CategoryComp article={article} ad={pub} categorie={cate} categoriesList={articleData.data?.data} />
+      <CategoryComp article={article} ad={pub} categorie={cate} categoriesList={articleData.data?.data} setArticle={setArticle} />
     </div>
   );
 };

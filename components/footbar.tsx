@@ -33,6 +33,18 @@ const Footbar = () => {
         }
     }, [articleData.data])
 
+    function filterCategoriesWithChildren(categories: Category[]): Category[] {
+        // Filtrer les catégories parent (qui ont parent === null)
+        const parentCategories = categories.filter(category => category.parent === null);
+
+        // Filtrer les catégories parent ayant au moins un enfant avec des articles
+        return parentCategories.filter(parent =>
+            categories.some(child =>
+                child.parent === parent.id && Array.isArray(child.articles) && child.articles.length > 0
+            )
+        );
+    }
+
     return (
         categorie && categorie.length > 0 ?
         <div className='w-full flex flex-col items-center justify-center gap-8'>
@@ -62,7 +74,7 @@ const Footbar = () => {
                         <h4 className='uppercase text-[#A1A1A1]'>{"Catégories"}</h4>
                         <div className='flex flex-col gap-3'>
                             {
-                                categorie?.slice(0, 6).map((x, i) => (
+                                filterCategoriesWithChildren(categorie)?.slice(0, 6).map((x, i) => (
                                     <Link href={`/user/category/${x.title}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x.title}</Link>
                                 ))
                             }
@@ -72,7 +84,7 @@ const Footbar = () => {
                         <h4 className='uppercase text-[#A1A1A1]'>{categorie[0].title}</h4>
                         <div className='flex flex-col gap-2'>
                             {
-                                [...new Set(categorie[0].articles?.map(x => x.type))].map((x, i) => (
+                                [...new Set(categorie.filter(x => x.parent === categorie[0].id).flatMap(x => x.articles).map(x => x.type))].map((x, i) => (
                                     <Link href={`/user/${categorie[0].title}/${x}`} key={i} className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{x}</Link>
                                 ))
                             }
