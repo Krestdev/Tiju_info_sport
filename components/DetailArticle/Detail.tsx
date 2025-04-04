@@ -93,11 +93,42 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (likerA.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (likerA.isError) {
             console.log(likerA.error)
         }
     }, [likerA.isError, likerA.isSuccess, likerA.error])
+
+    //Unliker un commentaire
+
+    const unLikerA = useMutation({
+        mutationKey: ["comment"],
+        mutationFn: (id: string) => {
+            return axiosClient.patch(`/articles/unlike/${id}`, {
+                user_id: currentUser.id
+            });
+        },
+    });
+
+    function handleUnLikeA(id: string) {
+        unLikerA.mutate(id);
+    }
+
+    React.useEffect(() => {
+        if (unLikerA.isSuccess) {
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+        } else if (unLikerA.isError) {
+            console.log(unLikerA.error)
+        }
+    }, [unLikerA.isError, unLikerA.isSuccess, unLikerA.error])
+
+    function handleClickLikeArticleButton(id: string) {
+        if (details.likes.some(x => x === currentUser?.id)) {
+            handleUnLikeA(id);
+        } else {
+            handleLike(id);
+        }
+    }
 
     //commenter
     const commenter = useMutation({
@@ -118,7 +149,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (commenter.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (commenter.isError) {
             console.log(commenter.error)
         }
@@ -143,7 +174,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (repondre.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (repondre.isError) {
             console.log(repondre.error)
         }
@@ -165,7 +196,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (modifierCom.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (modifierCom.isError) {
             console.log(modifierCom.error)
         }
@@ -187,7 +218,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (likerC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (likerC.isError) {
             console.log(likerC.error)
         }
@@ -207,10 +238,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     function handleUnLikeC(id: string) {
         unLikerC.mutate(id);
     }
-
     React.useEffect(() => {
         if (unLikerC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (unLikerC.isError) {
             console.log(unLikerC.error)
         }
@@ -232,7 +262,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (signalC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (signalC.isError) {
             console.log(signalC.error)
         }
@@ -255,7 +285,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (unsignalC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         } else if (unsignalC.isError) {
             console.log(unsignalC.error)
         }
@@ -268,7 +298,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
             return axiosClient.delete(`/comments/${articleId}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         },
     });
 
@@ -313,7 +343,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     const isImage = (media: string | undefined): boolean => {
         console.log(media);
-        
+
         if (!media) return false;
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
@@ -375,28 +405,28 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 <FullScreen image={details.images ? details.images : settings.noImage}>
                                     {details.images && (
                                         // isImage(details.images ? details.images : settings.noImage) ? (
-                                            <img
-                                                className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
-                                                src={details.images ? `https://tiju.krestdev.com/api/image/${details.images[0].id}` : settings.noImage}
-                                                alt={""}
-                                            />
-                                    //     ) : (
-                                    //         <video
-                                    //             className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
-                                    //             controls
-                                    //             autoPlay
-                                    //             muted
-                                    //             loop
-                                    //             src={details.images ? details.images : settings.noImage}
-                                    //         >
-                                    //             Votre navigateur ne supporte pas la lecture de cette vidéo.
-                                    //         </video>
-                                    //     )
+                                        <img
+                                            className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                            src={details.images ? `https://tiju.krestdev.com/api/image/${details.images[0].id}` : settings.noImage}
+                                            alt={""}
+                                        />
+                                        //     ) : (
+                                        //         <video
+                                        //             className='max-w-[836px] w-full h-auto aspect-video rounded-[6px] object-cover'
+                                        //             controls
+                                        //             autoPlay
+                                        //             muted
+                                        //             loop
+                                        //             src={details.images ? details.images : settings.noImage}
+                                        //         >
+                                        //             Votre navigateur ne supporte pas la lecture de cette vidéo.
+                                        //         </video>
+                                        //     )
                                     )
                                     }
                                 </FullScreen>}
                             <div className='flex flex-col gap-4'>
-                                <p className='text-[18px] text-[#545454] font-bold'>{details.summery}</p>
+                                <p className='text-[18px] font-bold'>{details.summery}</p>
                                 <div
                                     // className={`${peutConsulter(currentUser, details) ? 'hidden' :`}`
                                     className={`'flex flex-row w-full items-center justify-center'} hidden`}>
@@ -407,11 +437,10 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                     </Link>
                                 </div>
                                 <div>
-                                    <p className='font-bold text-[18px]'>{details.author.name}</p>
-                                    <p className='text-[#A1A1A1] text-[18px]'>{details.created_at}</p>
+                                    <p className='font-normal text-[18px] font-ubuntu text-[#545454]'>{`Publié le ${details.created_at} par ${details.author.name}`}</p>
                                 </div>
                             </div>
-                            <div className='flex flex-col gap-6'>
+                            <div className='flex flex-col gap-6' >
 
                                 {/* <div
                                     // className={`${peutConsulter(currentUser, details) ? '' :`}
@@ -422,11 +451,12 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                 // className={`${peutConsulter(currentUser, details) ? '' :"" }`}
                                 // className={`'h-[100px] max-w-[836px] overflow-hidden blur-[3px] z-10 break-words'}`}
                                 >
-                                    <p className='font-normal'>
+                                    <>
                                         {/* {peutConsulter(currentUser, details) ? */}
-                                        {details.description}
+                                        {/* {details.description} */}
+                                        <div dangerouslySetInnerHTML={{ __html: details.description }} />
                                         {/* //  : btoa(details.description).split(' ') */}
-                                    </p>
+                                    </>
                                 </div>
                                 {/* {peutConsulter(currentUser, details) ? */}
                                 <div className='flex flex-col md:grid grid-cols-4 gap-4'>
@@ -527,20 +557,20 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                         lastModified: Date.now(),
                                     })]
                                         , details.summery)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
-                                    <Button onClick={() => handleLike(details.id.toString())} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
+                                    <Button onClick={() => handleClickLikeArticleButton(details.id.toString())} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
                                         <ThumbsUp
-                                            // style={{
-                                            //     color: like ? "red" : "gray",
-                                            //     cursor: "pointer",
-                                            // }}
+                                            style={{
+                                                color: details.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
+                                                cursor: "pointer",
+                                            }}
                                             size={30} />
                                     </Button>
                                     <h2
-                                    // style={{
-                                    //     color: like ? "red" : "gray",
-                                    //     cursor: "pointer",
-                                    // }}
-                                    >{details.likes}</h2>
+                                        style={{
+                                            color: details.likes.some(x => x === currentUser?.id) ? "012BAE" : "#A1A1A1",
+                                            cursor: "pointer",
+                                        }}
+                                    >{details.likes.length}</h2>
                                     <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
                                         <PopoverTrigger asChild>
                                             <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
@@ -592,19 +622,19 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                         <div className='flex flex-row items-center gap-4'>
                                                             <Button disabled={!currentUser}
-                                                                onClick={() => handleLikeC(x.id.toString())}
-                                                                // style={{
-                                                                //     color: x.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                //     cursor: "pointer",
-                                                                // }}
+                                                                onClick={() => x.likes.some(x => x !== currentUser?.id) ? handleLikeC(x.id.toString()) : handleUnLikeC(x.id.toString())}
+                                                                style={{
+                                                                    color: x.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
+                                                                    cursor: "pointer",
+                                                                }}
                                                                 variant={'ghost'} className='flex items-center justify-center gap-1 px-1'>
                                                                 <ThumbsUp
-                                                                    // style={{
-                                                                    //     color: currentUser && x.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                    //     cursor: "pointer",
-                                                                    // }}
+                                                                    style={{
+                                                                        color: currentUser && x.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
+                                                                        cursor: "pointer",
+                                                                    }}
                                                                     className='size-4 text-[#012BAE]' />
-                                                                <p className='font-normal text-[12px] leading-[15.6px]'>{x.likes} </p>
+                                                                <p className='font-normal text-[12px] leading-[15.6px]'>{x.likes.length} </p>
                                                             </Button>
                                                             {x.author.id !== currentUser?.id ?
                                                                 <div>
@@ -627,11 +657,11 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             </div>
                                                                         </PopoverContent>
                                                                     </Popover>
-                                                                    <Button disabled={!currentUser} onClick={() => handleSignalC(x.id.toString())}
-                                                                        // style={{
-                                                                        //     color: currentUser && x.signals && x.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                        //     cursor: "pointer",
-                                                                        // }}
+                                                                    <Button disabled={!currentUser} onClick={() => x.signals.some(x => x !== currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
+                                                                        style={{
+                                                                            color: currentUser && x.signals && x.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                            cursor: "pointer",
+                                                                        }}
                                                                         className={`px-1 text-[12px] font-ubuntu hover:text-[#012BAE]`} variant={'ghost'}>{"Signaler"}
                                                                     </Button>
                                                                 </div> :
@@ -692,19 +722,19 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             <p className='font-normal text-[16px]'>{a.author.name}</p>
                                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
                                                                             <div className='flex flex-row items-center gap-4'>
-                                                                                <Button onClick={() => handleLikeC(a.id.toString())}
-                                                                                    // style={{
-                                                                                    //     color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                                    //     cursor: "pointer",
-                                                                                    // }}
+                                                                                <Button onClick={() => a.likes.some(x => x !== currentUser?.id) ? handleLikeC(a.id.toString()) : handleUnLikeC(a.id.toString())}
+                                                                                    style={{
+                                                                                        color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                        cursor: "pointer",
+                                                                                    }}
                                                                                     variant={'ghost'} className='flex gap-1 px-1'>
                                                                                     <ThumbsUp
-                                                                                        // style={{
-                                                                                        //     color: a.like.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                                        //     cursor: "pointer",
-                                                                                        // }}
+                                                                                        style={{
+                                                                                            color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                            cursor: "pointer",
+                                                                                        }}
                                                                                         className='size-5 text-[#012BAE]' />
-                                                                                    <p className='font-normal text-[12px] leading-[15.6px]'>{a.likes} </p>
+                                                                                    <p className='font-normal text-[12px] leading-[15.6px]'>{a.likes.length} </p>
                                                                                 </Button>
                                                                                 {a.author.id !== currentUser?.id ?
                                                                                     <div>
@@ -727,11 +757,10 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                                 </div>
                                                                                             </PopoverContent>
                                                                                         </Popover>
-                                                                                        <Button onClick={() => handleSignalC(a.id.toString())}
-                                                                                            // style={{
-                                                                                            //     color: a.signals.some(x => x.id === currentUser?.id) ? "red" : "#A1A1A1",
-                                                                                            //     cursor: "pointer",
-                                                                                            // }}
+                                                                                        <Button onClick={() => a.signals.some(x => x !== currentUser?.id) ? handleSignalC(a.id.toString()) : handleUnSignalC(a.id.toString())} style={{
+                                                                                            color: a.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                            cursor: "pointer",
+                                                                                        }}
                                                                                             className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
                                                                                     </div> :
                                                                                     <div>

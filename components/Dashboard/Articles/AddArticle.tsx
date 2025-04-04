@@ -90,6 +90,7 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
+            
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
@@ -430,7 +431,7 @@ const AddArticle = () => {
                         type="button"
                         onClick={() => {
                             form.handleSubmit(onSubmit)()
-                            }}>
+                        }}>
                         {"Publier"}
                     </Button>
                     {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}

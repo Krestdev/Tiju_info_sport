@@ -68,7 +68,7 @@ function MenuBar({ article }: Donnee) {
                     <p className="hidden md:flex">{"Menu"}</p>
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="h-full w-screen md:w-[360px] rounded-none px-5 pb-10 gap-5 scrollbar scrollbar-hide">
+            <DrawerContent className="h-full w-screen md:w-[360px] rounded-none px-5 pb-10 gap-5 overflow-y-auto">
                 <DrawerHeader>
                     <DrawerTitle className="flex items-center justify-between p-0">
                         <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
@@ -102,7 +102,7 @@ function MenuBar({ article }: Donnee) {
                         ))
                     }
                 </div>
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                     <div className="flex px-2 py-4 gap-2 bg-[#FF0068] justify-center">
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"Favoris"}</p>
                     </div>
@@ -113,7 +113,7 @@ function MenuBar({ article }: Donnee) {
                             </Link>
                         ))
                     }
-                </div>
+                </div> */}
                 <div className="flex flex-col">
                     <div className="flex px-2 py-4 gap-2 bg-[#182067] justify-center">
                         <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">{"Sport"}</p>

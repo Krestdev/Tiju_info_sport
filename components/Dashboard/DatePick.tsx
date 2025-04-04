@@ -21,7 +21,7 @@ export function DatePick({ onChange, show }: DatePickerWithRangeProps) {
   return (
     <div className={cn("grid gap-2")}>
       <Popover >
-        <PopoverTrigger asChild className="w-fit z-50">
+        <PopoverTrigger asChild className="w-fit z-30">
           <Button
             id="date"
             variant={"outline"}

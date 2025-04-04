@@ -84,9 +84,9 @@ type Comments = {
     author: User;
     article_id: number;
     message: string;
-    likes: number;
+    likes: number[];
     response: Comments[]; 
-    signals: number;
+    signals: number[];
     created_at: string;
     updated_at: string;
   };
@@ -111,7 +111,7 @@ type Article = {
     images: ImageA[]; 
     author: User;
     comments: Comments[]; 
-    likes: number;
+    likes: number[];
     created_at: string;
     updated_at: string;
 };

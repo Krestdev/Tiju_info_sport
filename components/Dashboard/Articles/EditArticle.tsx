@@ -51,7 +51,7 @@ const formSchema = z.object({
     description: z.string().min(4, {
         message: "Name must be at least 10 characters.",
     }),
-    couverture: z.any(),
+    // couverture: z.any(),
     media: z
         .any()
         .refine(
@@ -78,6 +78,7 @@ function EditArticle({ children, donnee }: Props) {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
+    const [categorie, setCategorie] = useState<Category[]>();
     const [cate, setCate] = useState<Category[]>()
     const [dialogOpen, setDialogOpen] = useState(false)
     const queryClient = useQueryClient();
@@ -89,11 +90,11 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     const axiosClient1 = axiosConfig({
-            Authorization: `Bearer ${token}`,
-            "Accept": "*/*",
-            "x-api-key": "abc123",
-            'Content-Type': 'multipart/form-data'
-        });
+        Authorization: `Bearer ${token}`,
+        "Accept": "*/*",
+        "x-api-key": "abc123",
+        'Content-Type': 'multipart/form-data'
+    });
 
     const decodeHtml = (html: string) => {
         const doc = new DOMParser().parseFromString(html, "text/html");
@@ -112,9 +113,13 @@ function EditArticle({ children, donnee }: Props) {
 
     useEffect(() => {
         if (articleCate.isSuccess) {
-            setCate(articleCate.data.data)
+            setCategorie(articleCate.data.data)
         }
     }, [articleCate.data])
+
+    const filteredCategories = (categorie || []).filter((x) =>
+        x.title.toLowerCase().includes(entry.toLowerCase())
+    );
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEntry(e.target.value)
@@ -124,7 +129,7 @@ function EditArticle({ children, donnee }: Props) {
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
             console.log(data);
-            
+
             return axiosClient1.post(`/image/${donnee.images[0].id}`,
                 {
                     file: data,
@@ -192,8 +197,8 @@ function EditArticle({ children, donnee }: Props) {
             type: donnee.type,
             extrait: donnee.summery,
             description: donnee.description,
-            couverture: donnee.images[0],
-            media: donnee.images,
+            // couverture: donnee.images[0],
+            media: donnee.images[0],
         },
     });
 
@@ -264,10 +269,7 @@ function EditArticle({ children, donnee }: Props) {
                                 </FormItem>
                             )}
                         />
-                        <div className="flex flex-row items-end gap-2">
-                            {
-                                photo && <img src={`https://tiju.krestdev.com/api/image/${photo.id}`} alt="" className="w-[60px] h-[60px] object-cover" />
-                            }
+                        {/* <div className="flex flex-row items-end gap-2">
                             <FormField
                                 control={form.control}
                                 name="couverture"
@@ -295,14 +297,12 @@ function EditArticle({ children, donnee }: Props) {
                                     </FormItem>
                                 )}
                             />
-                        </div>
+                        </div> */}
 
-                        <div className="flex flex-col gap-2">
-                            {/* {
-                                images && images.map((x, i) =>
-                                    <img key={i} src={x} alt="" className="w-[150px] h-[150px]" />
-                                )
-                            } */}
+                        <div className="flex flex-row items-end gap-2">
+                            {
+                                photo && <img src={`https://tiju.krestdev.com/api/image/${photo.id}`} alt="" className="w-[70px] h-[70px] object-cover" />
+                            }
                             <FormField
                                 control={form.control}
                                 name="media"
@@ -411,11 +411,14 @@ function EditArticle({ children, donnee }: Props) {
                                                             placeholder='rechercher une catégorie'
                                                             className='h-10 w-full'
                                                         />
-                                                        {cate?.map((x, i) => (
-                                                            <SelectItem key={i} value={x.title}>
-                                                                {x.title}
-                                                            </SelectItem>
-                                                        ))}
+                                                        {filteredCategories.length > 0 ? (
+                                                            filteredCategories.map((x, i) => (
+                                                                <SelectItem key={i} value={x.title}>
+                                                                    {x.title}
+                                                                </SelectItem>
+                                                            ))) : (
+                                                            <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
+                                                        )}
                                                     </div>
                                                 </SelectContent>
                                             </Select>
@@ -426,7 +429,16 @@ function EditArticle({ children, donnee }: Props) {
                             />
                         </div>
                         <div className='w-full flex flex-col gap-2'>
-                            <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
+                            <Button
+                                variant="default"
+                                className="max-w-[384px] w-full font-normal rounded-none"
+                                type="button"
+                                onClick={() => {
+                                    form.handleSubmit(onSubmit)()
+                                }}>
+                                {"Publier"}
+                            </Button>
+                            {/* <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
                             <Sharing donnee={donnee} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
                             <Button
                                 type="submit"
@@ -437,13 +449,13 @@ function EditArticle({ children, donnee }: Props) {
                                 }}
                             >
                                 {"Publier"}
-                            </Button>
+                            </Button> */}
                         </div>
                     </form>
                 </Form>
             </DialogContent>
             <ToastContainer />
-        </Dialog>
+        </Dialog >
     );
 }
 
