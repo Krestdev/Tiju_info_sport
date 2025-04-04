@@ -117,7 +117,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
 
     return (
         <div className='flex flex-col'>
-            {
+            {/* {
                 <div className='flex flex-row gap-1 px-0 md:px-7'>
                     {path === '/user' ?
                         <div className='flex items-center gap-4 px-7 py-4'>
@@ -129,7 +129,7 @@ const CategoryComp = ({ article, ad, categorie }: Props) => {
                         </div>
                     }
                 </div>
-            }
+            } */}
             <div className='flex flex-row gap-1 px-7 py-3 overflow-x-auto scrollbar-hide'>
                 {
                     [...new Set(liste?.articles.map(a => a.type))]

@@ -13,6 +13,8 @@ import {
     SidebarMenuItem,
     SidebarMenuSub,
     SidebarMenuSubItem,
+    SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -22,9 +24,24 @@ import { ChevronDown, ChevronRight, ChevronUp, LucideCircleDollarSign } from "lu
 import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LuChartColumnDecreasing, LuCirclePlus, LuCircleUser, LuFile, LuFiles, LuFolder, LuFolderOpen, LuLayoutGrid, LuMegaphone, LuMessageSquare, LuMessageSquareText, LuSettings, LuUserRound, LuUsersRound } from "react-icons/lu";
+import { 
+    LuChartColumnDecreasing, 
+    LuCirclePlus, 
+    LuCircleUser, 
+    LuFile, 
+    LuFiles, 
+    LuFolder, 
+    LuFolderOpen, 
+    LuLayoutGrid, 
+    LuMegaphone, 
+    LuMessageSquare, 
+    LuMessageSquareText, 
+    LuSettings, 
+    LuUserRound, 
+    LuUsersRound 
+} from "react-icons/lu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Menu items.
 const items = [
@@ -142,7 +159,7 @@ export function AppSidebar() {
     }
 
     return (
-        <Sidebar variant="sidebar" collapsible="icon">
+        <Sidebar variant="sidebar" collapsible="icon"  >
             <SidebarInset className="max-w-[320px] w-full">
                 <div className="flex flex-row items-center gap-3">
                     <SidebarHeader className="h-[60px] w-[60px]">

@@ -105,13 +105,13 @@ function CommentsTable() {
         if (article) {
             const commentSignal = article
                 .flatMap(y => y.comments ? y.comments : [])
-                .filter(x => x.signals > 0);
+                .filter(x => x.signals.length > 0);
 
             const respenseSignal = article
                 .flatMap(x => x.comments && x.comments)
                 .filter(x => x.response.length > 0)
                 .flatMap(x => x.response)
-                .filter(x => x.signals > 0)
+                .filter(x => x.signals.length > 0)
 
             setCommentsData([...commentSignal, ...respenseSignal])
             setComments(article.flatMap(y => y.comments))
@@ -187,7 +187,7 @@ function CommentsTable() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = current === "tous" ?
         filterData.slice(startIndex, startIndex + itemsPerPage) :
-        filterData.filter(x => x.signals > 0).slice(startIndex, startIndex + itemsPerPage)
+        filterData.filter(x => x.signals.length > 0).slice(startIndex, startIndex + itemsPerPage)
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -281,7 +281,7 @@ function CommentsTable() {
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.message}</TableCell>
                                                                 <TableCell className="border">{item.author?.name}</TableCell>
                                                                 <TableCell className="border">{item.created_at}</TableCell>
-                                                                <TableCell className="border">{item.signals > 0 ? "Signalé" : "Normal"}</TableCell>
+                                                                <TableCell className="border">{item.signals.length > 0 ? "Signalé" : "Normal"}</TableCell>
                                                                 <TableCell className="flex gap-2 items-center justify-center">
                                                                     <ModalWarning id={item.id} action={onDeleteComment} name={item.message}>
                                                                         <LuTrash2 size={20} className="text-red-500 flex items-center justify-center" />
