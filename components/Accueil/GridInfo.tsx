@@ -36,9 +36,9 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
             <div className='flex flex-row w-full items-center justify-between px-5 gap-4'>
                 {gridAff && gridAff.length > 1 && (
                     <>
-                        <h1 className='uppercase'>{gridAff[1].title}</h1>
+                        <h1 className='uppercase'>{gridAff[0].title}</h1>
                         <Button className='uppercase rounded-none'>
-                            <Link href={`/user/${gridAff[1].title}`}>{"Tout voir"}</Link>
+                            <Link href={`/user/${gridAff[0].title}`}>{"Tout voir"}</Link>
                         </Button>
                     </>
                 )}
@@ -50,7 +50,7 @@ const GridInfo = ({ gridAff, couleur }: Aff) => {
                  }
                 <div className='flex flex-col items-center justify-between gap-5'>
                     {
-                        article?.slice(0, 3).map((x, i) => {
+                        article?.slice(1, 4).map((x, i) => {
                             return (
 
                                 <Link href={`/user/detail-article/${x.id}`} key={i} className='flex flex-row gap-7'>

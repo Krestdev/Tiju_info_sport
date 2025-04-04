@@ -86,15 +86,9 @@ const AddArticle = () => {
         },
     });
 
-    const decodeHtml = (html: string) => {
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        return doc.body.textContent || "";
-    };
-
     const addArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const decodedText = decodeHtml(data.description)
             const idU = String(currentUser.id)
             return axiosClient.post("/articles",
                 {
@@ -102,7 +96,7 @@ const AddArticle = () => {
                     category_id: categorie?.find(x => x.title === data.type)?.id,
                     title: data.titre,
                     summary: data.extrait,
-                    description: decodedText,
+                    description: data.description,
                     type: data.type,
                 }
             )
@@ -434,7 +428,9 @@ const AddArticle = () => {
                         variant="default"
                         className="max-w-[384px] w-full font-normal rounded-none"
                         type="button"
-                        onClick={() => form.handleSubmit(onSubmit)()}>
+                        onClick={() => {
+                            form.handleSubmit(onSubmit)()
+                            }}>
                         {"Publier"}
                     </Button>
                     {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}

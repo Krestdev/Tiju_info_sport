@@ -392,6 +392,7 @@ const ProfilForm = ({ pub, une }: Props) => {
 
                     <Button
                         type="button"
+                        className='w-full max-w-[398px] h-[40px] rounded-none'
                         onClick={() => {
                             form1.handleSubmit((data1) => {
                                 form.handleSubmit((data2) => {
@@ -400,7 +401,7 @@ const ProfilForm = ({ pub, une }: Props) => {
                             })();
                         }}
                     >
-                        Soumettre les formulaires
+                        Enregistrer
                     </Button>
                     {currentUser && <Button variant={'destructive'} onClick={logout} className='flex w-fit'> {"Se déconnecter"}</Button>}
 

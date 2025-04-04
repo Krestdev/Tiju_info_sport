@@ -1,5 +1,3 @@
-"use client";
-
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -10,6 +8,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import type { Klass } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
+import { ImageNode } from "./ImageNode";
 
 import Toolbar from "./Toolbar";
 import LoadInitialContent from "./LoadInitialContent";
@@ -32,7 +31,7 @@ export default function LexicalEditor({ value, onChange }: LexicalEditorProps) {
       },
     },
     onError: (error: Error) => console.error(error),
-    nodes: [TextNode, ParagraphNode, HeadingNode, QuoteNode] as Klass<LexicalNode>[],
+    nodes: [TextNode, ParagraphNode, HeadingNode, QuoteNode, ImageNode] as Klass<LexicalNode>[],
   };
 
   return (
