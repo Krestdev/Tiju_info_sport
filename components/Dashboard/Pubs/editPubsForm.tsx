@@ -210,9 +210,9 @@ function EditPubsForm({ children, selectedPubs }: Props) {
                             )}
                         />
                         <div className="flex flex-row gap-2">
-                            <FullScreen image={`https://tiju.krestdev.com/api/image/${selectedPubs.image.id}`} >
+                            {/* <FullScreen image={`https://tiju.krestdev.com/api/image/${selectedPubs.image.id}`} >
                                 <img src={`https://tiju.krestdev.com/api/image/${selectedPubs.image.id}`} alt="" className="size-16 object-cover cursor-pointer" />
-                            </FullScreen>
+                            </FullScreen> */}
                             <FormField
                                 control={form.control}
                                 name="image"

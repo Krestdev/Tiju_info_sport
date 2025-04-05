@@ -41,7 +41,7 @@ const PubsComp = ({ pub, clip, taille }: PubProps) => {
       ]}
       className='w-full'
     >
-      <CarouselContent className='w-full'>
+      <CarouselContent className='w-full px-7 md:px-0'>
         {pub.map((x, i) => {
           return (
             <CarouselItem key={i} className='w-full'>

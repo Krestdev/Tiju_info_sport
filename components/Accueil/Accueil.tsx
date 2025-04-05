@@ -105,8 +105,8 @@ const Accueil = () => {
                                     <UnePubs titre={'A la une'} couleur={'bg-[#B3261E]'} article={une?.slice(0, 2).flatMap(cat => cat.articles.slice(0, 1))} pubs={pub} />
                                     <UnePubs titre={"Aujourd'hui"} couleur={'bg-[#01AE35]'} article={une?.slice().flatMap(cat => cat.articles.slice()).slice(0, 8)} pubs={pub?.slice().reverse()} />
                                 </div>
-                                {tail === "max-h-[379px]" && <Button variant={"outline"} className='rounded-none mx-7 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
-                                <div className='flex md:hidden px-7 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
+                                {tail === "max-h-[379px]" && <Button variant={"outline"} className='mx-7 rounded-none mt-3 flex md:hidden' onClick={() => handleVoirtout()}>{"Voir Plus"}</Button>}
+                                <div className='flex md:hidden px-0 mt-7'>{pub && <PubsComp pub={pub} taille={'h-[300px]'} clip={'clip-custom'} />}</div>
                             </div>
                         </div>
                         <div>

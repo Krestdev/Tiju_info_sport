@@ -145,7 +145,7 @@
     @apply font-oswald uppercase tracking-[-2%] leading-[130%] font-medium text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
   }
   .containerBloc {
-    @apply mx-auto w-full max-w-7xl px-7;
+    @apply mx-auto w-full max-w-7xl px-0 md:px-7;
   }
 
   .clip-custom {
