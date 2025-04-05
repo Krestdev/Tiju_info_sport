@@ -9,7 +9,7 @@ const oswald = Oswald({ subsets: ["latin"] });
 const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"] });
 
 export const metadata: Metadata = {
-  title: "Tyju Info Sport",
+  title: "Tyju Info Sport - L'actualité sportive",
   description: "Votre source d'infos sportives. Actualités, résultats, interviews et analyses sur le football, basket, athlétisme et bien d'autres sports.",
 }
 
