@@ -173,7 +173,7 @@ const Accueil = () => {
           </div>
         </div>
         {
-            categories.data.data.length > 0 && categories.data.data.filter(x=>x.articles.length>0).slice(0,1).map(category=>(
+            categories.data.data.length > 0 && categories.data.data.filter(x=>x.articles.length>1).slice(0,1).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
             ))
         }
