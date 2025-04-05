@@ -31,8 +31,6 @@ interface Props {
 
 const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
 
-    console.log(artId);
-
     const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
@@ -130,9 +128,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
                         >
                             {"Publier Maintenant"}
                         </Button>
-                        {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
+                        {/* {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
                             {"Programmer la publication"}
-                        </Button>}
+                        </Button>} */}
                         {programmer && <div>
                             <FormField
                                 control={form.control}

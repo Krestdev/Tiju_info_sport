@@ -78,9 +78,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="containerBloc gap-3">
-      <div className="px-7">
         {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
-      </div>
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={cate} favorite={favorite} />
     </div>
   );

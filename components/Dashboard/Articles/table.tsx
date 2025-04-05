@@ -85,7 +85,7 @@ function ArticleTable() {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/publish/${id}`, {
                 user_id: idU,
-                status: "deleted",
+                statut: "deleted",
             });
         },
         onSuccess() {
@@ -118,10 +118,10 @@ function ArticleTable() {
         setSearchEntry(event.target.value);
     }
 
-    const toNormalDate = (dateStr: string): Date => {
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
-    };
+    function toNormalDate(dateString: string): Date {
+        return new Date(dateString.replace(" ", "T"));
+    }
+
 
 
     const decodeHtml = (html: string) => {
@@ -142,6 +142,7 @@ function ArticleTable() {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
                 const itemDate = toNormalDate(item.created_at);
+
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -238,7 +239,6 @@ function ArticleTable() {
                     <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
                         <SelectItem value="none">{"Tous les auteurs"}</SelectItem>
                         {[...new Set(auteur)].map((x, i) => {
-                            console.log(x.name);
                             return (
                                 <SelectItem key={i} value={String(x.id)}>
                                     {x.name}
@@ -313,8 +313,8 @@ function ArticleTable() {
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <DeleteValidation id={item.id} action1={deleteArticle} action2={onSubmit1} bouton1="Supprimer définitivement" bouton2="AJouter a la corbeille" message="Vous etes sur le point de supprimer" name={item.title}>
-                                                                            <Trash2 className="text-red-400 size-5 cursor-pointer" />
+                                                                        <DeleteValidation id={selectedArticleId} action1={deleteArticle} action2={editArticle.mutate} bouton1="Supprimer définitivement" bouton2="AJouter a la corbeille" message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                            <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                         </DeleteValidation>
                                                                         {
                                                                             item.status === "draft" || item.status === "programmed" ?
@@ -327,7 +327,7 @@ function ArticleTable() {
                                                                                     className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                 :
                                                                                 item.status === "deleted" ?
-                                                                                    <ShareWarning id={0} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
+                                                                                    <ShareWarning id={selectedArticleId} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
                                                                                         <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />

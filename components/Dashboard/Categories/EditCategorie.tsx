@@ -37,7 +37,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
     description: z.string().min(10, { message: "La description doit avoir au moins 10 caractères" }),
-    parent: z.string().optional()
+    parent: z.any().optional()
 })
 
 

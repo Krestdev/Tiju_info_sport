@@ -81,8 +81,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const likerA = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/like/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -104,8 +105,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unLikerA = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/unlike/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -206,8 +208,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const likerC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/like/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -229,8 +232,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unLikerC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/unlike/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -250,8 +254,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const signalC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/signal/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -273,8 +278,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unsignalC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/unsignal/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -301,7 +307,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
             queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         },
     });
-
 
     const toggleComment = (id: number) => {
         setOpenModifier((prev) => (prev === id ? null : id));
@@ -647,7 +652,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                         <div className='flex flex-row items-center gap-4'>
                                                             <Button disabled={!currentUser}
-                                                                onClick={() => x.likes.some(x => x !== currentUser?.id) ? handleLikeC(x.id.toString()) : handleUnLikeC(x.id.toString())}
+                                                                onClick={() => x.likes.find(x => x === currentUser?.id) ? handleUnLikeC(x.id.toString()) :  handleLikeC(x.id.toString())}
                                                                 style={{
                                                                     color: x.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
                                                                     cursor: "pointer",
@@ -682,7 +687,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             </div>
                                                                         </PopoverContent>
                                                                     </Popover>
-                                                                    <Button disabled={!currentUser} onClick={() => x.signals.some(x => x !== currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
+                                                                    <Button disabled={!currentUser} onClick={() => x.signals.find(x => x === currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
                                                                         style={{
                                                                             color: currentUser && x.signals && x.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                             cursor: "pointer",
@@ -747,7 +752,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             <p className='font-normal text-[16px]'>{a.author.name}</p>
                                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
                                                                             <div className='flex flex-row items-center gap-4'>
-                                                                                <Button onClick={() => a.likes.some(x => x !== currentUser?.id) ? handleLikeC(a.id.toString()) : handleUnLikeC(a.id.toString())}
+                                                                                <Button onClick={() => a.likes.some(x => x === currentUser?.id) ? handleUnLikeC(a.id.toString()) :handleLikeC(a.id.toString())}
                                                                                     style={{
                                                                                         color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                         cursor: "pointer",
@@ -782,7 +787,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                                 </div>
                                                                                             </PopoverContent>
                                                                                         </Popover>
-                                                                                        <Button onClick={() => a.signals.some(x => x !== currentUser?.id) ? handleSignalC(a.id.toString()) : handleUnSignalC(a.id.toString())} style={{
+                                                                                        <Button onClick={() => a.signals.find(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()): handleSignalC(a.id.toString())} style={{
                                                                                             color: a.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}

@@ -137,7 +137,6 @@ const AddArticle = () => {
 
     React.useEffect(() => {
         if (addArticle.isSuccess) {
-            setDialogOpen(prev => !prev);
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         } else if (addArticle.isError) {
             toast.error("Erreur lors de la création de l'article");
