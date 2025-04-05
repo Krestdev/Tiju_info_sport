@@ -413,12 +413,12 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     return (
 
         <div className='containerBloc my-3'>
-            <div className='w-full flex items-center justify-start px-7 py-3 gap-1'>
+            {/* <div className='w-full flex items-center justify-start px-7 py-3 gap-1'>
                 <Button className='rounded-none'><Link href={"/"}><LuHouse /></Link></Button>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white border border-[#E4E4E4] capitalize text-[14px]'>{cate?.title}</div>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white capitalize text-[14px]'><LuChevronRight className='size-[20px]' /></div>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white border border-[#E4E4E4] capitalize text-[14px]'>{details.type}</div>
-            </div>
+            </div> */}
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7'>
                 <div className='w-full flex flex-col md:flex-row gap-10 px-7'>
                     <div className='max-w-[824px] flex flex-col gap-5'>
