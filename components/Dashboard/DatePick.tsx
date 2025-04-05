@@ -49,9 +49,10 @@ export function DatePick({ onChange, show }: DatePickerWithRangeProps) {
             selected={date}
             onSelect={(newDate) => {
               setDate(newDate);
-              if (onChange) onChange(newDate); 
+              if (onChange) onChange(newDate);
             }}
             numberOfMonths={2}
+            disabled={{ after: new Date() }} 
           />
         </PopoverContent>
       </Popover>

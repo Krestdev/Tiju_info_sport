@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <div>
       <Navbar />
-      <div className="pt-[65px] md:pt-0">
+      <div className="pt-0 md:pt-[65px]">
         <Accueil />
       </div>
       <Footbar />
