@@ -31,7 +31,6 @@ import { IoMdAdd, IoMdClose } from "react-icons/io";
 import LexicalEditor from "./LexicalEditor";
 import { LuEye, LuPlus } from "react-icons/lu";
 import DatePubli from "./DatePubli";
-import Sharing from "./Sharing";
 import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 

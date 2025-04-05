@@ -85,11 +85,11 @@ function ArticleTable() {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/publish/${id}`, {
                 user_id: idU,
-                statut: "deleted",
+                status: "deleted",
             });
         },
         onSuccess() {
-            toast.success("Article publié avec succès");
+            toast.success("AJouté à la corbeille publié avec succès");
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
