@@ -22,6 +22,7 @@ import UnePubs from '../Accueil/UnePubs';
 import GridAcc from '../Accueil/GridAcc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
+import Head from 'next/head';
 
 
 const formSchema = z
@@ -353,45 +354,30 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
 
-    const handleShare = async (image: File[], text: string) => {
-        if (navigator.canShare({ files: image })) {
-            await navigator.share({
-                title: "Partage",
-                text: text,
-                files: image
-            })
-            console.log("Succes");
-
-        } else {
-            console.log("erreur");
-
-        }
-    }
 
     const formatDate = (dateStr: string): string => {
         const date = new Date(dateStr);
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
-        const diffMinutes = Math.floor(diffMs / (1000 * 60));
-        const diffHours = Math.floor(diffMinutes / 60);
-        const diffDays = Math.floor(diffHours / 24);
-        const diffMonths = Math.floor(diffDays / 30);
-        const diffYears = Math.floor(diffDays / 365);
-    
-        if (diffMinutes < 60) {
-            return `Il y a ${diffMinutes} min`;
-        } else if (diffHours < 24) {
-            return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
-        } else if (diffDays < 3) {
-            return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
-        } else if (diffDays <= 60) {  // 2 mois approximatifs
-            return `Le ${date.toLocaleDateString()}`;
-        } else if (diffMonths < 12) {
-            return `Il y a ${diffMonths} mois`;
+
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHeure = Math.floor(diffMin / 60);
+        const diffJour = Math.floor(diffHeure / 24);
+
+        if (diffSec < 60) {
+            return `Il y a ${diffSec} seconde${diffSec > 1 ? 's' : ''}`;
+        } else if (diffMin < 60) {
+            return `Il y a ${diffMin} minute${diffMin > 1 ? 's' : ''}`;
+        } else if (diffHeure < 24) {
+            return `Il y a ${diffHeure} heure${diffHeure > 1 ? 's' : ''}`;
+        } else if (diffJour <= 2) {
+            return `Il y a ${diffJour} jour${diffJour > 1 ? 's' : ''}`;
         } else {
-            return `Il y a ${diffYears} an${diffYears > 1 ? 's' : ''}`;
+            return `Publié le ${date.toLocaleDateString('fr-FR')}`;
         }
-    };    
+    };
+
 
     // function peutConsulter(utilisateur: Users | null, article: Article): boolean {
     //     // Si l'article est gratuit (coutMois et coutAn à 0), tout le monde peut le lire
@@ -414,6 +400,22 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
 
     const cate = dataArticle?.find(x => x.articles.some(x => x === details))
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: details.title,
+                    text: details.summery,
+                    url: `https://www.tyjuinfosport.com/user/detail-article/${details.id}`,
+                });
+                console.log('Partage réussi');
+            } catch (err) {
+                console.error('Erreur lors du partage', err);
+            }
+        } else {
+            alert("Le partage n'est pas supporté par ce navigateur.");
+        }
+    };
 
     return (
 
@@ -582,11 +584,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                             {
                                 currentUser &&
                                 <div className='flex items-center gap-4'>
-                                    <Button onClick={() => handleShare([new File([], "nom_du_fichier.txt", {
-                                        type: "text/plain",
-                                        lastModified: Date.now(),
-                                    })]
-                                        , details.summery)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
+                                    <Button onClick={() => handleShare()} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
                                     <Button onClick={() => handleClickLikeArticleButton(details.id.toString())} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
                                         <ThumbsUp
                                             style={{
@@ -652,7 +650,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                         <div className='flex flex-row items-center gap-4'>
                                                             <Button disabled={!currentUser}
-                                                                onClick={() => x.likes.find(x => x === currentUser?.id) ? handleUnLikeC(x.id.toString()) :  handleLikeC(x.id.toString())}
+                                                                onClick={() => x.likes.find(x => x === currentUser?.id) ? handleUnLikeC(x.id.toString()) : handleLikeC(x.id.toString())}
                                                                 style={{
                                                                     color: x.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
                                                                     cursor: "pointer",
@@ -752,7 +750,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             <p className='font-normal text-[16px]'>{a.author.name}</p>
                                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
                                                                             <div className='flex flex-row items-center gap-4'>
-                                                                                <Button onClick={() => a.likes.some(x => x === currentUser?.id) ? handleUnLikeC(a.id.toString()) :handleLikeC(a.id.toString())}
+                                                                                <Button onClick={() => a.likes.some(x => x === currentUser?.id) ? handleUnLikeC(a.id.toString()) : handleLikeC(a.id.toString())}
                                                                                     style={{
                                                                                         color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                         cursor: "pointer",
@@ -787,7 +785,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                                 </div>
                                                                                             </PopoverContent>
                                                                                         </Popover>
-                                                                                        <Button onClick={() => a.signals.find(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()): handleSignalC(a.id.toString())} style={{
+                                                                                        <Button onClick={() => a.signals.find(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()) : handleSignalC(a.id.toString())} style={{
                                                                                             color: a.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}

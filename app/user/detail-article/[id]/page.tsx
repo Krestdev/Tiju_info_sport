@@ -7,6 +7,7 @@ import useStore from "@/context/store";
 import { useQuery } from "@tanstack/react-query";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import Head from "next/head";
 
 declare global {
   interface Window {
@@ -25,23 +26,23 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const [cate, setCate] = useState<Category[]>()
   const axiosClient = axiosConfig();
 
-    const pubData = useQuery({
-        queryKey: ["advertisement"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
-                `/advertisement`
-            );
-        },
-    });
+  const pubData = useQuery({
+    queryKey: ["advertisement"],
+    queryFn: () => {
+      return axiosClient.get<any, AxiosResponse<Advertisement[]>>(
+        `/advertisement`
+      );
+    },
+  });
 
   const articleData = useQuery({
-          queryKey: ["categoryv"],
-          queryFn: () => {
-              return axiosClient.get<any, AxiosResponse<Category[]>>(
-                  `/category`
-              );
-          },
-      });
+    queryKey: ["categoryv"],
+    queryFn: () => {
+      return axiosClient.get<any, AxiosResponse<Category[]>>(
+        `/category`
+      );
+    },
+  });
 
   useEffect(() => {
     if (pubData.isSuccess) {
@@ -76,9 +77,26 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Chargement ou article introuvable...</div>;
   }
 
-  return (
-    <div className="containerBloc gap-3">
-        {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
+   // URL de l'image de l'article ou image par défaut si absente
+   const imageUrl = article.images && article.images.length > 0
+   ? `https://tiju.krestdev.com/api/image/${article.images[0].id}`
+   : 'https://tiju.krestdev.com/path/to/noImage.jpg';
+
+ return (
+   <div className="containerBloc gap-3">
+     <Head>
+       <meta property="og:title" content={article.title} />
+       <meta property="og:description" content={article.summery} />
+       <meta property="og:image" content={imageUrl} />
+       <meta property="og:url" content={`https://www.tyjuinfosport.com/user/detail-article/${article.id}`} />
+
+       <meta name="twitter:title" content={article.title} />
+       <meta name="twitter:description" content={article.summery} />
+       <meta name="twitter:image" content={imageUrl} />
+       <meta name="twitter:card" content="summary_large_image" />
+     </Head>
+
+      {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
       <Detail details={article} similaire={similaire} pub={pub} dataArticle={cate} favorite={favorite} />
     </div>
   );
