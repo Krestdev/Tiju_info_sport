@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { LuHouse } from "react-icons/lu";
+import { LuHouse, LuSend, LuX } from "react-icons/lu";
 import { LuChevronRight } from "react-icons/lu";
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
@@ -22,6 +22,8 @@ import UnePubs from '../Accueil/UnePubs';
 import GridAcc from '../Accueil/GridAcc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
+import Head from 'next/head';
+import { Input } from '../ui/input';
 
 
 const formSchema = z
@@ -57,6 +59,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const [response, setResponse] = useState('');
     const [modifie, setModifie] = useState('');
     const [openCommenter, setOpenCommenter] = useState(false)
+    const [openCommenterMob, setOpenCommenterMob] = useState(false)
     const [commentaire, setCommentaire] = useState("")
     const [showReponses, setShowReponses] = useState<{ [id: number]: boolean }>({});
     const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -81,8 +84,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const likerA = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/like/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -104,8 +108,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unLikerA = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/unlike/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -206,8 +211,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const likerC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/like/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -229,8 +235,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unLikerC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/unlike/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -250,8 +257,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const signalC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/signal/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -273,8 +281,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const unsignalC = useMutation({
         mutationKey: ["comment"],
         mutationFn: (id: string) => {
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/comments/unsignal/${id}`, {
-                user_id: currentUser.id
+                user_id: idU
             });
         },
     });
@@ -301,7 +310,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
-
 
     const toggleComment = (id: number) => {
         setOpenModifier((prev) => (prev === id ? null : id));
@@ -348,45 +356,30 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         return /\.(jpg|jpeg|png|gif|webp)$/i.test(media);
     };
 
-    const handleShare = async (image: File[], text: string) => {
-        if (navigator.canShare({ files: image })) {
-            await navigator.share({
-                title: "Partage",
-                text: text,
-                files: image
-            })
-            console.log("Succes");
-
-        } else {
-            console.log("erreur");
-
-        }
-    }
 
     const formatDate = (dateStr: string): string => {
         const date = new Date(dateStr);
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
-        const diffMinutes = Math.floor(diffMs / (1000 * 60));
-        const diffHours = Math.floor(diffMinutes / 60);
-        const diffDays = Math.floor(diffHours / 24);
-        const diffMonths = Math.floor(diffDays / 30);
-        const diffYears = Math.floor(diffDays / 365);
-    
-        if (diffMinutes < 60) {
-            return `Il y a ${diffMinutes} min`;
-        } else if (diffHours < 24) {
-            return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
-        } else if (diffDays < 3) {
-            return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
-        } else if (diffDays <= 60) {  // 2 mois approximatifs
-            return `Le ${date.toLocaleDateString()}`;
-        } else if (diffMonths < 12) {
-            return `Il y a ${diffMonths} mois`;
+
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHeure = Math.floor(diffMin / 60);
+        const diffJour = Math.floor(diffHeure / 24);
+
+        if (diffSec < 60) {
+            return `Il y a ${diffSec} seconde${diffSec > 1 ? 's' : ''}`;
+        } else if (diffMin < 60) {
+            return `Il y a ${diffMin} minute${diffMin > 1 ? 's' : ''}`;
+        } else if (diffHeure < 24) {
+            return `Il y a ${diffHeure} heure${diffHeure > 1 ? 's' : ''}`;
+        } else if (diffJour <= 2) {
+            return `Il y a ${diffJour} jour${diffJour > 1 ? 's' : ''}`;
         } else {
-            return `Il y a ${diffYears} an${diffYears > 1 ? 's' : ''}`;
+            return `Publié le ${date.toLocaleDateString('fr-FR')}`;
         }
-    };    
+    };
+
 
     // function peutConsulter(utilisateur: Users | null, article: Article): boolean {
     //     // Si l'article est gratuit (coutMois et coutAn à 0), tout le monde peut le lire
@@ -409,16 +402,32 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
 
     const cate = dataArticle?.find(x => x.articles.some(x => x === details))
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: details.title,
+                    text: details.summery,
+                    url: `https://www.tyjuinfosport.com/user/detail-article/${details.id}`,
+                });
+                console.log('Partage réussi');
+            } catch (err) {
+                console.error('Erreur lors du partage', err);
+            }
+        } else {
+            alert("Le partage n'est pas supporté par ce navigateur.");
+        }
+    };
 
     return (
 
         <div className='containerBloc my-3'>
-            <div className='w-full flex items-center justify-start px-7 py-3 gap-1'>
+            {/* <div className='w-full flex items-center justify-start px-7 py-3 gap-1'>
                 <Button className='rounded-none'><Link href={"/"}><LuHouse /></Link></Button>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white border border-[#E4E4E4] capitalize text-[14px]'>{cate?.title}</div>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white capitalize text-[14px]'><LuChevronRight className='size-[20px]' /></div>
                 <div className='px-4 gap-2 w-fit h-[40px] flex items-center font-oswald bg-white border border-[#E4E4E4] capitalize text-[14px]'>{details.type}</div>
-            </div>
+            </div> */}
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7'>
                 <div className='w-full flex flex-col md:flex-row gap-10 px-7'>
                     <div className='max-w-[824px] flex flex-col gap-5'>
@@ -577,11 +586,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                             {
                                 currentUser &&
                                 <div className='flex items-center gap-4'>
-                                    <Button onClick={() => handleShare([new File([], "nom_du_fichier.txt", {
-                                        type: "text/plain",
-                                        lastModified: Date.now(),
-                                    })]
-                                        , details.summery)} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
+                                    <Button onClick={() => handleShare()} variant={'outline'} className='size-10 rounded-none border-black'><Share2 className='size-5' /></Button>
                                     <Button onClick={() => handleClickLikeArticleButton(details.id.toString())} size={'icon'} variant={'outline'} className='size-10 rounded-none border-black'>
                                         <ThumbsUp
                                             style={{
@@ -596,21 +601,80 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                             cursor: "pointer",
                                         }}
                                     >{details.likes.length}</h2>
-                                    <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
-                                        <PopoverTrigger asChild>
-                                            <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-80 flex flex-col gap-2">
-                                            <div className="flex flex-col gap-2">
-                                                <Textarea
-                                                    placeholder="Répondre au commentaire"
-                                                    rows={2}
-                                                    onChange={(e) => setCommentaire(e.target.value)}
-                                                />
-                                                <Button onClick={() => handleAddComment(details.id.toString())}>{"COMMENTER"}</Button>
+                                    {/* <div className='hidden md:flex'>
+                                        <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
+                                            <PopoverTrigger asChild>
+                                                <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="hidden w-80 md:flex flex-col gap-2">
+                                                <div className="flex flex-col gap-2">
+                                                    <Textarea
+                                                        placeholder="Tapez votre commentaire"
+                                                        rows={2}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                    />
+                                                    <Button onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}>{"COMMENTER"}</Button>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div> */}
+                                    <div className='flex'>
+                                        <Button
+                                            onClick={() => setOpenCommenter(true)}
+                                        >
+                                            COMMENTER
+                                        </Button>
+
+                                        {openCommenter && (
+                                            <div className="fixed inset-0 flex items-end justify-center z-50">
+                                                <div className="bg-white flex md:flex-col gap-2 items-center w-full max-w-md shadow-lg rounded-[20px]">
+                                                    <Input
+                                                        className="flex md:hidden w-full border border-gray-300 rounded-[20px] resize-none"
+                                                        placeholder="Tapez votre commentaire"
+                                                        value={commentaire}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                        autoFocus
+                                                    />
+                                                    <Textarea
+                                                        rows={3}
+                                                        className="hidden md:flex w-full border border-gray-300 resize-none"
+                                                        placeholder="Tapez votre commentaire"
+                                                        value={commentaire}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                        autoFocus
+                                                    />
+                                                    <div className='flex justify-end md:justify-start md:gap-2 md:mt-1'>
+                                                        <Button
+                                                            className='flex md:hidden bg-transparent shadow-none text-[#012BAE]'
+                                                            onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
+                                                        >
+                                                            <LuSend />
+                                                        </Button>
+                                                        <Button
+                                                            className='hidden md:flex'
+                                                            onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
+                                                        >
+                                                            {"COMMENTER"}
+                                                        </Button>
+                                                        <Button
+                                                            variant={"ghost"}
+                                                            className='hidden md:flex'
+                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                        >
+                                                            {"ANNULER"}
+                                                        </Button>
+                                                        <Button
+                                                            variant={"ghost"}
+                                                            className='flex md:hidden bg-transparent shadow-none text-black'
+                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                        >
+                                                            <LuX />
+                                                        </Button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </PopoverContent>
-                                    </Popover>
+                                        )}
+                                    </div>
                                 </div>
                             }
                             <p className='font-bold'> {details.comments.length <= 9 && '0'}{details.comments.length} Commentaire{details.comments.length > 1 && 's'}</p>
@@ -647,7 +711,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                         <div className='flex flex-row items-center gap-4'>
                                                             <Button disabled={!currentUser}
-                                                                onClick={() => x.likes.some(x => x !== currentUser?.id) ? handleLikeC(x.id.toString()) : handleUnLikeC(x.id.toString())}
+                                                                onClick={() => x.likes.find(x => x === currentUser?.id) ? handleUnLikeC(x.id.toString()) : handleLikeC(x.id.toString())}
                                                                 style={{
                                                                     color: x.likes.some(x => x === currentUser?.id) ? "#012BAE" : "#A1A1A1",
                                                                     cursor: "pointer",
@@ -682,7 +746,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             </div>
                                                                         </PopoverContent>
                                                                     </Popover>
-                                                                    <Button disabled={!currentUser} onClick={() => x.signals.some(x => x !== currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
+                                                                    <Button disabled={!currentUser} onClick={() => x.signals.find(x => x === currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
                                                                         style={{
                                                                             color: currentUser && x.signals && x.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                             cursor: "pointer",
@@ -747,7 +811,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             <p className='font-normal text-[16px]'>{a.author.name}</p>
                                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>
                                                                             <div className='flex flex-row items-center gap-4'>
-                                                                                <Button onClick={() => a.likes.some(x => x !== currentUser?.id) ? handleLikeC(a.id.toString()) : handleUnLikeC(a.id.toString())}
+                                                                                <Button onClick={() => a.likes.some(x => x === currentUser?.id) ? handleUnLikeC(a.id.toString()) : handleLikeC(a.id.toString())}
                                                                                     style={{
                                                                                         color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                         cursor: "pointer",
@@ -782,7 +846,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                                 </div>
                                                                                             </PopoverContent>
                                                                                         </Popover>
-                                                                                        <Button onClick={() => a.signals.some(x => x !== currentUser?.id) ? handleSignalC(a.id.toString()) : handleUnSignalC(a.id.toString())} style={{
+                                                                                        <Button onClick={() => a.signals.find(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()) : handleSignalC(a.id.toString())} style={{
                                                                                             color: a.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}

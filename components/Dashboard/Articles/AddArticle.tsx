@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
 import LexicalEditor from './LexicalEditor';
+import DatePubli from './DatePubli';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -44,7 +45,7 @@ const formSchema = z.object({
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ).optional(),
-
+    status: z.string(),
 });
 
 
@@ -83,6 +84,7 @@ const AddArticle = () => {
             extrait: "",
             description: "",
             media: "",
+            status: "save"
         },
     });
 
@@ -90,7 +92,7 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
-            
+
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
@@ -99,6 +101,7 @@ const AddArticle = () => {
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
+                    status: data.status
                 }
             )
         },
@@ -108,9 +111,32 @@ const AddArticle = () => {
         },
     })
 
+    const addArticle1 = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = String(currentUser.id)
+
+            return axiosClient.post("/articles",
+                {
+                    user_id: idU,
+                    category_id: categorie?.find(x => x.title === data.type)?.id,
+                    title: data.titre,
+                    summary: data.extrait,
+                    description: data.description,
+                    type: data.type,
+                    status: data.status
+                }
+            )
+        },
+        onSuccess(data) {
+            setArt(data.data);
+            fichier && addImage1.mutate({ data: fichier[0], id: data.data.id })
+            handleOpen();
+        },
+    })
+
     React.useEffect(() => {
         if (addArticle.isSuccess) {
-            setDialogOpen(prev => !prev);
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         } else if (addArticle.isError) {
             toast.error("Erreur lors de la création de l'article");
@@ -128,6 +154,26 @@ const AddArticle = () => {
     });
 
     const addImage = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            setArtId(id)
+            return axiosClient.post("/image",
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+        onError(error: any) {
+            console.log(error.status);
+            // if (error.status === 500) {
+            toast.error("La taille maximale de l'image doit être de 2Mo")
+            // }
+            deleteArticle(artId)
+        },
+    })
+
+    const addImage1 = useMutation({
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
             setArtId(id)
@@ -200,8 +246,12 @@ const AddArticle = () => {
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
         setFichier(data.media);
-        console.log(data)
         addArticle.mutate(data);
+    }
+
+    const onSubmit1 = (data: z.infer<typeof formSchema>) => {
+        setFichier(data.media);
+        addArticle1.mutate(data);
     }
 
     const handleOpen = () => {
@@ -427,6 +477,15 @@ const AddArticle = () => {
 
                 <div className='w-full flex flex-col gap-2'>
                     <Button
+                        variant="outline"
+                        className="max-w-[384px] w-full font-normal rounded-none"
+                        type="button"
+                        onClick={() => {
+                            form.handleSubmit(onSubmit)()
+                        }}>
+                        {"enregistrer"}
+                    </Button>
+                    {/* <Button
                         variant="default"
                         className="max-w-[384px] w-full font-normal rounded-none"
                         type="button"
@@ -434,21 +493,20 @@ const AddArticle = () => {
                             form.handleSubmit(onSubmit)()
                         }}>
                         {"Publier"}
-                    </Button>
-                    {/* <DatePubli donnee={form.getValues()} isOpen={dialogOpen} onOpenChange={setDialogOpen} /> */}
-                    {/* <Button
+                    </Button> */}
+                    <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                    <Button
                         type="submit"
                         className="max-w-[384px] w-full rounded-none font-normal"
                         onClick={(e) => {
+                            form.handleSubmit(onSubmit1)()
                             e.preventDefault();
-                            handleOpen();
                         }}
                     >
                         {"Publier"}
-                    </Button> */}
+                    </Button>
                 </div>
             </form>
-            <ToastContainer />
         </Form>
     )
 }

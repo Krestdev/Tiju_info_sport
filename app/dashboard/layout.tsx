@@ -11,7 +11,6 @@ import SideBarMobile from "@/components/Dashboard/SIdeBarMobile";
 function Layout({ children }: { children: React.ReactNode }) {
   const { isFull, setIsFull } = useStore();
   const [show, setShow] = React.useState(false);
-  console.log(isFull);
 
   return (
     <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>

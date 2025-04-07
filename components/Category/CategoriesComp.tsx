@@ -59,7 +59,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList, setArticle }: Pr
                             const cat = categorie?.find(a => a.articles.some(b => b.id === x?.id))
 
                             return (
-                                <Link href={isUserAtSecondLastSegment(path) ? `/user/${cat?.title}` : `/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
+                                <Link href={`/user/detail-article/${x?.id}`} key={x.id} className='max-w-[398px] w-full flex flex-col gap-5'>
                                     {x.images && (
                                         // isImage(x?.images[0] ? x?.images[0] : settings.noImage) ? (
                                         <img
@@ -133,7 +133,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList, setArticle }: Pr
     }, [article]);
 
     useEffect(() => {
-        setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id))
+        setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id && x.articles.length > 0))
     }, [article, categorie, selected, categoriesList])
 
     return (
@@ -193,7 +193,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList, setArticle }: Pr
             <div className='flex flex-col md:flex-row gap-7'>
                 <div className='max-w-[824px] w-full h-fit flex flex-col md:sticky md:top-0'>
                     <div className=' flex flex-col justify-start gap-7'>
-                        <Link href={path === '/user' ? `/user/${sim1?.title}` : `/user/detail-article/${premier?.id}`} className='flex flex-col gap-7'>
+                        <Link href={`/user/detail-article/${premier?.id}`} className='flex flex-col gap-7'>
                             <div key={premier?.id} className={`relative max-w-[824px] max-h-[320px] h-full w-full`}>
                                 {premier?.images && (
                                     // isImage(premier?.images[0] ? premier?.images[0] : settings.noImage) ? (

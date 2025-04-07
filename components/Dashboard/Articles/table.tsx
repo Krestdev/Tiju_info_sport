@@ -29,18 +29,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
 import EditArticle from "./EditArticle";
-import { LuSquarePen } from "react-icons/lu";
+import { LuSend, LuSquarePen, LuUndo2 } from "react-icons/lu";
 import Link from "next/link";
-import Sharing from "./Sharing";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import ShareWarning from "@/components/sharedWarning";
+import DatePubli from "./DatePubli";
+import DeleteValidation from "./DeleteValidation";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function ArticleTable() {
-    // const { deleteArticle } = useStore();
+    const { currentUser } = useStore();
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
     //Search value
@@ -55,8 +57,9 @@ function ArticleTable() {
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
     const [rein, setRein] = useState(false)
     const [selectedAuthor, setSelectedAuthor] = useState("none");
-    const [auteur, setAuteur] = useState<string[] | undefined>()
+    const [auteur, setAuteur] = useState<User[] | undefined>()
     const [dialog, setDialog] = React.useState(false);
+    const [selectedArticleId, setSelectedArticleId] = useState<number>(0);
     const itemsPerPage = 15;
 
 
@@ -72,8 +75,31 @@ function ArticleTable() {
     useEffect(() => {
         if (articleCate.isSuccess) {
             setSport(articleCate.data.data)
+            setAuteur(sport?.flatMap(x => x.author).filter((value, index, self) => index === self.findIndex((v) => v.id === value.id)))
         }
     }, [articleCate.data])
+
+    const editArticle = useMutation({
+        mutationKey: ["pictures"],
+        mutationFn: (id: number) => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/articles/publish/${id}`, {
+                user_id: idU,
+                statut: "deleted",
+            });
+        },
+        onSuccess() {
+            toast.success("AJouté à la corbeille publié avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000
+    });
+
+
+    function onSubmit1(id: number) {
+        editArticle.mutate(id);
+    }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
@@ -86,16 +112,16 @@ function ArticleTable() {
         },
     })
 
-    
+
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setSearchEntry(event.target.value);
     }
 
-    const toNormalDate = (dateStr: string): Date => {
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
-    };
+    function toNormalDate(dateString: string): Date {
+        return new Date(dateString.replace(" ", "T"));
+    }
+
 
 
     const decodeHtml = (html: string) => {
@@ -116,6 +142,7 @@ function ArticleTable() {
             filtered = filtered.filter((item) => {
                 if (!dateRange?.from) return true;
                 const itemDate = toNormalDate(item.created_at);
+
                 return (
                     itemDate >= dateRange.from &&
                     (dateRange.to ? itemDate <= dateRange.to : true)
@@ -138,7 +165,7 @@ function ArticleTable() {
 
         // Filtrage par auteur
         if (selectedAuthor && selectedAuthor !== "none") {
-            filtered = filtered.filter((el) => el.author?.name === selectedAuthor);
+            filtered = filtered.filter((el) => el.author?.id === Number(selectedAuthor));
         }
 
         return filtered;
@@ -160,6 +187,7 @@ function ArticleTable() {
     }
 
     function onRestoreArticle(id: number) {
+        //Ici on va modifier son statut a enregistrer
         queryClient.invalidateQueries({ queryKey: ["article"] })
         toast.success("Article Restauré avec succès");
     }
@@ -171,8 +199,8 @@ function ArticleTable() {
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = current === "tous" ?
-        filterData.slice(startIndex, startIndex + itemsPerPage) : []
-    // :filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.statut === current);
+        filterData.slice(startIndex, startIndex + itemsPerPage)
+        : filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.status === current);
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -181,10 +209,10 @@ function ArticleTable() {
             <h1 className="uppercase text-[40px]">{"Tous Les Articles"}</h1>
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
-                {/* <Button onClick={() => setCurrent("publie")} className={`shadow-none text-[16px] rounded-[6px] ${current === "publie" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
-                <Button onClick={() => setCurrent("programme")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programme" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
-                <Button onClick={() => setCurrent("brouillon")} className={`shadow-none text-[16px] rounded-[6px] ${current === "brouillon" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
-                <Button onClick={() => setCurrent("corbeille")} className={`shadow-none text-[16px] rounded-[6px] ${current === "corbeille" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button> */}
+                <Button onClick={() => setCurrent("published")} className={`shadow-none text-[16px] rounded-[6px] ${current === "published" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
+                <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
+                <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
+                <Button onClick={() => setCurrent("deleted")} className={`shadow-none text-[16px] rounded-[6px] ${current === "deleted" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
             </div>
             <span className="flex flex-wrap items-center gap-5">
                 <span className="relative max-w-sm w-full">
@@ -210,11 +238,13 @@ function ArticleTable() {
                     </SelectTrigger>
                     <SelectContent className="border border-[#A1A1A1] w-fit flex items-center p-2">
                         <SelectItem value="none">{"Tous les auteurs"}</SelectItem>
-                        {[...new Set(auteur)].map((x, i) => (
-                            <SelectItem key={i} value={x}>
-                                {x}
-                            </SelectItem>
-                        ))}
+                        {[...new Set(auteur)].map((x, i) => {
+                            return (
+                                <SelectItem key={i} value={String(x.id)}>
+                                    {x.name}
+                                </SelectItem>
+                            )
+                        })}
                     </SelectContent>
                 </Select>
                 <Link href={"/dashboard/articles/add-article"} passHref>
@@ -273,36 +303,36 @@ function ArticleTable() {
                                                                     <TableCell className="border">{item.author?.name}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
                                                                     <TableCell className="border">{item.created_at}</TableCell>
-                                                                    <TableCell className="border">{"Statut"}</TableCell>
-                                                                    {/* <TableCell className="border">{item.statut === "brouillon" ?
+                                                                    <TableCell className="border">{item.status === "draft" ?
                                                                         "Brouillon" :
-                                                                        item.statut === "publie" ? "Publié" :
-                                                                            item.statut === "programme" ? "Programmé" :
-                                                                                item.statut === "corbeille" ? "Corbeille" : ""
-                                                                    }</TableCell> */}
+                                                                        item.status === "published" ? "Publié" :
+                                                                            item.status === "programmed" ? "Programmé" :
+                                                                                item.status === "deleted" ? "Corbeille" : ""
+                                                                    }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <ModalWarning id={item.id} action={deleteArticle} name={item.title}>
-                                                                            <Trash2 className="text-red-400 size-5 cursor-pointer" />
-                                                                        </ModalWarning>
-                                                                        {/* {
-                                                                            item.statut === "brouillon" || item.statut === "programme" ?
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : editArticle.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                            <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
+                                                                        </DeleteValidation>
+                                                                        {
+                                                                            item.status === "draft" || item.status === "programmed" ?
                                                                                 <LuSend
                                                                                     onClick={(e) => {
                                                                                         e.preventDefault();
+                                                                                        setSelectedArticleId(item.id);
                                                                                         handleOpen();
                                                                                     }}
                                                                                     className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                 :
-                                                                                item.statut === "corbeille" ?
-                                                                                    <ShareWarning id={0} action={onRestoreArticle} name={item.titre} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
+                                                                                item.status === "deleted" ?
+                                                                                    <ShareWarning id={selectedArticleId} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
                                                                                         <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
-                                                                        } */}
-                                                                        <Sharing isOpen={dialog} onOpenChange={setDialog} donnee={item} />
+                                                                        }
+                                                                        <DatePubli artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} />
                                                                     </TableCell>
                                                                 </TableRow>
                                                             )
@@ -311,7 +341,6 @@ function ArticleTable() {
                                                     </TableBody>
                                                 </Table>
                                             </FormControl>
-
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -327,11 +356,9 @@ function ArticleTable() {
                             )
                         )}
                 </form>
+                <ToastContainer />
             </Form>
-
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
-            <ToastContainer />
         </div>
     );
 }

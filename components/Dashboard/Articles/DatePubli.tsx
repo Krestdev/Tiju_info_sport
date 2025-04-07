@@ -17,6 +17,7 @@ import { LuCalendarDays, LuChevronDown } from 'react-icons/lu';
 import useStore from '@/context/store';
 import axiosConfig from '@/api/api';
 import { AxiosResponse } from 'axios';
+import { stat } from 'fs';
 const formSchema = z.object({
     date: z.coerce.date(),
     heure: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format invalide (HH:mm)"),
@@ -25,34 +26,20 @@ const formSchema = z.object({
 interface Props {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-    donnee: {
-        type: string;
-        description: string;
-        titre: string;
-        extrait: string;
-        media?: any;
-        couverture?: any;
-    };
+    artId: number;
 }
 
-const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
+const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
 
-    console.log(donnee);
-
-
-    const { dataCategorie, token } = useStore();
+    const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [selectedHour, setSelectedHour] = useState<number | null>(null);
     const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
-    const [submitFunction, setSubmitFunction] = useState(() => onSubmit);
+    const [submitFunction, setSubmitFunction] = useState(() => onSubmit2);
     const [programmer, setProgrammer] = useState(false);
     const [categorie, setCategorie] = useState<Category[]>()
 
-    const cateData = useQuery({
-        queryKey: ["category"],
-        queryFn: async () => dataCategorie
-    })
 
     const articleCate = useQuery({
         queryKey: ["categories"],
@@ -80,42 +67,32 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
         return doc.body.textContent || "";
     };
 
-    const addArticle = useMutation({
-        mutationKey: ["articles"],
-        mutationFn: (data: z.infer<typeof formSchema>) => {
-            const decodedText = decodeHtml(donnee.description)
-            return axiosClient.post("/articles",
-                {
-                    user_id: "3",
-                    category_id: categorie?.find(x => x.title === donnee.type)?.id,
-                    title: donnee.titre,
-                    summary: donnee.extrait,
-                    description: decodedText,
-                    type: donnee.type,
-                    created_at: new Date(`${format(data.date, "yyyy-MM-dd")}T${data.heure}:00`)
-                        .toString(),
-                    images: donnee.media
-                }
-            )
-        }
-    })
+    const editArticle = useMutation({
+            mutationKey: ["pictures"],
+            mutationFn: (id: number) => {
+                const idU = String(currentUser.id)
+                return axiosClient.patch(`/articles/publish/${id}`, {
+                    user_id: idU,
+                    statut: "published",
+                });
+            },
+            onSuccess() {
+                onOpenChange(false);
+                toast.success("Article publié avec succès");
+                queryClient.invalidateQueries({ queryKey: ["articles"] });
+            },
+            retry: 5,
+            retryDelay: 5000
+        });
 
-    function onSubmit (data: z.infer<typeof formSchema>) {
-        addArticle.mutate(data);
+
+    function onSubmit1 () {
+        editArticle.mutate(artId);
     }
 
-    React.useEffect(() => {
-        if (addArticle.isSuccess) {
-            toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["articles"] });
-            // setDialogOpen(prev => !prev);
-            setOpen(prev => !prev)
-            queryClient.invalidateQueries({ queryKey: ["pubs"] })
-        } else if (addArticle.isError) {
-            toast.error("Erreur lors de la création de l'article");
-            console.log(addArticle.error)
-        }
-    }, [addArticle.isError, addArticle.isSuccess, addArticle.error])
+    function onSubmit2 (data: z.infer<typeof formSchema>) {
+        editArticle.mutate(artId);
+    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -147,13 +124,13 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
                         <Button
                             type="submit"
                             className='rounded-none'
-                            onClick={() => setSubmitFunction(() => onSubmit)}
+                            onClick={() => {setSubmitFunction(() => onSubmit1)}}
                         >
                             {"Publier Maintenant"}
                         </Button>
-                        {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
+                        {/* {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
                             {"Programmer la publication"}
-                        </Button>}
+                        </Button>} */}
                         {programmer && <div>
                             <FormField
                                 control={form.control}
@@ -240,7 +217,7 @@ const DatePubli = ({ isOpen, onOpenChange, donnee }: Props) => {
                                 variant={"outline"}
                                 type="submit"
                                 className='rounded-none w-full mt-4'
-                                onClick={() => setSubmitFunction(() => onSubmit)}
+                                onClick={() => setSubmitFunction(() => onSubmit2)}
                             >
                                 {"Valider"}
                             </Button>

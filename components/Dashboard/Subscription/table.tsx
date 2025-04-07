@@ -89,10 +89,9 @@ function SubscritionTable() {
         setSearchEntry(event.target.value);
     }
 
-    const toNormalDate = (dateStr: string): Date => {
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
-    };
+    function toNormalDate(dateString: string): Date {
+        return new Date(dateString.replace(" ", "T"));
+    }
 
     // const filterData = useMemo(() => {
     //     if (!subscritionData.data) {

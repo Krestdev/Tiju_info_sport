@@ -123,10 +123,9 @@ function CommentsTable() {
         setSearchEntry(event.target.value);
     }
 
-    const toNormalDate = (dateStr: string): Date => {
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
-    };
+    function toNormalDate(dateString: string): Date {
+        return new Date(dateString.replace(" ", "T"));
+    }
 
     //Updated data with search implemented
     const filterData = useMemo(() => {
@@ -196,8 +195,8 @@ function CommentsTable() {
             <h1 className="uppercase text-[40px]">{"Commentaires"}</h1>
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
-                {/* <Button onClick={() => setCurrent("signale")} className={`shadow-none text-[16px] rounded-[6px] ${current === "signale" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Signalés"}</Button>
-                <Button onClick={() => setCurrent("supprime")} className={`shadow-none text-[16px] rounded-[6px] ${current === "supprime" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Supprimés"}</Button> */}
+                <Button onClick={() => setCurrent("signale")} className={`shadow-none text-[16px] rounded-[6px] ${current === "signale" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Signalés"}</Button>
+                <Button onClick={() => setCurrent("supprime")} className={`shadow-none text-[16px] rounded-[6px] ${current === "supprime" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Supprimés"}</Button>
             </div>
             <span className="flex flex-wrap items-center gap-5">
                 <span className="relative max-w-sm w-full">
