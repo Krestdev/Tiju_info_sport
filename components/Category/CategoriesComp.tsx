@@ -133,7 +133,7 @@ const CategoryComp = ({ article, ad, categorie, categoriesList, setArticle }: Pr
     }, [article]);
 
     useEffect(() => {
-        setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id))
+        setListe(categorie?.filter(x => x.parent === categoriesList?.find(x => x.title === selected)?.id && x.articles.length > 0))
     }, [article, categorie, selected, categoriesList])
 
     return (
