@@ -12,7 +12,7 @@ function Feed({ className }: feedProps) {
 
   if (isSuccess) {
     return (
-      <div className={`grid gap-7 ${className}`}>
+      <div className={`flex flex-col gap-7 ${className}`}>
         {mainArticles.length > 0 && (
           <div className="flex flex-col">
             <div className="border-b">
