@@ -116,6 +116,7 @@ type Article = {
     created_at: string;
     updated_at: string;
     status: string;
+    headline: boolean;
 };
 
 type ImageA = {

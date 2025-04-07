@@ -33,6 +33,7 @@ import { LuEye, LuPlus } from "react-icons/lu";
 import DatePubli from "./DatePubli";
 import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -58,6 +59,7 @@ const formSchema = z.object({
                 Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ).optional(),
+    headline: z.boolean()
 });
 
 
@@ -78,10 +80,10 @@ function EditArticle({ children, donnee }: Props) {
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
     const [categorie, setCategorie] = useState<Category[]>();
-    const [cate, setCate] = useState<Category[]>()
     const [dialogOpen, setDialogOpen] = useState(false)
     const queryClient = useQueryClient();
     const [fichier, setFichier] = useState(null)
+    const [artMod, setArtMod] = useState<any>()
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -127,8 +129,6 @@ function EditArticle({ children, donnee }: Props) {
     const updateImage = useMutation({
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
-            console.log(data);
-
             return axiosClient1.post(`/image/${donnee.images[0].id}`,
                 {
                     file: data,
@@ -136,15 +136,8 @@ function EditArticle({ children, donnee }: Props) {
                 }
             )
         },
-        onSuccess(data) {
-            editArticle.mutate({
-                data: {
-                    title: donnee.title,
-                    type: donnee.type,
-                    extrait: donnee.summery,
-                    description: donnee.description,
-                }, dataI: data
-            })
+        onSuccess() {
+            editArticle.mutate()
         },
     })
 
@@ -159,27 +152,34 @@ function EditArticle({ children, donnee }: Props) {
 
     const editArticle = useMutation({
         mutationKey: ["articles"],
-        mutationFn: ({ data, dataI }: { data: z.infer<typeof formSchema>, dataI: any },) => {
+        mutationFn: () => {
             const idU = String(currentUser.id)
-            return axiosClient.patch(`/articles/${dataI.id}`, {
+            return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
-                title: data.title,
-                summary: data.extrait,
-                description: decodeHtml(data.description),
-                type: data.type,
+                title: artMod.title,
+                summary: artMod.extrait,
+                description: decodeHtml(artMod.description),
+                type: artMod.type,
+                headline: artMod.headline
             });
         },
+        onSuccess() {
+            setDialogOpen(false)
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000,
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
         setFichier(data.media)
+        setArtMod(data)
         fichier && updateImage.mutate({ data: fichier[0], id: donnee.id });
     }
 
     React.useEffect(() => {
         if (editArticle.isSuccess) {
             toast.success("Modifiée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["articles"] });
             setDialogO(false);
             form.reset();
         } else if (editArticle.isError) {
@@ -198,6 +198,7 @@ function EditArticle({ children, donnee }: Props) {
             description: donnee.description,
             // couverture: donnee.images[0],
             media: donnee.images[0],
+            headline: donnee.headline
         },
     });
 
@@ -427,6 +428,25 @@ function EditArticle({ children, donnee }: Props) {
                                 )}
                             />
                         </div>
+
+                        <FormField
+                            control={form.control}
+                            name="headline"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <div className='flex items-center gap-2'>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                            <p>{"Ajouter a la une"}</p>
+                                        </div>
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
                         <div className='w-full flex flex-col gap-2'>
                             <Button
                                 variant="default"
@@ -451,9 +471,9 @@ function EditArticle({ children, donnee }: Props) {
                             </Button> */}
                         </div>
                     </form>
+                    <ToastContainer />
                 </Form>
             </DialogContent>
-            <ToastContainer />
         </Dialog >
     );
 }

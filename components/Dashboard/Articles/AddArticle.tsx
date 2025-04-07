@@ -20,6 +20,7 @@ import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
 import LexicalEditor from './LexicalEditor';
 import DatePubli from './DatePubli';
+import { Checkbox } from "@/components/ui/checkbox"
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -46,6 +47,7 @@ const formSchema = z.object({
             { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
         ).optional(),
     status: z.string(),
+    headline: z.boolean(),
 });
 
 
@@ -62,6 +64,7 @@ const AddArticle = () => {
     const [articleAjout, setArticleAjout] = useState<Article>();
     const [fichier, setFichier] = useState(null);
     const [artId, setArtId] = useState(0);
+    const [checked, setChecked] = useState<boolean>(false)
     const [art, setArt] = useState<Article | null>(null)
 
     const axiosClient = axiosConfig({
@@ -84,7 +87,8 @@ const AddArticle = () => {
             extrait: "",
             description: "",
             media: "",
-            status: "save"
+            status: "save",
+            headline: false
         },
     });
 
@@ -101,7 +105,8 @@ const AddArticle = () => {
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
-                    status: data.status
+                    status: data.status,
+                    headline: Boolean(data.headline)
                 }
             )
         },
@@ -124,7 +129,8 @@ const AddArticle = () => {
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
-                    status: data.status
+                    status: data.status,
+                    headline: Boolean(data.headline)
                 }
             )
         },
@@ -225,6 +231,7 @@ const AddArticle = () => {
                 summary: data.summery,
                 description: data.description,
                 type: data.type,
+                headline: Boolean(data.headline),
                 images: `https://tiju.krestdev.com/api/image/${imageId}`
             });
         },
@@ -474,6 +481,23 @@ const AddArticle = () => {
                         )}
                     />
                 </div>
+                <FormField
+                    control={form.control}
+                    name="headline"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <div className='flex items-center gap-2'>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                    <p>{"Ajouter a la une"}</p>
+                                </div>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
 
                 <div className='w-full flex flex-col gap-2'>
                     <Button
@@ -499,6 +523,8 @@ const AddArticle = () => {
                         type="submit"
                         className="max-w-[384px] w-full rounded-none font-normal"
                         onClick={(e) => {
+                            console.log(form.getValues());
+                            
                             form.handleSubmit(onSubmit1)()
                             e.preventDefault();
                         }}

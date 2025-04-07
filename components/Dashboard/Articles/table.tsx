@@ -79,26 +79,26 @@ function ArticleTable() {
         }
     }, [articleCate.data])
 
-    const editArticle = useMutation({
+    const articleToTrash = useMutation({
         mutationKey: ["pictures"],
         mutationFn: (id: number) => {
             const idU = String(currentUser.id)
-            return axiosClient.patch(`/articles/publish/${id}`, {
+            return axiosClient.patch(`/articles/trash/${id}`, {
                 user_id: idU,
-                statut: "deleted",
             });
         },
         onSuccess() {
-            toast.success("AJouté à la corbeille publié avec succès");
+            toast.success("AJouté à la corbeille avec succès");
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
         retryDelay: 5000
     });
 
+    
 
     function onSubmit1(id: number) {
-        editArticle.mutate(id);
+        articleToTrash.mutate(id);
     }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -276,6 +276,7 @@ function ArticleTable() {
                                                             <TableHead>{"titre"}</TableHead>
                                                             <TableHead>{"Auteur"}</TableHead>
                                                             <TableHead>{"Categories"}</TableHead>
+                                                            <TableHead>{"À la une"}</TableHead>
                                                             <TableHead>{"Date"}</TableHead>
                                                             <TableHead>{"Statut"}</TableHead>
                                                             <TableHead>{"Actions"}</TableHead>
@@ -302,6 +303,7 @@ function ArticleTable() {
                                                                     <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
                                                                     <TableCell className="border">{item.author?.name}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
+                                                                    <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
                                                                     <TableCell className="border">{item.created_at}</TableCell>
                                                                     <TableCell className="border">{item.status === "draft" ?
                                                                         "Brouillon" :
@@ -313,7 +315,7 @@ function ArticleTable() {
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : editArticle.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
                                                                             <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                         </DeleteValidation>
                                                                         {

@@ -380,7 +380,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
         }
     };
 
-
     // function peutConsulter(utilisateur: Users | null, article: Article): boolean {
     //     // Si l'article est gratuit (coutMois et coutAn à 0), tout le monde peut le lire
     //     if (article.abonArticle.coutMois === 0 && article.abonArticle.coutAn === 0) {
@@ -726,12 +725,12 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                 <p className='font-normal text-[12px] leading-[15.6px]'>{x.likes.length} </p>
                                                             </Button>
                                                             {x.author.id !== currentUser?.id ?
-                                                                <div>
-                                                                    <Popover open={openRepondre === x.id} onOpenChange={() => toggleRepondre(x.id)}>
+                                                                <div className='flex'>
+                                                                    {/* <Popover open={openRepondre === x.id} onOpenChange={() => toggleRepondre(x.id)}>
                                                                         <PopoverTrigger asChild>
                                                                             <Button disabled={!currentUser} className='hidden md:flex px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
                                                                         </PopoverTrigger>
-                                                                        <PopoverContent className="w-80 flex flex-col gap-2">
+                                                                        <PopoverContent className="w-80 hidden md:flex flex-col gap-2">
                                                                             <div className="space-y-2 bg-gray-100 rounded-full">
                                                                                 <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
                                                                             </div>
@@ -745,7 +744,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                 <Button onClick={() => handleResponseClick(details.id.toString(), x.id.toString())}>{"Répondre"}</Button>
                                                                             </div>
                                                                         </PopoverContent>
-                                                                    </Popover>
+                                                                    </Popover> */}
                                                                     <div className='flex'>
                                                                         <Button
                                                                             onClick={() => toggleRepondre(x.id)}
@@ -761,7 +760,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                     <Input
                                                                                         className="flex md:hidden w-full border border-gray-300 rounded-[20px] resize-none"
                                                                                         placeholder="Tapez votre commentaire"
-                                                                                        value={commentaire}
+                                                                                        value={response}
                                                                                         onChange={(e) => setResponse(e.target.value)}
                                                                                         autoFocus
                                                                                     />
@@ -769,7 +768,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                         rows={3}
                                                                                         className="hidden md:flex w-full border border-gray-300 resize-none"
                                                                                         placeholder="Tapez votre commentaire"
-                                                                                        value={commentaire}
+                                                                                        value={response}
                                                                                         onChange={(e) => setResponse(e.target.value)}
                                                                                         autoFocus
                                                                                     />
@@ -789,7 +788,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                         <Button
                                                                                             variant={"ghost"}
                                                                                             className='hidden md:flex'
-                                                                                            onClick={() => { setCommentaire(""); toggleRepondre(x.id) }}
+                                                                                            onClick={() => { setResponse(""); toggleRepondre(x.id) }}
                                                                                         >
                                                                                             {"ANNULER"}
                                                                                         </Button>
@@ -805,12 +804,12 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             </div>
                                                                         )}
                                                                     </div>
-                                                                    <Button disabled={!currentUser} onClick={() => x.signals.find(x => x === currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
+                                                                    <Button disabled={!currentUser} onClick={() => x.signals.some(x => x === currentUser?.id) ? handleUnSignalC(x.id.toString()) : handleSignalC(x.id.toString())}
                                                                         style={{
                                                                             color: currentUser && x.signals && x.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                             cursor: "pointer",
                                                                         }}
-                                                                        className={`px-1 text-[12px] font-ubuntu hover:text-[#012BAE]`} variant={'ghost'}>{"Signaler"}
+                                                                        className={`px-1 text-[12px] font-ubuntu hover:text-[#012BAE]`} variant={'ghost'}>{x.signals.some(a => a === currentUser?.id) ? "Signalé" : "Signaler"}
                                                                     </Button>
                                                                 </div> :
                                                                 <div>
@@ -872,13 +871,13 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             <div className='flex flex-row items-center gap-4'>
                                                                                 <Button onClick={() => a.likes.some(x => x === currentUser?.id) ? handleUnLikeC(a.id.toString()) : handleLikeC(a.id.toString())}
                                                                                     style={{
-                                                                                        color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                        color: a.likes.some(x => x === currentUser?.id) ? "#0128AE" : "#A1A1A1",
                                                                                         cursor: "pointer",
                                                                                     }}
                                                                                     variant={'ghost'} className='flex gap-1 px-1'>
                                                                                     <ThumbsUp
                                                                                         style={{
-                                                                                            color: a.likes.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
+                                                                                            color: a.likes.some(x => x === currentUser?.id) ? "#0128AE" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}
                                                                                         className='size-5 text-[#012BAE]' />
@@ -905,11 +904,11 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                                                 </div>
                                                                                             </PopoverContent>
                                                                                         </Popover>
-                                                                                        <Button onClick={() => a.signals.find(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()) : handleSignalC(a.id.toString())} style={{
+                                                                                        <Button onClick={() => a.signals.some(x => x === currentUser?.id) ? handleUnSignalC(a.id.toString()) : handleSignalC(a.id.toString())} style={{
                                                                                             color: a.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
                                                                                             cursor: "pointer",
                                                                                         }}
-                                                                                            className='px-1 text-[#A1A1A1]' variant={'ghost'}>{"Signaler"}</Button>
+                                                                                            className='px-1 text-[12px] font-ubuntu text-[#A1A1A1]' variant={'ghost'}>{a.signals.some(x => x === currentUser?.id) ? "Signalé" : "Signaler"}</Button>
                                                                                     </div> :
                                                                                     <div>
                                                                                         <Popover open={openModifier === a.id} onOpenChange={() => toggleComment(a.id)}>
