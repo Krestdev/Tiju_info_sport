@@ -625,26 +625,31 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                         </Button>
 
                                         {openCommenter && (
-                                            <div className="fixed inset-0 bg-black/30 flex items-end justify-center z-50">
-                                                <div className="bg-white flex w-full max-w-md shadow-lg">
+                                            <div className="fixed inset-0 bg-black/30 z-50">
+                                                {/* Empêche le scroll du fond */}
+                                                <div className="absolute inset-0 overflow-hidden" />
+
+                                                {/* Barre de commentaire en bas, fixe au-dessus du clavier */}
+                                                <div className="fixed bottom-0 left-0 right-0 bg-white w-full max-w-md mx-auto px-2 py-2 shadow-lg flex items-center gap-2">
                                                     <Input
-                                                        className="w-full border border-gray-300 resize-none"
+                                                        className="flex-1 border border-gray-300"
                                                         placeholder="Tapez votre commentaire"
                                                         value={commentaire}
                                                         onChange={(e) => setCommentaire(e.target.value)}
                                                         autoFocus
                                                     />
-                                                    <div className='flex justify-end'>
-                                                        <Button
-                                                        className=''
-                                                            onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
-                                                        >
-                                                            <LuSend />
-                                                        </Button>
-                                                    </div>
+                                                    <Button
+                                                        onClick={() => {
+                                                            setOpenCommenter(false);
+                                                            handleAddComment(details.id.toString());
+                                                        }}
+                                                    >
+                                                        <LuSend />
+                                                    </Button>
                                                 </div>
                                             </div>
                                         )}
+
                                     </div>
                                 </div>
                             }
