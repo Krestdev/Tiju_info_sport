@@ -63,7 +63,7 @@ type Advertisement = {
     id: number;
     author: Author;
     title: string;
-    description: string;
+    description: "large" | "petit";
     url: string;
     image: ImageA;
     createdAt: string;
@@ -74,7 +74,7 @@ type Advertisement = {
 type AdvertisementCreation = {
     user_id: number;
     title: string;
-    description: string;
+    description: "large" | "petit";
     image: string;
     url: string;
 };
@@ -116,6 +116,7 @@ type Article = {
     created_at: string;
     updated_at: string;
     status: "published" | "draft" | "deleted";
+    headline: boolean;
 };
 
 type ImageA = {

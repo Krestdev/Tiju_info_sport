@@ -1,27 +1,30 @@
+import { useAds } from "@/hooks/useAds";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
-import { Skeleton } from "./ui/skeleton";
+import Advertisement from "./advertisement";
 import ArticlePreview from "./articlePreview";
+import { Skeleton } from "./ui/skeleton";
 
 interface feedProps {
   className?: string;
 }
 
 function Feed({ className }: feedProps) {
-  const { isLoading, isSuccess, todayArticles, mainArticles } =
+  const { isLoading, isSuccess, todayArticles, headline } =
     usePublishedArticles();
+  const ads = useAds();
 
   if (isSuccess) {
     return (
       <div className={`flex flex-col gap-7 ${className}`}>
-        {mainArticles.length > 0 && (
-          <div className="flex flex-col">
+        {headline.length > 0 && (
+          <div className="flex flex-col order-1">
             <div className="border-b">
               <h3 className="w-fit uppercase font-oswald text-xl text-white py-2 px-4 bg-red-700">
                 {"à la une"}
               </h3>
             </div>
             <div className="grid divide-y">
-                {mainArticles.slice(0, 4).map((article) => (
+                {headline.slice(0, 4).map((article) => (
                 <ArticlePreview
                     key={article.id}
                     version="text-only"
@@ -32,7 +35,7 @@ function Feed({ className }: feedProps) {
           </div>
         )}
         {todayArticles.length > 0 && (
-          <div className="flex flex-col">
+          <div className="flex flex-col order-3 lg:order-2">
             <div className="border-b">
               <h3 className="w-fit uppercase font-oswald text-xl text-white py-2 px-4 bg-green-500">
                 {"aujourd'hui"}
@@ -49,6 +52,7 @@ function Feed({ className }: feedProps) {
             </div>
           </div>
         )}
+        { ads.randomSquare && <Advertisement variant="square" className="order-2 lg:order-3" {...ads.randomSquare}/>}
       </div>
     );
   }

@@ -16,6 +16,7 @@ import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
 import Feed from "../feed";
 import ArticlePreview from "../articlePreview";
+import FeedTemplate from "../feed-template";
 
 const Accueil = () => {
   const { currentUser, setFavorite, favorite } = useStore();
@@ -51,6 +52,7 @@ const Accueil = () => {
   useEffect(() => {
     if (ads.isSuccess) {
       setPub(ads.data.data);
+      //console.log(ads.data.data)
     }
   }, [ads.data]);
 
@@ -134,14 +136,12 @@ const Accueil = () => {
   }
   if(categories.isSuccess){
     return (
-        <>
         <main className="py-0 lg:py-8">
             <div className="block lg:hidden mb-10">
                 {/* <Head gridAff={articles} /> */}
                 <ArticlePreview version="main" {...articles[0]}/>
             </div>
-        <div className="containerBloc grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-10">
-          <div className="flex flex-col gap-10 col-span-1 lg:col-span-2 order-2 lg:order-1">
+            <FeedTemplate>
             <div className="hidden lg:block">
                 {/* <Head gridAff={articles} /> */}
                 <ArticlePreview version="main" {...articles[0]}/>
@@ -155,11 +155,9 @@ const Accueil = () => {
             </div>
                 : <div className="w-full min-h-80 flex items-center justify-center"><span className="text-lg sm:text-xl lg:text-2xl">{"Aucun article à afficher"}</span></div>}
             { ads.isLoading && <Skeleton className="w-full h-auto aspect-[4/1]" />}
-            { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-auto aspect-[4/1] bg-repeat-x bg-contain" style={{backgroundImage: `url(${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id})`}} /></Link>}
+            { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-[200px] bg-repeat-x bg-contain" style={{backgroundImage: `url(${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id})`}} /></Link>}
             {/* { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data} taille={"h-[200px]"} clip={""} />} */}
-          </div>
-          <Feed className="col-span-1 order-1 lg:order-2"/>
-        </div>
+            </FeedTemplate>
         {
             categories.data.data.length > 0 && categories.data.data.filter(x=>x.articles.length>1).slice(0,1).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
@@ -172,83 +170,6 @@ const Accueil = () => {
             ))
         }
       </main>
-        {/* <div>
-      {categories.isSuccess && (
-        <div className="containerBloc flex flex-col justify-center py-8 gap-[10px]">
-          <div className="w-full flex flex-col-reverse  md:flex-row gap-10 md:px-7">
-            <div className="max-w-[824px] w-full flex flex-col gap-10">
-              <div className="w-full flex flex-col gap-10">
-                <div className="hidden md:flex">
-                  {carrHero && <Head gridAff={carrHero} />}
-                </div>
-                <div className="px-7 md:px-0">
-                  {carrHero && <GridAcc gridAff={carrHero} />}
-                </div>
-                <div className="hidden md:flex">
-                  {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
-                </div>
-              </div>
-            </div>
-            <div className="md:max-w-[360px] w-full md:px-7 gap-7">
-              <div className="flex pb-7 !px-0 md:hidden">
-                {carrHero && <Head gridAff={carrHero} />}
-              </div>
-              <div
-                className={`${tail} md:max-h-full h-full overflow-hidden px-7 md:px-0`}
-              >
-                <UnePubs
-                  titre={"A la une"}
-                  couleur={"bg-[#B3261E]"}
-                  article={une
-                    ?.slice(0, 2)
-                    .flatMap((cat) => cat.articles.slice(0, 1))}
-                  pubs={pub}
-                />
-                <UnePubs
-                  titre={"Aujourd'hui"}
-                  couleur={"bg-[#01AE35]"}
-                  article={une
-                    ?.slice()
-                    .flatMap((cat) => cat.articles.slice())
-                    .slice(0, 8)}
-                  pubs={pub?.slice().reverse()}
-                />
-              </div>
-              {tail === "max-h-[379px]" && (
-                <Button
-                  variant={"outline"}
-                  className="mx-7 rounded-none mt-3 flex md:hidden"
-                  onClick={() => handleVoirtout()}
-                >
-                  {"Voir Plus"}
-                </Button>
-              )}
-              <div className="flex md:hidden px-0 mt-7">
-                {pub && (
-                  <PubsComp
-                    pub={pub}
-                    taille={"h-[300px]"}
-                    clip={"clip-custom"}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-          <div>
-            {une && (
-              <GridInfo gridAff={une.slice(0, 4)} couleur={"bg-[#0A0E93]"} />
-            )}
-            <div className="hidden md:flex">
-              {pub && <PubsComp pub={pub} taille={"h-[200px]"} clip={""} />}
-            </div>
-            {une && (
-              <GridInfo gridAff={une.slice(5, 9)} couleur={"bg-[#0180F8]"} />
-            )}
-          </div>
-        </div>
-      )}
-    </div> */}
-        </>
     );
   }
 };

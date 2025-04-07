@@ -86,3 +86,11 @@ export function getDateRange(value: string) {
 export function defineTitle(title:string) {
   return `${title} - Tyju Info Sport`
 }
+
+export function sortArticles(articles:Article[]){
+  return [...articles].sort((a, b) => {
+    const dateA = new Date(a.created_at).getTime(); // Convert to timestamp
+    const dateB = new Date(b.created_at).getTime();
+    return dateB - dateA; // Newest first (descending)
+  })
+}
