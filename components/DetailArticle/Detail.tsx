@@ -659,14 +659,14 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         <Button
                                                             variant={"ghost"}
                                                             className='hidden md:flex'
-                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                            onClick={() => { setCommentaire(""); setOpenCommenter(false) }}
                                                         >
                                                             {"ANNULER"}
                                                         </Button>
                                                         <Button
                                                             variant={"ghost"}
                                                             className='flex md:hidden bg-transparent shadow-none text-black'
-                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                            onClick={() => { setCommentaire(""); setOpenCommenter(false) }}
                                                         >
                                                             <LuX />
                                                         </Button>
@@ -746,6 +746,63 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                             </div>
                                                                         </PopoverContent>
                                                                     </Popover>
+                                                                    <div className='flex'>
+                                                                        <Button
+                                                                            onClick={() => toggleRepondre(x.id)}
+                                                                        >
+                                                                            {"REPONDRE"}
+                                                                        </Button>
+
+                                                                        {openRepondre && (
+                                                                            <div className="fixed inset-0 flex items-end justify-center z-50">
+                                                                                <div className="bg-white flex md:flex-col gap-2 items-center w-full max-w-md shadow-lg rounded-[20px]">
+                                                                                    <Input
+                                                                                        className="flex md:hidden w-full border border-gray-300 rounded-[20px] resize-none"
+                                                                                        placeholder="Tapez votre commentaire"
+                                                                                        value={commentaire}
+                                                                                        onChange={(e) => setResponse(e.target.value)}
+                                                                                        autoFocus
+                                                                                    />
+                                                                                    <Textarea
+                                                                                        rows={3}
+                                                                                        className="hidden md:flex w-full border border-gray-300 resize-none"
+                                                                                        placeholder="Tapez votre commentaire"
+                                                                                        value={commentaire}
+                                                                                        onChange={(e) => setResponse(e.target.value)}
+                                                                                        autoFocus
+                                                                                    />
+                                                                                    <div className='flex justify-end md:justify-start md:gap-2 md:mt-1'>
+                                                                                        <Button
+                                                                                            className='flex md:hidden bg-transparent shadow-none text-[#012BAE]'
+                                                                                            onClick={() => { toggleRepondre(x.id); handleResponseClick(details.id.toString(), x.id.toString()) }}
+                                                                                        >
+                                                                                            <LuSend />
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            className='hidden md:flex'
+                                                                                            onClick={() => { toggleRepondre(x.id); handleResponseClick(details.id.toString(), x.id.toString()) }}
+                                                                                        >
+                                                                                            {"REPONDRE"}
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            variant={"ghost"}
+                                                                                            className='hidden md:flex'
+                                                                                            onClick={() => { setCommentaire(""); toggleRepondre(x.id) }}
+                                                                                        >
+                                                                                            {"ANNULER"}
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            variant={"ghost"}
+                                                                                            className='flex md:hidden bg-transparent shadow-none text-black'
+                                                                                            onClick={() => { setCommentaire(""); toggleRepondre(x.id) }}
+                                                                                        >
+                                                                                            <LuX />
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                     <Button disabled={!currentUser} onClick={() => x.signals.find(x => x === currentUser?.id) ? handleSignalC(x.id.toString()) : handleUnSignalC(x.id.toString())}
                                                                         style={{
                                                                             color: currentUser && x.signals && x.signals.some(x => x === currentUser?.id) ? "red" : "#A1A1A1",
