@@ -115,8 +115,8 @@ type Article = {
     likes: number[];
     created_at: string;
     updated_at: string;
-    status: string;
-    headline: boolean;
+    status: "published" | "draft" | "deleted";
+    headline: boolean
 };
 
 type ImageA = {

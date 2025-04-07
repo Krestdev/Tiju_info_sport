@@ -55,7 +55,7 @@ function CategoryTable() {
     const axiosClient = axiosConfig();
 
     const articleCate = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`
@@ -75,7 +75,7 @@ function CategoryTable() {
             return axiosClient.delete(`/category/${categoryId}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
 

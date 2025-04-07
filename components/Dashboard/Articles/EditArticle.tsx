@@ -104,7 +104,7 @@ function EditArticle({ children, donnee }: Props) {
 
 
     const articleCate = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

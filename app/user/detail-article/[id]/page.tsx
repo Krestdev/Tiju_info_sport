@@ -36,13 +36,13 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   });
 
   const articleData = useQuery({
-    queryKey: ["categoryv"],
-    queryFn: () => {
-      return axiosClient.get<any, AxiosResponse<Category[]>>(
-        `/category`
-      );
-    },
-  });
+          queryKey: ["categories"],
+          queryFn: () => {
+              return axiosClient.get<any, AxiosResponse<Category[]>>(
+                  `/category`
+              );
+          },
+      });
 
   useEffect(() => {
     if (pubData.isSuccess) {

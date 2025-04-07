@@ -39,30 +39,25 @@ const PubsComp = ({ pub, clip, taille }: PubProps) => {
           delay: 5000,
         }),
       ]}
-      className='w-full'
+      className='mx-auto max-w-7xl w-full'
     >
       <CarouselContent className='w-full px-7 md:px-0'>
         {pub.map((x, i) => {
           return (
-            <CarouselItem key={i} className='w-full'>
+            <CarouselItem key={i} className='w-full h-auto aspect-[4/1]'>
               <Link
                 // onClick={() => handleClick(x)}
                 href={x.url}
                 target="_blank"
-                className='w-full'
+                className='w-full h-full'
               >
                 <div
-                  className={`w-full flex items-center justify-center ${taille === 'h-[200px]' ? 'bg-repeat' : ''}`}
-                  style={taille === 'h-[200px]' ? { backgroundImage: `url(https://tiju.krestdev.com/api/image/${x.image.id})`, height: 200} : {}}
-                  // style={{
-                  //   backgroundImage: `url(https://tiju.krestdev.com/api/image/${x.image.id})`,
-                  //   height: 200,
-                  //   // width: "100%",
-                  // }}
+                  className={`w-full h-full flex items-center justify-center bg-contain ${taille === 'h-[200px]' && 'bg-repeat-x'}`}
+                  style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_API}image/${x.image.id})`}}
                 >
                   {taille === 'h-[200px]' ? "" : (
                     <img
-                      src={`https://tiju.krestdev.com/api/image/${x.image.id}`}
+                      src={`${process.env.NEXT_PUBLIC_API}image/${x.image.id}`}
                       alt={settings?.pub || "Publicité"}
                       className={`w-full object-cover ${taille} ${clip}`}
                     />

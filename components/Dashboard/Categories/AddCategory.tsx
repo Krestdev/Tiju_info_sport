@@ -55,7 +55,7 @@ const AddCategory = ({ children }: Props) => {
     const queryClient = useQueryClient();
 
     const addCategory = useMutation({
-        mutationKey: ["categoryv"],
+        mutationKey: ["categories"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
             return axiosClient.post("/category",
@@ -71,7 +71,7 @@ const AddCategory = ({ children }: Props) => {
     React.useEffect(() => {
         if (addCategory.isSuccess) {
             toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
             setDialogOpen(prev => !prev);
         } else if (addCategory.isError) {
             toast.error("Erreur lors de la création de la catégorie");
@@ -81,7 +81,7 @@ const AddCategory = ({ children }: Props) => {
 
 
     const addSubCategory = useMutation({
-        mutationKey: ["categoryv"],
+        mutationKey: ["categories"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
             return axiosClient.post(`/category/sub/${data.parent}`,
@@ -97,7 +97,7 @@ const AddCategory = ({ children }: Props) => {
     React.useEffect(() => {
         if (addSubCategory.isSuccess) {
             toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
             setDialogOpen(prev => !prev);
         } else if (addSubCategory.isError) {
             toast.error("Erreur lors de la création de la catégorie");
@@ -106,7 +106,7 @@ const AddCategory = ({ children }: Props) => {
     }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
 
     const articleCate = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

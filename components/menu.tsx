@@ -15,7 +15,7 @@ export function MenuComp() {
     const axiosClient = axiosConfig();
 
     const { isSuccess, data, isError, isLoading } = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

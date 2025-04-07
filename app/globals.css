@@ -145,7 +145,7 @@
     @apply font-oswald uppercase tracking-[-2%] leading-[130%] font-medium text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
   }
   .containerBloc {
-    @apply mx-auto w-full max-w-7xl px-0 md:px-7;
+    @apply mx-auto w-full max-w-7xl px-7;
   }
 
   .clip-custom {
@@ -158,5 +158,11 @@
 
   .text-strikethrough {
     text-decoration: line-through;
+  }
+  .article-category{
+    @apply font-oswald font-medium leading-[130%] text-[20px] uppercase text-gray-400; 
+  }
+  .article-title{
+    @apply font-oswald font-medium leading-[130%] tracking-[-2%] text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900 line-clamp-2;
   }
 }
