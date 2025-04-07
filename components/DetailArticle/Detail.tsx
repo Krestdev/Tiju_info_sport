@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { LuHouse } from "react-icons/lu";
+import { LuHouse, LuSend } from "react-icons/lu";
 import { LuChevronRight } from "react-icons/lu";
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
@@ -626,9 +626,9 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
                                         {openCommenter && (
                                             <div className="fixed inset-0 bg-black/30 flex items-end justify-center z-50">
-                                                <div className="bg-white w-full max-w-md p-4 shadow-lg">
+                                                <div className="bg-white flex w-full max-w-md shadow-lg">
                                                     <Input
-                                                        className="w-full border border-gray-300 p-2 mb-2 resize-none"
+                                                        className="w-full border border-gray-300 resize-none"
                                                         placeholder="Tapez votre commentaire"
                                                         value={commentaire}
                                                         onChange={(e) => setCommentaire(e.target.value)}
@@ -636,9 +636,10 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                     />
                                                     <div className='flex justify-end'>
                                                         <Button
+                                                        className=''
                                                             onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
                                                         >
-                                                            COMMENTER
+                                                            <LuSend />
                                                         </Button>
                                                     </div>
                                                 </div>
