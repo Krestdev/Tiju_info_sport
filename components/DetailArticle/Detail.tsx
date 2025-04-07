@@ -23,6 +23,7 @@ import GridAcc from '../Accueil/GridAcc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
 import Head from 'next/head';
+import { Input } from '../ui/input';
 
 
 const formSchema = z
@@ -599,21 +600,51 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                             cursor: "pointer",
                                         }}
                                     >{details.likes.length}</h2>
-                                    <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
-                                        <PopoverTrigger asChild>
-                                            <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-80 flex flex-col gap-2">
-                                            <div className="flex flex-col gap-2">
-                                                <Textarea
-                                                    placeholder="Répondre au commentaire"
-                                                    rows={2}
-                                                    onChange={(e) => setCommentaire(e.target.value)}
-                                                />
-                                                <Button onClick={() => handleAddComment(details.id.toString())}>{"COMMENTER"}</Button>
+                                    <div className='hidden md:flex'>
+                                        <Popover open={openCommenter} onOpenChange={setOpenCommenter}>
+                                            <PopoverTrigger asChild>
+                                                <Button variant={'default'} className='h-10 rounded-none'>{"COMMENTER"}</Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="hidden w-80 md:flex flex-col gap-2">
+                                                <div className="flex flex-col gap-2">
+                                                    <Textarea
+                                                        placeholder="Tapez votre commentaire"
+                                                        rows={2}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                    />
+                                                    <Button onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}>{"COMMENTER"}</Button>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                    <div className='flex md:hidden'>
+                                        <Button
+                                            onClick={() => setOpenCommenter(true)}
+                                        >
+                                            COMMENTER
+                                        </Button>
+
+                                        {openCommenter && (
+                                            <div className="fixed inset-0 bg-black/30 flex items-end justify-center z-50">
+                                                <div className="bg-white w-full max-w-md p-4 shadow-lg">
+                                                    <Input
+                                                        className="w-full border border-gray-300 p-2 mb-2 resize-none"
+                                                        placeholder="Tapez votre commentaire"
+                                                        value={commentaire}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                        autoFocus
+                                                    />
+                                                    <div className='flex justify-end'>
+                                                        <Button
+                                                            onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
+                                                        >
+                                                            COMMENTER
+                                                        </Button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </PopoverContent>
-                                    </Popover>
+                                        )}
+                                    </div>
                                 </div>
                             }
                             <p className='font-bold'> {details.comments.length <= 9 && '0'}{details.comments.length} Commentaire{details.comments.length > 1 && 's'}</p>

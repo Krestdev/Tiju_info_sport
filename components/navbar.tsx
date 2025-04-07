@@ -30,7 +30,7 @@ const Navbar = () => {
 
     useEffect(() => {
         if (articleData.isSuccess) {
-            setArticle(articleData.data.data.filter(x => x.articles.length > 0))
+            setArticle(articleData.data.data.filter(x => articleData.data.data.some(a => a.articles.length > 0 && a.parent === x.id)))
         }
     }, [articleData.data])
 
