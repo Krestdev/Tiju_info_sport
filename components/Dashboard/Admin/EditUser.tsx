@@ -151,7 +151,7 @@ function EditUser({ children, selectedUser }: Props) {
         editUser.mutate(values);
     }
 
-    const role = ["admin", "user"]
+    const role = ["administrateur", "moderateur","redacteur"]
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

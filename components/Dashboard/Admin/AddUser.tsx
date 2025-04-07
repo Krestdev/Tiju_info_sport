@@ -47,7 +47,7 @@ const AddUser = () => {
             nom: "",
             email: "",
             password: "",
-            role: "admin"
+            role: "redacteur"
         }
     })
 
@@ -90,7 +90,7 @@ const AddUser = () => {
         }
     };
 
-    const role = ["admin", "user"]
+    const role = ["administrateur", "moderateur","redacteur"]
 
     return (
         <Form {...form}>

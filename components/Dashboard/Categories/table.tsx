@@ -48,7 +48,8 @@ function CategoryTable() {
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [sport, setSport] = useState<Category[]>();
-    const [rein, setRein] = useState(false)
+    const [rein, setRein] = useState(false);
+    const [nbArt, setNbArt] = useState(0);
     const itemsPerPage = 15;
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
@@ -62,13 +63,13 @@ function CategoryTable() {
         },
     });
 
-    
+
     useEffect(() => {
         if (articleCate.isSuccess) {
-            setSport(articleCate.data.data)
+            setSport(articleCate.data.data);
         }
     }, [articleCate.data])
-    
+
     const { mutate: deleteCategory } = useMutation({
         mutationFn: async (categoryId: number) => {
             return axiosClient.delete(`/category/${categoryId}`);
@@ -77,7 +78,7 @@ function CategoryTable() {
             queryClient.invalidateQueries({ queryKey: ["categoryv"] });
         },
     });
-    
+
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
@@ -124,6 +125,24 @@ function CategoryTable() {
         toast.success("Supprimé avec succès");
     }
 
+    // Supposons que tu as un tableau de toutes les catégories
+    function getArticleCountForParentCategory(
+        parentId: number,
+        allCategories: Category[]
+    ): number {
+        // Trouver les enfants de la catégorie parent
+        const childCategories = allCategories.filter(
+            (category) => category.parent === parentId
+        );
+
+        // Calculer la somme des articles des enfants
+        const totalArticles = childCategories.reduce((sum, child) => {
+            return sum + (child.articles?.length || 0);
+        }, 0);
+
+        return totalArticles;
+    }
+
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = filterData.slice(startIndex, startIndex + itemsPerPage)
@@ -158,7 +177,6 @@ function CategoryTable() {
                                 name="items"
                                 render={({ field }) => (
                                     <FormItem>
-
                                         <FormControl>
                                             <Table className="border divide-x">
                                                 <TableHeader>
@@ -179,6 +197,7 @@ function CategoryTable() {
                                                 </TableHeader>
                                                 <TableBody>
                                                     {currentItems.map((item, id) => {
+                                                        const total = getArticleCountForParentCategory(item.id, currentItems);
                                                         const parent = item.parent ? sport?.find((x) => x.id === item.parent)?.title : "Aucun parent";
                                                         return (
                                                             <TableRow className="text-[16px]" key={id}>
@@ -197,7 +216,7 @@ function CategoryTable() {
                                                                     />
                                                                 </TableCell>
                                                                 <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
-                                                                <TableCell className="border">{item.articles.length}</TableCell>
+                                                                <TableCell className="border">{item.parent === null ? total : item.articles.length}</TableCell>
                                                                 <TableCell className="border">{parent}</TableCell>
                                                                 <TableCell className="flex gap-4 justify-center">
                                                                     <EditCategorie donnee={item} nom={item.title}>
@@ -209,8 +228,7 @@ function CategoryTable() {
                                                                 </TableCell>
                                                             </TableRow>
                                                         )
-                                                    }
-                                                    )}
+                                                    })}
                                                 </TableBody>
                                             </Table>
                                         </FormControl>

@@ -14,15 +14,13 @@ import { Button } from "@/components/ui/button";
 interface Props {
     children: React.ReactNode;
     id: number;
-    action1: (id: number) => void;
-    action2: (id: number) => void;
+    action: (id: number) => void;
     name?: string;
     message: string;
-    bouton1: string
-    bouton2: string
+    bouton: string
 }
 
-const DeleteValidation = ({ children, id, action1, action2, name, message, bouton1, bouton2 }: Props) => {
+const DeleteValidation = ({ children, id, action, name, message, bouton }: Props) => {
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -35,13 +33,8 @@ const DeleteValidation = ({ children, id, action1, action2, name, message, bouto
                 </DialogHeader>
                 <span className="flex gap-3 flex-wrap items-center justify-center">
                     <DialogClose asChild>
-                        <Button variant={"destructive"} onClick={() => action1(id)}>
-                            {bouton1}
-                        </Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                        <Button onClick={() => action2(id)}>
-                            {bouton2}
+                        <Button variant={"destructive"} onClick={() => action(id)}>
+                            {bouton}
                         </Button>
                     </DialogClose>
                     <DialogClose asChild>

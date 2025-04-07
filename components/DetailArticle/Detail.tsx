@@ -626,10 +626,10 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                         </Button>
 
                                         {openCommenter && (
-                                            <div className="fixed inset-0 bg-black/30 flex items-end justify-center z-50">
-                                                <div className="bg-white flex md:flex-col items-center w-full max-w-md shadow-lg">
+                                            <div className="fixed inset-0 flex items-end justify-center z-50">
+                                                <div className="bg-white flex md:flex-col gap-2 items-center w-full max-w-md shadow-lg rounded-[20px]">
                                                     <Input
-                                                        className="flex md:hidden w-full border border-gray-300 resize-none"
+                                                        className="flex md:hidden w-full border border-gray-300 rounded-[20px] resize-none"
                                                         placeholder="Tapez votre commentaire"
                                                         value={commentaire}
                                                         onChange={(e) => setCommentaire(e.target.value)}
@@ -645,7 +645,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                     />
                                                     <div className='flex justify-end md:justify-start md:gap-2 md:mt-1'>
                                                         <Button
-                                                            className='flex md:hidden'
+                                                            className='flex md:hidden bg-transparent shadow-none text-[#012BAE]'
                                                             onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
                                                         >
                                                             <LuSend />
@@ -665,7 +665,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                         </Button>
                                                         <Button
                                                             variant={"ghost"}
-                                                            className='flex md:hidden'
+                                                            className='flex md:hidden bg-transparent shadow-none text-black'
                                                             onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
                                                         >
                                                             <LuX />

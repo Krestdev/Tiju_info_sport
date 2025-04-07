@@ -313,7 +313,7 @@ function ArticleTable() {
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <DeleteValidation id={selectedArticleId} action1={deleteArticle} action2={editArticle.mutate} bouton1="Supprimer définitivement" bouton2="AJouter a la corbeille" message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : editArticle.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
                                                                             <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                         </DeleteValidation>
                                                                         {
