@@ -60,7 +60,7 @@ export async function GET(request: Request) {
       dateRanges: [{ startDate: getFormattedDate(start), endDate: getFormattedDate(end) }],
     });
 
-    const categoryViews: Record<string, number> = {};
+    const categoriesiews: Record<string, number> = {};
 
     if (response?.rows) {
       response.rows.forEach((row) => {
@@ -68,12 +68,12 @@ export async function GET(request: Request) {
         const vues = Number(row.metricValues?.[0]?.value || 0);
 
         if (title.includes("category ")) {
-          categoryViews[title] = (categoryViews[title] || 0) + vues;
+          categoriesiews[title] = (categoriesiews[title] || 0) + vues;
         }
       });
     }
 
-    const categories = Object.entries(categoryViews).map(([title, vues]) => ({ title, vues }));
+    const categories = Object.entries(categoriesiews).map(([title, vues]) => ({ title, vues }));
 
     return NextResponse.json({ categories });
   } catch (error) {

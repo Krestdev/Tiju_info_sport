@@ -20,7 +20,7 @@ const Navbar = () => {
     const axiosClient = axiosConfig();
 
     const articleData = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

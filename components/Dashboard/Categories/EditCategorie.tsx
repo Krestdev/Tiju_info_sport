@@ -59,7 +59,7 @@ function EditCategorie({ children, donnee }: Props) {
 
 
     const articleCate = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`
@@ -98,7 +98,7 @@ function EditCategorie({ children, donnee }: Props) {
     });
 
     const addSubCategory = useMutation({
-            mutationKey: ["categoryv"],
+            mutationKey: ["categories"],
             mutationFn: (data: z.infer<typeof formSchema>) => {
                 const idU = String(currentUser.id)
                 return axiosClient.post(`/category/sub/${data.parent}`,
@@ -114,7 +114,7 @@ function EditCategorie({ children, donnee }: Props) {
         React.useEffect(() => {
             if (addSubCategory.isSuccess) {
                 toast.success("Ajoutée avec succès");
-                queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+                queryClient.invalidateQueries({ queryKey: ["categories"] });
                 setDialogOpen(prev => !prev);
             } else if (addSubCategory.isError) {
                 toast.error("Erreur lors de la création de la catégorie");

@@ -93,7 +93,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (likerA.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (likerA.isError) {
             console.log(likerA.error)
         }
@@ -116,7 +116,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (unLikerA.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (unLikerA.isError) {
             console.log(unLikerA.error)
         }
@@ -149,7 +149,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (commenter.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (commenter.isError) {
             console.log(commenter.error)
         }
@@ -174,7 +174,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (repondre.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (repondre.isError) {
             console.log(repondre.error)
         }
@@ -196,7 +196,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (modifierCom.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (modifierCom.isError) {
             console.log(modifierCom.error)
         }
@@ -218,7 +218,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (likerC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (likerC.isError) {
             console.log(likerC.error)
         }
@@ -240,7 +240,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     }
     React.useEffect(() => {
         if (unLikerC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (unLikerC.isError) {
             console.log(unLikerC.error)
         }
@@ -262,7 +262,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (signalC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (signalC.isError) {
             console.log(signalC.error)
         }
@@ -285,7 +285,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
     React.useEffect(() => {
         if (unsignalC.isSuccess) {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         } else if (unsignalC.isError) {
             console.log(unsignalC.error)
         }
@@ -298,7 +298,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
             return axiosClient.delete(`/comments/${articleId}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["categoryv"] });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
 

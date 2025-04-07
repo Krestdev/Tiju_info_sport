@@ -35,7 +35,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     });
 
   const articleData = useQuery({
-          queryKey: ["categoryv"],
+          queryKey: ["categories"],
           queryFn: () => {
               return axiosClient.get<any, AxiosResponse<Category[]>>(
                   `/category`

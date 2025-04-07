@@ -39,7 +39,7 @@ const PubsComp = ({ pub, clip, taille }: PubProps) => {
           delay: 5000,
         }),
       ]}
-      className='w-full'
+      className='mx-auto max-w-7xl w-full'
     >
       <CarouselContent className='w-full px-7 md:px-0'>
         {pub.map((x, i) => {

@@ -14,6 +14,8 @@ import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
+import Feed from "../feed";
+import ArticlePreview from "../articlePreview";
 
 const Accueil = () => {
   const { currentUser, setFavorite, favorite } = useStore();
@@ -25,7 +27,7 @@ const Accueil = () => {
   const axiosClient = axiosConfig();
 
   const categories = useQuery({
-    queryKey: ["categoryv"],
+    queryKey: ["categories"],
     queryFn: () => {
       return axiosClient.get<any, AxiosResponse<Category[]>>(`/category`);
     },
@@ -39,7 +41,8 @@ const Accueil = () => {
       );
     },
   });
-  const articles = categories.isSuccess ? categories.data.data.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles) : [];
+  const articles = categories.isSuccess ? categories.data.data.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status === "published") : [];
+  //console.log(articles);
   const randomAd = ads.isSuccess ? Math.floor(Math.random() * ads.data.data.length) : 0;
 
   const handleVoirtout = () => {
@@ -134,24 +137,20 @@ const Accueil = () => {
         <>
         <main className="py-0 lg:py-8">
             <div className="block lg:hidden mb-10">
-                <Head gridAff={articles} />
+                {/* <Head gridAff={articles} /> */}
+                <ArticlePreview version="main" {...articles[0]}/>
             </div>
         <div className="containerBloc grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-10">
-          <div className="flex flex-col gap-10 col-span-1 lg:col-span-2">
+          <div className="flex flex-col gap-10 col-span-1 lg:col-span-2 order-2 lg:order-1">
             <div className="hidden lg:block">
-                <Head gridAff={articles} />
+                {/* <Head gridAff={articles} /> */}
+                <ArticlePreview version="main" {...articles[0]}/>
             </div>
             {/**Articles map */}
                 {articles.length > 0 ?
             <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
-                {articles.slice(0,6).map((article, id)=>(
-                    <Link key={id} className="flex flex-col gap-5" href={`/user/detail-article/${article.id}`}>
-                        <img src={article.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${article.images[0].id}`: "/images/no-image.jpg"} alt={article.title} className="w-full h-auto aspect-video rounded-md object-cover"/>
-                        <div className="flex flex-col">
-                            <span className="article-category">{article.type}</span>
-                            <h3 className="article-title">{article.title}</h3>
-                        </div>
-                    </Link>
+                {articles.slice(0,6).map(article=>(
+                    <ArticlePreview key={article.id} {...article} />
                 ))}  
             </div>
                 : <div className="w-full min-h-80 flex items-center justify-center"><span className="text-lg sm:text-xl lg:text-2xl">{"Aucun article à afficher"}</span></div>}
@@ -159,25 +158,14 @@ const Accueil = () => {
             { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-auto aspect-[4/1] bg-repeat-x bg-contain" style={{backgroundImage: `url(${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id})`}} /></Link>}
             {/* { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data} taille={"h-[200px]"} clip={""} />} */}
           </div>
-          <div className="col-span-1 px-7 flex flex-col gap-7">
-              {Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="flex flex-col">
-                      <Skeleton className="w-full h-10"/>
-                      {Array.from({ length: 2 }).map((_, i) => (
-                          <div key={i} className="flex flex-col gap-2 py-4">
-                              <Skeleton className="w-14 h-5"/>
-                              <Skeleton className="w-full h-11"/>
-                          </div>
-                      ))}
-                  </div>))}
-          </div>
+          <Feed className="col-span-1 order-1 lg:order-2"/>
         </div>
         {
             categories.data.data.length > 0 && categories.data.data.filter(x=>x.articles.length>1).slice(0,1).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
             ))
         }
-        { ads.isSuccess && ads.data.data.length > 0 && <span className="mx-auto max-w-7xl"><PubsComp pub={ads.data.data.filter((x,i)=>i!==randomAd)} taille={"h-[200px]"} clip={""} /></span>}
+        { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data.filter((x,i)=>i!==randomAd)} taille={"h-[200px]"} clip={""} />}
         {
             categories.data.data.length > 0 && categories.data.data.filter(x=>x.articles.length>1).slice(1,categories.data.data.length).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
