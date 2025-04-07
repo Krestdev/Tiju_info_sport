@@ -729,7 +729,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                 <div>
                                                                     <Popover open={openRepondre === x.id} onOpenChange={() => toggleRepondre(x.id)}>
                                                                         <PopoverTrigger asChild>
-                                                                            <Button disabled={!currentUser} className='px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
+                                                                            <Button disabled={!currentUser} className='hidden md:flex px-1 text-[12px] font-ubuntu' variant={'ghost'}>{"Repondre"}</Button>
                                                                         </PopoverTrigger>
                                                                         <PopoverContent className="w-80 flex flex-col gap-2">
                                                                             <div className="space-y-2 bg-gray-100 rounded-full">
@@ -749,6 +749,8 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                                     <div className='flex'>
                                                                         <Button
                                                                             onClick={() => toggleRepondre(x.id)}
+                                                                            className='px-1 text-[12px] font-ubuntu'
+                                                                            variant={'ghost'}
                                                                         >
                                                                             {"REPONDRE"}
                                                                         </Button>
