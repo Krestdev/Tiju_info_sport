@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { LuHouse, LuSend } from "react-icons/lu";
+import { LuHouse, LuSend, LuX } from "react-icons/lu";
 import { LuChevronRight } from "react-icons/lu";
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
@@ -59,6 +59,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const [response, setResponse] = useState('');
     const [modifie, setModifie] = useState('');
     const [openCommenter, setOpenCommenter] = useState(false)
+    const [openCommenterMob, setOpenCommenterMob] = useState(false)
     const [commentaire, setCommentaire] = useState("")
     const [showReponses, setShowReponses] = useState<{ [id: number]: boolean }>({});
     const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -617,7 +618,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                             </PopoverContent>
                                         </Popover>
                                     </div> */}
-                                    <div className='flex md:hidden'>
+                                    <div className='flex'>
                                         <Button
                                             onClick={() => setOpenCommenter(true)}
                                         >
@@ -626,20 +627,48 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
 
                                         {openCommenter && (
                                             <div className="fixed inset-0 bg-black/30 flex items-end justify-center z-50">
-                                                <div className="bg-white flex w-full max-w-md shadow-lg">
+                                                <div className="bg-white flex md:flex-col items-center w-full max-w-md shadow-lg">
                                                     <Input
-                                                        className="w-full border border-gray-300 resize-none"
+                                                        className="flex md:hidden w-full border border-gray-300 resize-none"
                                                         placeholder="Tapez votre commentaire"
                                                         value={commentaire}
                                                         onChange={(e) => setCommentaire(e.target.value)}
                                                         autoFocus
                                                     />
-                                                    <div className='flex justify-end'>
+                                                    <Textarea
+                                                        rows={3}
+                                                        className="hidden md:flex w-full border border-gray-300 resize-none"
+                                                        placeholder="Tapez votre commentaire"
+                                                        value={commentaire}
+                                                        onChange={(e) => setCommentaire(e.target.value)}
+                                                        autoFocus
+                                                    />
+                                                    <div className='flex justify-end md:justify-start md:gap-2 md:mt-1'>
                                                         <Button
-                                                        className=''
+                                                            className='flex md:hidden'
                                                             onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
                                                         >
                                                             <LuSend />
+                                                        </Button>
+                                                        <Button
+                                                            className='hidden md:flex'
+                                                            onClick={() => { setOpenCommenter(false); handleAddComment(details.id.toString()) }}
+                                                        >
+                                                            {"COMMENTER"}
+                                                        </Button>
+                                                        <Button
+                                                            variant={"ghost"}
+                                                            className='hidden md:flex'
+                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                        >
+                                                            {"ANNULER"}
+                                                        </Button>
+                                                        <Button
+                                                            variant={"ghost"}
+                                                            className='flex md:hidden'
+                                                            onClick={() => {  setCommentaire(""); setOpenCommenter(false) }}
+                                                        >
+                                                            <LuX />
                                                         </Button>
                                                     </div>
                                                 </div>

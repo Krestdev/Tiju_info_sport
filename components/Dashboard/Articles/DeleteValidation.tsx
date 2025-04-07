@@ -39,11 +39,11 @@ const DeleteValidation = ({ children, id, action1, action2, name, message, bouto
                             {bouton1}
                         </Button>
                     </DialogClose>
-                    {/* <DialogClose asChild>
+                    <DialogClose asChild>
                         <Button onClick={() => action2(id)}>
                             {bouton2}
                         </Button>
-                    </DialogClose> */}
+                    </DialogClose>
                     <DialogClose asChild>
                         <Button variant={"outline"}>{"Annuler"}</Button>
                     </DialogClose>
