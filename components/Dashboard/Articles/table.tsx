@@ -60,6 +60,7 @@ function ArticleTable() {
     const [auteur, setAuteur] = useState<User[] | undefined>()
     const [dialog, setDialog] = React.useState(false);
     const [selectedArticleId, setSelectedArticleId] = useState<number>(0);
+    const [selectedArticle, setSelectedArticle] = useState<Article>()
     const itemsPerPage = 15;
 
 
@@ -95,7 +96,7 @@ function ArticleTable() {
         retryDelay: 5000
     });
 
-    
+
 
     function onSubmit1(id: number) {
         articleToTrash.mutate(id);
@@ -162,7 +163,6 @@ function ArticleTable() {
                 )
             );
         }
-
         // Filtrage par auteur
         if (selectedAuthor && selectedAuthor !== "none") {
             filtered = filtered.filter((el) => el.author?.id === Number(selectedAuthor));
@@ -309,23 +309,24 @@ function ArticleTable() {
                                                                         "Brouillon" :
                                                                         item.status === "published" ? "Publié" :
                                                                             // item.status === "programmed" ? "Programmé" :
-                                                                                item.status === "deleted" ? "Corbeille" : ""
+                                                                            item.status === "deleted" ? "Corbeille" : ""
                                                                     }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
-                                                                            <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement" : "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                            <Trash2 onClick={() => setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                         </DeleteValidation>
                                                                         {
-                                                                            item.status === "draft" 
-                                                                            // || item.status === "programmed" 
-                                                                            ?
+                                                                            item.status === "draft"
+                                                                                // || item.status === "programmed" 
+                                                                                ?
                                                                                 <LuSend
                                                                                     onClick={(e) => {
                                                                                         e.preventDefault();
                                                                                         setSelectedArticleId(item.id);
+                                                                                        setSelectedArticle(item)
                                                                                         handleOpen();
                                                                                     }}
                                                                                     className="text-[#0128AE] size-5 cursor-pointer" />
@@ -336,7 +337,7 @@ function ArticleTable() {
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
                                                                         }
-                                                                        <DatePubli artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} />
+                                                                        <DatePubli artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
                                                                     </TableCell>
                                                                 </TableRow>
                                                             )
