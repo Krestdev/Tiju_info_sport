@@ -97,11 +97,6 @@ function ArticleTable() {
     });
 
 
-
-    function onSubmit1(id: number) {
-        articleToTrash.mutate(id);
-    }
-
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
@@ -112,7 +107,6 @@ function ArticleTable() {
             items: [],
         },
     })
-
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
