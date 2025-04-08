@@ -80,7 +80,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     const axiosClient1 = axiosConfig({
-        Authorization: `Bearer ${token}`,
+        // Authorization: `Bearer ${token}`,
         "Accept": "*/*",
         "x-api-key": "abc123",
         'Content-Type': 'multipart/form-data'
@@ -93,7 +93,7 @@ function EditArticle({ children, donnee }: Props) {
 
 
     const articleCate = useQuery({
-        queryKey: ["categoryv"],
+        queryKey: ["categories"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`
@@ -164,9 +164,9 @@ function EditArticle({ children, donnee }: Props) {
         setFichier(data.media)
         setArtMod(data)
         console.log(fichier);
-
+        
         fichier === undefined ? editArticle.mutate() :
-            updateImage.mutate({ data: fichier[0], id: donnee.id })
+        updateImage.mutate({ data: fichier[0], id: donnee.id })
     }
 
     React.useEffect(() => {
