@@ -55,7 +55,7 @@ function CategoryTable() {
     const axiosClient = axiosConfig();
 
     const articleCate = useQuery({
-        queryKey: ["categories"],
+        queryKey: ["categoryv"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

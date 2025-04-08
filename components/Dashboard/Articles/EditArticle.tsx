@@ -93,7 +93,7 @@ function EditArticle({ children, donnee }: Props) {
 
 
     const articleCate = useQuery({
-        queryKey: ["categories"],
+        queryKey: ["categoryv"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`
@@ -164,9 +164,9 @@ function EditArticle({ children, donnee }: Props) {
         setFichier(data.media)
         setArtMod(data)
         console.log(fichier);
-        
+
         fichier === undefined ? editArticle.mutate() :
-        updateImage.mutate({ data: fichier[0], id: donnee.id })
+            updateImage.mutate({ data: fichier[0], id: donnee.id })
     }
 
     React.useEffect(() => {
@@ -255,7 +255,7 @@ function EditArticle({ children, donnee }: Props) {
                                 return (
                                     <FormItem>
                                         <FormControl>
-                                            <LexicalEditor {...field} onChange={field.onChange} />
+                                            <LexicalEditor {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
