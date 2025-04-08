@@ -94,3 +94,63 @@ export function sortArticles(articles:Article[]){
     return dateB - dateA; // Newest first (descending)
   })
 }
+
+//Display article date
+export function articleDate(value: string): string {
+  const date = new Date(value);
+  const today = new Date();
+  
+  // Vérifier si la date est invalide
+  if (isNaN(date.getTime())) {
+    return "Date inconnue";
+  }
+
+  // Calculer les différences de temps
+  const diffInMilliseconds = today.getTime() - date.getTime();
+  const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  // Formater les options de date
+  const options: Intl.DateTimeFormatOptions = { 
+    day: 'numeric', 
+    month: 'long' 
+  };
+
+  // Ajouter l'année si différente de l'année en cours
+  if (date.getFullYear() !== today.getFullYear()) {
+    options.year = 'numeric';
+  }
+
+  // Déterminer le format approprié
+  if (diffInDays === 0) {
+    // Aujourd'hui
+    if (diffInHours < 1) {
+      if (diffInMinutes < 1) {
+        return "Publié à l'instant";
+      }
+      return `Publié il y a ${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''}`;
+    }
+    return `Publié il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ''}`;
+  } else if (diffInDays === 1) {
+    return "Publié hier";
+  } else if (diffInDays < 7) {
+    return `Publié il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+  } else {
+    // Format de date classique
+    return `Publié le ${date.toLocaleDateString('fr-FR', options)}`;
+  }
+}
+
+
+//Slug generator
+export function slugify(text: string): string {
+  return text
+    .toLowerCase() // Tout en minuscule
+    .normalize("NFD") // Sépare les lettres accentuées
+    .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+    .replace(/[^a-z0-9\s-]/g, "") // Supprime les caractères spéciaux sauf espaces et tirets
+    .trim() // Supprime les espaces au début/fin
+    .replace(/\s+/g, "-") // Remplace les espaces par des tirets
+    .replace(/-+/g, "-"); // Évite les tirets doubles
+}

@@ -45,7 +45,7 @@ export function MenuComp() {
                 {isSuccess &&
                     filterCategoriesWithChildren(categories).map((x, i) => {
                         return (
-                            <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-oswald h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
+                            <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-mono h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
                                 <span className="font-medium text-[14px] uppercase">{x.title}</span>
                             </Link>
                         )
