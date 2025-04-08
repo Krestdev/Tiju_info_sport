@@ -1,9 +1,7 @@
-import axiosConfig from "@/api/api";
 import { fetchCategory } from "@/lib/api";
 import { sortArticles } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-const axiosClient = axiosConfig();
 const today = new Date();
 
 export const usePublishedArticles = () =>{
