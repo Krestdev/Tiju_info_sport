@@ -38,28 +38,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const formSchema = z.object({
-    // nom: z.string().min(4, {
-    //     message: "Name must be at least 4 characters.",
-    // }),
     type: z.string(),
-    title: z.string().min(4, {
-        message: "Name must be at least 10 characters.",
+    title: z.string().min(2, {
+        message: "Le titre doit contenir au moins 2 caractères.",
     }),
-    extrait: z.string().min(4, {
-        message: "Name must be at least 10 characters.",
+    extrait: z.string().min(2, {
+        message: "Le sommaire doit contenir au moins 2 caractères.",
     }),
-    description: z.string().min(4, {
-        message: "Name must be at least 10 characters.",
+    description: z.string().min(2, {
+        message: "La description doit contenir au moins 2 caractères.",
     }),
-    // couverture: z.any(),
-    media: z
-        .any()
-        .refine(
-            (files) =>
-                Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
-            { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
-        ).optional(),
-    headline: z.boolean()
+    couverture: z.any(),
+    media: z.any(),
+    headline: z.boolean(),
 });
 
 
@@ -71,10 +62,8 @@ type Props = {
 
 function EditArticle({ children, donnee }: Props) {
 
-    const { dataSubscription, token, currentUser } = useStore()
+    const { token, currentUser } = useStore()
     const [dialogO, setDialogO] = React.useState(false);
-    const [abon, setAbon] = useState<Abonnement[]>();
-    const [images, setImages] = useState<ImageA[]>(donnee.images);
     const [photo, setPhoto] = useState<ImageA>(donnee.images[0]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [entry, setEntry] = useState<string>("")
@@ -82,7 +71,7 @@ function EditArticle({ children, donnee }: Props) {
     const [categorie, setCategorie] = useState<Category[]>();
     const [dialogOpen, setDialogOpen] = useState(false)
     const queryClient = useQueryClient();
-    const [fichier, setFichier] = useState(null)
+    const [fichier, setFichier] = useState<File[] | undefined>()
     const [artMod, setArtMod] = useState<any>()
 
     const axiosClient = axiosConfig({
@@ -174,7 +163,10 @@ function EditArticle({ children, donnee }: Props) {
     function onSubmit(data: z.infer<typeof formSchema>) {
         setFichier(data.media)
         setArtMod(data)
-        fichier && updateImage.mutate({ data: fichier[0], id: donnee.id });
+        console.log(fichier);
+        
+        fichier === undefined ? editArticle.mutate() :
+        updateImage.mutate({ data: fichier[0], id: donnee.id })
     }
 
     React.useEffect(() => {
@@ -188,6 +180,23 @@ function EditArticle({ children, donnee }: Props) {
         }
     }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
 
+    const [value, setValue] = useState(extractTextFromHtml(donnee.description))
+
+    useEffect(() => {
+        if (donnee && donnee.description) {
+            const textOnly = extractTextFromHtml(donnee.description);
+            setValue(textOnly);
+        }
+    }, [donnee, setValue, dialogO]);
+
+    function extractTextFromHtml(html: string): string {
+        if (!html) return "";
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || "";
+    }
+
+
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -197,7 +206,7 @@ function EditArticle({ children, donnee }: Props) {
             extrait: donnee.summery,
             description: donnee.description,
             // couverture: donnee.images[0],
-            media: donnee.images[0],
+            // media: donnee.images[0] ? [donnee.images[0] as unknown as File] : [],
             headline: donnee.headline
         },
     });
@@ -243,12 +252,10 @@ function EditArticle({ children, donnee }: Props) {
                             control={form.control}
                             name="description"
                             render={({ field }) => {
-                                // console.log(field.value);
-
                                 return (
                                     <FormItem>
                                         <FormControl>
-                                            <LexicalEditor value={field.value} onChange={field.onChange} />
+                                            <LexicalEditor {...field} onChange={field.onChange} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

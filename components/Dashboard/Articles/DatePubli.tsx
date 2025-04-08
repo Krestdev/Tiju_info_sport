@@ -27,9 +27,10 @@ interface Props {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     artId: number;
+    article: Article | undefined
 }
 
-const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
+const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
 
     const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
@@ -67,13 +68,44 @@ const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
         return doc.body.textContent || "";
     };
 
+    function mergeDateAndTime(data: { date: Date; heure: string }): Date {
+        const [hours, minutes] = data.heure.split(':').map(Number);
+      
+        const merged = new Date(data.date);
+        merged.setHours(hours);
+        merged.setMinutes(minutes);
+        merged.setSeconds(0);
+        merged.setMilliseconds(0);
+      
+        return merged;
+      }
+
     const editArticle = useMutation({
-            mutationKey: ["pictures"],
+            mutationKey: ["articles"],
             mutationFn: (id: number) => {
                 const idU = String(currentUser.id)
                 return axiosClient.patch(`/articles/publish/${id}`, {
                     user_id: idU,
-                    statut: "published",
+                });
+            },
+            onSuccess() {
+                onOpenChange(false);
+                toast.success("Article publié avec succès");
+                queryClient.invalidateQueries({ queryKey: ["articles"] });
+            },
+            retry: 5,
+            retryDelay: 5000
+        });
+
+        const programArticle = useMutation({
+            mutationKey: ["articles"],
+            mutationFn: (data:  z.infer<typeof formSchema>) => {
+                const idU = String(currentUser.id)
+                return axiosClient.patch(`/articles/${artId}`, {
+                    ...article,
+                    summary: article?.summery,
+                    user_id: idU,
+                    created_at: mergeDateAndTime(data)
                 });
             },
             onSuccess() {
@@ -91,7 +123,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
     }
 
     function onSubmit2 (data: z.infer<typeof formSchema>) {
-        editArticle.mutate(artId);
+        programArticle.mutate(data);
     }
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -128,9 +160,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
                         >
                             {"Publier Maintenant"}
                         </Button>
-                        {/* {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
+                        {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
                             {"Programmer la publication"}
-                        </Button>} */}
+                        </Button>}
                         {programmer && <div>
                             <FormField
                                 control={form.control}
@@ -156,6 +188,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId }: Props) => {
                                                     selected={field.value}
                                                     onSelect={field.onChange}
                                                     initialFocus
+                                                    disabled={{ before: new Date() }}
                                                 />
                                             </PopoverContent>
                                         </Popover>

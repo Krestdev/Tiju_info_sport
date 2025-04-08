@@ -29,14 +29,14 @@ const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
     type: z.string(),
-    titre: z.string().min(10, {
-        message: "Name must be at least 10 characters.",
+    title: z.string().min(2, {
+        message: "Le titre doit contenir au moins 2 caractères.",
     }),
-    extrait: z.string().min(10, {
-        message: "Name must be at least 10 characters.",
+    extrait: z.string().min(2, {
+        message: "Le sommaire doit contenir au moins 2 caractères.",
     }),
-    description: z.string().min(10, {
-        message: "Name must be at least 10 characters.",
+    description: z.string().min(2, {
+        message: "La description doit contenir au moins 2 caractères.",
     }),
     couverture: z.any(),
     media: z
@@ -64,8 +64,7 @@ const AddArticle = () => {
     const [articleAjout, setArticleAjout] = useState<Article>();
     const [fichier, setFichier] = useState(null);
     const [artId, setArtId] = useState(0);
-    const [checked, setChecked] = useState<boolean>(false)
-    const [art, setArt] = useState<Article | null>(null)
+    const [selectedArticle, setSelectedArticle] = useState<Article>()
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -83,7 +82,7 @@ const AddArticle = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             type: "",
-            titre: "",
+            title: "",
             extrait: "",
             description: "",
             media: "",
@@ -101,7 +100,7 @@ const AddArticle = () => {
                 {
                     user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
-                    title: data.titre,
+                    title: data.title,
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
@@ -111,7 +110,6 @@ const AddArticle = () => {
             )
         },
         onSuccess(data) {
-            setArt(data.data);
             fichier && addImage.mutate({ data: fichier[0], id: data.data.id })
         },
     })
@@ -120,12 +118,11 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
-
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
-                    title: data.titre,
+                    title: data.title,
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
@@ -135,7 +132,7 @@ const AddArticle = () => {
             )
         },
         onSuccess(data) {
-            setArt(data.data);
+            setSelectedArticle(data.data)
             fichier && addImage1.mutate({ data: fichier[0], id: data.data.id })
             handleOpen();
         },
@@ -288,7 +285,7 @@ const AddArticle = () => {
 
                 <FormField
                     control={form.control}
-                    name="titre"
+                    name="title"
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
@@ -304,7 +301,7 @@ const AddArticle = () => {
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <LexicalEditor value={field.value} onChange={field.onChange} />
+                                <LexicalEditor {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -518,13 +515,13 @@ const AddArticle = () => {
                         }}>
                         {"Publier"}
                     </Button> */}
-                    <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                    <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
                         type="submit"
                         className="max-w-[384px] w-full rounded-none font-normal"
                         onClick={(e) => {
                             console.log(form.getValues());
-                            
+
                             form.handleSubmit(onSubmit1)()
                             e.preventDefault();
                         }}
