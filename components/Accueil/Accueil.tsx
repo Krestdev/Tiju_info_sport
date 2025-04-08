@@ -148,7 +148,7 @@ const Accueil = () => {
             </div>
             {/**Articles map */}
                 {articles.length > 0 ?
-            <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
                 {articles.slice(0,6).map(article=>(
                     <ArticlePreview key={article.id} {...article} />
                 ))}  
