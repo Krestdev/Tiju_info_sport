@@ -79,26 +79,26 @@ function ArticleTable() {
         }
     }, [articleCate.data])
 
-    const editArticle = useMutation({
+    const articleToTrash = useMutation({
         mutationKey: ["pictures"],
         mutationFn: (id: number) => {
             const idU = String(currentUser.id)
-            return axiosClient.patch(`/articles/publish/${id}`, {
+            return axiosClient.patch(`/articles/trash/${id}`, {
                 user_id: idU,
-                statut: "deleted",
             });
         },
         onSuccess() {
-            toast.success("AJouté à la corbeille publié avec succès");
+            toast.success("AJouté à la corbeille avec succès");
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
         retryDelay: 5000
     });
 
+    
 
     function onSubmit1(id: number) {
-        editArticle.mutate(id);
+        articleToTrash.mutate(id);
     }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -210,7 +210,7 @@ function ArticleTable() {
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("published")} className={`shadow-none text-[16px] rounded-[6px] ${current === "published" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
-                <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
+                {/* <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button> */}
                 <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
                 <Button onClick={() => setCurrent("deleted")} className={`shadow-none text-[16px] rounded-[6px] ${current === "deleted" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
             </div>
@@ -276,6 +276,7 @@ function ArticleTable() {
                                                             <TableHead>{"titre"}</TableHead>
                                                             <TableHead>{"Auteur"}</TableHead>
                                                             <TableHead>{"Categories"}</TableHead>
+                                                            <TableHead>{"À la une"}</TableHead>
                                                             <TableHead>{"Date"}</TableHead>
                                                             <TableHead>{"Statut"}</TableHead>
                                                             <TableHead>{"Actions"}</TableHead>
@@ -302,22 +303,25 @@ function ArticleTable() {
                                                                     <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
                                                                     <TableCell className="border">{item.author?.name}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
+                                                                    <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
                                                                     <TableCell className="border">{item.created_at}</TableCell>
                                                                     <TableCell className="border">{item.status === "draft" ?
                                                                         "Brouillon" :
                                                                         item.status === "published" ? "Publié" :
-                                                                            item.status === "programmed" ? "Programmé" :
+                                                                            // item.status === "programmed" ? "Programmé" :
                                                                                 item.status === "deleted" ? "Corbeille" : ""
                                                                     }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.title}>
                                                                             <LuSquarePen className="size-5 cursor-pointer" />
                                                                         </EditArticle>
-                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : editArticle.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement": "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
                                                                             <Trash2 onClick={() =>setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                         </DeleteValidation>
                                                                         {
-                                                                            item.status === "draft" || item.status === "programmed" ?
+                                                                            item.status === "draft" 
+                                                                            // || item.status === "programmed" 
+                                                                            ?
                                                                                 <LuSend
                                                                                     onClick={(e) => {
                                                                                         e.preventDefault();
