@@ -1,12 +1,14 @@
-import { Oswald, Ubuntu } from "next/font/google";
+import { Open_Sans, Oswald, Ubuntu } from "next/font/google";
 import "./globals.css";
 import Providers from "@/context/providers";
 import HydrationZustand from "@/components/ui/hydration";
 import Script from "next/script";
 import { Metadata } from "next";
+import { cn } from "@/lib/utils";
 
-const oswald = Oswald({ subsets: ["latin"] });
-const ubuntu = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"] });
+const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
+/* const fontSans = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"], variable: "--font-sans" }); */
+const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" }); /**Ubuntu doesnt display well for some reason, so we better use this one :/ */
 
 export const metadata: Metadata = {
   title: "Tyju Info Sport - L'actualité sportive",
@@ -36,7 +38,7 @@ export default async function RootLayout({
         </Script>
       </head>
       <body
-        className={`${ubuntu.className} ${oswald.className}`}
+        className={cn("min-h-screen font-sans antialiased", fontMono.variable, fontSans.variable)}
         suppressHydrationWarning={true}
       >
         <main>

@@ -82,23 +82,29 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground text-[18px] font-ubuntu leading-[23.4px] tracking-[-2%];
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-mono tracking-[-2%] leading-[130%] font-medium;
   }
 
   h1 {
-    @apply font-oswald text-[28px] md:text-[32px] font-medium leading-[36.4px] md:leading-[52px] tracking-tight first-letter:uppercase;
+    @apply uppercase text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
   }
 
   h2 {
-    @apply font-oswald font-medium text-[18px] md:text-[28px];
+    @apply text-[18px] md:text-[28px];
   }
 
   h3 {
-    @apply font-oswald font-medium text-[28px] leading-[36.4px] tracking-[-2%];
+    @apply text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900;
   }
 
   h4 {
-    @apply font-medium text-[18px] font-oswald leading-[18.2px] tracking-[-2%];
+    @apply text-[18px] text-gray-900;
+  }
+  p {
+    @apply text-base leading-[130%];
   }
 }
 
@@ -114,7 +120,7 @@
   }
 
   .scrollbar {
-    overflow-y: auto;
+    @apply overflow-y-auto;
   }
   
   /* Personnalisation de la scrollbar */
@@ -142,7 +148,7 @@
     /* Pour Firefox */
   }
   .dashboard-heading {
-    @apply font-oswald uppercase tracking-[-2%] leading-[130%] font-medium text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
+    @apply uppercase tracking-[-2%] leading-[130%] font-medium text-[28px] sm:text-[32px] lg:text-[36px] xl:text-[40px];
   }
   .containerBloc {
     @apply mx-auto w-full max-w-7xl px-7;
@@ -160,9 +166,9 @@
     text-decoration: line-through;
   }
   .article-category{
-    @apply font-oswald font-medium leading-[130%] text-[20px] uppercase text-gray-400; 
+    @apply font-mono font-medium leading-[130%] text-[20px] uppercase text-category; 
   }
   .article-title{
-    @apply font-oswald font-medium leading-[130%] tracking-[-2%] text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900 line-clamp-2;
+    @apply font-mono font-medium leading-[130%] tracking-[-2%] text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900 line-clamp-2;
   }
 }

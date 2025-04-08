@@ -19,10 +19,11 @@ const config: Config = {
 		},
 		extend: {
 			fontFamily: {
-				oswald: ["Oswald", ...fontFamily.sans],
-				ubuntu: ["Ubuntu", ...fontFamily.sans],
+				sans: ["var(--font-sans)", ...fontFamily.sans],
+				mono: ["var(--font-mono)", ...fontFamily.mono],
 			  },
 			colors: {
+				category: "#A1A1A1",
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

@@ -56,6 +56,7 @@ type Category = {
     articles: Article[]; // Liste d'articles liés à la catégorie
     created_at: string;
     updated_at: string;
+    slug:string;
 };
 
 // Type pour une annonce publicitaire
@@ -63,7 +64,7 @@ type Advertisement = {
     id: number;
     author: Author;
     title: string;
-    description: string;
+    description: "large" | "petit";
     url: string;
     image: ImageA;
     createdAt: string;
@@ -74,7 +75,7 @@ type Advertisement = {
 type AdvertisementCreation = {
     user_id: number;
     title: string;
-    description: string;
+    description: "large" | "petit";
     image: string;
     url: string;
 };
@@ -116,7 +117,8 @@ type Article = {
     created_at: string;
     updated_at: string;
     status: "published" | "draft" | "deleted";
-    headline: boolean
+    headline: boolean;
+    slug:string;
 };
 
 type ImageA = {

@@ -51,7 +51,7 @@ const Navbar = () => {
                 <span className='hidden sm:flex flex-row items-center justify-center gap-5'>
                     <Link href={"/"} className='flex flex-row items-center gap-4 text-[#182067]'>
                         <img src={settings.logo} alt="Logo" className='size-[40px]' />
-                        <span className='uppercase font-semibold font-oswald text-lg'>{settings.compagnyName}</span>
+                        <span className='uppercase font-semibold font-mono text-lg'>{settings.compagnyName}</span>
                     </Link>
                 </span>
                 {/* Right side content */}
@@ -66,20 +66,6 @@ const Navbar = () => {
                                         {currentUser?.nom ?? "Profil"}
                                     </Button>
                                     </Link>
-                                    {/* {
-                                        currentUser && currentUser.abonnement && currentUser.abonnement?.coutMois > 0 ?
-                                            <Link href={'/user/subscribe'} className='hover:underline'>
-                                                <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
-                                                    {"Changer d'offre"}
-                                                </div>
-                                            </Link>
-                                            :
-                                            <Link href={'/user/subscribe'} className='hover:underline'>
-                                                <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
-                                                    {"S'ABONNER"}
-                                                </div>
-                                            </Link>
-                                    } */}
                                 </ div> :
                                 <span className='w-full inline-flex gap-2 items-center'>
                                     <Link href={"/user/logIn"}>
@@ -90,11 +76,6 @@ const Navbar = () => {
                                             {"se connecter"}
                                         </Button>
                                     </Link>
-                                    {/* <Link href={'/user/subscribe'} className='hover:underline '>
-                                        <div className='px-3 py-2 bg-[#0128AE] hover:bg-[#3456c4] text-white'>
-                                            {"S'ABONNER"}
-                                        </div>
-                                    </Link> */}
                                 </span>
                         }
                     </div>
