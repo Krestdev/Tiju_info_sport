@@ -70,59 +70,59 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
 
     function mergeDateAndTime(data: { date: Date; heure: string }): Date {
         const [hours, minutes] = data.heure.split(':').map(Number);
-      
+
         const merged = new Date(data.date);
         merged.setHours(hours);
         merged.setMinutes(minutes);
         merged.setSeconds(0);
         merged.setMilliseconds(0);
-      
+
         return merged;
-      }
+    }
 
     const editArticle = useMutation({
-            mutationKey: ["articles"],
-            mutationFn: (id: number) => {
-                const idU = String(currentUser.id)
-                return axiosClient.patch(`/articles/publish/${id}`, {
-                    user_id: idU,
-                });
-            },
-            onSuccess() {
-                onOpenChange(false);
-                toast.success("Article publié avec succès");
-                queryClient.invalidateQueries({ queryKey: ["articles"] });
-            },
-            retry: 5,
-            retryDelay: 5000
-        });
+        mutationKey: ["articles"],
+        mutationFn: (id: number) => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/articles/publish/${id}`, {
+                user_id: idU,
+            });
+        },
+        onSuccess() {
+            onOpenChange(false);
+            toast.success("Article publié avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000
+    });
 
-        const programArticle = useMutation({
-            mutationKey: ["articles"],
-            mutationFn: (data:  z.infer<typeof formSchema>) => {
-                const idU = String(currentUser.id)
-                return axiosClient.patch(`/articles/${artId}`, {
-                    ...article,
-                    summary: article?.summery,
-                    user_id: idU,
-                    created_at: mergeDateAndTime(data)
-                });
-            },
-            onSuccess() {
-                onOpenChange(false);
-                toast.success("Article publié avec succès");
-                queryClient.invalidateQueries({ queryKey: ["articles"] });
-            },
-            retry: 5,
-            retryDelay: 5000
-        });
+    const programArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/articles/${artId}`, {
+                ...article,
+                summary: article?.summery,
+                user_id: idU,
+                publish_on: mergeDateAndTime(data)
+            });
+        },
+        onSuccess() {
+            onOpenChange(false);
+            toast.success("Article publié avec succès");
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000
+    });
 
 
-    function onSubmit1 () {
+    function onSubmit1() {
         editArticle.mutate(artId);
     }
 
-    function onSubmit2 (data: z.infer<typeof formSchema>) {
+    function onSubmit2(data: z.infer<typeof formSchema>) {
         programArticle.mutate(data);
     }
 
@@ -141,7 +141,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
         setOpen(false);
     }
 
-    
+
     const heure = Array.from({ length: 24 }, (_, i) => i)
     const minute = Array.from({ length: 60 }, (_, i) => i)
 
@@ -156,7 +156,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                         <Button
                             type="submit"
                             className='rounded-none'
-                            onClick={() => {setSubmitFunction(() => onSubmit1)}}
+                            onClick={() => { setSubmitFunction(() => onSubmit1) }}
                         >
                             {"Publier Maintenant"}
                         </Button>
