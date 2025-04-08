@@ -41,12 +41,15 @@ export default function AdminLogin() {
   const router = useRouter();
   const axiosClient = axiosConfig({
     Authorization: `Bearer ${token}`,
+    "Accept": "*/*",
+    "x-api-key": "abc123",
+    'Content-Type': 'application/json'
   });
 
   const logIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post("/users/signin", {
+      return axiosClient.post("users/signin", {
         email: data.email,
         password: data.password,
       });

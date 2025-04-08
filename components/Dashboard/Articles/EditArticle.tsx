@@ -80,7 +80,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     const axiosClient1 = axiosConfig({
-        Authorization: `Bearer ${token}`,
+        // Authorization: `Bearer ${token}`,
         "Accept": "*/*",
         "x-api-key": "abc123",
         'Content-Type': 'multipart/form-data'
