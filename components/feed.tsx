@@ -1,3 +1,4 @@
+'use client'
 import { useAds } from "@/hooks/useAds";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 import Advertisement from "./advertisement";

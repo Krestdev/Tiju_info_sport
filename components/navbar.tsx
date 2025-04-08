@@ -10,39 +10,21 @@ import { useEffect, useState } from 'react'
 import { MenuComp } from './menu'
 import MenuBar from './menuBar'
 import { Button } from './ui/button'
+import { usePublishedArticles } from '@/hooks/usePublishedData'
 
 
 const Navbar = () => {
 
     const { currentUser, settings, } = useStore()
-    const [article, setArticle] = useState<Category[]>()
 
-    const axiosClient = axiosConfig();
-
-    const articleData = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
-
-    useEffect(() => {
-        if (articleData.isSuccess) {
-            setArticle(articleData.data.data.filter(x => articleData.data.data.some(a => a.articles.length > 0 && a.parent === x.id)))
-        }
-    }, [articleData.data])
-
-
-
+    const {categories} = usePublishedArticles()
 
     return (
         <div className='sticky top-0 z-20 bg-white'>
             <div className='containerBloc h-[60px] grid grid-cols-2 sm:grid-cols-3 gap-2'>
                 {/* Menu bar goes here */}
                 <span className='inline-flex items-center justify-start gap-2'>
-                    <MenuBar article={article} />
+                    <MenuBar article={categories} />
                     <Link href={"/"} className='flex sm:hidden flex-row items-center gap-4 text-[#182067]'>
                         <img src={settings.logo} alt="Logo" className='size-[40px]' />
                     </Link>

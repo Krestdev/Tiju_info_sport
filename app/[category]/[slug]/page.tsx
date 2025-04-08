@@ -1,61 +1,53 @@
-'use client'
 import ArticlePreview from '@/components/articlePreview';
 import FeedTemplate from '@/components/feed-template';
 import ShareArticle from '@/components/shareArticle';
 import { Button } from '@/components/ui/button';
 import { usePublishedArticles } from '@/hooks/usePublishedData';
-import { articleDate } from '@/lib/utils';
+import { articleDate, defineTitle, sortArticles } from '@/lib/utils';
 import { Share2, ThumbsUp } from 'lucide-react';
 import React from 'react';
 
 // lib/metadata.ts
 import { Metadata } from 'next';
+import { fetchCategory } from '@/lib/api';
 
-export function generateArticleMetadata(
-  article: Article,
-  category: { slug: string }
-): Metadata {
-  const imageUrl = article.images.length > 0 
-    ? `${process.env.NEXT_PUBLIC_API}image/${article.images[0].id}`
-    : '/images/no-image.jpg';
+export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
+    const {category, slug} = await params;
+    const categories = await fetchCategory();
+    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
+    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
+    const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
+    if(currentArticle){
+        return {
+          title: defineTitle(currentArticle.title),
+          description: currentArticle.summery,
+          openGraph: {
+            images: currentArticle.images.length > 0 
+              ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`
+              : '/images/no-image.jpg'
+          }
+        };
+    } else {
+        return {
+            title: defineTitle("Article Introuvable"), 
+        }
+    }
+  }
 
-  return {
-    title: `${article.title} | Nom de votre site`,
-    description: article.summery,
-    openGraph: {
-      title: article.title,
-      description: article.summery,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: article.title,
-        },
-      ],
-      type: 'article',
-      url: `${process.env.NEXT_PUBLIC_HOST}${category.slug}/${article.slug}`,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: article.title,
-      description: article.summery,
-      images: [imageUrl],
-    },
-  };
-}
-
-function ArticlePage({ params }: { params: Promise<{  category: string; slug: string; }> }) {
-    const {category, slug} = React.use(params);
-    const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
-    const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
-    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase()) //publishedArticles.find(x=>x.type.toString() === decodeURIComponent(category));
-    console.log(currentArticle);
+async function ArticlePage({ params }: { params: Promise<{  category: string; slug: string; }> }) {
+    const {category, slug} = await params;
+    const categories = await fetchCategory();
+    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
+    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
+    const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
+    // const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
+    // const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
+    // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase()) 
 
   return (
     <div className='py-8'>
         <FeedTemplate>
-            {isSuccess && currentCategory && currentArticle &&
+            { currentCategory && currentArticle &&
                 <div className='flex flex-col gap-4'>
                     <h1>{currentArticle.title}</h1>
                     <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
