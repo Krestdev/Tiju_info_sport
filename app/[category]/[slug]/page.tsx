@@ -8,6 +8,43 @@ import { articleDate } from '@/lib/utils';
 import { Share2, ThumbsUp } from 'lucide-react';
 import React from 'react';
 
+// lib/metadata.ts
+import { Metadata } from 'next';
+
+export function generateArticleMetadata(
+  article: Article,
+  category: { slug: string }
+): Metadata {
+  const imageUrl = article.images.length > 0 
+    ? `${process.env.NEXT_PUBLIC_API}image/${article.images[0].id}`
+    : '/images/no-image.jpg';
+
+  return {
+    title: `${article.title} | Nom de votre site`,
+    description: article.summery,
+    openGraph: {
+      title: article.title,
+      description: article.summery,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+      type: 'article',
+      url: `${process.env.NEXT_PUBLIC_HOST}${category.slug}/${article.slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.summery,
+      images: [imageUrl],
+    },
+  };
+}
+
 function ArticlePage({ params }: { params: Promise<{  category: string; slug: string; }> }) {
     const {category, slug} = React.use(params);
     const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
@@ -25,7 +62,7 @@ function ArticlePage({ params }: { params: Promise<{  category: string; slug: st
                     <p className='leading-[130%] text-[16px] sm:text-[18px] font-bold text-gray-800'>{currentArticle.summery}</p>
                     <div className='flex flex-col gap-2r'>
                         <span className='font-bold text-gray-900'>{currentArticle.author.name}</span>
-                        <p className='text-gray-600'>{articleDate(currentArticle.created_at)}</p>
+                        <p className='text-gray-600'>{currentArticle.publish_on.length > 0 ? articleDate(currentArticle.publish_on) : articleDate(currentArticle.created_at)}</p>
                         {/**Display Update date if the article has been updated */}
                         {currentArticle.updated_at !== currentArticle.created_at && <p className='text-gray-600'>{`Mis à jour le ${new Date(currentArticle.updated_at).toLocaleDateString()}`}</p>}
                     </div>

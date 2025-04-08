@@ -119,6 +119,7 @@ type Article = {
     status: "published" | "draft" | "deleted";
     headline: boolean;
     slug:string;
+    publish_on:string;
 };
 
 type ImageA = {
