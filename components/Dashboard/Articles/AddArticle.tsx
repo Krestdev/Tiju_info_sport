@@ -21,6 +21,7 @@ import AddCategory from '../Categories/AddCategory';
 import LexicalEditor, { LexicalEditorRef } from './LexicalEditor';
 import DatePubli from './DatePubli';
 import { Checkbox } from "@/components/ui/checkbox"
+import { slugify } from '@/lib/utils';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -33,9 +34,6 @@ const formSchema = z.object({
         message: "Le titre doit contenir au moins 2 caractères.",
     }),
     extrait: z.string().min(2, {
-        message: "Le sommaire doit contenir au moins 2 caractères.",
-    }),
-    extrait2: z.string().min(2, {
         message: "Le sommaire doit contenir au moins 2 caractères.",
     }),
     description: z.string().min(2, {
@@ -93,7 +91,6 @@ const AddArticle = () => {
             media: "",
             status: "save",
             headline: false,
-            extrait2: ""
         },
     });
 
@@ -130,7 +127,7 @@ const AddArticle = () => {
                     category_id: categorie?.find(x => x.title === data.type)?.id,
                     title: data.title,
                     summary: data.extrait,
-                    slug: data.extrait2,
+                    slug: slugify(data.title),
                     description: data.description,
                     type: data.type,
                     status: data.status,
@@ -233,7 +230,7 @@ const AddArticle = () => {
                 user_id: idU,
                 title: data.title,
                 summary: data.summery,
-                slug: data.slug,
+                slug: slugify(data.title),
                 description: data.description,
                 type: data.type,
                 headline: Boolean(data.headline),
@@ -325,19 +322,6 @@ const AddArticle = () => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{"Sommaire de l'article"}</FormLabel>
-                            <FormControl>
-                                <Input className='max-w-[384px] w-full h-[60px]' {...field} placeholder="Résumé de l'article" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="extrait2"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{"Petit extrait"}</FormLabel>
                             <FormControl>
                                 <Input className='max-w-[384px] w-full h-[60px]' {...field} placeholder="Résumé de l'article" />
                             </FormControl>
