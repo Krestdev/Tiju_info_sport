@@ -154,7 +154,7 @@ function EditArticle({ children, donnee }: Props) {
     const editArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: () => {
-            const idU = currentUser && String(currentUser.id)
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
                 title: artMod.title,
