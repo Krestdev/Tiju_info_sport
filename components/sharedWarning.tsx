@@ -16,10 +16,11 @@ type Props = {
   action: (id: number) => void;
   name?: string;
   message: string;
-  bouton: string
+  bouton: string;
 };
 
 function ShareWarning({ children, id, action, name = "an element", message, bouton }: Props) {
+console.log(id);
 
   return (
     <Dialog>
