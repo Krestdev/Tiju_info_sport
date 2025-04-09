@@ -170,7 +170,7 @@ function AdminTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {userData.isLoading && "Loading"}
+                    {userData.isLoading && "Chargement..."}
                     {userData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -261,12 +261,12 @@ function AdminTable() {
 
                         </div>
                     ) : userData.isSuccess && filterData.length < 1 && user && user.length > 0 ? (
-                        "No result"
+                        "Pas de résultat"
                     ) : userData.isSuccess && user?.length === 0 ? (
-                        "Empty table"
+                        "Aucun administrateur"
                     ) : (
                         userData.isError && (
-                            "Some error occured"
+                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
                 </form>

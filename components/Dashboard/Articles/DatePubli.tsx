@@ -241,7 +241,6 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                     </form>
                 </Form>
             </DialogContent>
-            <ToastContainer />
         </Dialog>
     );
 }

@@ -223,7 +223,7 @@ function ArticleTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {pubsData.isLoading && <h3>{"Loading"}</h3>}
+                    {pubsData.isLoading && <h3>{"Chargement..."}</h3>}
                     {pubsData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -305,12 +305,12 @@ function ArticleTable() {
 
                         </div>
                     ) : pubsData.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
-                        "No result"
+                        "Pas de résultat"
                     ) : pubsData.isSuccess && sport?.length === 0 ? (
-                        "Empty table"
+                        "Aucune publicité"
                     ) : (
                         pubsData.isError && (
-                            "Some error occured"
+                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
                 </form>

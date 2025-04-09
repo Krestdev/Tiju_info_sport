@@ -87,12 +87,6 @@ function EditArticle({ children, donnee }: Props) {
         'Content-Type': 'multipart/form-data'
     });
 
-    const decodeHtml = (html: string) => {
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        return doc.body.textContent || "";
-    };
-
-
     const articleCate = useQuery({
         queryKey: ["categories"],
         queryFn: () => {
@@ -117,7 +111,7 @@ function EditArticle({ children, donnee }: Props) {
     }
 
     const updateImage = useMutation({
-        mutationKey: ["articles"],
+        mutationKey: ["pictures"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
             return axiosClient1.post(`/image/${donnee.images[0].id}`,
                 {
@@ -128,6 +122,7 @@ function EditArticle({ children, donnee }: Props) {
         },
         onSuccess() {
             editArticle.mutate()
+            queryClient.invalidateQueries({ queryKey: ["pictures"] });
         },
     })
 
@@ -148,7 +143,7 @@ function EditArticle({ children, donnee }: Props) {
                 user_id: idU,
                 title: artMod.title,
                 summary: artMod.extrait,
-                description: decodeHtml(artMod.description),
+                description: artMod.description,
                 type: artMod.type,
                 headline: artMod.headline
             });
@@ -162,7 +157,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        setFichier(data.media)
+        // setFichier(data.media)
         setArtMod(data)
         console.log(fichier);
 
@@ -180,23 +175,6 @@ function EditArticle({ children, donnee }: Props) {
             console.log(editArticle.error)
         }
     }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
-
-    const [value, setValue] = useState(extractTextFromHtml(donnee.description))
-
-    useEffect(() => {
-        if (donnee && donnee.description) {
-            const textOnly = extractTextFromHtml(donnee.description);
-            setValue(textOnly);
-        }
-    }, [donnee, setValue, dialogO]);
-
-    function extractTextFromHtml(html: string): string {
-        if (!html) return "";
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
-        return tempDiv.textContent || "";
-    }
-
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -343,7 +321,7 @@ function EditArticle({ children, donnee }: Props) {
                                                             if (e.target.files) {
                                                                 const newFiles = Array.from(e.target.files);
                                                                 const updatedFiles = [...selectedFiles, ...newFiles];
-
+                                                                setFichier(updatedFiles)
                                                                 setSelectedFiles(updatedFiles);
                                                                 field.onChange(updatedFiles);
                                                             }
@@ -467,19 +445,30 @@ function EditArticle({ children, donnee }: Props) {
                                 }}>
                                 {"Publier"}
                             </Button>
-                            {/* <Button onClick={() => console.log(form.getValues())} variant={"outline"} className='max-w-[384px] w-full font-normal rounded-none'>{"Enregistrer"}</Button>
-                            <Sharing donnee={donnee} isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+                        </div>
+
+                        {/* <div className='w-full flex flex-col gap-2'>
                             <Button
-                                type="submit"
+                                variant="outline"
+                                className="max-w-[384px] w-full font-normal rounded-none"
+                                type="button"
+                                onClick={() => {
+                                    form.handleSubmit(onSubmit)()
+                                }}>
+                                {"enregistrer"}
+                            </Button>
+                            <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
+                            <Button
+                                type="button"
                                 className="max-w-[384px] w-full rounded-none font-normal"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleOpen();
+                                onClick={() => {
+                                    form.handleSubmit(onSubmit1)()
                                 }}
                             >
                                 {"Publier"}
-                            </Button> */}
-                        </div>
+                            </Button>
+                        </div> */}
+
                     </form>
                     <ToastContainer />
                 </Form>

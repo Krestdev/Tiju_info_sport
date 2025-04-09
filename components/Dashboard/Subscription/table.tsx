@@ -162,7 +162,7 @@ function SubscritionTable() {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {subscritionData.isLoading && "Loading"}
+                    {subscritionData.isLoading && "Chargement..."}
                     {subscritionData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -241,12 +241,12 @@ function SubscritionTable() {
                             />
                         </div>
                     ) : subscritionData.isSuccess && filterData.length < 1 && subscritionData.data.length > 0 ? (
-                        "No result"
+                        "Pas de résultat"
                     ) : subscritionData.isSuccess && subscritionData.data.length === 0 ? (
-                        "Empty table"
+                        "Aucun abonnement"
                     ) : (
                         subscritionData.isError && (
-                            "Some error occured"
+                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
 

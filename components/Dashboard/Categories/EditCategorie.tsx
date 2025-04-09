@@ -37,7 +37,8 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
     description: z.string().min(10, { message: "La description doit avoir au moins 10 caractères" }),
-    parent: z.any().optional()
+    parent: z.any().optional(),
+    color: z.any()
 })
 
 
@@ -51,11 +52,9 @@ function EditCategorie({ children, donnee }: Props) {
 
     const { currentUser } = useStore()
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [cate, setCate] = useState<Categories[]>()
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
     const [parents, setParents] = useState<Category[]>([]);
-    const [par, setPar] = useState<any>()
 
 
     const articleCate = useQuery({
@@ -80,7 +79,8 @@ function EditCategorie({ children, donnee }: Props) {
         defaultValues: {
             nom: donnee.title,
             description: donnee.description,
-            parent: donnee.parent ? donnee.parent.toString() : undefined
+            parent: donnee.parent ? donnee.parent.toString() : undefined,
+            color: donnee.color
         }
     })
 
@@ -91,36 +91,40 @@ function EditCategorie({ children, donnee }: Props) {
                 user_id: "3",
                 title: data.nom,
                 image: "defaultImage",
+                slug: data.nom,
                 description: data.description,
-                parent: data.parent
+                parent: data.parent,
+                color: data.color
             });
         },
     });
 
     const addSubCategory = useMutation({
-            mutationKey: ["categories"],
-            mutationFn: (data: z.infer<typeof formSchema>) => {
-                const idU = String(currentUser.id)
-                return axiosClient.post(`/category/sub/${data.parent}`,
-                    {
-                        user_id: idU,
-                        title: data.nom,
-                        image: "image",
-                        description: data.description
-                    })
-            },
-        })
-    
-        React.useEffect(() => {
-            if (addSubCategory.isSuccess) {
-                toast.success("Ajoutée avec succès");
-                queryClient.invalidateQueries({ queryKey: ["categories"] });
-                setDialogOpen(prev => !prev);
-            } else if (addSubCategory.isError) {
-                toast.error("Erreur lors de la création de la catégorie");
-                console.log(addSubCategory.error)
-            }
-        }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
+        mutationKey: ["categories"],
+        mutationFn: (data: z.infer<typeof formSchema>) => {
+            const idU = String(currentUser.id)
+            return axiosClient.post(`/category/sub/${data.parent}`,
+                {
+                    user_id: idU,
+                    title: data.nom,
+                    image: "image",
+                    slug: data.nom,
+                    description: data.description,
+                    color: data.color
+                })
+        },
+    })
+
+    React.useEffect(() => {
+        if (addSubCategory.isSuccess) {
+            toast.success("Ajoutée avec succès");
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            setDialogOpen(prev => !prev);
+        } else if (addSubCategory.isError) {
+            toast.error("Erreur lors de la création de la catégorie");
+            console.log(addSubCategory.error)
+        }
+    }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
 
     //Submit function
     function onSubmit(data: z.infer<typeof formSchema>) {
@@ -201,6 +205,18 @@ function EditCategorie({ children, donnee }: Props) {
                                         </Select>
                                     </FormControl>
                                     <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="color"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Selectionnez une couleur"}</FormLabel>
+                                    <FormControl>
+                                        <Input type="color" {...field} placeholder="Selectionnez une couleur" className="h-[60px] max-w-[384px]" />
+                                    </FormControl>
                                 </FormItem>
                             )}
                         />

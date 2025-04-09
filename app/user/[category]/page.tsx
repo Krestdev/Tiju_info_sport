@@ -21,7 +21,8 @@ const page = ({ params }: { params: Promise<{ category: string, id: string }> })
 
 
     const articleData = useQuery({
-        queryKey: ["categories"],
+        // A changer plutard
+        queryKey: ["categoryv"],
         queryFn: () => {
             return axiosClient.get<any, AxiosResponse<Category[]>>(
                 `/category`

@@ -40,5 +40,4 @@ function Page({ params }: { params: Promise<{ category: string }> }) {
     </main>
   )
 }
-
 export default Page
