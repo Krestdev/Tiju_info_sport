@@ -174,7 +174,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        // setFichier(data.media)
+        setFichier(data.media)
         setArtMod(data)
         console.log(fichier);
 
@@ -184,7 +184,7 @@ function EditArticle({ children, donnee }: Props) {
 
     function onSubmit1(data: z.infer<typeof formSchema>) {
         setArtMod(data)
-        setPhoto(data.media)
+        setFichier(data.media)
         fichier === undefined ? setDialogOpenE(true) :
             updateImage1.mutate({ data: fichier[0], id: donnee.id })
     }

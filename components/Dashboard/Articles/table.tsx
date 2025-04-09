@@ -325,14 +325,15 @@ function ArticleTable() {
                                                                             item.status === "draft"
                                                                                 // || item.status === "programmed" 
                                                                                 ?
-                                                                                <LuSend
-                                                                                    onClick={(e) => {
-                                                                                        e.preventDefault();
-                                                                                        setSelectedArticleId(item.id);
-                                                                                        setSelectedArticle(item)
-                                                                                        handleOpen();
-                                                                                    }}
-                                                                                    className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                // <LuSend
+                                                                                //     onClick={(e) => {
+                                                                                //         e.preventDefault();
+                                                                                //         setSelectedArticleId(item.id);
+                                                                                //         setSelectedArticle(item)
+                                                                                //         handleOpen();
+                                                                                //     }}
+                                                                                //     className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                <LuSend className="opacity-0 size-5" />
                                                                                 :
                                                                                 item.status === "deleted" ?
                                                                                     <ShareWarning id={item.id} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
