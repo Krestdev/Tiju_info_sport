@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
+import Logo from './logo';
 
 
 const Footbar = () => {
@@ -29,10 +30,7 @@ const Footbar = () => {
         isSuccess && categories.length > 0 ?
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
-                <Link href={"/"} className='flex items-center gap-4 text-[#182067]'>
-                    <img src={settings.logo} alt="Logo" className='size-[50px]' />
-                    <p className='font-semibold font-mono uppercase text-3xl'>{settings.compagnyName}</p>
-                </Link>
+                <Logo logoSize={50} textClass='text-3xl'/>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
                         <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>

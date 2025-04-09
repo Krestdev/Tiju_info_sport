@@ -17,6 +17,7 @@ import {
 import axiosConfig from "@/api/api";
 import { toast, ToastContainer } from "react-toastify";
 import Link from "next/link";
+import Logo from "@/components/logo";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide." }),
@@ -89,15 +90,7 @@ export default function AdminLogin() {
   return (
     <main className="min-h-screen bg-white">
       <div className="h-[60px] inline-flex w-full items-center justify-center">
-        <Link
-          href={"/"}
-          className="flex flex-row items-center gap-4 text-[#182067]"
-        >
-          <img src={settings.logo} alt="Logo" className="size-[40px]" />
-          <span className="uppercase font-semibold font-oswald text-lg">
-            {settings.compagnyName}
-          </span>
-        </Link>
+        <Logo/>
       </div>
       {/** Login content here */}
       <section id="login" className="w-full flex justify-center h-[calc(100vh-60px)] pt-[10vh]">

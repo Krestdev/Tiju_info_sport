@@ -7,9 +7,10 @@ import Link from "next/link";
 import { MenuComp } from "./menu";
 import MenuBar from "./menuBar";
 import { Button } from "./ui/button";
+import Logo from "./logo";
 
 const Navbar = () => {
-  const { currentUser, settings } = useStore();
+  const { currentUser } = useStore();
 
   const { categories } = usePublishedArticles();
 
@@ -19,24 +20,11 @@ const Navbar = () => {
         {/* Menu bar goes here */}
         <span className="inline-flex items-center justify-start gap-2">
           <MenuBar article={categories} />
-          <Link
-            href={"/"}
-            className="flex sm:hidden flex-row items-center gap-4 text-primary-hover"
-          >
-            <img src={settings.logo} alt="Logo" className="size-[40px]" />
-          </Link>
+          <Logo showName={false} className="flex sm:hidden"/>
         </span>
         {/* Logo and Name */}
         <span className="hidden sm:flex flex-row items-center justify-center gap-5">
-          <Link
-            href={"/"}
-            className="flex flex-row items-center gap-4 text-[#182067]"
-          >
-            <img src={settings.logo} alt="Logo" className="size-[40px]" />
-            <span className="uppercase font-semibold font-mono text-lg">
-              {settings.compagnyName}
-            </span>
-          </Link>
+          <Logo/>
         </span>
         {/* Right side content */}
         <div className="flex flex-row items-center justify-end gap-5">

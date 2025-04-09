@@ -2,14 +2,13 @@ import ArticlePreview from '@/components/articlePreview';
 import FeedTemplate from '@/components/feed-template';
 import ShareArticle from '@/components/shareArticle';
 import { Button } from '@/components/ui/button';
-import { usePublishedArticles } from '@/hooks/usePublishedData';
 import { articleDate, defineTitle, sortArticles } from '@/lib/utils';
-import { Share2, ThumbsUp } from 'lucide-react';
-import React from 'react';
+import { ThumbsUp } from 'lucide-react';
 
 // lib/metadata.ts
-import { Metadata } from 'next';
+import Comment from '@/components/comment-display';
 import { fetchCategory } from '@/lib/api';
+import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
     const {category, slug} = await params;
@@ -42,7 +41,7 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
     // const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
     // const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
-    // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase()) 
+    // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
 
   return (
     <div className='py-8'>
@@ -69,8 +68,11 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                         <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{currentArticle.comments.length>1 ? `${currentArticle.comments.length} Commentaires` : currentArticle.comments.length===1 ? "1 Commentaire" : "Aucun commentaire"}</span>
                     </div>
                     {/**Comments here */}
-                    {currentArticle.comments.length === 0 ? null 
-                    : currentArticle.comments.length < 3 && <div></div>}
+                    {currentArticle.comments.length > 0 &&  
+                    <div className='flex flex-col'>
+                        {currentArticle.comments.map(x=><Comment key={x.id} comment={x}/>)}
+                    </div>
+                    }
                     {/**More articles */}
                     { currentCategory.articles.filter(x=>x.status==="published" && x.id !== currentArticle.id).length>0 && (
                         <div className='mt-10 grid grid-cols-1 gap-7 sm:grid-cols-2'>

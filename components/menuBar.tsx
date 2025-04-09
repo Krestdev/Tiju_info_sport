@@ -33,6 +33,7 @@ import {
 import { ResponsiveContainer, Bar } from "recharts";
 import { data } from "tailwindcss/defaultTheme";
 import { LuX } from "react-icons/lu";
+import Logo from "./logo";
 
 export interface Categorie {
   nom: string;
@@ -77,15 +78,7 @@ function MenuBar({ article }: Donnee) {
       <DrawerContent className="h-full w-screen md:w-[360px] rounded-none px-5 pb-10 gap-5 overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle className="flex items-center justify-between p-0">
-            <Link
-              href={"/"}
-              className="flex flex-row items-center gap-4 text-[#182067]"
-            >
-              <img src={settings.logo} alt="Logo" className="size-[50px]" />
-              <p className="font-semibold font-oswald text-[18px] leading-[26.68px] flex">
-                {settings.compagnyName}
-              </p>
-            </Link>
+            <Logo/>
             <DrawerClose asChild>
               <LuX className="size-5 cursor-pointer hover:bg-gray-50" />
             </DrawerClose>
@@ -132,25 +125,6 @@ function MenuBar({ article }: Donnee) {
             </Link>
           ))}
         </div>
-        {/* <div className="flex flex-col">
-          <div className="flex px-2 py-4 gap-2 bg-[#FF0068] justify-center">
-            <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">
-              {"Favoris"}
-            </p>
-          </div>
-          {article?.map((x, i) => (
-            <Link
-              onClick={() => setIsOpen(false)}
-              href={`/user/${x.title}`}
-              key={i}
-              className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center"
-            >
-              <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFFZ]">
-                {x.title}
-              </p>
-            </Link>
-          ))}
-        </div> */}
         <div className="flex flex-col">
           <div className="flex px-2 py-4 gap-2 bg-[#182067] justify-center">
             <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">
