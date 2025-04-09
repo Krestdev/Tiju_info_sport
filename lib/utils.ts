@@ -84,7 +84,7 @@ export function getDateRange(value: string) {
 }
 
 export function defineTitle(title:string) {
-  return `${title} - Tyju Info Sport`
+  return `${title} - Tyjuinfosport`
 }
 
 export function sortArticles(articles:Article[]){

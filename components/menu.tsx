@@ -6,25 +6,13 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Skeleton } from "./ui/skeleton"
+import { cn } from "@/lib/utils"
 
 export function MenuComp() {
 
-    const { isSuccess, isError, isLoading, categories } = usePublishedArticles();
-    console.log(categories)
-
-    const [selected, setSelected] = useState("");
-
-
+    const { isSuccess, isLoading, categories } = usePublishedArticles();
     const pathname = usePathname();
-
-    useEffect(() => {
-        const segments = pathname.split("/");
-
-        if (segments.length > 2 && segments[1] === "user") {
-            const userCategory = segments[2];
-            setSelected(userCategory);
-        }
-    }, [pathname]);
+    const path = pathname.split("/");
 
     function filterCategoriesWithChildren(data: Category[]): Category[] {
         // Filtrer les catégories parent (qui ont parent === null)
@@ -46,7 +34,7 @@ export function MenuComp() {
                 {isSuccess &&
                     filterCategoriesWithChildren(categories).map((x, i) => {
                         return (
-                            <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-mono h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/${x.slug}`}>
+                            <Link className={cn("font-mono h-10 w-fit shrink-0 px-3 flex items-center", path[1]===x.slug && "bg-primary text-primary-foreground")} key={i} href={`/${x.slug}`}>
                                 <span className="font-medium text-[14px] uppercase">{x.title}</span>
                             </Link>
                         )
