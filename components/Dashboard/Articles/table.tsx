@@ -180,8 +180,28 @@ function ArticleTable() {
         toast.success("Article publié avec succès");
     }
 
+    const editArticle = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: (id: number) => {
+            const art = sport?.find(x => x.id === id)
+            const idU = currentUser && String(currentUser.id)
+            return axiosClient.patch(`/articles/${id}`, {
+                user_id: idU,
+                ...art,
+                summary: art?.summery,
+                status: "draft"
+            });
+        },
+        onSuccess() {
+            // setDialogOpen(false)
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000,
+    });
+
     function onRestoreArticle(id: number) {
-        //Ici on va modifier son statut a enregistrer
+        editArticle.mutate(id);
         queryClient.invalidateQueries({ queryKey: ["article"] })
         toast.success("Article Restauré avec succès");
     }
@@ -205,7 +225,7 @@ function ArticleTable() {
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("published")} className={`shadow-none text-[16px] rounded-[6px] ${current === "published" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
                 <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
-                <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${ current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
+                <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
                 <Button onClick={() => setCurrent("deleted")} className={`shadow-none text-[16px] rounded-[6px] ${current === "deleted" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
             </div>
             <span className="flex flex-wrap items-center gap-5">
@@ -303,7 +323,7 @@ function ArticleTable() {
                                                                         "Brouillon" :
                                                                         item.status === "published" ? "Publié" :
                                                                             // item.status === "programmed" ? "Programmé" :
-                                                                            item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ?  "Programmé" : ""
+                                                                            item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ? "Programmé" : ""
                                                                     }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.title}>
@@ -326,7 +346,7 @@ function ArticleTable() {
                                                                                     className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                 :
                                                                                 item.status === "deleted" ?
-                                                                                    <ShareWarning id={selectedArticleId} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
+                                                                                    <ShareWarning id={item.id} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
                                                                                         <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />

@@ -513,7 +513,7 @@ const AddArticle = () => {
                         onClick={() => {
                             form.handleSubmit(onSubmit)()
                         }}>
-                        {"enregistrer"}
+                        {"Ajouter à la corbeille"}
                     </Button>
                     <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button

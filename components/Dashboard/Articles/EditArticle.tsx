@@ -69,7 +69,7 @@ function EditArticle({ children, donnee }: Props) {
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
     const [categorie, setCategorie] = useState<Category[]>();
-    const [dialogOpen, setDialogOpen] = useState(false)
+    const [dialogOpenE, setDialogOpenE] = useState(false)
     const queryClient = useQueryClient();
     const [fichier, setFichier] = useState<File[] | undefined>()
     const [artMod, setArtMod] = useState<any>()
@@ -126,6 +126,22 @@ function EditArticle({ children, donnee }: Props) {
         },
     })
 
+    const updateImage1 = useMutation({
+        mutationKey: ["pictures"],
+        mutationFn: ({ data, id }: { data: any, id: number }) => {
+            return axiosClient1.post(`/image/${donnee.images[0].id}`,
+                {
+                    file: data,
+                    article_id: id
+                }
+            )
+        },
+        onSuccess() {
+            setDialogOpenE(true)
+            queryClient.invalidateQueries({ queryKey: ["pictures"] });
+        },
+    })
+
     React.useEffect(() => {
         if (updateImage.isSuccess) {
             console.log(updateImage);
@@ -146,10 +162,11 @@ function EditArticle({ children, donnee }: Props) {
                 description: artMod.description,
                 type: artMod.type,
                 headline: artMod.headline,
+                status: "draft"
             });
         },
         onSuccess() {
-            setDialogOpen(false)
+            setDialogOpenE(false)
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
@@ -163,6 +180,13 @@ function EditArticle({ children, donnee }: Props) {
 
         fichier === undefined ? editArticle.mutate() :
             updateImage.mutate({ data: fichier[0], id: donnee.id })
+    }
+
+    function onSubmit1(data: z.infer<typeof formSchema>) {
+        setArtMod(data)
+        console.log(fichier);
+        fichier === undefined ? setDialogOpenE(true) :
+            updateImage1.mutate({ data: fichier[0], id: donnee.id })
     }
 
     React.useEffect(() => {
@@ -184,19 +208,9 @@ function EditArticle({ children, donnee }: Props) {
             type: donnee.type,
             extrait: donnee.summery,
             description: donnee.description,
-            // couverture: donnee.images[0],
-            // media: donnee.images[0] ? [donnee.images[0] as unknown as File] : [],
-            headline: donnee.headline
+            headline: donnee.headline,
         },
     });
-
-    const handleOpen = () => {
-        if (formSchema.safeParse(form.getValues()).success) {
-            setDialogOpen(true);
-        } else {
-            toast.error("Veuillez remplir correctement le formulaire.");
-        }
-    };
 
     return (
         <Dialog open={dialogO} onOpenChange={setDialogO}>
@@ -437,27 +451,15 @@ function EditArticle({ children, donnee }: Props) {
 
                         <div className='w-full flex flex-col gap-2'>
                             <Button
-                                variant="default"
-                                className="max-w-[384px] w-full font-normal rounded-none"
-                                type="button"
-                                onClick={() => {
-                                    form.handleSubmit(onSubmit)()
-                                }}>
-                                {"Publier"}
-                            </Button>
-                        </div>
-
-                        {/* <div className='w-full flex flex-col gap-2'>
-                            <Button
                                 variant="outline"
                                 className="max-w-[384px] w-full font-normal rounded-none"
                                 type="button"
                                 onClick={() => {
                                     form.handleSubmit(onSubmit)()
                                 }}>
-                                {"enregistrer"}
+                                {"Ajouter à la corbeille"}
                             </Button>
-                            <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
+                            <DatePubli artId={donnee.id} isOpen={dialogOpenE} onOpenChange={setDialogOpenE} article={donnee} />
                             <Button
                                 type="button"
                                 className="max-w-[384px] w-full rounded-none font-normal"
@@ -467,10 +469,8 @@ function EditArticle({ children, donnee }: Props) {
                             >
                                 {"Publier"}
                             </Button>
-                        </div> */}
-
+                        </div>
                     </form>
-                    <ToastContainer />
                 </Form>
             </DialogContent>
         </Dialog >
