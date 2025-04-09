@@ -42,7 +42,6 @@ const FormSchema = z.object({
 
 
 function CommentsTable() {
-    const { dataArticles, deleteComment } = useStore();
     const queryClient = useQueryClient();
 
     const searchParams = useSearchParams();

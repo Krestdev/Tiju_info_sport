@@ -37,8 +37,7 @@ const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
-function ArticleTable() {
-    const { dataPubs, deleteArticle } = useStore();
+function PubsTable() {
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
 
@@ -148,14 +147,6 @@ function ArticleTable() {
         return filtered;
     }, [rein, sport, dateRange, searchEntry, selectedType, selectedStatut]);
 
-
-
-    //Delete function
-    function onDeleteArticle(id: number) {
-        deleteArticle(id)
-        queryClient.invalidateQueries({ queryKey: ["users"] })
-        toast.success("Supprimé avec succès");
-    }
 
     const { mutate: deletePubs } = useMutation({
         mutationFn: async (categoryId: number) => {
@@ -323,4 +314,4 @@ function ArticleTable() {
     );
 }
 
-export default ArticleTable;
+export default PubsTable;

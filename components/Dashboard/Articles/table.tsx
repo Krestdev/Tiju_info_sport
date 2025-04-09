@@ -83,7 +83,7 @@ function ArticleTable() {
     const articleToTrash = useMutation({
         mutationKey: ["pictures"],
         mutationFn: (id: number) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.patch(`/articles/trash/${id}`, {
                 user_id: idU,
             });

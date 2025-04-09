@@ -29,10 +29,10 @@ export function MenuComp() {
         // Filtrer les catégories parent (qui ont parent === null)
         const parentCategories = categories.filter(category => category.parent === null);
 
-        // Filtrer les catégories parent ayant au moins un enfant avec des articles
+        // Filtrer les catégories parent ayant au moins un enfant avec des articles publiés
         return parentCategories.filter(parent =>
             categories.some(child =>
-                child.parent === parent.id && Array.isArray(child.articles) && child.articles.length > 0
+                child.parent === parent.id && Array.isArray(child.articles) && child.articles.some(x => x.status === "published")
             )
         );
     }

@@ -102,7 +102,7 @@ function EditCategorie({ children, donnee }: Props) {
     const addSubCategory = useMutation({
         mutationKey: ["categories"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.post(`/category/sub/${data.parent}`,
                 {
                     user_id: idU,

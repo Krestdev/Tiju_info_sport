@@ -34,7 +34,7 @@ const FormSchema = z.object({
 });
 
 function AdminTable() {
-    const { token, deleteArticle, editUser } = useStore();
+    const { token } = useStore();
     const queryClient = useQueryClient();
 
 
@@ -139,16 +139,8 @@ function AdminTable() {
 
     //Delete function
     function onDeleteArticle(id: number) {
-        deleteArticle(id)
         queryClient.invalidateQueries({ queryKey: ["users"] })
         toast.success("Supprimé avec succès");
-    }
-
-    const onDelete = (id: number) => {
-        editUser({
-            id: id,
-            statut: "Banni"
-        })
     }
 
     // Get current items
