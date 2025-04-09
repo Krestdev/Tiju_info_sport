@@ -127,17 +127,17 @@ const Accueil = () => {
             { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-[200px] bg-repeat-x bg-contain" style={{backgroundImage: `url(${`${ads.data.data[randomAd].image ? `${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id}` : "/images/no-image.jpeg"}`})`}} /></Link>}
             {/* { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data} taille={"h-[200px]"} clip={""} />} */}
             </FeedTemplate>
-        {
+{/*         {
             categories.length > 0 && categories.filter(x=>x.articles.length>1).slice(0,1).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
             ))
-        }
+        } */}
         { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data.filter((x,i)=>i!==randomAd)} taille={"h-[200px]"} clip={""} />}
-        {
+{/*         {
             categories.length > 0 && categories.filter(x=>x.articles.length>1).slice(1,categories.length).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
             ))
-        }
+        } */}
       </main>
     );
   }

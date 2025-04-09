@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Sheet,
   SheetTrigger,
@@ -7,48 +7,21 @@ import {
   SheetTitle,
   SheetClose,
 } from "./ui/sheet";
-import { Button } from "@/components/ui/button";
-import { BarChart, Menu, Minus, Plus, User } from "lucide-react";
-import { Users } from "@/data/temps";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { CircleUser, Menu } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useStore from "@/context/store";
-import { IoMdArrowDropright } from "react-icons/io";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "./ui/drawer";
-import { ResponsiveContainer, Bar } from "recharts";
-import { data } from "tailwindcss/defaultTheme";
-import { LuX } from "react-icons/lu";
 import Logo from "./logo";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
+import { cn } from "@/lib/utils";
 
-export interface Categorie {
-  nom: string;
-  donnees: Article[];
-}
 
-interface Donnee {
-  article: Category[] | undefined;
-}
-
-function MenuBar({ article }: Donnee) {
-  const { logout, settings, favorite, currentUser } = useStore();
+function MenuBar() {
+  const { logout, favorite, currentUser } = useStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [photo, setPhoto] = useState(currentUser?.image || settings.noPhoto);
+  const {mainCategories} = usePublishedArticles();
 
   const handleLogin = () => {
     setIsOpen(false);
@@ -61,33 +34,25 @@ function MenuBar({ article }: Donnee) {
     router.push("/user/logIn");
   };
 
-  useEffect(() => {
-    if (currentUser?.image) {
-      setPhoto(currentUser.image);
-    }
-  }, [currentUser]);
 
   return (
-    <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
         <Button variant="ghost">
-          <Menu className="h-6 w-6" />
+          <Menu />
           <span className="hidden sm:flex">{"Menu"}</span>
         </Button>
-      </DrawerTrigger>
-      <DrawerContent className="h-full w-screen md:w-[360px] rounded-none px-5 pb-10 gap-5 overflow-y-auto">
-        <DrawerHeader>
-          <DrawerTitle className="flex items-center justify-between p-0">
+      </SheetTrigger>
+      <SheetContent side={"left"} className="flex flex-col gap-4 overflow-y-auto">
+        <SheetHeader >
+          <SheetTitle>
             <Logo/>
-            <DrawerClose asChild>
-              <LuX className="size-5 cursor-pointer hover:bg-gray-50" />
-            </DrawerClose>
-          </DrawerTitle>
-        </DrawerHeader>
+          </SheetTitle>
+        </SheetHeader>
         {/* <Button className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2">{"S'abonner"}</Button> */}
         {currentUser ? (
           <Link href={"/user/profil"}>
-            <Button variant={"outline"}>{"profil"}</Button>
+            <Button variant={"outline"} className="w-full">{"profil"}</Button>
           </Link>
         ) : (
           <Link
@@ -99,53 +64,24 @@ function MenuBar({ article }: Donnee) {
             <Button
               onClick={handleLogin}
               variant={"outline"}
-              className="font-oswald font-medium text-[20px] uppercase w-full rounded-none px-2 py-4 gap-2"
+              className="w-full"
             >
-                <User />
+                <CircleUser />
               {"se connecter"}
             </Button>
           </Link>
         )}
-        <div className="flex flex-col">
-          <div className="flex px-2 py-4 gap-2 bg-[#EEEEEE] justify-center">
-            <p className="font-oswald font-medium text-[20px] uppercase text-[#545454]">
-              {"À la une"}
-            </p>
-          </div>
-          {article?.map((x, i) => (
-            <Link
-              onClick={() => setIsOpen(false)}
-              href={`/${x.title}`}
-              key={i}
-              className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center"
-            >
-              <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">
-                {x.title}
-              </p>
+        {mainCategories && 
+        <div className="flex flex-col divide-y">
+          {mainCategories.map(x=>
+            <Link key={x.id} href={`/${x.slug}`} className={cn(buttonVariants({variant:"ghost"}))}>
+              {x.title}
             </Link>
-          ))}
+          )}
         </div>
-        <div className="flex flex-col">
-          <div className="flex px-2 py-4 gap-2 bg-[#182067] justify-center">
-            <p className="font-oswald font-medium text-[20px] uppercase text-[#FFFFFF]">
-              {"Sport"}
-            </p>
-          </div>
-          {article?.slice(0, 4).map((x, i) => (
-            <Link
-              onClick={() => setIsOpen(false)}
-              href={`/${x.title}`}
-              key={i}
-              className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center"
-            >
-              <p className="font-oswald font-medium text-[20px] uppercase text-[#000000]">
-                {x.title}
-              </p>
-            </Link>
-          ))}
-        </div>
-      </DrawerContent>
-    </Drawer>
+        }
+      </SheetContent>
+    </Sheet>
   );
 }
 

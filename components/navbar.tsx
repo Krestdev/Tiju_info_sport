@@ -2,7 +2,7 @@
 
 import useStore from "@/context/store";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
-import { User } from "lucide-react";
+import { CircleUser, User } from "lucide-react";
 import Link from "next/link";
 import { MenuComp } from "./menu";
 import MenuBar from "./menuBar";
@@ -19,7 +19,7 @@ const Navbar = () => {
       <div className="containerBloc h-[60px] grid grid-cols-2 sm:grid-cols-3 gap-2">
         {/* Menu bar goes here */}
         <span className="inline-flex items-center justify-start gap-2">
-          <MenuBar article={categories} />
+          <MenuBar />
           <Logo showName={false} className="flex sm:hidden"/>
         </span>
         {/* Logo and Name */}
@@ -33,7 +33,7 @@ const Navbar = () => {
               <div className="flex flex-row items-center gap-4">
                 <Link href={"/user/profil"}>
                   <Button variant={"outline"}>
-                    <User />
+                    <CircleUser />
                     {"Profil"}
                   </Button>
                 </Link>
@@ -42,9 +42,7 @@ const Navbar = () => {
               <span className="w-full inline-flex gap-2 items-center">
                 <Link href={"/user/logIn"}>
                   <Button variant={"ghost"}>
-                    <div className="flex border-black border rounded-full">
-                      <User />
-                    </div>
+                      <CircleUser />
                     {"se connecter"}
                   </Button>
                 </Link>
