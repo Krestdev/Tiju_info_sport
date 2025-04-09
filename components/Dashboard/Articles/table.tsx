@@ -195,10 +195,6 @@ function ArticleTable() {
         toast.success("Article Restauré avec succès");
     }
 
-    const handleOpen = () => {
-        setDialog(true);
-    };
-
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = current === "tous" ?
