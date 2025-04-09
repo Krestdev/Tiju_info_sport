@@ -9,7 +9,7 @@ import useStore from '@/context/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { GrFormClose } from 'react-icons/gr';
 import { IoMdAdd, IoMdClose } from 'react-icons/io';
@@ -18,9 +18,10 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
-import LexicalEditor from './LexicalEditor';
+import LexicalEditor, { LexicalEditorRef } from './LexicalEditor';
 import DatePubli from './DatePubli';
 import { Checkbox } from "@/components/ui/checkbox"
+import { slugify } from '@/lib/utils';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -65,6 +66,8 @@ const AddArticle = () => {
     const [fichier, setFichier] = useState(null);
     const [artId, setArtId] = useState(0);
     const [selectedArticle, setSelectedArticle] = useState<Article>()
+    const editorRef = useRef<LexicalEditorRef>(null);
+
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -87,7 +90,7 @@ const AddArticle = () => {
             description: "",
             media: "",
             status: "save",
-            headline: false
+            headline: false,
         },
     });
 
@@ -124,6 +127,7 @@ const AddArticle = () => {
                     category_id: categorie?.find(x => x.title === data.type)?.id,
                     title: data.title,
                     summary: data.extrait,
+                    slug: slugify(data.title),
                     description: data.description,
                     type: data.type,
                     status: data.status,
@@ -226,6 +230,7 @@ const AddArticle = () => {
                 user_id: idU,
                 title: data.title,
                 summary: data.summery,
+                slug: slugify(data.title),
                 description: data.description,
                 type: data.type,
                 headline: Boolean(data.headline),
@@ -253,7 +258,7 @@ const AddArticle = () => {
         addArticle.mutate(data);
     }
 
-    const onSubmit1 = (data: z.infer<typeof formSchema>) => {
+    const onSubmit1 = async (data: z.infer<typeof formSchema>) => {
         setFichier(data.media);
         addArticle1.mutate(data);
     }
@@ -274,7 +279,6 @@ const AddArticle = () => {
     const filteredCategories = categorie ? categorie.filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
     ) : [];
-
 
     return (
         <Form {...form}>
@@ -300,8 +304,13 @@ const AddArticle = () => {
                     name="description"
                     render={({ field }) => (
                         <FormItem>
+                            <FormLabel>{"Description"}</FormLabel>
                             <FormControl>
-                                <LexicalEditor {...field} />
+                                <LexicalEditor
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    ref={editorRef}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -312,7 +321,7 @@ const AddArticle = () => {
                     name="extrait"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{"Extrait de l'article"}</FormLabel>
+                            <FormLabel>{"Sommaire de l'article"}</FormLabel>
                             <FormControl>
                                 <Input className='max-w-[384px] w-full h-[60px]' {...field} placeholder="Résumé de l'article" />
                             </FormControl>
@@ -517,13 +526,10 @@ const AddArticle = () => {
                     </Button> */}
                     <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
-                        type="submit"
+                        type="button"
                         className="max-w-[384px] w-full rounded-none font-normal"
-                        onClick={(e) => {
-                            console.log(form.getValues());
-
+                        onClick={() => {
                             form.handleSubmit(onSubmit1)()
-                            e.preventDefault();
                         }}
                     >
                         {"Publier"}

@@ -1,4 +1,3 @@
-// LexicalEditor.tsx
 import {
   LexicalComposer,
   type InitialConfigType,
@@ -32,17 +31,19 @@ import {
 } from "react";
 import Toolbar from "./Toolbar"; // facultatif
 
-// Props et type exposé
+// Props & ref exposé
 interface LexicalEditorProps {
   value: string;
+  onChange: (value: string) => void;
 }
+
 export interface LexicalEditorRef {
   getHtml: () => Promise<string>;
 }
 
 // Composant principal
 const LexicalEditor = forwardRef(
-  ({ value }: LexicalEditorProps, ref: Ref<LexicalEditorRef>) => {
+  ({ value, onChange }: LexicalEditorProps, ref: Ref<LexicalEditorRef>) => {
     const initialConfig: InitialConfigType = {
       namespace: "LexicalEditor",
       theme: {
@@ -81,6 +82,7 @@ const LexicalEditor = forwardRef(
           />
           <LoadInitialContent value={value} />
           <ExposeGetHtml ref={ref} />
+          <SyncOnChange onChange={onChange} />
         </div>
       </LexicalComposer>
     );
@@ -89,14 +91,27 @@ const LexicalEditor = forwardRef(
 
 export default LexicalEditor;
 
-// Chargement du HTML initial
+function SyncOnChange({ onChange }: { onChange: (value: string) => void }) {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const html = $generateHtmlFromNodes(editor, null);
+        onChange(html);
+      });
+    });
+  }, [editor, onChange]);
+
+  return null;
+}
+
 function LoadInitialContent({ value }: { value: string }) {
   const [editor] = useLexicalComposerContext();
   const hasInitialized = useRef(false);
 
   useEffect(() => {
     if (!value || hasInitialized.current) return;
-
     hasInitialized.current = true;
 
     const sanitizedHtml = sanitizeHtml(value, {
@@ -124,6 +139,7 @@ function LoadInitialContent({ value }: { value: string }) {
 
     const parser = new DOMParser();
     const dom = parser.parseFromString(sanitizedHtml, "text/html");
+
     editor.update(() => {
       const nodes = $generateNodesFromDOM(editor, dom);
       const root = $getRoot();
@@ -139,7 +155,6 @@ function LoadInitialContent({ value }: { value: string }) {
   return null;
 }
 
-// Exposition de la méthode getHtml()
 const ExposeGetHtml = forwardRef((_, ref: Ref<LexicalEditorRef>) => {
   const [editor] = useLexicalComposerContext();
 

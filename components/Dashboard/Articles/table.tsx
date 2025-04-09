@@ -97,11 +97,6 @@ function ArticleTable() {
     });
 
 
-
-    function onSubmit1(id: number) {
-        articleToTrash.mutate(id);
-    }
-
     function onSubmit(data: z.infer<typeof FormSchema>) {
         console.log(data);
     }
@@ -112,7 +107,6 @@ function ArticleTable() {
             items: [],
         },
     })
-
 
     //Update searchEntry while the user's typing
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -210,8 +204,8 @@ function ArticleTable() {
             <div className="flex flex-row items-center gap-3">
                 <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                 <Button onClick={() => setCurrent("published")} className={`shadow-none text-[16px] rounded-[6px] ${current === "published" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
-                {/* <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button> */}
-                <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
+                <Button onClick={() => setCurrent("programmed")} className={`shadow-none text-[16px] rounded-[6px] ${current === "programmed" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Programmés"}</Button>
+                <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${ current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
                 <Button onClick={() => setCurrent("deleted")} className={`shadow-none text-[16px] rounded-[6px] ${current === "deleted" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
             </div>
             <span className="flex flex-wrap items-center gap-5">
@@ -304,12 +298,12 @@ function ArticleTable() {
                                                                     <TableCell className="border">{item.author?.name}</TableCell>
                                                                     <TableCell className="border">{item.type}</TableCell>
                                                                     <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
-                                                                    <TableCell className="border">{item.created_at}</TableCell>
-                                                                    <TableCell className="border">{item.status === "draft" ?
+                                                                    <TableCell className="border">{item.publish_on ? item.publish_on : item.created_at}</TableCell>
+                                                                    <TableCell className="border">{item.status === "draft" && item.publish_on === "" ?
                                                                         "Brouillon" :
                                                                         item.status === "published" ? "Publié" :
                                                                             // item.status === "programmed" ? "Programmé" :
-                                                                            item.status === "deleted" ? "Corbeille" : ""
+                                                                            item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ?  "Programmé" : ""
                                                                     }</TableCell>
                                                                     <TableCell className="flex gap-4 justify-center">
                                                                         <EditArticle donnee={item} nom={item.title}>

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import useStore from "@/context/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ToastContainer, toast } from 'react-toastify';
@@ -28,7 +28,7 @@ import { Abonnement } from "@/data/temps";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GrFormClose } from "react-icons/gr";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
-import LexicalEditor from "./LexicalEditor";
+import LexicalEditor, { LexicalEditorRef } from "./LexicalEditor";
 import { LuEye, LuPlus } from "react-icons/lu";
 import DatePubli from "./DatePubli";
 import { AxiosResponse } from "axios";
@@ -73,6 +73,7 @@ function EditArticle({ children, donnee }: Props) {
     const queryClient = useQueryClient();
     const [fichier, setFichier] = useState<File[] | undefined>()
     const [artMod, setArtMod] = useState<any>()
+    const editorRef = useRef<LexicalEditorRef>(null);
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -80,7 +81,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     const axiosClient1 = axiosConfig({
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Accept": "*/*",
         "x-api-key": "abc123",
         'Content-Type': 'multipart/form-data'
@@ -164,9 +165,9 @@ function EditArticle({ children, donnee }: Props) {
         setFichier(data.media)
         setArtMod(data)
         console.log(fichier);
-        
+
         fichier === undefined ? editArticle.mutate() :
-        updateImage.mutate({ data: fichier[0], id: donnee.id })
+            updateImage.mutate({ data: fichier[0], id: donnee.id })
     }
 
     React.useEffect(() => {
@@ -251,17 +252,19 @@ function EditArticle({ children, donnee }: Props) {
                         <FormField
                             control={form.control}
                             name="description"
-                            render={({ field }) => {
-                                return (
-                                    <FormItem>
-                                        <FormControl>
-                                            <LexicalEditor {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )
-                            }
-                            }
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Description"}</FormLabel>
+                                    <FormControl>
+                                        <LexicalEditor
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            ref={editorRef}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
                         <FormField
                             control={form.control}
