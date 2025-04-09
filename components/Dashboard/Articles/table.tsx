@@ -337,7 +337,7 @@ function ArticleTable() {
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
                                                                         }
-                                                                        <DatePubli formId={`form-article-${item.id}`} artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
+                                                                        {/* <DatePubli formId={`form-article-${item.id}`} artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} /> */}
                                                                     </TableCell>
                                                                 </TableRow>
                                                             )

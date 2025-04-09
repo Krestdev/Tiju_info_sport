@@ -97,7 +97,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
     });
 
 
-    function onSubmit1() {
+    function onSubmit3() {
         publishNow.mutate(artId);
     }
 
@@ -133,9 +133,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                 <Form {...form}>
                     <form id={`form-datepubli-${artId}`} onSubmit={form.handleSubmit(submitFunction)} className="flex flex-col gap-5 px-7 py-10">
                         <Button
-                            type="submit"
+                            type="button"
                             className='rounded-none'
-                            onClick={() => { setSubmitFunction(() => onSubmit1) }}
+                            onClick={onSubmit3}
                         >
                             {"Publier Maintenant"}
                         </Button>
@@ -231,9 +231,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                             />
                             <Button
                                 variant={"outline"}
-                                type="submit"
+                                type="button"
                                 className='rounded-none w-full mt-4'
-                                onClick={() => setSubmitFunction(() => onSubmit2)}
+                                onClick={() => onSubmit2}
                             >
                                 {"Valider"}
                             </Button>
