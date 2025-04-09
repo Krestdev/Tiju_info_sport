@@ -27,10 +27,11 @@ interface Props {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     artId: number;
-    article: Article | undefined
+    article: Article | undefined;
+    formId: string;
 }
 
-const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
+const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
 
     const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
@@ -45,7 +46,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
         "Content-Type": "application/json",
         "Accept": "*/*",
     });
-    
+
     function mergeDateAndTime(data: { date: Date; heure: string }): Date {
         const [hours, minutes] = data.heure.split(':').map(Number);
 
@@ -130,7 +131,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                     <DialogTitle className='w-full flex justify-center uppercase text-[40px] font-medium !font-oswald'>{"Publier un article"}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(submitFunction)} className="flex flex-col gap-5 px-7 py-10">
+                    <form id={`form-datepubli-${artId}`} onSubmit={form.handleSubmit(submitFunction)} className="flex flex-col gap-5 px-7 py-10">
                         <Button
                             type="submit"
                             className='rounded-none'
@@ -138,7 +139,11 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                         >
                             {"Publier Maintenant"}
                         </Button>
-                        {!programmer && <Button type='button' variant='outline' onClick={() => setProgrammer(true)}>
+                        {!programmer && <Button
+                            type='button'
+                            variant='outline'
+                            onClick={() => setProgrammer(true)}
+                        >
                             {"Programmer la publication"}
                         </Button>}
                         {programmer && <div>

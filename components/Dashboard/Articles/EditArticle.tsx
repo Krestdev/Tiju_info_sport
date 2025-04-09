@@ -184,7 +184,7 @@ function EditArticle({ children, donnee }: Props) {
 
     function onSubmit1(data: z.infer<typeof formSchema>) {
         setArtMod(data)
-        console.log(fichier);
+        setPhoto(data.media)
         fichier === undefined ? setDialogOpenE(true) :
             updateImage1.mutate({ data: fichier[0], id: donnee.id })
     }
@@ -217,7 +217,7 @@ function EditArticle({ children, donnee }: Props) {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="w-[95vh] h-[95vh] max-w-none p-6 scrollbar">
                 <DialogHeader>
-                    <DialogTitle>{"Modifier une Publicité"}</DialogTitle>
+                    <DialogTitle>{"Modifier un Article"}</DialogTitle>
                     <DialogDescription>
                         {"Remplissez le formulaire pour modifier une Publicité"}
                     </DialogDescription>
@@ -227,8 +227,7 @@ function EditArticle({ children, donnee }: Props) {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex flex-col gap-5 px-7 py-10"
                     >
-                        <h1 className='uppercase text-[40px]'>{"Ajouter un article"}</h1>
-
+                        <h1 className='uppercase text-[40px]'>{"Modifier un article"}</h1>
                         <FormField
                             control={form.control}
                             name="title"
@@ -459,7 +458,7 @@ function EditArticle({ children, donnee }: Props) {
                                 }}>
                                 {"Ajouter à la corbeille"}
                             </Button>
-                            <DatePubli artId={donnee.id} isOpen={dialogOpenE} onOpenChange={setDialogOpenE} article={donnee} />
+                            <DatePubli artId={donnee.id} isOpen={dialogOpenE} onOpenChange={setDialogOpenE} article={donnee} formId={`form-article-${donnee.id}`} />
                             <Button
                                 type="button"
                                 className="max-w-[384px] w-full rounded-none font-normal"

@@ -513,7 +513,7 @@ const AddArticle = () => {
                         }}>
                         {"Ajouter à la corbeille"}
                     </Button>
-                    <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
+                    <DatePubli formId={`form-article-${artId}`} artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
                         type="button"
                         className="max-w-[384px] w-full rounded-none font-normal"
