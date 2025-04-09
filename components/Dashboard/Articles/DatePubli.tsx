@@ -45,12 +45,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
         "Content-Type": "application/json",
         "Accept": "*/*",
     });
-
-    const decodeHtml = (html: string) => {
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        return doc.body.textContent || "";
-    };
-
+    
     function mergeDateAndTime(data: { date: Date; heure: string }): Date {
         const [hours, minutes] = data.heure.split(':').map(Number);
 

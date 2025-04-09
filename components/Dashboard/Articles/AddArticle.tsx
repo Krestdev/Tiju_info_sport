@@ -193,9 +193,7 @@ const AddArticle = () => {
         },
         onError(error: any) {
             console.log(error.status);
-            // if (error.status === 500) {
             toast.error("La taille maximale de l'image doit être de 2Mo")
-            // }
             deleteArticle(artId)
         },
     })
