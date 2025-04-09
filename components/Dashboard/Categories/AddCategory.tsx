@@ -41,6 +41,7 @@ const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
     description: z.string().min(10, { message: "La description doit avoir au moins 10 caractères" }),
     parent: z.any().optional(),
+    color: z.any()
 });
 
 type Props = {
@@ -62,8 +63,10 @@ const AddCategory = ({ children }: Props) => {
                 {
                     user_id: idU,
                     title: data.nom,
+                    slug: data.nom,
                     image: "image",
-                    description: data.description
+                    description: data.description,
+                    color: data.color
                 })
         },
     })
@@ -88,8 +91,10 @@ const AddCategory = ({ children }: Props) => {
                 {
                     user_id: idU,
                     title: data.nom,
+                    slug: data.nom,
                     image: "image",
-                    description: data.description
+                    description: data.description,
+                    color: data.color
                 })
         },
     })
@@ -129,7 +134,8 @@ const AddCategory = ({ children }: Props) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nom: "",
-            description: ""
+            description: "",
+            color: undefined
         },
     });
 
@@ -205,7 +211,18 @@ const AddCategory = ({ children }: Props) => {
                                 </FormItem>
                             )}
                         />
-
+                        <FormField
+                            control={form.control}
+                            name="color"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Selectionnez une couleur"}</FormLabel>
+                                    <FormControl>
+                                        <Input type="color" {...field} placeholder="Selectionnez une couleur" className="h-[60px] max-w-[384px]" />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                         <Button type="submit" className="rounded-none max-w-[384px] w-full">
                             {"Ajouter"}
                         </Button>

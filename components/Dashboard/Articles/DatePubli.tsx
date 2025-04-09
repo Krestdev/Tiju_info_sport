@@ -39,23 +39,6 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
     const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
     const [submitFunction, setSubmitFunction] = useState(() => onSubmit2);
     const [programmer, setProgrammer] = useState(false);
-    const [categorie, setCategorie] = useState<Category[]>()
-
-
-    const articleCate = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
-
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setCategorie(articleCate.data.data)
-        }
-    }, [articleCate.data])
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -80,7 +63,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
         return merged;
     }
 
-    const editArticle = useMutation({
+    const publishNow = useMutation({
         mutationKey: ["articles"],
         mutationFn: (id: number) => {
             const idU = String(currentUser.id)
@@ -119,7 +102,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
 
 
     function onSubmit1() {
-        editArticle.mutate(artId);
+        publishNow.mutate(artId);
     }
 
     function onSubmit2(data: z.infer<typeof formSchema>) {
