@@ -48,7 +48,6 @@ type Props = {
 };
 
 function EditSubscriptionForm({ children, selectedPubs }: Props) {
-    const { editSubscription } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const queryClient = useQueryClient();
 
@@ -66,16 +65,16 @@ function EditSubscriptionForm({ children, selectedPubs }: Props) {
 
     //Submit function
     function onSubmit(values: z.infer<typeof formSchema>) {
-        editSubscription({
-            nom: values.nom,
-            coutMois: values.coutMois,
-            coutAn: values.coutAn
-        });
-        console.log(values);
-        queryClient.invalidateQueries({ queryKey: ["client"] });
-        setDialogOpen(false);
-        toast.success("Modifié avec succès");
-        form.reset();
+        // editSubscription({
+        //     nom: values.nom,
+        //     coutMois: values.coutMois,
+        //     coutAn: values.coutAn
+        // });
+        // console.log(values);
+        // queryClient.invalidateQueries({ queryKey: ["client"] });
+        // setDialogOpen(false);
+        // toast.success("Modifié avec succès");
+        // form.reset();
     }
 
     return (

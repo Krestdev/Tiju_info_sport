@@ -45,7 +45,7 @@ const Navbar = () => {
                                     <Link href={'/user/profil'}>
                                     <Button variant={"outline"}>
                                         <User/>
-                                        {currentUser?.nom ?? "Profil"}
+                                        {currentUser?.name ?? "Profil"}
                                     </Button>
                                     </Link>
                                 </ div> :

@@ -53,7 +53,7 @@ interface Props {
 const ProfilForm = ({ pub, une }: Props) => {
     const { currentUser, settings, logout } = useStore();
     const queryClient = useQueryClient();
-    const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto)
+    const [photo, setPhoto] = useState(currentUser?.image || settings.noPhoto)
     const [fichier, setFichier] = useState(null)
     const sexe = ["Homme", "Femme"]
     const router = useRouter();
@@ -78,7 +78,7 @@ const ProfilForm = ({ pub, une }: Props) => {
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
         defaultValues: {
-            photo: currentUser?.photo || null,
+            photo: currentUser?.image || null,
             password: currentUser?.password || '',
             email: currentUser?.email,
             // pseudo: currentUser?.pseudo,
@@ -101,9 +101,7 @@ const ProfilForm = ({ pub, une }: Props) => {
     const updateImage = useMutation({
         mutationKey: ["user"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
-            console.log(data);
-
-            return axiosClient1.post(`/image/${currentUser.images.id}`,
+            return axiosClient1.post(`/image/${currentUser && currentUser.image}`,
                 {
                     file: data,
                     article_id: id
@@ -131,10 +129,10 @@ const ProfilForm = ({ pub, une }: Props) => {
     const editUser = useMutation({
             mutationKey: ["user"],
             mutationFn: ({ data, dataI }: { data: z.infer<typeof combinedSchema>, dataI: any },) => {
-                const idU = String(currentUser.id)
+                const idU = currentUser && String(currentUser.id)
                 return axiosClient.patch(`/articles/${dataI.id}`, 
                     {
-                        user_id: currentUser.id,
+                        user_id: currentUser && currentUser.id,
                         email: data.email,
                         name: data.name,
                         password: data.password,
@@ -153,11 +151,11 @@ const ProfilForm = ({ pub, une }: Props) => {
     const onSubmit = (data: z.infer<typeof combinedSchema>) => {
         console.log(data);
         setFichier(data.photo)
-        currentUser.image ?
+        currentUser && currentUser.image ?
             // updateImage.mutate({ data: fichier, id: currentUser.id })
             console.log("Hello world")
             :
-            addImage.mutate({ data: fichier, id: currentUser.id })
+            currentUser && addImage.mutate({ data: fichier, id: currentUser.id })
     };
 
     return (
@@ -407,7 +405,7 @@ const ProfilForm = ({ pub, une }: Props) => {
 
                     <div className='flex flex-col gap-4'>
                         <h3 className='uppercase'>{"Mon abonnement"}</h3>
-                        {
+                        {/* {
                             currentUser?.abonnement === undefined ?
                                 <div className='flex flex-col md:flex-row gap-10'>
                                     <div className='flex flex-row items-center gap-4 px-4 py-2'>
@@ -427,7 +425,7 @@ const ProfilForm = ({ pub, une }: Props) => {
                                         <Button onClick={() => { router.push("/user/subscribe") }} className='rounded-none'>{"Changer d'abonnement"}</Button>
                                     </div>
                                 </div>
-                        }
+                        } */}
                     </div>
                 </div>
             </div>

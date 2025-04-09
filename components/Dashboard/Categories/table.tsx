@@ -30,9 +30,7 @@ import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 
 const FormSchema = z.object({
-    items: z.array(z.number()).refine((value) => value.length > 0, {
-        message: "You have to select at least one item.",
-    }),
+    items: z.array(z.number()),
 });
 
 interface successRes {
@@ -169,7 +167,7 @@ function CategoryTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleCate.isLoading && <h3>{"Loading"}</h3>}
+                    {articleCate.isLoading && <h3>{"Chargement..."}</h3>}
                     {articleCate.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -240,20 +238,18 @@ function CategoryTable() {
 
                         </div>
                     ) : articleCate.isSuccess && filterData.length < 1 && sport?.length && sport?.length > 0 ? (
-                        "No result"
+                        "Pas de résultat"
                     ) : articleCate.isSuccess && sport?.length === 0 ? (
-                        "Empty table"
+                        "Aucune catégorie"
                     ) : (
                         articleCate.isError && (
-                            "Some error occured"
+                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
                 </form>
+                <ToastContainer />
             </Form>
-
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
-            <ToastContainer />
         </div>
     );
 }

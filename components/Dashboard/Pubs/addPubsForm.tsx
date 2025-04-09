@@ -85,7 +85,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
     const addAdvertisement = useMutation({
         mutationKey: ["advertisement"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = currentUser.id
+            const idU = currentUser && currentUser.id
             return axiosClient.post("/advertisement",
                 {
                     user_id: idU,
@@ -141,7 +141,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
     const editAdvertisement = useMutation({
         mutationKey: ["advertisement"],
         mutationFn: ({ data, id }: { data: Advertisement, id: string },) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient1.patch(`/advertisement/${data.id}`, {
                 user_id: idU,
                 title: data.title,

@@ -83,7 +83,7 @@ function ArticleTable() {
     const articleToTrash = useMutation({
         mutationKey: ["pictures"],
         mutationFn: (id: number) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.patch(`/articles/trash/${id}`, {
                 user_id: idU,
             });
@@ -247,7 +247,7 @@ function ArticleTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleCate.isLoading ? <h3>{"Loading"}</h3> :
+                    {articleCate.isLoading ? <h3>{"Chargement..."}</h3> :
                         articleCate.isSuccess && filterData.length > 0 ? (
                             <div className="min-h-[70vh] overflow-y-auto w-full">
                                 <FormField
@@ -346,12 +346,12 @@ function ArticleTable() {
                                 />
                             </div>
                         ) : articleCate.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
-                            "No result"
+                            "Pas de résultat"
                         ) : articleCate.isSuccess && sport?.length === 0 ? (
-                            "Empty table"
+                            "Aucun article"
                         ) : (
                             articleCate.isError && (
-                                "Some error occured"
+                                "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                             )
                         )}
                 </form>

@@ -47,7 +47,7 @@ function MenuBar({ article }: Donnee) {
   const { logout, settings, favorite, currentUser } = useStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto);
+  const [photo, setPhoto] = useState(currentUser?.image || settings.noPhoto);
 
   const handleLogin = () => {
     setIsOpen(false);
@@ -61,8 +61,8 @@ function MenuBar({ article }: Donnee) {
   };
 
   useEffect(() => {
-    if (currentUser?.photo) {
-      setPhoto(currentUser.photo);
+    if (currentUser?.image) {
+      setPhoto(currentUser.image);
     }
   }, [currentUser]);
 
@@ -122,7 +122,7 @@ function MenuBar({ article }: Donnee) {
           {article?.map((x, i) => (
             <Link
               onClick={() => setIsOpen(false)}
-              href={`/user/${x.title}`}
+              href={`/${x.title}`}
               key={i}
               className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center"
             >
@@ -160,7 +160,7 @@ function MenuBar({ article }: Donnee) {
           {article?.slice(0, 4).map((x, i) => (
             <Link
               onClick={() => setIsOpen(false)}
-              href={`/user/${x.title}`}
+              href={`/${x.title}`}
               key={i}
               className="flex px-2 py-4 gap-2 border-b border-[#A1A1A1] justify-center"
             >

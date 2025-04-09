@@ -15,7 +15,7 @@ interface PubProps {
 }
 
 const PubsComp = ({ pub, clip, taille }: PubProps) => {
-  const { settings, setClick } = useStore();
+  const { settings } = useStore();
 
   // const handleClick = (clickedPub: Advertisement) => {
   //   // Incrémente le compteur de clics localement

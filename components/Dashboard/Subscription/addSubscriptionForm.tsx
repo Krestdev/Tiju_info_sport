@@ -46,7 +46,6 @@ const formSchema = z.object({
 
 function AddSubscriptionForm({ addButton }: { addButton: string }) {
 
-    const { addSubscription } = useStore();
     const [dialogOpen, setDialogOpen] = useState(false);
     const queryClient = useQueryClient();
 
@@ -62,16 +61,16 @@ function AddSubscriptionForm({ addButton }: { addButton: string }) {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addSubscription({
-            id: Date.now(),
-            nom: values.nom,
-            coutMois: Number(values.coutMois),
-            coutAn: Number(values.coutAn),
-        });
-        queryClient.invalidateQueries({ queryKey: ["subscription"] })
-        setDialogOpen(false);
-        toast.success("Ajouté avec succès");
-        form.reset();
+        // addSubscription({
+        //     id: Date.now(),
+        //     nom: values.nom,
+        //     coutMois: Number(values.coutMois),
+        //     coutAn: Number(values.coutAn),
+        // });
+        // queryClient.invalidateQueries({ queryKey: ["subscription"] })
+        // setDialogOpen(false);
+        // toast.success("Ajouté avec succès");
+        // form.reset();
     }
 
     return (

@@ -36,5 +36,4 @@ async function Page({ params }: { params: Promise<{ category: string }> }) {
     </div>
   )
 }
-
 export default Page

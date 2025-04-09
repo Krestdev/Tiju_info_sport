@@ -42,7 +42,7 @@ interface GoogleUser {
 
 export default function SignupPage() {
 
-  const { token, dataSubscription } = useStore();
+  const { token } = useStore();
   const queryClient = useQueryClient();
   const router = useRouter();
   const axiosClient = axiosConfig({

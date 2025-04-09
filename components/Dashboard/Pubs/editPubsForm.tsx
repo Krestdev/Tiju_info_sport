@@ -109,7 +109,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
     const editAdvertisement = useMutation({
         mutationKey: ["advertisement"],
         mutationFn: ({ data, dataI }: { data: z.infer<typeof formSchema>, dataI: any },) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.patch(`/advertisement/${dataI.id}`, {
                 user_id: idU,
                 title: data.nom,

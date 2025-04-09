@@ -66,7 +66,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
     const publishNow = useMutation({
         mutationKey: ["articles"],
         mutationFn: (id: number) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.patch(`/articles/publish/${id}`, {
                 user_id: idU,
             });
@@ -83,7 +83,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
     const programArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.patch(`/articles/${artId}`, {
                 ...article,
                 summary: article?.summery,
@@ -241,7 +241,6 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                     </form>
                 </Form>
             </DialogContent>
-            <ToastContainer />
         </Dialog>
     );
 }

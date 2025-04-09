@@ -59,7 +59,7 @@ type Props = {
 };
 
 function EditUser({ children, selectedUser }: Props) {
-    const { dataSubscription, token } = useStore();
+    const { token } = useStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [abon, setAbon] = useState<Abonnement[]>()
 

@@ -81,6 +81,7 @@ const LexicalEditor = forwardRef(
             ErrorBoundary={LexicalErrorBoundary}
           />
           <LoadInitialContent value={value} />
+          {/* <LoadInitialContent value={"value"} /> */}
           <ExposeGetHtml ref={ref} />
           <SyncOnChange onChange={onChange} />
         </div>

@@ -42,7 +42,6 @@ const FormSchema = z.object({
 
 
 function CommentsTable() {
-    const { dataArticles, deleteComment } = useStore();
     const queryClient = useQueryClient();
 
     const searchParams = useSearchParams();
@@ -232,7 +231,7 @@ function CommentsTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleData.isLoading && "Loading"}
+                    {articleData.isLoading && "Chargement..."}
                     {articleData.isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
@@ -301,12 +300,12 @@ function CommentsTable() {
 
                         </div>
                     ) : articleData.isSuccess && filterData.length < 1 && article && article.length > 0 ? (
-                        "No result"
+                        "Pas de résultat"
                     ) : articleData.isSuccess && article?.length === 0 ? (
-                        "Empty table"
+                        "Aucun commentaire"
                     ) : (
                         articleData.isError && (
-                            "Some error occured"
+                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
                 </form>
