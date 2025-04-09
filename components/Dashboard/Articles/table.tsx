@@ -118,12 +118,6 @@ function ArticleTable() {
     }
 
 
-
-    const decodeHtml = (html: string) => {
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        return doc.body.textContent || "";
-    };
-
     const filterData = useMemo(() => {
         if (!sport) {
             setRein(false);
@@ -174,11 +168,6 @@ function ArticleTable() {
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
     });
-
-    function onPublishArticle(id: number) {
-        queryClient.invalidateQueries({ queryKey: ["article"] })
-        toast.success("Article publié avec succès");
-    }
 
     const editArticle = useMutation({
         mutationKey: ["articles"],
@@ -319,7 +308,7 @@ function ArticleTable() {
                                                                     <TableCell className="border">{item.type}</TableCell>
                                                                     <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
                                                                     <TableCell className="border">{item.publish_on ? item.publish_on : item.created_at}</TableCell>
-                                                                    <TableCell className="border">{item.status === "draft" && item.publish_on === "" ?
+                                                                    <TableCell className="border">{item.publish_on === "" && item.status === "draft" ?
                                                                         "Brouillon" :
                                                                         item.status === "published" ? "Publié" :
                                                                             // item.status === "programmed" ? "Programmé" :
@@ -351,7 +340,7 @@ function ArticleTable() {
                                                                                     </ShareWarning>
                                                                                     : <LuSend className="opacity-0 size-5" />
                                                                         }
-                                                                        <DatePubli artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
+                                                                        <DatePubli formId={`form-article-${item.id}`} artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
                                                                     </TableCell>
                                                                 </TableRow>
                                                             )

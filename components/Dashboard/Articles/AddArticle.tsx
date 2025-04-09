@@ -97,13 +97,13 @@ const AddArticle = () => {
     const addArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = currentUser && String(currentUser.id)
-
+            const idU = String(currentUser.id)
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
                     title: data.title,
+                    slug: slugify(data.title),
                     summary: data.extrait,
                     description: data.description,
                     type: data.type,
@@ -120,7 +120,7 @@ const AddArticle = () => {
     const addArticle1 = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = currentUser && String(currentUser.id)
+            const idU = String(currentUser.id)
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
@@ -173,9 +173,7 @@ const AddArticle = () => {
         },
         onError(error: any) {
             console.log(error.status);
-            // if (error.status === 500) {
             toast.error("La taille maximale de l'image doit être de 2Mo")
-            // }
             deleteArticle(artId)
         },
     })
@@ -223,7 +221,7 @@ const AddArticle = () => {
     const editArticle = useMutation({
         mutationKey: ["pictures"],
         mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
-            const idU = currentUser && String(currentUser.id)
+            const idU = String(currentUser.id) 
             return axiosClient1.patch(`/articles/${data.id}`, {
                 user_id: idU,
                 title: data.title,
@@ -513,7 +511,7 @@ const AddArticle = () => {
                         }}>
                         {"Ajouter à la corbeille"}
                     </Button>
-                    <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
+                    <DatePubli formId={`form-article-${artId}`} artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
                         type="button"
                         className="max-w-[384px] w-full rounded-none font-normal"

@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 interface store {
   settings: any;
-  currentUser: User | null;
+  currentUser: any | null;
   currentAdmin: any | null;
   isFull: boolean | undefined
   favorite: Category[] | null
@@ -20,7 +20,7 @@ interface actions {
   setSearch: (art: Article[] | undefined) => void
   setFavorite: (cate: Category[] | undefined) => void;
 
-  setCurrentUser: (user: User) => void;
+  setCurrentUser: (user: any) => void;
   logout: () => void;
   logoutAdmin: () => void;
 }
@@ -76,7 +76,7 @@ const useStore = create<store & actions>()(
           favorite: cate || state.favorite,
         })),
 
-        setIsFull: (open) => set({ isFull: open }),
+      setIsFull: (open) => set({ isFull: open }),
 
       logout: () => {
         localStorage.removeItem("token");
