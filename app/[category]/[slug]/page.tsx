@@ -40,13 +40,14 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
     const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
+    console.log(currentArticle);
     // const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
     // const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
     // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase()) 
 
   return (
     <div className='py-8'>
-        <FeedTemplate>
+        <FeedTemplate isArticle>
             { currentCategory && currentArticle &&
                 <div className='flex flex-col gap-4'>
                     <h1>{currentArticle.title}</h1>
@@ -68,6 +69,9 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                         </span>
                         <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{currentArticle.comments.length>1 ? `${currentArticle.comments.length} Commentaires` : currentArticle.comments.length===1 ? "1 Commentaire" : "Aucun commentaire"}</span>
                     </div>
+                    {/**Comments here */}
+                    {currentArticle.comments.length === 0 ? null 
+                    : currentArticle.comments.length < 3 && <div></div>}
                     {/**More articles */}
                     { currentCategory.articles.filter(x=>x.status==="published" && x.id !== currentArticle.id).length>0 && (
                         <div className='mt-10 grid grid-cols-1 gap-7 sm:grid-cols-2'>
