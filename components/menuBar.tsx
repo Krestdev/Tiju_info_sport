@@ -71,7 +71,7 @@ function MenuBar({ article }: Donnee) {
       <DrawerTrigger asChild>
         <Button variant="ghost">
           <Menu className="h-6 w-6" />
-          <span className="hidden md:flex">{"Menu"}</span>
+          <span className="hidden sm:flex">{"Menu"}</span>
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-full w-screen md:w-[360px] rounded-none px-5 pb-10 gap-5 overflow-y-auto">

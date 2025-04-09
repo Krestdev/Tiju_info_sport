@@ -40,7 +40,6 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
     const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
-    console.log(currentArticle);
     // const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
     // const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
     // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase()) 

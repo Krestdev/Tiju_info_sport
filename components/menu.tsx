@@ -9,7 +9,8 @@ import { Skeleton } from "./ui/skeleton"
 
 export function MenuComp() {
 
-    const { isSuccess, isError, isLoading, categories } = usePublishedArticles()
+    const { isSuccess, isError, isLoading, categories } = usePublishedArticles();
+    console.log(categories)
 
     const [selected, setSelected] = useState("");
 
@@ -25,13 +26,13 @@ export function MenuComp() {
         }
     }, [pathname]);
 
-    function filterCategoriesWithChildren(categories: Category[]): Category[] {
+    function filterCategoriesWithChildren(data: Category[]): Category[] {
         // Filtrer les catégories parent (qui ont parent === null)
-        const parentCategories = categories.filter(category => category.parent === null);
+        const parentCategories = data.filter(category => category.parent === null);
 
         // Filtrer les catégories parent ayant au moins un enfant avec des articles publiés
         return parentCategories.filter(parent =>
-            categories.some(child =>
+            data.some(child =>
                 child.parent === parent.id && Array.isArray(child.articles) && child.articles.some(x => x.status === "published")
             )
         );
@@ -45,7 +46,7 @@ export function MenuComp() {
                 {isSuccess &&
                     filterCategoriesWithChildren(categories).map((x, i) => {
                         return (
-                            <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-mono h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/user/${x.title}`}>
+                            <Link className={`${decodeURIComponent(selected) === x.title && "bg-[#0128AE] text-white"} font-mono h-10 w-fit shrink-0 px-3 flex items-center`} key={i} href={`/${x.slug}`}>
                                 <span className="font-medium text-[14px] uppercase">{x.title}</span>
                             </Link>
                         )

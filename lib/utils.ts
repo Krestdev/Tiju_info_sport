@@ -154,3 +154,14 @@ export function slugify(text: string): string {
     .replace(/\s+/g, "-") // Remplace les espaces par des tirets
     .replace(/-+/g, "-"); // Évite les tirets doubles
 }
+
+//Return the first word in a string
+export function getFirstWord(name: string): string {
+  if (!name) return '';
+  
+  // Gestion des espaces multiples, tabulations, etc.
+  const firstWord = name.trim().split(/\s+/)[0];
+  
+  // Optionnel : supprime la ponctuation attachée au mot
+  return firstWord.replace(/[.,;!?]+$/, '');
+}
