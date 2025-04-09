@@ -124,7 +124,7 @@ const Accueil = () => {
             </div>
                 : <div className="w-full min-h-80 flex items-center justify-center"><span className="text-lg sm:text-xl lg:text-2xl">{"Aucun article à afficher"}</span></div>}
             { ads.isLoading && <Skeleton className="w-full h-auto aspect-[4/1]" />}
-            { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-[200px] bg-repeat-x bg-contain" style={{backgroundImage: `url(${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id})`}} /></Link>}
+            { ads.isSuccess && ads.data.data.length > 0 &&  <Link href={ads.data.data[randomAd].url}><div className="w-full h-[200px] bg-repeat-x bg-contain" style={{backgroundImage: `url(${`${ads.data.data[randomAd].image ? `${process.env.NEXT_PUBLIC_API}image/${ads.data.data[randomAd].image.id}` : "/images/no-image.jpeg"}`})`}} /></Link>}
             {/* { ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data} taille={"h-[200px]"} clip={""} />} */}
             </FeedTemplate>
         {
