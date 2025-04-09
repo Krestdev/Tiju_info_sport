@@ -11,7 +11,7 @@ const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
 const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" }); /**Ubuntu doesnt display well for some reason, so we better use this one :/ */
 
 export const metadata: Metadata = {
-  title: "Tyju Info Sport - L'actualité sportive",
+  title: "Tyjuinfosport - L'actualité sportive",
   description: "Votre source d'infos sportives. Actualités, résultats, interviews et analyses sur le football, basket, athlétisme et bien d'autres sports.",
 }
 
