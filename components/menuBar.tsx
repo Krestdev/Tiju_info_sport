@@ -47,7 +47,7 @@ function MenuBar({ article }: Donnee) {
   const { logout, settings, favorite, currentUser } = useStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [photo, setPhoto] = useState(currentUser?.photo || settings.noPhoto);
+  const [photo, setPhoto] = useState(currentUser?.image || settings.noPhoto);
 
   const handleLogin = () => {
     setIsOpen(false);
@@ -61,8 +61,8 @@ function MenuBar({ article }: Donnee) {
   };
 
   useEffect(() => {
-    if (currentUser?.photo) {
-      setPhoto(currentUser.photo);
+    if (currentUser?.image) {
+      setPhoto(currentUser.image);
     }
   }, [currentUser]);
 

@@ -97,7 +97,7 @@ const AddArticle = () => {
     const addArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
 
             return axiosClient.post("/articles",
                 {
@@ -120,7 +120,7 @@ const AddArticle = () => {
     const addArticle1 = useMutation({
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
@@ -225,7 +225,7 @@ const AddArticle = () => {
     const editArticle = useMutation({
         mutationKey: ["pictures"],
         mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
-            const idU = String(currentUser.id)
+            const idU = currentUser && String(currentUser.id)
             return axiosClient1.patch(`/articles/${data.id}`, {
                 user_id: idU,
                 title: data.title,
@@ -515,15 +515,6 @@ const AddArticle = () => {
                         }}>
                         {"enregistrer"}
                     </Button>
-                    {/* <Button
-                        variant="default"
-                        className="max-w-[384px] w-full font-normal rounded-none"
-                        type="button"
-                        onClick={() => {
-                            form.handleSubmit(onSubmit)()
-                        }}>
-                        {"Publier"}
-                    </Button> */}
                     <DatePubli artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
                         type="button"
