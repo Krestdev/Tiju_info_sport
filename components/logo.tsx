@@ -7,18 +7,18 @@ import React from "react";
 interface LogoProps {
   showName?: boolean;
   className?:string;
-  logoSize?:number;
+  logoSize?: "size-[40px]"|"size-[50px]";
   textClass?:string;
 }
 
-function Logo({ showName = true, className, logoSize=40, textClass }: LogoProps) {
+function Logo({ showName = true, className, logoSize="size-[40px]", textClass }: LogoProps) {
   const { settings } = useStore();
   return (
     <Link
       href={"/"}
       className={cn("flex flex-row items-center gap-4 text-primary-hover", className)}
     >
-      <img src={settings.logo} alt="Logo" className={`h-10 w-10`} />
+      <img src={settings.logo} alt="Logo" className={cn(logoSize)} />
       {showName && (
         <span className={cn("uppercase font-semibold font-mono text-lg", textClass)}>
           {settings.compagnyName}
