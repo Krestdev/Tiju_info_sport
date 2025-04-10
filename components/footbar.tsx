@@ -30,7 +30,7 @@ const Footbar = () => {
         isSuccess && categories.length > 0 ?
         <div className='w-full flex flex-col items-center justify-center gap-8'>
             <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
-                <Logo logoSize={50} textClass='text-3xl'/>
+                <Logo logoSize={"size[50]px"} textClass='text-3xl'/>
                 <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
                     <div className='flex flex-row gap-6 '>
                         <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
