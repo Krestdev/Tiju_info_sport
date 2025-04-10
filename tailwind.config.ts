@@ -24,6 +24,7 @@ const config: Config = {
 			  },
 			colors: {
 				category: "#A1A1A1",
+				paragraph: "#545454",
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -75,7 +76,15 @@ const config: Config = {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				success:{
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))',
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))',
+				  },
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

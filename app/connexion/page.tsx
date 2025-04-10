@@ -1,13 +1,9 @@
-import React from 'react'
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import AdminLogin from './adminLogin';
+import Login from './login';
 
 
 const page = () => {
   return (
-    <div>
-        <AdminLogin />
-    </div>
+        <Login />
   )
 }
 

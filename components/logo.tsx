@@ -16,7 +16,7 @@ function Logo({ showName = true, className, logoSize="size-[40px]", textClass }:
   return (
     <Link
       href={"/"}
-      className={cn("flex flex-row items-center gap-4 text-primary-hover", className)}
+      className={cn("flex flex-row items-center gap-4 text-primary-hover shrink-0", className)}
     >
       <img src={settings.logo} alt="Logo" className={cn(logoSize)} />
       {showName && (

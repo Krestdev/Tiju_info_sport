@@ -79,7 +79,7 @@ const ProfilForm = ({ pub, une }: Props) => {
         resolver: zodResolver(formSchema1),
         defaultValues: {
             photo: currentUser?.image || null,
-            password: currentUser?.password || '',
+            password: "",
             email: currentUser?.email,
             // pseudo: currentUser?.pseudo,
 
