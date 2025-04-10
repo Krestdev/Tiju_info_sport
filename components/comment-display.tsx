@@ -1,3 +1,4 @@
+'use client'
 import useStore from '@/context/store'
 import { cn } from '@/lib/utils'
 import { ThumbsUp } from 'lucide-react'
