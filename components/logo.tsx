@@ -7,7 +7,7 @@ import React from "react";
 interface LogoProps {
   showName?: boolean;
   className?:string;
-  logoSize?: "size-[40px]"|"size[50]px";
+  logoSize?: "size-[40px]"|"size-[50px]";
   textClass?:string;
 }
 
