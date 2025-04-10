@@ -1,9 +1,10 @@
+import AuthRedirect from '@/components/auth-redirect';
 import Login from './login';
 
 
 const page = () => {
   return (
-        <Login />
+        <AuthRedirect><Login /></AuthRedirect>
   )
 }
 

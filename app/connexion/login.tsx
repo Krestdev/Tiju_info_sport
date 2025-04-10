@@ -15,9 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosConfig from "@/api/api";
-import { toast, ToastContainer } from "react-toastify";
 import Link from "next/link";
-import { Toast } from "@/components/ui/toast";
+import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide." }),
@@ -25,7 +24,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-  const { token } = useStore();
+  const { token, setCurrentUser } = useStore();
   const router = useRouter();
   const axiosClient = axiosConfig({
     Authorization: `Bearer ${token}`,
@@ -37,36 +36,38 @@ export default function Login() {
   const logIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post("users/signin", {
+      return axiosClient.post<User>("users/signin", {
         email: data.email,
         password: data.password,
       });
     },
     onSuccess: (response) => {
-      if (response.data.role === "admin") {
-        Toast({
-          variant:"default" //revenir ici !!
-        })
-        toast.success("Connexion réussie !");
-        useStore.getState().setCurrentUser(response.data);
+      //Let's make sure we set the user properly here
+      setCurrentUser(response.data);
+      //Display the success message according to the role
+      toast({
+        variant: "success",
+        title:"Connexion réuissie",
+        description: response.data.role !== "user" ? `Vous êtes connecté en tant que ${response.data.role}` : `Vous êtes connecté en tant que ${response.data.name}`
+      });
+      if (response.data.role !== "user") {
         router.push("/dashboard");
       } else {
-        toast.error("ce compte n'exixte pas !");
+        router.push("/");
       }
     },
     onError: (error) => {
-      toast.error("Erreur lors de la connexion.");
-      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Echec de connexion",
+        description: 'Adresse ou mot de passe erroné !'
+      })
+      //console.error(error);
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
       logIn.mutateAsync(data);
-    } catch (error) {
-      toast.error("Erreur lors de la connexion");
-      console.error(error);
-    }
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -129,7 +130,6 @@ export default function Login() {
           </Form>
         </div>
       </section>
-      <ToastContainer />
     </main>
   );
 }

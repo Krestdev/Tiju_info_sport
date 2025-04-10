@@ -8,7 +8,7 @@ type User = {
     sex: string;
     town: string;
     country: string;
-    role: string;
+    role: "admin"|"super-admin"|"editor"|"user";
     liked: number;
     signals: number;
     created_at: string;

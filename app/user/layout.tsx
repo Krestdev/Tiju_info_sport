@@ -13,14 +13,8 @@ export default async function RootLayout({
 }>) {
 
   return (
-    <Providers>
-      <HydrationZustand>
-        <Navbar />
-        <div className="min-h-[calc(80vh-100px)]">
+        <div className="min-h-[calc(100vh-500px)]">
         {children}
         </div>
-        <Footbar />
-      </HydrationZustand>
-    </Providers>
   );
 }
