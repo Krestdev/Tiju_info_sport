@@ -24,6 +24,7 @@ const config: Config = {
 			  },
 			colors: {
 				category: "#A1A1A1",
+				paragraph: "#545454",
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

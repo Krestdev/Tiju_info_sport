@@ -1,4 +1,5 @@
 import ArticlePreview from '@/components/articlePreview';
+import CategoryBreadcrumb from '@/components/breadcrumb-category';
 import FeedTemplate from '@/components/feed-template';
 import { fetchCategory } from '@/lib/api';
 import { sortArticles } from '@/lib/utils';
@@ -17,6 +18,7 @@ async function Page({ params }: { params: Promise<{ category: string }> }) {
             //publishedArticles.filter(x=>x.type.toLocaleLowerCase()===currentCategory.title.toLocaleLowerCase()).length > 0 ? 
             currentPublishedArticles.length > 0 ?
             <>
+            <div className="containerBloc py-3"><CategoryBreadcrumb category={currentCategory}/></div>
             <div className='block lg:hidden mb-10'>
                 <ArticlePreview version="main" {...currentPublishedArticles[0]}/>
             </div>

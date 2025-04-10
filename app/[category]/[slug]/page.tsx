@@ -39,9 +39,7 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
     const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
-    // const {categories, publishedArticles, isLoading, isSuccess} = usePublishedArticles();
-    // const currentArticle = publishedArticles.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
-    // const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
+
 
   return (
     <div className='py-8'>
@@ -49,14 +47,14 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
             { currentCategory && currentArticle &&
                 <div className='flex flex-col gap-4'>
                     <h1>{currentArticle.title}</h1>
-                    <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
-                    <p className='leading-[130%] text-[16px] sm:text-[18px] font-bold text-gray-800'>{currentArticle.summery}</p>
+                    <p>{currentArticle.summery}</p>
                     <div className='flex flex-col gap-2r'>
                         <span className='font-bold text-gray-900'>{currentArticle.author.name}</span>
                         <p className='text-gray-600'>{currentArticle.publish_on.length > 0 ? articleDate(currentArticle.publish_on) : articleDate(currentArticle.created_at)}</p>
                         {/**Display Update date if the article has been updated */}
                         {currentArticle.updated_at !== currentArticle.created_at && <p className='text-gray-600'>{`Mis à jour le ${new Date(currentArticle.updated_at).toLocaleDateString()}`}</p>}
                     </div>
+                    <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
                     <div dangerouslySetInnerHTML={{ __html: currentArticle.description }}/>
                     {/**Share Comment Like */}
                     <div className='flex flex-wrap justify-between gap-4 items-center'>
