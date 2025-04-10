@@ -57,7 +57,7 @@ type Category = {
     created_at: string;
     updated_at: string;
     slug:string;
-    color: string;
+    color: string | null;
 };
 
 // Type pour une annonce publicitaire

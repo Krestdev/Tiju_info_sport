@@ -8,12 +8,17 @@ import { MenuComp } from "./menu";
 import MenuBar from "./menuBar";
 import { Button } from "./ui/button";
 import Logo from "./logo";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const { currentUser } = useStore();
+  const pathname = usePathname();
+  const path = pathname.split("/");
+  const isDashboard = path.includes("dashboard")
 
-  const { categories } = usePublishedArticles();
-
+  if(isDashboard){
+    return null
+  }
   return (
     <div className="sticky top-0 z-20 bg-white">
       <div className="containerBloc h-[60px] grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -40,7 +45,7 @@ const Navbar = () => {
               </div>
             ) : (
               <span className="w-full inline-flex gap-2 items-center">
-                <Link href={"/user/logIn"}>
+                <Link href={"/connexion"}>
                   <Button variant={"ghost"}>
                       <CircleUser />
                     {"se connecter"}

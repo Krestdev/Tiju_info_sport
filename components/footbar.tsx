@@ -7,12 +7,14 @@ import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
 import Logo from './logo';
+import { usePathname } from 'next/navigation';
 
 
 const Footbar = () => {
-
-    const { settings } = useStore()
     const {categories, isSuccess} = usePublishedArticles();
+    const pathname = usePathname();
+    const path = pathname.split("/");
+    const isDashboard = path.includes("dashboard");
 
     function filterCategoriesWithChildren(categories: Category[]): Category[] {
         // Filtrer les catégories parent (qui ont parent === null)
@@ -24,6 +26,10 @@ const Footbar = () => {
                 child.parent === parent.id && Array.isArray(child.articles) && child.articles.length > 0
             )
         );
+    }
+
+    if(isDashboard){
+        return null;
     }
 
     return (

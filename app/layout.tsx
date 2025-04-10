@@ -5,6 +5,8 @@ import HydrationZustand from "@/components/ui/hydration";
 import Script from "next/script";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import Navbar from "@/components/navbar";
+import Footbar from "@/components/footbar";
 
 const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
 /* const fontSans = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"], variable: "--font-sans" }); */
@@ -45,7 +47,9 @@ export default async function RootLayout({
           {/* <GA /> */}
           <Providers>
             <HydrationZustand>
+              <Navbar/>
               {children}
+              <Footbar/>
             </HydrationZustand>
           </Providers>
         </main>
