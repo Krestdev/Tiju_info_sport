@@ -11,7 +11,7 @@ interface LogoProps {
   textClass?:string;
 }
 
-function Logo({ showName = true, className, logoSize=40, textClass }: LogoProps) {
+function Logo({ showName = true, className, logoSize=10, textClass }: LogoProps) {
   const { settings } = useStore();
   return (
     <Link
