@@ -40,10 +40,14 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const formSchema = z.object({
     type: z.string(),
     title: z.string().min(2, {
-        message: "Le titre doit contenir au moins 2 caractères.",
+        message: "Le titre doit contenir plus de 2 caractères.",
+    }).max(254, {
+        message: "Le titre doit contenir moins de 255 caractères"
     }),
     extrait: z.string().min(2, {
         message: "Le sommaire doit contenir au moins 2 caractères.",
+    }).max(299, {
+        message: "Le sommaire doit contenir moins de 300 caractères"
     }),
     description: z.string().min(2, {
         message: "La description doit contenir au moins 2 caractères.",
@@ -157,9 +161,9 @@ function EditArticle({ children, donnee }: Props) {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
-                title: artMod.title,
-                summary: artMod.extrait,
-                description: artMod.description,
+                title: artMod.title.trim(),
+                summary: artMod.extrait.trim(),
+                description: artMod.description.trim(),
                 type: artMod.type,
                 headline: artMod.headline,
                 status: "draft"
@@ -167,6 +171,28 @@ function EditArticle({ children, donnee }: Props) {
         },
         onSuccess() {
             setDialogOpenE(false)
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000,
+    });
+
+    const editArticle1 = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: () => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/articles/${donnee.id}`, {
+                user_id: idU,
+                title: artMod.title.trim(),
+                summary: artMod.extrait.trim(),
+                description: artMod.description.trim(),
+                type: artMod.type,
+                headline: artMod.headline,
+                status: "draft"
+            });
+        },
+        onSuccess() {
+            setDialogOpenE(true)
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
@@ -183,7 +209,7 @@ function EditArticle({ children, donnee }: Props) {
     function onSubmit1(data: z.infer<typeof formSchema>) {
         setArtMod(data)
         setFich(data.media)
-        fich === undefined ? setDialogOpenE(true) :
+        fich === undefined ? editArticle1.mutate() :
             updateImage1.mutate({ data: fich[0], id: donnee.id })
     }
 
@@ -202,10 +228,10 @@ function EditArticle({ children, donnee }: Props) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: donnee.title,
-            type: donnee.type,
-            extrait: donnee.summery,
-            description: donnee.description,
+            title: donnee.title.trim(),
+            type: donnee.type.trim(),
+            extrait: donnee.summery.trim(),
+            description: donnee.description.trim(),
             headline: donnee.headline,
         },
     });

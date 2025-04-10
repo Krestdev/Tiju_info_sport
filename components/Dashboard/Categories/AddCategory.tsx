@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dialog";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import { slugify } from "@/lib/utils";
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
@@ -62,10 +63,10 @@ const AddCategory = ({ children }: Props) => {
             return axiosClient.post("/category",
                 {
                     user_id: idU,
-                    title: data.nom,
-                    slug: data.nom,
+                    title: data.nom.trim(),
+                    slug: slugify(data.nom.trim()),
                     image: "image",
-                    description: data.description,
+                    description: data.description.trim(),
                     color: data.color
                 })
         },
@@ -90,10 +91,10 @@ const AddCategory = ({ children }: Props) => {
             return axiosClient.post(`/category/sub/${data.parent}`,
                 {
                     user_id: idU,
-                    title: data.nom,
-                    slug: data.nom,
+                    title: data.nom.trim(),
+                    slug: slugify(data.nom.trim()),
                     image: "image",
-                    description: data.description,
+                    description: data.description.trim(),
                     color: data.color
                 })
         },

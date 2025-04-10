@@ -31,10 +31,14 @@ const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 const formSchema = z.object({
     type: z.string(),
     title: z.string().min(2, {
-        message: "Le titre doit contenir au moins 2 caractères.",
+        message: "Le titre doit contenir plus de 2 caractères.",
+    }).max(254, {
+        message: "Le titre doit contenir moins de 255 caractères"
     }),
     extrait: z.string().min(2, {
         message: "Le sommaire doit contenir au moins 2 caractères.",
+    }).max(299, {
+        message: "Le sommaire doit contenir moins de 300 caractères"
     }),
     description: z.string().min(2, {
         message: "La description doit contenir au moins 2 caractères.",
@@ -102,10 +106,10 @@ const AddArticle = () => {
                 {
                     user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
-                    title: data.title,
-                    slug: slugify(data.title),
-                    summary: data.extrait,
-                    description: data.description,
+                    title: data.title.trim(),
+                    slug: slugify(data.title.trim()),
+                    summary: data.extrait.trim(),
+                    description: data.description.trim(),
                     type: data.type,
                     status: data.status,
                     headline: Boolean(data.headline)
@@ -125,10 +129,10 @@ const AddArticle = () => {
                 {
                     user_id: idU,
                     category_id: categorie?.find(x => x.title === data.type)?.id,
-                    title: data.title,
-                    summary: data.extrait,
-                    slug: slugify(data.title),
-                    description: data.description,
+                    title: data.title.trim(),
+                    summary: data.extrait.trim(),
+                    slug: slugify(data.title.trim()),
+                    description: data.description.trim(),
                     type: data.type,
                     status: data.status,
                     headline: Boolean(data.headline)
@@ -221,13 +225,13 @@ const AddArticle = () => {
     const editArticle = useMutation({
         mutationKey: ["pictures"],
         mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
-            const idU = String(currentUser.id) 
+            const idU = String(currentUser.id)
             return axiosClient1.patch(`/articles/${data.id}`, {
                 user_id: idU,
-                title: data.title,
-                summary: data.summery,
-                slug: slugify(data.title),
-                description: data.description,
+                title: data.title.trim(),
+                summary: data.summery.trim(),
+                slug: slugify(data.title.trim()),
+                description: data.description.trim(),
                 type: data.type,
                 headline: Boolean(data.headline),
                 images: `https://tiju.krestdev.com/api/image/${imageId}`

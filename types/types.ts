@@ -143,3 +143,11 @@ type ImageUser = {
     user_id: number;
     file: File[]
 }
+
+type Ressource = {
+    id?: number,
+    title: string,
+    url: string,
+    content: string,
+    section?: number
+}
