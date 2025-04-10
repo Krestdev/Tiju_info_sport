@@ -84,6 +84,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                 ...article,
                 summary: article?.summery,
                 user_id: idU,
+                status: "draft",
                 publish_on: mergeDateAndTime(data)
             });
         },

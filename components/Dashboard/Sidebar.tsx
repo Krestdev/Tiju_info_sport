@@ -42,6 +42,7 @@ import {
 } from "react-icons/lu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useEffect, useState } from "react";
+import Logo from "../logo";
 
 // Menu items.
 const items = [
@@ -162,15 +163,9 @@ export function AppSidebar() {
         <Sidebar variant="sidebar" collapsible="icon"  >
             <SidebarInset className="max-w-[320px] w-full">
                 <div className="flex flex-row items-center gap-3">
-                    <SidebarHeader className="h-[60px] w-[60px]">
-                        <img
-                            sizes="20px"
-                            className="w-full object-cover"
-                            src={settings.logo}
-                            alt={settings.compagnyName}
-                        />
+                    <SidebarHeader>
+                    <Logo showName={isFull} />
                     </SidebarHeader>
-                    {isFull && <p className='uppercase font-semibold font-oswald text-[18px] leading-[26.68px] text-[#182067]'>{settings.compagnyName}</p>}
                 </div>
                 <SidebarContent className="max-w-[320px] w-full">
                     <SidebarGroup>

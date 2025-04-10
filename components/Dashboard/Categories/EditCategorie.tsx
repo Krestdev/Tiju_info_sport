@@ -31,6 +31,7 @@ import FullScreen from "../FullScreen";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import { slugify } from "@/lib/utils";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -89,10 +90,10 @@ function EditCategorie({ children, donnee }: Props) {
         mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
             return axiosClient.patch(`/category/${id}`, {
                 user_id: "3",
-                title: data.nom,
+                title: data.nom.trim(),
                 image: "defaultImage",
-                slug: data.nom,
-                description: data.description,
+                slug: slugify(data.nom.trim()),
+                description: data.description.trim(),
                 parent: data.parent,
                 color: data.color
             });
@@ -106,10 +107,10 @@ function EditCategorie({ children, donnee }: Props) {
             return axiosClient.post(`/category/sub/${data.parent}`,
                 {
                     user_id: idU,
-                    title: data.nom,
+                    title: data.nom.trim(),
                     image: "image",
-                    slug: data.nom,
-                    description: data.description,
+                    slug: slugify(data.nom.trim()),
+                    description: data.description.trim(),
                     color: data.color
                 })
         },
