@@ -36,6 +36,7 @@ const Configuration = () => {
     const { token } = useStore()
     const queryClient = useQueryClient();
     const [selected, setSelected] = useState<number>()
+    const cate = usePublishedArticles()
 
     const contents = useQuery({
         queryKey: ["ressources"],
@@ -46,22 +47,38 @@ const Configuration = () => {
         },
     });
 
-    const content: Ressource[] = contents.isSuccess ? contents.data.data : [];
-    const cate = usePublishedArticles()
+
+    const sections = useQuery({
+        queryKey: ["sections"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<{ title: string, id: number, content: Ressource[] }[]>>(
+                `/footer/show`
+            );
+        },
+    });
+
+    const section: { title: string, id: number, content: Ressource[], }[] = sections.isSuccess ? sections.data.data : [];
+
+    const selectC = section.flatMap(x => x.content.filter(x => x.section === 5)).flatMap(x => x.id)
+    const select = section.flatMap(x => x.content.filter(x => x.section === 8)).flatMap(x => x.id)
+
+    console.log(select, selectC);
+    
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             allCategories: false,
-            selectedCategories: [],
+            selectedCategories: selectC
         },
     })
+
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
         defaultValues: {
             allSubCategories: false,
-            selectedSubCategories: [],
+            selectedSubCategories: select,
         },
     })
 
@@ -118,6 +135,38 @@ const Configuration = () => {
         },
     })
 
+    const createContent1 = useMutation({
+        mutationKey: ["ressources"],
+        mutationFn: (data: { title: string, url: string }) => {
+            return axiosClient.post("/content/create",
+                {
+                    footer_id: 5,
+                    title: data.title,
+                    url: data.url,
+                }
+            )
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+        },
+    })
+
+    const createContent2 = useMutation({
+        mutationKey: ["ressources"],
+        mutationFn: (data: { title: string, url: string }) => {
+            return axiosClient.post("/content/create",
+                {
+                    footer_id: 8,
+                    title: data.title,
+                    url: data.url,
+                }
+            )
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+        },
+    })
+
     const updateContent = useMutation({
         mutationKey: ["ressources"],
         mutationFn: (data: Ressource) => {
@@ -134,6 +183,27 @@ const Configuration = () => {
             queryClient.invalidateQueries({ queryKey: ["ressources"] });
         },
     })
+
+    function onSubmit(data: z.infer<typeof formSchema>) {
+        data.selectedCategories.forEach(element => {
+            const title = cate.mainCategories.find(x => x.id === element)?.title
+            title && createContent1.mutate({
+                title: title,
+                url: `https://https://www.tyjuinfosport.com/${title}`
+            })
+        });
+    }
+
+    function onSubmit1(data: z.infer<typeof formSchema1>) {
+        data.selectedSubCategories.forEach(element => {
+            const title = cate.childCategories.find(x => x.id === element)?.title
+            title && createContent2.mutate({
+                title: title,
+                url: `https://https://www.tyjuinfosport.com/${title}`
+            })
+        });
+    }
+
     const { watch, setValue } = form;
     const { watch: watch1, setValue: setValue1 } = form1;
 
@@ -184,6 +254,8 @@ const Configuration = () => {
                                 name='selectedCategories'
                                 render={({ field }) => {
                                     const isChecked = field.value.includes(cat.id);
+                                    console.log(field.value);
+
                                     return (
                                         <FormItem className='flex flex-row items-center gap-2'>
                                             <FormControl>
@@ -191,7 +263,7 @@ const Configuration = () => {
                                                     checked={isChecked}
                                                     onCheckedChange={(checked) => {
                                                         if (checked) {
-                                                            field.onChange([...field.value, cat]);
+                                                            field.onChange([...field.value, cat.id]);
                                                         } else {
                                                             field.onChange(field.value.filter((c) => c !== cat.id));
                                                             setValue("allCategories", false);
@@ -206,7 +278,7 @@ const Configuration = () => {
                             />
                         ))}
                     </div>
-                    <Button type='button' className='w-fit' onClick={() => console.log()}>{"Sauvegarder"}</Button>
+                    <Button type='button' className='w-fit' onClick={form.handleSubmit(onSubmit)}>{"Sauvegarder"}</Button>
                 </form>
             </Form>
             <Form {...form1}>
@@ -226,7 +298,7 @@ const Configuration = () => {
                             )}
                         />
 
-                        {cate.mainCategories.map((cat) => (
+                        {cate.childCategories.map((cat) => (
                             <FormField
                                 key={cat.id}
                                 control={form1.control}
@@ -240,7 +312,7 @@ const Configuration = () => {
                                                     checked={isChecked}
                                                     onCheckedChange={(checked) => {
                                                         if (checked) {
-                                                            field.onChange([...field.value, cat]);
+                                                            field.onChange([...field.value, cat.id]);
                                                         } else {
                                                             field.onChange(field.value.filter((c) => c !== cat.id));
                                                             setValue("allCategories", false);
@@ -255,7 +327,7 @@ const Configuration = () => {
                             />
                         ))}
                     </div>
-                    <Button type='button' className='w-fit' onClick={() => console.log()}>{"Sauvegarder"}</Button>
+                    <Button type='button' className='w-fit' onClick={form1.handleSubmit(onSubmit1)}>{"Sauvegarder"}</Button>
                 </form>
             </Form>
 
@@ -263,7 +335,7 @@ const Configuration = () => {
             <div className='flex flex-col gap-5 pt-5'>
                 <h3 className='uppercase text-[28px]'>{"Ressources"}</h3>
                 {
-                    content.map((x, i) => {
+                    section.filter(x => x.id === 7).flatMap(x => x.content).map((x, i) => {
                         return (
                             <div key={i} className='flex gap-5'>
                                 <h4 className='uppercase'>{x.title}</h4>
@@ -280,9 +352,9 @@ const Configuration = () => {
                     })
                 }
                 <AddRessource title={''} content={''} url={''} action={createContent.mutate} message={'ajouter la ressource'}>
-                    <Button className='w-fit'>
+                    <Button className='w-fit text-white'>
                         <LucidePlusCircle />
-                        <p>{"Ajouter une ressource"}</p>
+                        {"Ajouter une ressource"}
                     </Button>
                 </AddRessource>
 

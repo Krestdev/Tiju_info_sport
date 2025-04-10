@@ -148,5 +148,6 @@ type Ressource = {
     id?: number,
     title: string,
     url: string,
-    content: string
+    content: string,
+    section?: number
 }

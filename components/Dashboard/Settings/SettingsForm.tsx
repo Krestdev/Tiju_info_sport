@@ -46,14 +46,6 @@ const SettingsForm = () => {
         'Content-Type': 'multipart/form-data'
     });
 
-    const contents = useQuery({
-        queryKey: ["contents"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Ressource[]>>(
-                `/content/show`
-            );
-        },
-    });
     const sections = useQuery({
         queryKey: ["sections"],
         queryFn: () => {
@@ -63,7 +55,6 @@ const SettingsForm = () => {
         },
     });
 
-    const content: Ressource[] = contents.isSuccess ? contents.data.data : [];
     const section: { title: string, id: number, content: Ressource[] }[] = sections.isSuccess ? sections.data.data : [];
 
     const { settings, editSettings } = useStore()
