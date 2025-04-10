@@ -71,7 +71,7 @@ function EditArticle({ children, donnee }: Props) {
     const [categorie, setCategorie] = useState<Category[]>();
     const [dialogOpenE, setDialogOpenE] = useState(false)
     const queryClient = useQueryClient();
-    const [fichier, setFichier] = useState<File[] | undefined>()
+    const [fich, setFich] = useState<File[] | undefined>()
     const [artMod, setArtMod] = useState<any>()
     const editorRef = useRef<LexicalEditorRef>(null);
 
@@ -154,7 +154,7 @@ function EditArticle({ children, donnee }: Props) {
     const editArticle = useMutation({
         mutationKey: ["articles"],
         mutationFn: () => {
-            const idU = currentUser && String(currentUser.id)
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
                 title: artMod.title,
@@ -174,19 +174,17 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        // setFichier(data.media)
+        setFich(data.media)
         setArtMod(data)
-        console.log(fichier);
-
-        fichier === undefined ? editArticle.mutate() :
-            updateImage.mutate({ data: fichier[0], id: donnee.id })
+        fich === undefined ? editArticle.mutate() :
+            updateImage.mutate({ data: fich[0], id: donnee.id })
     }
 
     function onSubmit1(data: z.infer<typeof formSchema>) {
         setArtMod(data)
-        setPhoto(data.media)
-        fichier === undefined ? setDialogOpenE(true) :
-            updateImage1.mutate({ data: fichier[0], id: donnee.id })
+        setFich(data.media)
+        fich === undefined ? setDialogOpenE(true) :
+            updateImage1.mutate({ data: fich[0], id: donnee.id })
     }
 
     React.useEffect(() => {
@@ -334,7 +332,7 @@ function EditArticle({ children, donnee }: Props) {
                                                             if (e.target.files) {
                                                                 const newFiles = Array.from(e.target.files);
                                                                 const updatedFiles = [...selectedFiles, ...newFiles];
-                                                                setFichier(updatedFiles)
+                                                                setFich(updatedFiles)
                                                                 setSelectedFiles(updatedFiles);
                                                                 field.onChange(updatedFiles);
                                                             }
