@@ -40,7 +40,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const formSchema = z.object({
     type: z.string(),
     title: z.string().min(2, {
-        message: "Le titre doit plus de 2 caractères.",
+        message: "Le titre doit contenir plus de 2 caractères.",
     }).max(254, {
         message: "Le titre doit contenir moins de 255 caractères"
     }),
@@ -177,6 +177,28 @@ function EditArticle({ children, donnee }: Props) {
         retryDelay: 5000,
     });
 
+    const editArticle1 = useMutation({
+        mutationKey: ["articles"],
+        mutationFn: () => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/articles/${donnee.id}`, {
+                user_id: idU,
+                title: artMod.title.trim(),
+                summary: artMod.extrait.trim(),
+                description: artMod.description.trim(),
+                type: artMod.type,
+                headline: artMod.headline,
+                status: "draft"
+            });
+        },
+        onSuccess() {
+            setDialogOpenE(true)
+            queryClient.invalidateQueries({ queryKey: ["articles"] });
+        },
+        retry: 5,
+        retryDelay: 5000,
+    });
+
     function onSubmit(data: z.infer<typeof formSchema>) {
         setFich(data.media)
         setArtMod(data)
@@ -187,7 +209,7 @@ function EditArticle({ children, donnee }: Props) {
     function onSubmit1(data: z.infer<typeof formSchema>) {
         setArtMod(data)
         setFich(data.media)
-        fich === undefined ? setDialogOpenE(true) :
+        fich === undefined ? editArticle1.mutate() :
             updateImage1.mutate({ data: fich[0], id: donnee.id })
     }
 
