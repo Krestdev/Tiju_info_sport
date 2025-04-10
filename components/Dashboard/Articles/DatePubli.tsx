@@ -131,7 +131,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                     <DialogTitle className='w-full flex justify-center uppercase text-[40px] font-medium !font-oswald'>{"Publier un article"}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
-                    <form id={`form-datepubli-${artId}`} onSubmit={form.handleSubmit(submitFunction)} className="flex flex-col gap-5 px-7 py-10">
+                    <form id={`form-datepubli-${artId}`} className="flex flex-col gap-5 px-7 py-10">
                         <Button
                             type="button"
                             className='rounded-none'
@@ -233,15 +233,15 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                                 variant={"outline"}
                                 type="button"
                                 className='rounded-none w-full mt-4'
-                                onClick={() => onSubmit2}
+                                onClick={form.handleSubmit(onSubmit2)}
                             >
-                                {"Valider"}
-                            </Button>
+                            {"Valider"}
+                        </Button>
                         </div>}
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+                </form>
+            </Form>
+        </DialogContent>
+        </Dialog >
     );
 }
 
