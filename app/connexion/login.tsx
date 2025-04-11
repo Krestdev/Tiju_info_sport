@@ -15,8 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosConfig from "@/api/api";
-import { toast, ToastContainer } from "react-toastify";
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 import { Toast } from "@/components/ui/toast";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,7 +26,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-  const { token } = useStore();
+  const { token, setCurrentUser } = useStore();
   const router = useRouter();
   const axiosClient = axiosConfig({
     Authorization: `Bearer ${token}`,
@@ -38,36 +38,35 @@ export default function Login() {
   const logIn = useMutation({
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post("users/signin", {
+      return axiosClient.post<User>("users/signin", {
         email: data.email,
         password: data.password,
       });
     },
     onSuccess: (response) => {
       if (response.data.role === "admin") {
-        // Toast({
-        //   variant: "default" //revenir ici !!
-        // })
+        Toast({
+          variant:"default" //revenir ici !!
+        })
         toast.success("Connexion réussie !");
         useStore.getState().setCurrentUser(response.data);
         router.push("/dashboard");
       } else {
-        toast.error("ce compte n'exixte pas !");
+        router.push("/");
       }
     },
     onError: (error) => {
-      toast.error("Erreur lors de la connexion.");
-      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Echec de connexion",
+        description: 'Adresse ou mot de passe erroné !'
+      })
+      //console.error(error);
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
       logIn.mutateAsync(data);
-    } catch (error) {
-      toast.error("Erreur lors de la connexion");
-      console.error(error);
-    }
   };
 
   const form = useForm<z.infer<typeof formSchema>>({

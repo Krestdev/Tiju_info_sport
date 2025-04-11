@@ -2,15 +2,32 @@ import ArticlePreview from '@/components/articlePreview';
 import CategoryBreadcrumb from '@/components/breadcrumb-category';
 import FeedTemplate from '@/components/feed-template';
 import { fetchCategory } from '@/lib/api';
-import { sortArticles } from '@/lib/utils';
+import { defineTitle, sortArticles } from '@/lib/utils';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string; }> }): Promise<Metadata> {
+    const {category} = await params;
+    const categories = await fetchCategory();
+    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
+
+    if(currentCategory){
+        return {
+          title: defineTitle(currentCategory.title),
+          description: currentCategory.description,
+        };
+    } else {
+        return {
+            title: defineTitle("Catégorie Introuvable"), 
+        }
+    }
+  }
 
 async function Page({ params }: { params: Promise<{ category: string }> }) {
     const {category} = await params;
     const categories = await fetchCategory();
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase() === decodeURIComponent(category).toLocaleLowerCase());
     const currentPublishedArticles = sortArticles(categories.filter(y=>y.id === currentCategory?.id || y.parent===currentCategory?.id).filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
-    //const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
     
   return (
     <div className='py-8'>
