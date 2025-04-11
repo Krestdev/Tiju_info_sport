@@ -19,21 +19,18 @@ import { cn } from "@/lib/utils";
 
 
 function MenuBar() {
-  const { logout, favorite, currentUser } = useStore();
+  const { logout, favorite, activeUser, setActiveUser } = useStore();
   const router = useRouter();
   const pathname = usePathname();
   const path = pathname.split("/");
   const [isOpen, setIsOpen] = useState(false);
   const {mainCategories,childCategories} = usePublishedArticles();
 
-  const handleLogin = () => {
-    setIsOpen(false);
-    router.push("/user/logIn");
-  };
 
   const handleLogout = () => {
     setIsOpen(false);
     logout();
+    setActiveUser();
   };
 
 
@@ -51,22 +48,21 @@ function MenuBar() {
             <Logo/>
           </SheetTitle>
         </SheetHeader>
-          {currentUser ? (
+          {activeUser ? (
             <div className="grid gap-2">
-            <Link href={"/user/profil"}>
+            <Link href={"/profil"}>
               <Button variant={"outline"} className="w-full">{"profil"}</Button>
             </Link>
               <Button onClick={handleLogout}>{"se déconnecter"}</Button>
             </div>
           ) : (
             <Link
-              href={"/user/login"}
+              href={"/connexion"}
               onClick={() => {
                 setIsOpen(false);
               }}
             >
               <Button
-                onClick={handleLogin}
                 variant={"outline"}
                 className="w-full"
               >

@@ -4,6 +4,9 @@ import { persist } from "zustand/middleware";
 
 interface store {
   settings: any;
+  //a better user
+  activeUser: User | null;
+  //end new
   currentUser: any | null;
   currentAdmin: any | null;
   isFull: boolean | undefined
@@ -23,6 +26,8 @@ interface actions {
   setCurrentUser: (user: any) => void;
   logout: () => void;
   logoutAdmin: () => void;
+  //a better user
+  setActiveUser: (user?:User) =>void;
 }
 
 const initialData: store = {
@@ -41,7 +46,8 @@ const initialData: store = {
     description: "Tyju Info sport est un journal sportif"
   },
 
-
+  //a better user
+  activeUser: null,
 
   //données initiales
   favorite: null,
@@ -86,6 +92,14 @@ const useStore = create<store & actions>()(
       user: null,
       setCurrentUser: (user) => set({ currentUser: user }),
       logoutAdmin: () => set({ currentUser: null }),
+      //a better user here
+      setActiveUser:(user)=>{
+        if(user){
+          set({activeUser:user})
+        }else {
+          set({activeUser:null})
+        }
+      }
     }),
     { name: "Tyju" }
   )
