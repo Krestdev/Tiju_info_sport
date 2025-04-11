@@ -19,6 +19,7 @@ import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import { Toast } from "@/components/ui/toast";
 import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide." }),
@@ -48,7 +49,6 @@ export default function Login() {
         Toast({
           variant:"default" //revenir ici !!
         })
-        toast.success("Connexion réussie !");
         useStore.getState().setCurrentUser(response.data);
         router.push("/dashboard");
       } else {
