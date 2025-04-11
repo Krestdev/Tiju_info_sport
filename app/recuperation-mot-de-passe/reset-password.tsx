@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useStore from "@/context/store";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,65 +16,61 @@ import {
 import axiosConfig from "@/api/api";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
-import { Toast } from "@/components/ui/toast";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
+import { useState } from "react";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Adresse e-mail invalide." }),
-  password: z.string(),
+    password: z.string().min(8, { message: "Le mot de passe doit contenir au moins 8 caractères." }),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas.",
+    path: ["confirmPassword"],
 });
 
-export default function Login() {
-  const { setCurrentUser, setActiveUser } = useStore();
-  const router = useRouter();
-  const axiosClient = axiosConfig();
-  //Remember to remove setCurrentUser since it uses any !
-  const defineUser=(user:User)=>{
-    setActiveUser(user);
-    setCurrentUser(user);
-  }
+interface Props {
+    token:string;
+}
 
-  const signIn = useMutation({
-    mutationKey: ["login"],
+export default function ResetPassword({token}:Props) {
+  const axiosClient = axiosConfig();
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: ""
+    },
+  });
+
+  const resetPassword = useMutation({
+    mutationKey: ["reset-password"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post<User>("users/signin", {
-        email: data.email,
+      return axiosClient.post("users/password-reset/reset", {
         password: data.password,
+        token:token
       });
     },
-    onSuccess: (response) => {
-      //Let's make sure we set the user properly here
-      defineUser(response.data);
-      console.log(response.data);
+    onSuccess: () => {
       //Display the success message according to the role
       toast({
         variant: "success",
-        title:"Connexion réuissie",
-        description: response.data.role !== "user" ? `Vous êtes connecté en tant que ${response.data.role}` : `Vous êtes connecté en tant que ${response.data.name}`
-      });
+        title: "Votre mot de passe a été modifié avec succès !"
+      })
+      router.push("/connexion");
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Echec de connexion",
-        description: 'Adresse ou mot de passe erroné !'
-      })
+        title: "Echec",
+        description: "Un problème est survenu au cours de l'opération. Réessayez ou contactez le support.",
+      });
       //console.error(error);
     },
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-      signIn.mutateAsync(data);
+    resetPassword.mutate(data);
   };
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
 
   return (
     <main>
@@ -85,48 +80,52 @@ export default function Login() {
         className="w-full flex justify-center items-start base-height py-10 sm:py-14 lg:py-16 xl:py-20"
       >
         <div className="max-w-md w-full px-7 flex flex-col gap-10">
-          <h1 className="text-center">{"Connexion"}</h1>
+            <div className="flex flex-col gap-1">
+                <h1 className="text-center">{"Nouveau mot de passe"}</h1>
+                <p className="text-center">{"Complétez le formulaire pour définir votre nouveau mot de passe"}</p>
+            </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Adresse mail" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Mot de passe"
-                        {...field}
-                      />
+                      <Input placeholder="Mot de passe" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" isLoading={signIn.isPending} disabled={signIn.isPending}>{"Se connecter"}</Button>
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Confirmez votre mot de passe" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                isLoading={resetPassword.isPending}
+                disabled={resetPassword.isPending}
+              >
+                {"mettre à jour"}
+              </Button>
               <div className="flex flex-row flex-wrap justify-between items-center gap-3">
-                <Link href="/recuperation-mot-de-passe">
-                  <Button variant={"main"}>{"mot de passe oublié"}</Button>
-                </Link>
                 <Link href="/inscription">
                   <Button variant={"main"}>{"créer un compte"}</Button>
                 </Link>
+                <Link href="/connexion">
+                  <Button variant={"main"}>{"se connecter"}</Button>
+                </Link>
               </div>
             </form>
-            <ToastContainer />
           </Form>
         </div>
       </section>

@@ -1,22 +1,42 @@
 'use client'
 import useStore from '@/context/store'
-import { useRouter } from 'next/navigation';
-import React from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-interface Props {
-    children: React.ReactNode;
+export default function AuthRedirect({ children }: { children: React.ReactNode }) {
+    const { activeUser } = useStore()
+    const router = useRouter()
+    const [shouldRender, setShouldRender] = useState(!activeUser);
+    const pathname = usePathname();
+    const path = pathname.split("/");
+
+    useEffect(() => {
+        if (activeUser) {
+            if(activeUser.role !== "user" && path.includes("connexion")){
+                router.replace("/dashboard")
+            }else {
+                router.replace("/")
+            }
+        } else {
+            setShouldRender(true)
+        }
+    }, [activeUser, router])
+
+    return shouldRender ? <>{children}</> : null
 }
 
-function AuthRedirect({children}:Props) {
-    const { currentUser } = useStore();
-    const router = useRouter();
+export function NotAuthRedirect({ children }: { children: React.ReactNode }) {
+    const { activeUser } = useStore()
+    const router = useRouter()
+    const [shouldRender, setShouldRender] = useState(!activeUser)
 
-    if(!!currentUser){
-        router.replace("/")
-    }
-  return (
-    children
-  )
+    useEffect(() => {
+        if (!activeUser) {
+            router.replace("/")
+        } else {
+            setShouldRender(true)
+        }
+    }, [activeUser, router])
+
+    return shouldRender ? <>{children}</> : null
 }
-
-export default AuthRedirect

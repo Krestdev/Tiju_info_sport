@@ -11,10 +11,15 @@ import Logo from "./logo";
 import { usePathname } from "next/navigation";
 
 const Navbar = () => {
-  const { currentUser } = useStore();
+  const { logout, activeUser, setActiveUser } = useStore();
   const pathname = usePathname();
   const path = pathname.split("/");
   const isDashboard = path.includes("dashboard")
+
+  const signOut = () =>{
+    logout();
+    setActiveUser();
+  }
 
   if(isDashboard){
     return null
@@ -34,14 +39,15 @@ const Navbar = () => {
         {/* Right side content */}
         <div className="flex flex-row items-center justify-end gap-5">
           <div className="flex items-center gap-3">
-            {currentUser ? (
-              <div className="flex flex-row items-center gap-4">
-                <Link href={"/user/profil"}>
+            {activeUser ? (
+              <div className="flex flex-row items-center gap-2">
+                <Link href={"/profil"}>
                   <Button variant={"outline"}>
                     <CircleUser />
                     {"Profil"}
                   </Button>
                 </Link>
+                {!!activeUser && <Button className="hidden lg:inline-flex" onClick={signOut}>{"déconnexion"}</Button>}
               </div>
             ) : (
               <span className="w-full inline-flex gap-2 items-center">
