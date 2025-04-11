@@ -309,8 +309,8 @@ const AddArticle = () => {
                                 <LexicalEditor
                                     value={field.value}
                                     onChange={field.onChange}
-                                    ref={editorRef}
-                                />
+                                    ref={editorRef} 
+                                    placeholder={"Description de l'article"}                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

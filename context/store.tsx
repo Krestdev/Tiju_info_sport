@@ -31,6 +31,7 @@ const initialData: store = {
     logo: "/logo.png",
     email: "",
     phone: "",
+    whatsapp: "",
     address: "",
     facebook: "",
     instagram: "",

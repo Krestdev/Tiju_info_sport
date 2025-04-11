@@ -18,6 +18,7 @@ import axiosConfig from "@/api/api";
 import { toast, ToastContainer } from "react-toastify";
 import Link from "next/link";
 import { Toast } from "@/components/ui/toast";
+import 'react-toastify/dist/ReactToastify.css';
 
 const formSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide." }),
@@ -44,9 +45,9 @@ export default function Login() {
     },
     onSuccess: (response) => {
       if (response.data.role === "admin") {
-        Toast({
-          variant:"default" //revenir ici !!
-        })
+        // Toast({
+        //   variant: "default" //revenir ici !!
+        // })
         toast.success("Connexion réussie !");
         useStore.getState().setCurrentUser(response.data);
         router.push("/dashboard");
@@ -126,10 +127,10 @@ export default function Login() {
                 </Link>
               </div>
             </form>
+            <ToastContainer />
           </Form>
         </div>
       </section>
-      <ToastContainer />
     </main>
   );
 }

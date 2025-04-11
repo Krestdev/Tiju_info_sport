@@ -19,7 +19,7 @@ import axiosConfig from "@/api/api";
 const DashbordPage = () => {
   const { logoutAdmin } = useStore()
   const pathname = usePathname();
-  const [art, setArt] = useState<Article[]>()
+  // const [art, setArt] = useState<Article[]>()
   const [comment, setComment] = useState<number>(0)
   const [likes, setLikes] = useState<number>(0)
   const [signal, setSignal] = useState<number>(0)
@@ -50,17 +50,19 @@ const DashbordPage = () => {
     },
   });
 
+  const art: Article[] = articleData.isSuccess ? articleData.data.data.flatMap(x => x.articles) : []
+
   const countTotalLikes = (articles: Article[]): number => {
     return articles.reduce((totalLikes, article) => {
       return totalLikes + article.likes.length;
     }, 0);
   };
 
-  useEffect(() => {
-    if (articleData.isSuccess) {
-      setArt(articleData.data.data.flatMap(x => x.articles))
-    }
-  }, [articleData.data])
+  // useEffect(() => {
+  //   if (articleData.isSuccess) {
+  //     setArt(articleData.data.data.flatMap(x => x.articles))
+  //   }
+  // }, [articleData.data])
 
   useEffect(() => {
     if (art) {

@@ -56,7 +56,7 @@ type Category = {
     articles: Article[]; // Liste d'articles liés à la catégorie
     created_at: string;
     updated_at: string;
-    slug:string;
+    slug: string;
     color: string | null;
 };
 
@@ -88,11 +88,11 @@ type Comments = {
     article_id: number;
     message: string;
     likes: number[];
-    response: Comments[]; 
+    response: Comments[];
     signals: number[];
     created_at: string;
     updated_at: string;
-  };
+};
 
 // Type pour la création d'un article
 type ArticleCreation = {
@@ -111,16 +111,16 @@ type Article = {
     title: string;
     summery: string;
     description: string;
-    images: ImageA[]; 
+    images: ImageA[];
     author: User;
-    comments: Comments[]; 
+    comments: Comments[];
     likes: number[];
     created_at: string;
     updated_at: string;
     status: "published" | "draft" | "deleted";
     headline: boolean;
-    slug:string;
-    publish_on:string;
+    slug: string;
+    publish_on: string;
 };
 
 type ImageA = {
@@ -145,9 +145,20 @@ type ImageUser = {
 }
 
 type Ressource = {
-    id?: number,
+    id: number,
     title: string,
     url: string,
     content: string,
     section?: number
+}
+
+type Settings = {
+    compagnyName?: string,
+    logo?: string,
+    description?: string,
+    phone?: string,
+    whatsapp?: string,
+    facebook?: string,
+    instagram?: string,
+    x?: string
 }

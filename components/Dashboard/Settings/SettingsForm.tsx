@@ -6,10 +6,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import useStore from '@/context/store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast, ToastContainer } from 'react-toastify'
 import { z } from 'zod'
@@ -17,22 +17,18 @@ import { z } from 'zod'
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const formSchema = z
     .object({
-        titre: z.string().min(4, {
+        company: z.string().min(4, {
             message: "Name must be at least 4 characters.",
         }),
         logo: z.any(),
-        // .custom<File>((file) => file instanceof File, {
-        //     message: "Veuillez sélectionner un fichier valide.",
-        // })
-        // .refine((file) => file.size < MAX_FILE_SIZE, {
-        //     message: "Le fichier est trop volumineux (max 5MB).",
-        // }),
-        desciption: z.string(),
-        phone: z.string(),
-        whatsapp: z.string(),
-        facebook: z.string(),
-        instagram: z.string(),
-        x: z.string(),
+        description: z.string().optional(),
+        phone: z.string().optional(),
+        whatsapp: z.string().optional(),
+        facebook: z.string().optional(),
+        instagram: z.string().optional(),
+        x: z.string().optional(),
+        email: z.string().optional(),
+        address: z.string().optional(),
     });
 
 
@@ -55,29 +51,116 @@ const SettingsForm = () => {
         },
     });
 
+    const getSetting = useQuery({
+        queryKey: ["settings"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<{ data: Settings }[]>>(
+                `/param/show
+    `
+            );
+        },
+    });
+
+    const setting: { data: Settings }[] = getSetting.isSuccess ? getSetting.data.data : [];
     const section: { title: string, id: number, content: Ressource[] }[] = sections.isSuccess ? sections.data.data : [];
 
     const { settings, editSettings } = useStore()
     const [photo, setPhoto] = useState<string>();
     const router = useRouter();
+    const queryClient = useQueryClient();
+
+    const createSettings = useMutation({
+        mutationKey: ["settings"],
+        mutationFn: (data: Settings) => {
+            return axiosClient.post("/param/create",
+                {
+                    company: data.company,
+                    logo: data.logo,
+                    description: data.description,
+                    phone: data.phone,
+                    whatsapp: data.phone,
+                    facebook: data.facebook,
+                    instagram: data.instagram,
+                    x: data.x,
+                    email: data.email,
+                    address: data.address
+                }
+            )
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["settings"] });
+        },
+    })
+
+    const updateSettings = useMutation({
+        mutationKey: ["settings"],
+        mutationFn: (data: Settings) => {
+            return axiosClient.patch("/param/update",
+                {
+                    compagnyName: data.company,
+                    logo: data.logo,
+                    description: data.description,
+                    phone: data.phone,
+                    whatsapp: data.phone,
+                    facebook: data.facebook,
+                    instagram: data.instagram,
+                    x: data.x,
+                    email: data.email,
+                    address: data.address
+                }
+            )
+        },
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["settings"] });
+            toast.success("Paramètres enregistrés avec succès");
+        },
+    })
+
+    console.log(setting);
+
+    useEffect(() => {
+        if (setting[0]?.data) {
+            form.reset({
+                company: setting[0]?.data?.company ?? "",
+                logo: setting[0]?.data?.logo ?? "",
+                description: setting[0]?.data?.description ?? "",
+                phone: setting[0]?.data?.phone ?? "",
+                whatsapp: setting[0]?.data?.whatsapp ?? "",
+                facebook: setting[0]?.data?.facebook ?? "",
+                instagram: setting[0]?.data?.instagram ?? "",
+                x: setting[0]?.data?.x ?? "",
+                email: setting[0]?.data?.email ?? "",
+                address: setting[0]?.data?.address ?? "",
+            });
+        }
+    }, [getSetting.isSuccess])
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            titre: settings.compagnyName,
-            logo: settings.logo,
-            desciption: settings.description,
-            phone: settings.phone,
-            whatsapp: settings.phone,
-            facebook: settings.facebook,
-            instagram: settings.instagram,
-            x: settings.x
+            company: setting[0]?.data?.company ?? settings.compagnyName,
+            logo: setting[0]?.data?.logo ?? settings.logo,
+            description: setting[0]?.data?.description ?? settings.description,
+            phone: setting[0]?.data?.phone ?? settings.phone,
+            whatsapp: setting[0]?.data?.whatsapp ?? settings.whatsapp,
+            facebook: setting[0]?.data?.facebook ?? settings.facebook,
+            instagram: setting[0]?.data?.instagram ?? settings.instagram,
+            x: setting[0]?.data?.x ?? settings.x,
+            email: setting[0]?.data?.email ?? settings.email,
+            address: setting[0]?.data?.address ?? settings.address,
         }
     })
 
+
+
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        editSettings(values);
-        toast.success("Paramètres enregistrés avec succès");
+        setting ?
+            updateSettings.mutate(values)
+            :
+            createSettings.mutate(values)
+
     }
 
     return (
@@ -89,7 +172,7 @@ const SettingsForm = () => {
                         <h3 className='uppercase text-[28px]'>{"Informations"}</h3>
                         <FormField
                             control={form.control}
-                            name='titre'
+                            name='company'
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{"Titre du site"}</FormLabel>
@@ -129,7 +212,7 @@ const SettingsForm = () => {
                         />
                         <FormField
                             control={form.control}
-                            name='desciption'
+                            name='description'
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{"Description du site"}</FormLabel>
@@ -192,6 +275,32 @@ const SettingsForm = () => {
                         />
                         <FormField
                             control={form.control}
+                            name='email'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Email"}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder='exemple@exemple.com' className='max-w-[384px]' />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name='address'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Adreese"}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder='Denver, Bonamoussadi, Douala-Cameroun' className='max-w-[384px]' />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
                             name='facebook'
                             render={({ field }) => (
                                 <FormItem>
@@ -202,7 +311,8 @@ const SettingsForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        /><FormField
+                        />
+                        <FormField
                             control={form.control}
                             name='instagram'
                             render={({ field }) => (
@@ -230,7 +340,7 @@ const SettingsForm = () => {
                     </div>
                     <div className='flex flex-col gap-5 pt-5'>
                         <h3 className='uppercase text-[28px]'>{"Pied de page"}</h3>
-                        <div className='flex flex-col gap-5 px-2 py-3 w-[384px] border border-[#A1A1A1]'>
+                        {section.length > 0 && <div className='flex flex-col gap-5 px-2 py-3 w-[384px] border border-[#A1A1A1]'>
                             {
                                 section.map((x, k) => {
                                     return (
@@ -239,7 +349,7 @@ const SettingsForm = () => {
                                             <h4 className='uppercase text-[#A1A1A1] font-normal'>{x.title}</h4>
                                             <div className='flex flex-col gap-3'>
                                                 {
-                                                    x.content.map((cont,c) => {
+                                                    x.content.map((cont, c) => {
                                                         return (
                                                             <h4 key={c} className='uppercase'>{cont.title}</h4>
                                                         )
@@ -250,7 +360,7 @@ const SettingsForm = () => {
                                     )
                                 })
                             }
-                        </div>
+                        </div>}
                     </div>
                     <Button variant={"outline"} onClick={() => router.push("/dashboard/settings/footerConfig")} type="button" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Configurer le pied de page"}</Button>
                     <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Enregistrer les modifications"}</Button>

@@ -35,6 +35,7 @@ import Toolbar from "./Toolbar"; // facultatif
 interface LexicalEditorProps {
   value: string;
   onChange: (value: string) => void;
+  placeholder: string
 }
 
 export interface LexicalEditorRef {
@@ -43,7 +44,7 @@ export interface LexicalEditorRef {
 
 // Composant principal
 const LexicalEditor = forwardRef(
-  ({ value, onChange }: LexicalEditorProps, ref: Ref<LexicalEditorRef>) => {
+  ({ value, onChange, placeholder }: LexicalEditorProps, ref: Ref<LexicalEditorRef>) => {
     const initialConfig: InitialConfigType = {
       namespace: "LexicalEditor",
       theme: {
@@ -75,7 +76,7 @@ const LexicalEditor = forwardRef(
             }
             placeholder={
               <p className="font-light text-gray-400 px-5 py-2">
-                {"Description de l'article"}
+                {placeholder}
               </p>
             }
             ErrorBoundary={LexicalErrorBoundary}
