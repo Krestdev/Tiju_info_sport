@@ -153,7 +153,9 @@ type Ressource = {
 }
 
 type Settings = {
-    compagnyName?: string,
+    company?: string,
+    email?: string,
+    address?: string,
     logo?: string,
     description?: string,
     phone?: string,
