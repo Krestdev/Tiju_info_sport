@@ -12,7 +12,7 @@ function Comment({comment}:CommentData) {
     const { currentUser } = useStore()
   return (
     <div className='py-3 inline-flex gap-4 items-start'>
-        <img src={comment.author.image ?? "/images/default-photo.webp"} alt={comment.author.name} className='size-10 rounded-full object-cover' />
+        <img src={`${comment.author.image !== null && comment.author.image !== undefined ? "https://tiju.krestdev.com/api/image/"+comment.author.image.id : "/images/default-photo.webp"}`} alt={comment.author.name} className='size-10 rounded-full object-cover' />
         <div className='flex flex-col gap-2'>
             <span className='text-base leading-[130%]'>{comment.author.name}</span>
             <p className='text-sm leading-[130%]'>{comment.message}</p>
