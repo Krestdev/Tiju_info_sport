@@ -13,7 +13,11 @@ type User = {
     signals: number;
     created_at: string;
     updated_at: string;
-    image?: string
+    image?: {
+        id:number;
+        location:string;
+    }
+    nick_name:string;
 };
 
 // Type pour un utilisateur avec API Key

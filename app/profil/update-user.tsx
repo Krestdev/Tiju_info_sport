@@ -5,47 +5,69 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import useStore from '@/context/store'
+import { toast } from '@/hooks/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import EditPassword from './edit-password'
+import { Label } from '@/components/ui/label'
+import EditPhoto from './edit-photo'
+
+interface Props {
+  user: User;
+}
 
 const formSchema = z.object({
-    email: z.string().email(),
     name: z.string().min(4,{message: "Votre nom doit contenir au moins 4 caractères"}),
-    pseudo: z.string().min(4, {
-        message: "Votre Pseudonyme doit avoir au moins 4 caractères"
-      }),
-    country: z.string(),
-    town: z.string(),
-    sex: z.string(),
-    phone: z.string(),
+    country: z.string().optional(),
+    town: z.string().optional(),
+    sex: z.string().optional(),
+    phone: z.string().optional(),
   })
 
-function UpdateUser() {
-    const { activeUser } = useStore();
+function UpdateUser({user}:Props) {
     const axiosClient = axiosConfig();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues:{
-            email: activeUser?.email,
-            name: activeUser?.name,
-            pseudo: activeUser?.name,
-            country: activeUser?.country==="default" ? undefined : activeUser?.country,
-            town: activeUser?.town==="default" ? undefined : activeUser?.town,
-            sex: activeUser?.sex==="default" ? undefined : activeUser?.sex,
-            phone: activeUser?.phone==="default" ? undefined : activeUser?.phone,
+            name: user.name,
+            country: user.country==="default" ? undefined : user.country,
+            town: user.town==="default" ? undefined : user.town,
+            sex: user.sex==="default" ? undefined : user.sex,
+            phone: user.phone==="default" || user.phone==="null" ? undefined : user.phone,
         }
     });
     
     const patchUser = useMutation({
-        mutationKey: ["update-user"],
+        mutationKey: ["update-user", "user-profile"],
         mutationFn: (data:z.infer<typeof formSchema>)=>{
-            return axiosClient.post<User>(`users/${activeUser?.id}`)
+            return axiosClient.patch<User>(`users/${user.id}`,
+              {
+                name: data.name,
+                country:data.country ?? "default",
+                town:data.town ?? "default",
+                sex:data.sex ?? "default",
+                phone: data.phone?? "default"
+
+              }
+            )
+        },
+        onSuccess: ()=>{
+          toast({
+            variant: "success",
+            title: "Profil mis à jour avec succès !",
+            description: "Vos informations ont été mises à jour avec succès. Vous pouvez les consulter sur votre profil."
+          })
+        },
+        onError: (error)=>{
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Nous avons rencontré une erreur dans l'exécution de votre requête."
+          })
         }
     });
     const onSubmit=(data:z.infer<typeof formSchema>)=>{
@@ -53,40 +75,21 @@ function UpdateUser() {
     }
   return (
     <div className='flex flex-col gap-4'>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-10'>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
-            <FormField control={form.control} name="email" render={({field})=>(
-              <FormItem>
-                <FormLabel>{"Adresse mail"}</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled/>
-                </FormControl>
-              </FormItem>
-            )}/>
-            <FormField control={form.control} name="pseudo" render={({field})=>(
-              <FormItem>
-                <FormLabel>{"Pseudonyme"}</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled/>
-                </FormControl>
-              </FormItem>
-            )}/>
-            <div id='password' className="space-y-2">
-              <FormLabel>{"Mot de passe"}</FormLabel>
-              <div className='flex h-10 w-full border border-input bg-transparent px-3 py-1 text-base justify-between items-center gap-3 shadow-sm transition-colors'>
-                <span>{"•••••••••••"}</span>
-                <Link href={"#"} className='text-primary hover:text-primary-hover'>{"Modifier"}</Link> {/**Add the logic for edit password here, and it should be a modal maybe */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
+              <div id='email' className="flex flex-col gap-2">
+                <Label htmlFor='email'>{"Adresse mail"}</Label>
+                  <Input name="email" value={user.email} disabled/>
               </div>
-            </div>
-            <div id='photo' className="space-y-2">
-              <FormLabel>{"Photo"}</FormLabel>
-              <Link href={"#"} className='flex h-10 w-full bg-transparent px-3 text-base justify-between items-center gap-3'> {/**Add the logic for the user photo update here */}
-                <span className='inline-flex gap-2 items-center'><img src="/images/default-photo.webp" className='size-10 rounded-full object-cover' />{"Télécharger une photo"}</span>
-              </Link>
-            </div>
+              <div id='pseudo' className="flex flex-col gap-2">
+                <Label htmlFor='pseudo'>{"Pseudonyme"}</Label>
+                  <Input name="pseudo" value={user.nick_name ?? user.name ?? ""} disabled/>
+              </div>
+            {/**Edit password logic imported here ! */}
+            <EditPassword/>
+            <EditPhoto/>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5'>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5'>
             <h2 className='col-span-1 sm:col-span-2 uppercase'>{"Informations personnelles"}</h2>
             <FormField control={form.control} name="name" render={({field})=>(
               <FormItem>
@@ -106,6 +109,11 @@ function UpdateUser() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='cameroun'>{"Cameroun"}</SelectItem>
+                      <SelectItem value='tchad'>{"Tchad"}</SelectItem>
+                      <SelectItem value='cote-d-ivoire'>{"Côte d'Ivoire"}</SelectItem>
+                      <SelectItem value='senegal'>{"Sénégal"}</SelectItem>
+                      <SelectItem value='france'>{"France"}</SelectItem>
+                      <SelectItem value='gabon'>{"Gabon"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -144,9 +152,8 @@ function UpdateUser() {
               </FormItem>
             )}/>
             <span className='col-span-1 sm:col-span-2'>
-              <Button type="submit">{"Enregistrer"}</Button>
+              <Button type="submit" isLoading={patchUser.isPending} disabled={patchUser.isPending}>{"Enregistrer"}</Button>
             </span>
-          </div>
         </form>
       </Form>
     </div>

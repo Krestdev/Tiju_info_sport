@@ -12,7 +12,7 @@ function ResetDialog({open}:Props) {
     <Dialog open={open}>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle className='text-success'>{"Opération réussie !"}</DialogTitle>
+                <DialogTitle className='text-primary uppercase'>{"Opération réussie !"}</DialogTitle>
                 <DialogDescription/>
             </DialogHeader>
             <div className='py-8 flex flex-col items-center justify-center gap-3'>

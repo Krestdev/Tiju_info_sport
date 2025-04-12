@@ -52,7 +52,7 @@ export default function Register() {
           name: data.name,
           password: data.confirmPassword,
           nick_name: data.pseudo.trim(),
-          phone: "null",
+          phone: "default",
           sex: "default",
           town: "default",
           country: "default",
