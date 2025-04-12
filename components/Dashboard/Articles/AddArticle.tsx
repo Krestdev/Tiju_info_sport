@@ -22,6 +22,7 @@ import LexicalEditor, { LexicalEditorRef } from './LexicalEditor';
 import DatePubli from './DatePubli';
 import { Checkbox } from "@/components/ui/checkbox"
 import { slugify } from '@/lib/utils';
+import { usePublishedArticles } from '@/hooks/usePublishedData';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -65,13 +66,13 @@ const AddArticle = () => {
     const [show, setShow] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [categorie, setCategorie] = useState<Category[]>();
     const [articleAjout, setArticleAjout] = useState<Article>();
     const [fichier, setFichier] = useState(null);
     const [artId, setArtId] = useState(0);
     const [selectedArticle, setSelectedArticle] = useState<Article>()
     const editorRef = useRef<LexicalEditorRef>(null);
-
+    const { childCategories } = usePublishedArticles()
+    const categorie = childCategories
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -216,12 +217,6 @@ const AddArticle = () => {
         },
     });
 
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setCategorie(articleCate.data.data.filter(x => x.parent !== null));
-        }
-    }, [articleCate.data])
-
     const editArticle = useMutation({
         mutationKey: ["pictures"],
         mutationFn: ({ data, imageId }: { data: Article, imageId: string },) => {
@@ -309,8 +304,8 @@ const AddArticle = () => {
                                 <LexicalEditor
                                     value={field.value}
                                     onChange={field.onChange}
-                                    ref={editorRef} 
-                                    placeholder={"Description de l'article"}                                />
+                                    ref={editorRef}
+                                    placeholder={"Description de l'article"} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
