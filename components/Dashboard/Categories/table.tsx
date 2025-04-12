@@ -28,6 +28,7 @@ import EditCategorie from "./EditCategorie";
 import AddCategory from "./AddCategory";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -45,28 +46,16 @@ function CategoryTable() {
 
     //Pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [sport, setSport] = useState<Category[]>();
     const [rein, setRein] = useState(false);
     const [nbArt, setNbArt] = useState(0);
     const itemsPerPage = 15;
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
 
-    const articleCate = useQuery({
-        queryKey: ["categoryv"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
 
 
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setSport(articleCate.data.data);
-        }
-    }, [articleCate.data])
+    const { categories } = usePublishedArticles()
+    const sport = categories
 
     const { mutate: deleteCategory } = useMutation({
         mutationFn: async (categoryId: number) => {
@@ -167,8 +156,8 @@ function CategoryTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {articleCate.isLoading && <h3>{"Chargement..."}</h3>}
-                    {articleCate.isSuccess && filterData.length > 0 ? (
+                    {usePublishedArticles().isLoading && <h3>{"Chargement..."}</h3>}
+                    {usePublishedArticles().isSuccess && filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
                                 control={form.control}
@@ -237,12 +226,12 @@ function CategoryTable() {
                             />
 
                         </div>
-                    ) : articleCate.isSuccess && filterData.length < 1 && sport?.length && sport?.length > 0 ? (
+                    ) : usePublishedArticles().isSuccess && filterData.length < 1 && sport?.length && sport?.length > 0 ? (
                         "Pas de résultat"
-                    ) : articleCate.isSuccess && sport?.length === 0 ? (
+                    ) : usePublishedArticles().isSuccess && sport?.length === 0 ? (
                         "Aucune catégorie"
                     ) : (
-                        articleCate.isError && (
+                        usePublishedArticles().isError && (
                             "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}
