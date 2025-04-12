@@ -10,6 +10,7 @@ export const usePublishedArticles = () =>{
         queryFn: ()=> fetchCategory()
     });
     const categories:Category[] = isSuccess ? data : [];
+    const allArticles:Article[] = isSuccess ? sortArticles(data.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles)) : [];
     const publishedArticles:Article[] = isSuccess ? sortArticles(data.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published")) : [];
     const todayArticles:Article[] = publishedArticles.filter(article=>new Date(article.created_at).getDate()=== today.getDate());
     const headline:Article[]= publishedArticles.filter(x=>x.headline=== true);
@@ -17,6 +18,6 @@ export const usePublishedArticles = () =>{
     const childCategories = categories.filter(x=>x.parent !== null && x.articles.length > 0 );
 
     return {
-        isSuccess, isLoading, isError, categories, publishedArticles, todayArticles, headline, mainCategories, childCategories
+        isSuccess, isLoading, isError, categories, publishedArticles, todayArticles, headline, mainCategories, childCategories, allArticles
     }
 }
