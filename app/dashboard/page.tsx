@@ -14,6 +14,7 @@ import { CircChar } from "@/components/Dashboard/Dash/CircChar";
 import { DateRange } from "react-day-picker";
 import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 
 const DashbordPage = () => {
@@ -50,7 +51,7 @@ const DashbordPage = () => {
     },
   });
 
-  const art: Article[] = articleData.isSuccess ? articleData.data.data.flatMap(x => x.articles) : []
+  const art = usePublishedArticles().allArticles
 
   const countTotalLikes = (articles: Article[]): number => {
     return articles.reduce((totalLikes, article) => {
