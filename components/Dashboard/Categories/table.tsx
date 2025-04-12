@@ -156,8 +156,7 @@ function CategoryTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {usePublishedArticles().isLoading && <h3>{"Chargement..."}</h3>}
-                    {usePublishedArticles().isSuccess && filterData.length > 0 ? (
+                    {filterData.length > 0 ? (
                         <div className="min-h-[70vh] overflow-y-auto w-full">
                             <FormField
                                 control={form.control}
@@ -226,12 +225,12 @@ function CategoryTable() {
                             />
 
                         </div>
-                    ) : usePublishedArticles().isSuccess && filterData.length < 1 && sport?.length && sport?.length > 0 ? (
+                    ) : filterData.length < 1 && sport?.length && sport?.length > 0 ? (
                         "Pas de résultat"
-                    ) : usePublishedArticles().isSuccess && sport?.length === 0 ? (
+                    ) : sport?.length === 0 ? (
                         "Aucune catégorie"
                     ) : (
-                        usePublishedArticles().isError && (
+                        (
                             "Impossible de charger vos données. Verifiez votre connexion et réessayez"
                         )
                     )}

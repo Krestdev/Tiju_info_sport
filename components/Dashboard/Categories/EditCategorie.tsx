@@ -32,6 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 import { slugify } from "@/lib/utils";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -55,7 +56,6 @@ function EditCategorie({ children, donnee }: Props) {
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const queryClient = useQueryClient();
     const axiosClient = axiosConfig();
-    const [parents, setParents] = useState<Category[]>([]);
 
 
     const articleCate = useQuery({
@@ -67,11 +67,10 @@ function EditCategorie({ children, donnee }: Props) {
         },
     });
     // Filtrer les catégories parents
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setParents(articleCate.data.data.filter((x) => x.parent === null));
-        }
-    }, [articleCate.data, articleCate.isSuccess]);
+    const { mainCategories } = usePublishedArticles()
+
+    // Filtrer les catégories parents
+    const parents = mainCategories
 
 
     // 1. Define your form.
@@ -197,7 +196,7 @@ function EditCategorie({ children, donnee }: Props) {
                                             </SelectTrigger>
                                             <SelectContent className="border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2">
                                                 <SelectItem value="none">{"Sélectionner une catégorie"}</SelectItem>
-                                                {parents?.map((x, i) => (
+                                                {parents.map((x, i) => (
                                                     <SelectItem key={i} value={String(x.id)}>
                                                         {x.title}
                                                     </SelectItem>

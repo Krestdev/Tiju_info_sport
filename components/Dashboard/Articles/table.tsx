@@ -63,10 +63,18 @@ function ArticleTable() {
     const itemsPerPage = 15;
 
 
-    const { allArticles } = usePublishedArticles();
-    const sport = allArticles
+    const articleCate = useQuery({
+        queryKey: ["articles"],
+        queryFn: () => {
+            return axiosClient.get<any, AxiosResponse<Article[]>>(
+                `/articles`
+            );
+        },
+    });
 
-    const auteur = sport?.flatMap(x => x.author).filter((value, index, self) => index === self.findIndex((v) => v.id === value.id))
+    const { allArticles } = usePublishedArticles()
+    const sport = allArticles
+    const auteur = sport.flatMap(x => x.author).filter((value, index, self) => index === self.findIndex((v) => v.id === value.id))
 
 
     const articleToTrash = useMutation({
@@ -245,113 +253,113 @@ function ArticleTable() {
             </span>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    {usePublishedArticles().isLoading && <h3>{"Chargement..."}</h3>}
-                    {usePublishedArticles().isSuccess && filterData.length > 0 ? (
-                        <div className="min-h-[70vh] overflow-y-auto w-full">
-                            <FormField
-                                control={form.control}
-                                name="items"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <Table className="border divide-x">
-                                                <TableHeader>
-                                                    <TableRow className="text-[18px] capitalize font-normal">
-                                                        <TableHead>
-                                                            <Checkbox
-                                                                checked={currentItems.length > 0 && field.value?.length === currentItems.length}
-                                                                onCheckedChange={(checked) => {
-                                                                    field.onChange(checked ? currentItems.map((item) => item.id) : []);
-                                                                }}
-                                                            />
-                                                        </TableHead>
-                                                        <TableHead>{"titre"}</TableHead>
-                                                        <TableHead>{"Auteur"}</TableHead>
-                                                        <TableHead>{"Categories"}</TableHead>
-                                                        <TableHead>{"À la une"}</TableHead>
-                                                        <TableHead>{"Date"}</TableHead>
-                                                        <TableHead>{"Statut"}</TableHead>
-                                                        <TableHead>{"Actions"}</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {currentItems.map((item, id) => {
-                                                        return (
-                                                            <TableRow className="text-[16px]" key={id}>
-                                                                <TableCell className="border">
-                                                                    <Checkbox
-                                                                        checked={field.value?.includes(item.id)}
-                                                                        onCheckedChange={(checked) => {
-                                                                            return checked
-                                                                                ? field.onChange([...field.value, item.id])
-                                                                                : field.onChange(
-                                                                                    field.value?.filter(
-                                                                                        (value) => value !== item.id
+                    {articleCate.isLoading ? <h3>{"Chargement..."}</h3> :
+                        articleCate.isSuccess && filterData.length > 0 ? (
+                            <div className="min-h-[70vh] overflow-y-auto w-full">
+                                <FormField
+                                    control={form.control}
+                                    name="items"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Table className="border divide-x">
+                                                    <TableHeader>
+                                                        <TableRow className="text-[18px] capitalize font-normal">
+                                                            <TableHead>
+                                                                <Checkbox
+                                                                    checked={currentItems.length > 0 && field.value?.length === currentItems.length}
+                                                                    onCheckedChange={(checked) => {
+                                                                        field.onChange(checked ? currentItems.map((item) => item.id) : []);
+                                                                    }}
+                                                                />
+                                                            </TableHead>
+                                                            <TableHead>{"titre"}</TableHead>
+                                                            <TableHead>{"Auteur"}</TableHead>
+                                                            <TableHead>{"Categories"}</TableHead>
+                                                            <TableHead>{"À la une"}</TableHead>
+                                                            <TableHead>{"Date"}</TableHead>
+                                                            <TableHead>{"Statut"}</TableHead>
+                                                            <TableHead>{"Actions"}</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {currentItems.map((item, id) => {
+                                                            return (
+                                                                <TableRow className="text-[16px]" key={id}>
+                                                                    <TableCell className="border">
+                                                                        <Checkbox
+                                                                            checked={field.value?.includes(item.id)}
+                                                                            onCheckedChange={(checked) => {
+                                                                                return checked
+                                                                                    ? field.onChange([...field.value, item.id])
+                                                                                    : field.onChange(
+                                                                                        field.value?.filter(
+                                                                                            (value) => value !== item.id
+                                                                                        )
                                                                                     )
-                                                                                )
-                                                                        }}
-                                                                    />
-                                                                </TableCell>
-                                                                <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
-                                                                <TableCell className="border">{item.author?.name}</TableCell>
-                                                                <TableCell className="border">{item.type}</TableCell>
-                                                                <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
-                                                                <TableCell className="border">{item.publish_on ? item.publish_on : item.created_at}</TableCell>
-                                                                <TableCell className="border">{item.publish_on === "" && item.status === "draft" ?
-                                                                    "Brouillon" :
-                                                                    item.status === "published" ? "Publié" :
-                                                                        // item.status === "programmed" ? "Programmé" :
-                                                                        item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ? "Programmé" : ""
-                                                                }</TableCell>
-                                                                <TableCell className="flex gap-4 justify-center">
-                                                                    <EditArticle donnee={item} nom={item.title}>
-                                                                        <LuSquarePen className="size-5 cursor-pointer" />
-                                                                    </EditArticle>
-                                                                    <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement" : "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
-                                                                        <Trash2 onClick={() => setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
-                                                                    </DeleteValidation>
-                                                                    {
-                                                                        item.status === "draft"
-                                                                            // || item.status === "programmed" 
-                                                                            ?
-                                                                            <LuSend
-                                                                                onClick={(e) => {
-                                                                                    e.preventDefault();
-                                                                                    setSelectedArticleId(item.id);
-                                                                                    setSelectedArticle(item)
-                                                                                    handleOpen();
-                                                                                }}
-                                                                                className="text-[#0128AE] size-5 cursor-pointer" />
-                                                                            :
-                                                                            item.status === "deleted" ?
-                                                                                <ShareWarning id={item.id} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
-                                                                                    <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
-                                                                                </ShareWarning>
-                                                                                : <LuSend className="opacity-0 size-5" />
-                                                                    }
-                                                                    <DatePubli formId={`form-article-${item.id}`} artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    }
-                                                    )}
-                                                </TableBody>
-                                            </Table>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    ) : usePublishedArticles().isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
-                        "Pas de résultat"
-                    ) : usePublishedArticles().isSuccess && sport?.length === 0 ? (
-                        "Aucun article"
-                    ) : (
-                        usePublishedArticles().isError && (
-                            "Impossible de charger vos données. Verifiez votre connexion et réessayez"
-                        )
-                    )}
+                                                                            }}
+                                                                        />
+                                                                    </TableCell>
+                                                                    <TableCell className="inline-block text-nowrap text-ellipsis overflow-hidden max-w-[315px] w-fit">{item.title}</TableCell>
+                                                                    <TableCell className="border">{item.author?.name}</TableCell>
+                                                                    <TableCell className="border">{item.type}</TableCell>
+                                                                    <TableCell className="border">{item.headline ? "Oui" : "Non"}</TableCell>
+                                                                    <TableCell className="border">{item.publish_on ? item.publish_on : item.created_at}</TableCell>
+                                                                    <TableCell className="border">{item.publish_on === "" && item.status === "draft" ?
+                                                                        "Brouillon" :
+                                                                        item.status === "published" ? "Publié" :
+                                                                            // item.status === "programmed" ? "Programmé" :
+                                                                            item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ? "Programmé" : ""
+                                                                    }</TableCell>
+                                                                    <TableCell className="flex gap-4 justify-center">
+                                                                        <EditArticle donnee={item} nom={item.title}>
+                                                                            <LuSquarePen className="size-5 cursor-pointer" />
+                                                                        </EditArticle>
+                                                                        <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement" : "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
+                                                                            <Trash2 onClick={() => setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
+                                                                        </DeleteValidation>
+                                                                        {
+                                                                            item.status === "draft"
+                                                                                // || item.status === "programmed" 
+                                                                                ?
+                                                                                <LuSend
+                                                                                    onClick={(e) => {
+                                                                                        e.preventDefault();
+                                                                                        setSelectedArticleId(item.id);
+                                                                                        setSelectedArticle(item)
+                                                                                        handleOpen();
+                                                                                    }}
+                                                                                    className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                :
+                                                                                item.status === "deleted" ?
+                                                                                    <ShareWarning id={item.id} action={onRestoreArticle} name={item.title} message={"Vous etes sur le point de restaurer"} bouton={"Restaurer"}>
+                                                                                        <LuUndo2 className="text-[#0128AE] size-5 cursor-pointer" />
+                                                                                    </ShareWarning>
+                                                                                    : <LuSend className="opacity-0 size-5" />
+                                                                        }
+                                                                        <DatePubli formId={`form-article-${item.id}`} artId={selectedArticleId} isOpen={dialog} onOpenChange={setDialog} article={selectedArticle} />
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        }
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        ) : articleCate.isSuccess && filterData.length < 1 && sport && sport?.length > 0 ? (
+                            "Pas de résultat"
+                        ) : articleCate.isSuccess && sport?.length === 0 ? (
+                            "Aucun article"
+                        ) : (
+                            articleCate.isError && (
+                                "Impossible de charger vos données. Verifiez votre connexion et réessayez"
+                            )
+                        )}
                 </form>
                 <ToastContainer />
             </Form>

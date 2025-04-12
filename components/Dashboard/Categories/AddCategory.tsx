@@ -110,15 +110,7 @@ const AddCategory = ({ children }: Props) => {
             console.log(addSubCategory.error)
         }
     }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
-
-    const articleCate = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
+    
     const { mainCategories } = usePublishedArticles()
 
     // Filtrer les catégories parents
