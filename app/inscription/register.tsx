@@ -53,9 +53,9 @@ export default function Register() {
           password: data.confirmPassword,
           nick_name: data.pseudo.trim(),
           phone: "null",
-          sex: "m",
-          town: "yaoundé",
-          country: "cameroun",
+          sex: "default",
+          town: "default",
+          country: "default",
           photo: "null",
           role: "user"
       });
