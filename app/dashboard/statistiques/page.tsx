@@ -15,13 +15,11 @@ import MostPopular from "@/components/Dashboard/Stats/MostPopular";
 import { DateRange } from "react-day-picker";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const DashbordPage = () => {
     const { logoutAdmin } = useStore()
     const pathname = usePathname();
-    const [art, setArt] = useState<Article[]>()
-    const [comment, setComment] = useState<number>()
-    const [likes, setLikes] = useState<number>(0)
     const [dateRanges, setDateRanges] = useState<{ [key: string]: DateRange | undefined }>({
         publication: undefined,
         vuesSite: undefined,
@@ -35,15 +33,8 @@ const DashbordPage = () => {
         setValues((prev) => ({ ...prev, [key]: newValue }));
     };
 
-    const articleData = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
-
+    const { allArticles } = usePublishedArticles();
+    const art = allArticles;
 
 
     const countTotalLikes = (articles: Article[]): number => {
@@ -51,20 +42,6 @@ const DashbordPage = () => {
             return totalLikes + article.likes.length;
         }, 0);
     };
-
-    useEffect(() => {
-        if (articleData.isSuccess) {
-            setArt(articleData.data.data.flatMap(x => x.articles))
-        }
-    }, [articleData.data])
-
-    useEffect(() => {
-        if (art) {
-            setComment((art || []).reduce((total, article) => total + article.comments.length, 0))
-            setLikes(countTotalLikes(art))
-        }
-    }, [art])
-
 
     useEffect(() => {
         const handleRouteChange = () => {
@@ -84,19 +61,19 @@ const DashbordPage = () => {
 
     const grid = [
         {
-            value: art ? art?.length : 0,
+            value: art ? art.length : 0,
             category: "Articles publiés",
             bgColor: "bg-[#0128AE]/10",
             color: "text-[#182067]"
         },
         {
-            value: likes,
+            value: art ? countTotalLikes(art) : 0,
             category: "Likes",
             bgColor: "bg-[#FF0068]/10",
             color: "text-[#FF0068]"
         },
         {
-            value: comment,
+            value: art ? art.flatMap(x => x.comments).length : 0,
             category: "Tous Les Commentaires",
             bgColor: "bg-[#01AE35]/10",
             color: "text-[#01AE35]"
