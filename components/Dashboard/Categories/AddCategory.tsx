@@ -37,6 +37,7 @@ import {
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 import { slugify } from "@/lib/utils";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit avoir au moins 3 caractères" }),
@@ -51,7 +52,6 @@ type Props = {
 
 const AddCategory = ({ children }: Props) => {
     const { currentUser } = useStore();
-    const [parents, setParents] = useState<Category[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const axiosClient = axiosConfig();
     const queryClient = useQueryClient();
@@ -119,13 +119,10 @@ const AddCategory = ({ children }: Props) => {
             );
         },
     });
-    // Filtrer les catégories parents
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setParents(articleCate.data.data.filter((x) => x.parent === null));
-        }
-    }, [articleCate.data, articleCate.isSuccess]);
+    const { mainCategories } = usePublishedArticles()
 
+    // Filtrer les catégories parents
+    const parents = mainCategories
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
         data.parent ? addSubCategory.mutate(data) : addCategory.mutate(data);

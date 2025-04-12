@@ -167,7 +167,7 @@ function UserTable() {
 
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
-            <h1 className="uppercase text-[40px]">{"Utilisauteurs"}</h1>
+            <h1 className="uppercase text-[40px]">{"Utilisateurs"}</h1>
             <span className="flex flex-wrap items-center gap-5">
                 <span className="relative max-w-sm w-full">
                     <Input
