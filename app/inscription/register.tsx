@@ -52,10 +52,10 @@ export default function Register() {
           name: data.name,
           password: data.confirmPassword,
           nick_name: data.pseudo.trim(),
-          phone: "null",
-          sex: "m",
-          town: "yaoundé",
-          country: "cameroun",
+          phone: "default",
+          sex: "default",
+          town: "default",
+          country: "default",
           photo: "null",
           role: "user"
       });
