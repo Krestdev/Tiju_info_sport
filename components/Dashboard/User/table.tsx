@@ -58,7 +58,7 @@ function UserTable() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log(data);
+        // console.log(data);
     }
 
     const { mutate: deleteUser } = useMutation({
