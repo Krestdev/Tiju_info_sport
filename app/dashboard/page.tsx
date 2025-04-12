@@ -58,28 +58,12 @@ const DashbordPage = () => {
     }, 0);
   };
 
-  // useEffect(() => {
-  //   if (articleData.isSuccess) {
-  //     setArt(articleData.data.data.flatMap(x => x.articles))
-  //   }
-  // }, [articleData.data])
-
   useEffect(() => {
     if (art) {
       setComment(art.flatMap(x => x.comments).length)
       setLikes(countTotalLikes(art))
     }
   }, [art])
-
-  const groupUsersBySubscriptionType = (users: Users[]) => {
-    return users.reduce((acc, user) => {
-      if (user.abonnement) {
-        const type = user.abonnement.nom;
-        acc[type] = (acc[type] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<string, number>);
-  };
 
   useEffect(() => {
     const handleRouteChange = () => {
