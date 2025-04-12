@@ -42,29 +42,15 @@ const DashbordPage = () => {
     setValues((prev) => ({ ...prev, [key]: newValue }));
   };
 
-  const articleData = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => {
-      return axiosClient.get<any, AxiosResponse<Category[]>>(
-        `/category`
-      );
-    },
-  });
 
-  const art = usePublishedArticles().allArticles
+  const { allArticles } = usePublishedArticles();
+  const art = allArticles
 
   const countTotalLikes = (articles: Article[]): number => {
     return articles.reduce((totalLikes, article) => {
       return totalLikes + article.likes.length;
     }, 0);
   };
-
-  useEffect(() => {
-    if (art) {
-      setComment(art.flatMap(x => x.comments).length)
-      setLikes(countTotalLikes(art))
-    }
-  }, [art])
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -84,19 +70,19 @@ const DashbordPage = () => {
 
   const grid = [
     {
-      value: art ? art?.length : 0,
+      value: art ? art.length : 0,
       category: "Articles publiés",
       bgColor: "bg-[#0128AE]/10",
       color: "text-[#182067]"
     },
     {
-      value: likes,
+      value: art ? countTotalLikes(art) : 0,
       category: "Likes",
       bgColor: "bg-[#FF0068]/10",
       color: "text-[#FF0068]"
     },
     {
-      value: comment,
+      value: art ? art.flatMap(x => x.comments).length : 0,
       category: "Tous Les Commentaires",
       bgColor: "bg-[#01AE35]/10",
       color: "text-[#01AE35]"
