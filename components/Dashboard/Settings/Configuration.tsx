@@ -30,8 +30,13 @@ const formSchema1 = z
         selectedSubCategories: z.array(z.number()),
     })
 
-const Configuration = () => {
+interface Section {
+    title: string,
+    id: number,
+    content: Ressource[]
+}
 
+const Configuration = () => {
 
     const { token } = useStore()
     const queryClient = useQueryClient();
@@ -58,21 +63,31 @@ const Configuration = () => {
     });
 
     const section: { title: string, id: number, content: Ressource[], }[] = sections.isSuccess ? sections.data.data : [];
+    const select = section.flatMap(x => x.content).flatMap(x => x.id)
+    const ressource = section.flatMap(x => x.content).flatMap(x => x.title)
 
-    const selectC = section.flatMap(x => x.content.filter(x => x.section === 5)).flatMap(x => x.id)
-    const select = section.flatMap(x => x.content.filter(x => x.section === 8)).flatMap(x => x.id)
+    useEffect(() => {
+        if (sections.isSuccess) {
+            form.reset({
+                allCategories: false,
+                selectedCategories: select
+            });
+            form1.reset({
+                allSubCategories: false,
+                selectedSubCategories: select
+            });
+        }
+    }, [sections.isSuccess]);
 
-    console.log(select, selectC);
-    
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             allCategories: false,
-            selectedCategories: selectC
+            selectedCategories: select
         },
     })
-
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
@@ -90,7 +105,7 @@ const Configuration = () => {
     });
 
     const createRessource = useMutation({
-        mutationKey: ["ressources"],
+        mutationKey: ["sections"],
         mutationFn: () => {
             return axiosClient.post("/footer/create",
                 {
@@ -105,7 +120,7 @@ const Configuration = () => {
             return axiosClient.delete(`/footer/delete/${id}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     });
 
@@ -114,7 +129,7 @@ const Configuration = () => {
             return axiosClient.delete(`/content/delete/${id}`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     });
 
@@ -131,7 +146,7 @@ const Configuration = () => {
             )
         },
         onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     })
 
@@ -147,7 +162,7 @@ const Configuration = () => {
             )
         },
         onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     })
 
@@ -163,7 +178,7 @@ const Configuration = () => {
             )
         },
         onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     })
 
@@ -180,27 +195,34 @@ const Configuration = () => {
             )
         },
         onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["ressources"] });
+            queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
     })
 
+
     function onSubmit(data: z.infer<typeof formSchema>) {
-        data.selectedCategories.forEach(element => {
-            const title = cate.mainCategories.find(x => x.id === element)?.title
-            title && createContent1.mutate({
-                title: title,
-                url: `https://https://www.tyjuinfosport.com/${title}`
-            })
+        // Traiter uniquement celles qui n'existent pas encore
+        data.selectedCategories.forEach(id => {
+            const title = cate.mainCategories.find(x => x.id === id)?.title;
+            if (title && !ressource.includes(title)) {
+                createContent1.mutate({
+                    title: title,
+                    url: `https://www.tyjuinfosport.com/${title}`
+                });
+            }
         });
     }
+
 
     function onSubmit1(data: z.infer<typeof formSchema1>) {
         data.selectedSubCategories.forEach(element => {
             const title = cate.childCategories.find(x => x.id === element)?.title
-            title && createContent2.mutate({
-                title: title,
-                url: `https://https://www.tyjuinfosport.com/${title}`
-            })
+            if (title && !ressource.includes(title)) {
+                title && createContent2.mutate({
+                    title: title,
+                    url: `https://https://www.tyjuinfosport.com/${title}`
+                })
+            }
         });
     }
 
@@ -227,11 +249,25 @@ const Configuration = () => {
         }
     }, [allSubCategories, setValue1]);
 
+    function getSectionIdByCategoryId(
+        categoryId: number,
+        categories: Category[],
+        sections: Section[]
+    ): number | undefined {
+        const category = categories.find(cat => cat.id === categoryId);
+        if (!category) return undefined;
+
+        const section = sections.flatMap(x => x.content).find(sec => sec.title === category.title);
+
+        return section?.id;
+    }
+
+
     return (
         <div className='flex flex-col gap-5 px-7 py-10'>
             <h1>{"Configuration du pied de page"}</h1>
             <Form {...form}>
-                <form className='flex flex-col gap-5' >
+                <form className='flex flex-col gap-5 scrollbar' >
                     <div className='flex flex-col gap-5 pt-5'>
                         <h3 className='uppercase text-[28px]'>{"Catégories"}</h3>
                         <FormField
@@ -242,7 +278,7 @@ const Configuration = () => {
                                     <FormControl>
                                         <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                                     </FormControl>
-                                    <FormLabel className='!m-0'>Toutes les catégories</FormLabel>
+                                    <FormLabel className='!m-0'>{"Toutes les catégories"}</FormLabel>
                                 </FormItem>
                             )}
                         />
@@ -253,8 +289,10 @@ const Configuration = () => {
                                 control={form.control}
                                 name='selectedCategories'
                                 render={({ field }) => {
-                                    const isChecked = field.value.includes(cat.id);
-                                    console.log(field.value);
+                                    // const cour = section.flatMap(x => x.content).filter(x => field.value.includes(x.id)).flatMap(x => x.title)
+                                    // const isChecked = cour.includes(cat.title)
+                                    const sectionId = getSectionIdByCategoryId(cat.id, cate.mainCategories, section);
+                                    const isChecked = sectionId !== undefined && field.value.includes(sectionId);
 
                                     return (
                                         <FormItem className='flex flex-row items-center gap-2'>
@@ -304,7 +342,8 @@ const Configuration = () => {
                                 control={form1.control}
                                 name='selectedSubCategories'
                                 render={({ field }) => {
-                                    const isChecked = field.value.includes(cat.id);
+                                    const sectionId = getSectionIdByCategoryId(cat.id, cate.childCategories, section);
+                                    const isChecked = sectionId !== undefined && field.value.includes(sectionId);
                                     return (
                                         <FormItem className='flex flex-row items-center gap-2'>
                                             <FormControl>
@@ -335,7 +374,7 @@ const Configuration = () => {
             <div className='flex flex-col gap-5 pt-5'>
                 <h3 className='uppercase text-[28px]'>{"Ressources"}</h3>
                 {
-                    section.filter(x => x.id === 7).flatMap(x => x.content).map((x, i) => {
+                    section.flatMap(x => x.content).map((x, i) => {
                         return (
                             <div key={i} className='flex gap-5'>
                                 <h4 className='uppercase'>{x.title}</h4>
