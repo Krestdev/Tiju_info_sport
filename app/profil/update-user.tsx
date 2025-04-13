@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import useStore from '@/context/store'
 import { toast } from '@/hooks/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -29,6 +29,7 @@ const formSchema = z.object({
 
 function UpdateUser({user}:Props) {
     const axiosClient = axiosConfig();
+    const queryClient = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -61,6 +62,7 @@ function UpdateUser({user}:Props) {
             title: "Profil mis à jour avec succès !",
             description: "Vos informations ont été mises à jour avec succès. Vous pouvez les consulter sur votre profil."
           })
+          queryClient.invalidateQueries({queryKey:["user"]});
         },
         onError: (error)=>{
           toast({

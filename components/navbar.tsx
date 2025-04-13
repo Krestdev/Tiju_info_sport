@@ -9,6 +9,7 @@ import MenuBar from "./menuBar";
 import { Button } from "./ui/button";
 import Logo from "./logo";
 import { usePathname } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const { logout, activeUser, setActiveUser } = useStore();
@@ -19,6 +20,10 @@ const Navbar = () => {
   const signOut = () =>{
     logout();
     setActiveUser();
+    toast({
+      title: "Vous êtes déconnecté !",
+      description: "Vous naviguez actuellement en tant qu'invité."
+    })
   }
 
   if(isDashboard){

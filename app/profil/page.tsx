@@ -13,7 +13,7 @@ function Page() {
   const axiosClient = axiosConfig();
   const [user, setUser] = React.useState<User|null>(null);
   const {isLoading, data, isSuccess} = useQuery({
-    queryKey: ["user-profile"],
+    queryKey: ["user"],
     queryFn: ()=>{
       return axiosClient.get<{user: User}>(`/profile/${activeUser?.id}`)
     },
