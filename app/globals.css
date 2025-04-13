@@ -100,11 +100,11 @@
   }
 
   h2 {
-    @apply text-[18px] md:text-[28px];
+    @apply text-[22px] sm:text-[24px] lg:text-[28px] xl:text-[32px];
   }
 
   h3 {
-    @apply text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900;
+    @apply text-[18px] sm:text-[20px] lg:text-[24px] xl:text-[28px] text-gray-900;
   }
 
   h4 {

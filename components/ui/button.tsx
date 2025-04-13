@@ -30,7 +30,7 @@ const buttonVariants = cva(
       },
       family: {
         default: "font-mono",
-        sans: "font-sans"
+        sans: "font-sans normal-case"
       }
     },
     defaultVariants: {
@@ -49,11 +49,11 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, className, variant, size, asChild = false, isLoading = false, ...props }, ref) => {
+  ({ children, className, variant, size, family, asChild = false, isLoading = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className, family }))}
         ref={ref}
         {...props}
       >

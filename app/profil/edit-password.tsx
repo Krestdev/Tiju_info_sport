@@ -2,7 +2,7 @@
 import axiosConfig from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import useStore from '@/context/store';
@@ -87,6 +87,7 @@ function EditPassword() {
                             <FormControl>
                                 <Input {...field} type="password"/>
                             </FormControl>
+                            <FormMessage/>
                         </FormItem>
                     )} />
                     <FormField control={form.control} name="confirmPassword" render={({field})=>(
@@ -95,6 +96,7 @@ function EditPassword() {
                             <FormControl>
                                 <Input {...field} type="password"/>
                             </FormControl>
+                            <FormMessage/>
                         </FormItem>
                     )} />
                     <Button type="submit" isLoading={updatePassword.isPending} disabled={updatePassword.isPending} className='w-full'>{"Modifier"}</Button>
