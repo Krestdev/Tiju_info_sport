@@ -177,7 +177,6 @@ const AddArticle = () => {
             )
         },
         onError(error: any) {
-            console.log(error.status);
             toast.error("La taille maximale de l'image doit être de 2Mo")
             deleteArticle(artId)
         },
@@ -205,6 +204,11 @@ const AddArticle = () => {
         if (addImage.isSuccess) {
             toast.success("Article ajouté au brouillon avec succès")
             form.reset();
+            form.reset({
+                description: "",
+                media: []
+              });
+              setSelectedFiles([]);
         }
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
@@ -474,7 +478,7 @@ const AddArticle = () => {
                                                     <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
                                                 )}
                                                 <AddCategory>
-                                                    <Button className="rounded-none w-full">{"Ajouter une catégorie"}</Button>
+                                                    <Button className="rounded-none w-full">{"Creer une catégorie"}</Button>
                                                 </AddCategory>
                                             </div>
                                         </SelectContent>
@@ -511,7 +515,7 @@ const AddArticle = () => {
                         onClick={() => {
                             form.handleSubmit(onSubmit)()
                         }}
-                        disabled={addArticle.isPending}
+                        isLoading={addArticle.isPending}
                     >
                         {addArticle.isPending ? ("Chargement...") : "Enregistrer au brouillon"}
                     </Button>
@@ -522,7 +526,7 @@ const AddArticle = () => {
                         onClick={() => {
                             form.handleSubmit(onSubmit1)()
                         }}
-                        disabled={addArticle.isPending}
+                        isLoading={addArticle.isPending}
                     >
                         {addArticle.isPending ? ("Chargement...") : "Publier"}
                     </Button>

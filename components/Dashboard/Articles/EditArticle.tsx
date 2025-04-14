@@ -480,7 +480,7 @@ function EditArticle({ children, donnee }: Props) {
                                 onClick={() => {
                                     form.handleSubmit(onSubmit)()
                                 }}
-                                disabled={updateImage.isPending}
+                                isLoading={updateImage.isPending}
                                 >
                                 {updateImage.isPending ? "Chargement..." : "Enregistrer au brouillon"}
                             </Button>
@@ -491,7 +491,7 @@ function EditArticle({ children, donnee }: Props) {
                                 onClick={() => {
                                     form.handleSubmit(onSubmit1)()
                                 }}
-                                disabled={updateImage.isPending}
+                                isLoading={updateImage.isPending}
                                 >
                                 {updateImage.isPending ? "Chargement..." : "Publier"}
                             </Button>

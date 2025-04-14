@@ -46,13 +46,13 @@ const Configuration = () => {
     const sections = useQuery({
         queryKey: ["sections"],
         queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<{ title: string, id: number, content: Ressource[] }[]>>(
+            return axiosClient.get<any, AxiosResponse<{ title: string, id: number, content: Ressource[], catid: number }[]>>(
                 `/footer/show`
             );
         },
     });
 
-    const section: { title: string, id: number, content: Ressource[], }[] = sections.isSuccess ? sections.data.data : [];
+    const section: { title: string, id: number, content: Ressource[], catid: number }[] = sections.isSuccess ? sections.data.data : [];
     const select = section.flatMap(x => x.content).flatMap(x => x.id)
     const ressource = section.flatMap(x => x.content).flatMap(x => x.title)
 
@@ -247,19 +247,20 @@ const Configuration = () => {
 
     useEffect(() => {
         if (allCategories) {
-            setValue("selectedCategories", cate.mainCategories.flatMap(x => x.id));
+            setValue("selectedCategories", cate.mainCategories.map(x => x.id));
         } else {
             setValue("selectedCategories", []);
         }
-    }, [allCategories, setValue]);
+    }, [allCategories, setValue, cate.mainCategories]);
 
     useEffect(() => {
         if (allSubCategories) {
-            setValue1("selectedSubCategories", cate.mainCategories.flatMap(x => x.id));
+            setValue1("selectedSubCategories", cate.childCategories.map(x => x.id));
         } else {
             setValue1("selectedSubCategories", []);
         }
-    }, [allSubCategories, setValue1]);
+    }, [allSubCategories, setValue1, cate.childCategories]);
+
 
     function getSectionIdByCategoryId(
         categoryId: number,
@@ -269,9 +270,15 @@ const Configuration = () => {
         const category = categories.find(cat => cat.id === categoryId);
         if (!category) return undefined;
 
-        const section = sections.flatMap(x => x.content).find(sec => sec.title === category.title);
+        // Vérifie si la section contenant cette catégorie existe
+        for (const section of sections) {
+            const contentMatch = section.content.find(res => res.title === category.title);
+            if (contentMatch) {
+                return section.id;
+            }
+        }
 
-        return section?.id;
+        return undefined;
     }
 
 
@@ -285,14 +292,16 @@ const Configuration = () => {
                         <FormField
                             control={form.control}
                             name='allCategories'
-                            render={({ field }) => (
-                                <FormItem className='flex flex-row items-center gap-2'>
-                                    <FormControl>
-                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                    </FormControl>
-                                    <FormLabel className='!m-0'>{"Toutes les catégories"}</FormLabel>
-                                </FormItem>
-                            )}
+                            render={({ field }) => {
+                                return (
+                                    <FormItem className='flex flex-row items-center gap-2'>
+                                        <FormControl>
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
+                                        <FormLabel className='!m-0'>{"Toutes les catégories"}</FormLabel>
+                                    </FormItem>
+                                )
+                            }}
                         />
 
                         {cate.mainCategories.map((cat) => (
@@ -304,13 +313,13 @@ const Configuration = () => {
                                     // const cour = section.flatMap(x => x.content).filter(x => field.value.includes(x.id)).flatMap(x => x.title)
                                     // const isChecked = cour.includes(cat.title)
                                     const sectionId = getSectionIdByCategoryId(cat.id, cate.mainCategories, section);
-                                    const isChecked = sectionId !== undefined && field.value.includes(sectionId);
+                                    const isChecked = field.value.includes(sectionId!);
 
                                     return (
                                         <FormItem className='flex flex-row items-center gap-2'>
                                             <FormControl>
                                                 <Checkbox
-                                                    checked={isChecked}
+                                                    defaultChecked={isChecked}
                                                     onCheckedChange={(checked) => {
                                                         if (checked) {
                                                             field.onChange([...field.value, cat.id]);
@@ -387,8 +396,8 @@ const Configuration = () => {
                 <h3 className='uppercase text-[28px]'>{"Ressources"}</h3>
                 {
                     section.filter(x => x.id === 7).flatMap(x => x.content).map((x, i) => {
-                    console.log(x);
-                    
+                        console.log(x);
+
                         return (
                             <div key={i} className='flex gap-5'>
                                 <h4 className='uppercase'>{x.title}</h4>
@@ -411,9 +420,9 @@ const Configuration = () => {
                     </Button>
                 </AddRessource>
 
-                <Button type='button' onClick={() => createRessource1.mutate()}>{"Categories"}</Button>
+                {/* <Button type='button' onClick={() => createRessource1.mutate()}>{"Categories"}</Button>
                 <Button type='button' onClick={() => createRessource2.mutate()}>{"Sous categorie"}</Button>
-                <Button type='button' onClick={() => createRessource3.mutate()}>{"Ressources"}</Button>
+                <Button type='button' onClick={() => createRessource3.mutate()}>{"Ressources"}</Button> */}
                 {/* <Button type='button' onClick={() => deleteRessource(6)}>{"Supprimer"}</Button> */}
 
             </div>
