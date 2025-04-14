@@ -1,6 +1,7 @@
 "use client"
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import UserSync from "@/lib/user-sync";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 
@@ -18,6 +19,7 @@ function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>{children}
         <Toaster/>
+        <UserSync/>
       </TooltipProvider>
     </QueryClientProvider>
   );

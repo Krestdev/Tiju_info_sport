@@ -16,6 +16,7 @@ import useStore from "@/context/store";
 import Logo from "./logo";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 
 function MenuBar() {
@@ -31,6 +32,10 @@ function MenuBar() {
     setIsOpen(false);
     logout();
     setActiveUser();
+    toast({
+          title: "Vous êtes déconnecté !",
+          description: "Vous naviguez actuellement en tant qu'invité."
+        })
   };
 
 

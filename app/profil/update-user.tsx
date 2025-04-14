@@ -1,13 +1,12 @@
 'use client'
 import axiosConfig from '@/api/api'
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import useStore from '@/context/store'
 import { toast } from '@/hooks/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -20,15 +19,16 @@ interface Props {
 }
 
 const formSchema = z.object({
-    name: z.string().min(4,{message: "Votre nom doit contenir au moins 4 caractères"}),
+    name: z.string().min(4,{message: "Votre nom doit contenir au moins 4 caractères"}).max(21, {message: "Votre nom ne peut comporter plus de 20 caractères"}),
     country: z.string().optional(),
-    town: z.string().optional(),
+    town: z.string().max(20, {message: "Ce champ ne peut contenir plus de 20 caractères"}).optional(),
     sex: z.string().optional(),
     phone: z.string().optional(),
   })
 
 function UpdateUser({user}:Props) {
     const axiosClient = axiosConfig();
+    const queryClient = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -61,6 +61,7 @@ function UpdateUser({user}:Props) {
             title: "Profil mis à jour avec succès !",
             description: "Vos informations ont été mises à jour avec succès. Vous pouvez les consulter sur votre profil."
           })
+          queryClient.invalidateQueries({queryKey:["user"]});
         },
         onError: (error)=>{
           toast({
@@ -97,6 +98,7 @@ function UpdateUser({user}:Props) {
                 <FormControl>
                   <Input {...field}/>
                 </FormControl>
+                <FormMessage/>
               </FormItem>
             )}/>
             <FormField control={form.control} name="country" render={({field})=>(
@@ -141,6 +143,7 @@ function UpdateUser({user}:Props) {
                 <FormControl>
                   <Input {...field} placeholder='ex. Douala'/>
                 </FormControl>
+                <FormMessage/>
               </FormItem>
             )}/>
             <FormField control={form.control} name="phone" render={({field})=>(
@@ -149,6 +152,7 @@ function UpdateUser({user}:Props) {
                 <FormControl>
                   <Input {...field} placeholder='Numéro de téléphone'/>
                 </FormControl>
+                <FormMessage/>
               </FormItem>
             )}/>
             <span className='col-span-1 sm:col-span-2'>

@@ -2,13 +2,13 @@
 import axiosConfig from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label'
 import useStore from '@/context/store';
 import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -32,6 +32,7 @@ function EditPhoto() {
     const [preview, setPreview] = React.useState<string | null>(null)
     const { activeUser } = useStore();
     const axiosClient = axiosConfig();
+    const queryClient = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -60,7 +61,8 @@ function EditPhoto() {
                 variant: "success",
                 title: "Mise à jour réussie !",
                 description: "Votre photo de profil a bien été mise à jour."
-            })
+            });
+            queryClient.invalidateQueries({queryKey: ["user"]});
         },
         onError: ()=>{
             toast({
@@ -123,6 +125,7 @@ function EditPhoto() {
                                 <FormControl>
                                     <Input type="file" accept="image/*" onChange={handleFileChange} />
                                 </FormControl>
+                                <FormMessage/>
                             </FormItem>
                         )} />
                 {preview && (
