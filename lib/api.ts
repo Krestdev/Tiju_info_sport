@@ -16,8 +16,8 @@ export async function fetchArticle(slug: string): Promise<Article> {
     return res.data; // Adaptez selon votre API
   }
   
-  export async function fetchCategory(): Promise<Category[]> {
+  export async function fetchCategory() {
     const res:categoryData = await axiosClient.get(`/category`);
-    //console.log(res.data);
+    // console.log(res.data);
     return res.data;
   }

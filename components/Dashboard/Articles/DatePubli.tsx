@@ -137,13 +137,15 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                             type="button"
                             className='rounded-none'
                             onClick={onSubmit3}
+                            disabled={publishNow.isPending}
                         >
-                            {"Publier Maintenant"}
+                            {publishNow.isPending ? "Chargement..." : "Publier Maintenant"}
                         </Button>
                         {!programmer && <Button
                             type='button'
                             variant='outline'
                             onClick={() => setProgrammer(true)}
+                            disabled={publishNow.isPending}
                         >
                             {"Programmer la publication"}
                         </Button>}
@@ -235,8 +237,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                                 type="button"
                                 className='rounded-none w-full mt-4'
                                 onClick={form.handleSubmit(onSubmit2)}
+                                disabled={programArticle.isPending}
                             >
-                            {"Valider"}
+                            {programArticle.isPending ? "Chargement..." : "Valider"}
                         </Button>
                         </div>}
                 </form>

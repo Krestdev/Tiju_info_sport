@@ -203,19 +203,19 @@ const AddArticle = () => {
 
     React.useEffect(() => {
         if (addImage.isSuccess) {
-            toast.success("Article ajouté avec succès")
+            toast.success("Article ajouté au brouillon avec succès")
             form.reset();
         }
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
-    const articleCate = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
+    // const articleCate = useQuery({
+    //     queryKey: ["categories"],
+    //     queryFn: () => {
+    //         return axiosClient.get<any, AxiosResponse<Category[]>>(
+    //             `/category`
+    //         );
+    //     },
+    // });
 
     const editArticle = useMutation({
         mutationKey: ["pictures"],
@@ -507,8 +507,10 @@ const AddArticle = () => {
                         type="button"
                         onClick={() => {
                             form.handleSubmit(onSubmit)()
-                        }}>
-                        {"Ajouter à la corbeille"}
+                        }}
+                        disabled={addArticle.isPending}
+                        >
+                            {addArticle.isPending ? ("Chargement...") : "Enregistrer au brouillon"}
                     </Button>
                     <DatePubli formId={`form-article-${artId}`} artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button
@@ -517,11 +519,13 @@ const AddArticle = () => {
                         onClick={() => {
                             form.handleSubmit(onSubmit1)()
                         }}
+                        disabled={addArticle.isPending}
                     >
-                        {"Publier"}
+                        {addArticle.isPending ? ("Chargement...") : "Publier"}
                     </Button>
                 </div>
             </form>
+            <ToastContainer />
         </Form>
     )
 }

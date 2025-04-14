@@ -479,8 +479,10 @@ function EditArticle({ children, donnee }: Props) {
                                 type="button"
                                 onClick={() => {
                                     form.handleSubmit(onSubmit)()
-                                }}>
-                                {"Ajouter à la corbeille"}
+                                }}
+                                disabled={updateImage.isPending}
+                                >
+                                {updateImage.isPending ? "Chargement..." : "Enregistrer au brouillon"}
                             </Button>
                             <DatePubli artId={donnee.id} isOpen={dialogOpenE} onOpenChange={setDialogOpenE} article={donnee} formId={`form-article-${donnee.id}`} />
                             <Button
@@ -489,8 +491,9 @@ function EditArticle({ children, donnee }: Props) {
                                 onClick={() => {
                                     form.handleSubmit(onSubmit1)()
                                 }}
-                            >
-                                {"Publier"}
+                                disabled={updateImage.isPending}
+                                >
+                                {updateImage.isPending ? "Chargement..." : "Publier"}
                             </Button>
                         </div>
                     </form>

@@ -70,7 +70,7 @@ const DashbordPage = () => {
 
   const grid = [
     {
-      value: art ? art.length : 0,
+      value: art ? art.filter(a => a.status === "published").length : 0,
       category: "Articles publiés",
       bgColor: "bg-[#0128AE]/10",
       color: "text-[#182067]"
