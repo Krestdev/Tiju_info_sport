@@ -71,8 +71,8 @@ const AddArticle = () => {
     const [artId, setArtId] = useState(0);
     const [selectedArticle, setSelectedArticle] = useState<Article>()
     const editorRef = useRef<LexicalEditorRef>(null);
-    const { childCategories } = usePublishedArticles()
-    const categorie = childCategories
+    const { allchildCategories } = usePublishedArticles()
+    const categorie = allchildCategories
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -274,6 +274,9 @@ const AddArticle = () => {
     const filteredCategories = categorie ? categorie.filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
     ) : [];
+
+    console.log(filteredCategories);
+
 
     return (
         <Form {...form}>
@@ -509,8 +512,8 @@ const AddArticle = () => {
                             form.handleSubmit(onSubmit)()
                         }}
                         disabled={addArticle.isPending}
-                        >
-                            {addArticle.isPending ? ("Chargement...") : "Enregistrer au brouillon"}
+                    >
+                        {addArticle.isPending ? ("Chargement...") : "Enregistrer au brouillon"}
                     </Button>
                     <DatePubli formId={`form-article-${artId}`} artId={artId} isOpen={dialogOpen} onOpenChange={setDialogOpen} article={selectedArticle} />
                     <Button

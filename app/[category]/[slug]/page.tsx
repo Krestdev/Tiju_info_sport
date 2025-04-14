@@ -13,7 +13,7 @@ import { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
     const {category, slug} = await params;
     const categories = await fetchCategory();
-    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
+    const publishedArticles = categories.length > 0 ? sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published")) : [];
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
     if(currentArticle){

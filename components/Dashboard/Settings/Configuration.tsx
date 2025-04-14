@@ -43,16 +43,6 @@ const Configuration = () => {
     const [selected, setSelected] = useState<number>()
     const cate = usePublishedArticles()
 
-    const contents = useQuery({
-        queryKey: ["ressources"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Ressource[]>>(
-                `/content/show`
-            );
-        },
-    });
-
-
     const sections = useQuery({
         queryKey: ["sections"],
         queryFn: () => {
@@ -104,12 +94,34 @@ const Configuration = () => {
         'Content-Type': 'multipart/form-data'
     });
 
-    const createRessource = useMutation({
+    const createRessource1 = useMutation({
+        mutationKey: ["sections"],
+        mutationFn: () => {
+            return axiosClient.post("/footer/create",
+                {
+                    title: "Categories"
+                }
+            )
+        },
+    })
+
+    const createRessource2 = useMutation({
         mutationKey: ["sections"],
         mutationFn: () => {
             return axiosClient.post("/footer/create",
                 {
                     title: "Sous categories"
+                }
+            )
+        },
+    })
+
+    const createRessource3 = useMutation({
+        mutationKey: ["sections"],
+        mutationFn: () => {
+            return axiosClient.post("/footer/create",
+                {
+                    title: "Ressources"
                 }
             )
         },
@@ -374,7 +386,9 @@ const Configuration = () => {
             <div className='flex flex-col gap-5 pt-5'>
                 <h3 className='uppercase text-[28px]'>{"Ressources"}</h3>
                 {
-                    section.flatMap(x => x.content).map((x, i) => {
+                    section.filter(x => x.id === 7).flatMap(x => x.content).map((x, i) => {
+                    console.log(x);
+                    
                         return (
                             <div key={i} className='flex gap-5'>
                                 <h4 className='uppercase'>{x.title}</h4>
@@ -397,7 +411,9 @@ const Configuration = () => {
                     </Button>
                 </AddRessource>
 
-                {/* <Button type='button' onClick={() => createRessource.mutate()}>{"Creer"}</Button> */}
+                <Button type='button' onClick={() => createRessource1.mutate()}>{"Categories"}</Button>
+                <Button type='button' onClick={() => createRessource2.mutate()}>{"Sous categorie"}</Button>
+                <Button type='button' onClick={() => createRessource3.mutate()}>{"Ressources"}</Button>
                 {/* <Button type='button' onClick={() => deleteRessource(6)}>{"Supprimer"}</Button> */}
 
             </div>
