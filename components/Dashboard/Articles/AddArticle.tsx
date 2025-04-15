@@ -13,16 +13,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { GrFormClose } from 'react-icons/gr';
 import { IoMdAdd, IoMdClose } from 'react-icons/io';
-import { LuEye, LuPlus } from 'react-icons/lu';
+import { LuEye, LuPlus, LuUpload } from 'react-icons/lu';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod';
 import AddCategory from '../Categories/AddCategory';
-import LexicalEditor, { LexicalEditorRef } from './LexicalEditor';
+import LexicalEditor from './LexicalEditor';
 import DatePubli from './DatePubli';
 import { Checkbox } from "@/components/ui/checkbox"
 import { slugify } from '@/lib/utils';
 import { usePublishedArticles } from '@/hooks/usePublishedData';
+import AppLexical from './LexicalEditor';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -70,7 +71,6 @@ const AddArticle = () => {
     const [fichier, setFichier] = useState(null);
     const [artId, setArtId] = useState(0);
     const [selectedArticle, setSelectedArticle] = useState<Article>()
-    const editorRef = useRef<LexicalEditorRef>(null);
     const { allchildCategories } = usePublishedArticles()
     const categorie = allchildCategories
 
@@ -207,8 +207,8 @@ const AddArticle = () => {
             form.reset({
                 description: "",
                 media: []
-              });
-              setSelectedFiles([]);
+            });
+            setSelectedFiles([]);
         }
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
@@ -308,11 +308,12 @@ const AddArticle = () => {
                         <FormItem>
                             <FormLabel>{"Description"}</FormLabel>
                             <FormControl>
-                                <LexicalEditor
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    ref={editorRef}
-                                    placeholder={"Description de l'article"} />
+                                <AppLexical
+                                    initialValue={field.value}
+                                    onChange={(value) => {
+                                        field.onChange(value);
+                                    }}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -367,7 +368,14 @@ const AddArticle = () => {
                             <FormLabel>{"Image (max 2Mo)"}</FormLabel>
                             <FormControl>
                                 <div className="flex flex-col gap-2">
-                                    <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
+                                    <div className='relative w-fit h-fit'>
+                                        {selectedFiles.length > 0 && selectedFiles[0] instanceof File && (
+                                            <img
+                                                src={URL.createObjectURL(selectedFiles[0])}
+                                                alt="Aperçu"
+                                                className="size-32 object-cover rounded"
+                                            />
+                                        )}
                                         {selectedFiles.length > 0 && (
                                             <button
                                                 type="button"
@@ -375,43 +383,44 @@ const AddArticle = () => {
                                                     setSelectedFiles([]);
                                                     field.onChange([]);
                                                 }}
-                                                className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600 absolute -top-6 -right-5"
                                             >
                                                 <IoMdClose />
                                             </button>
                                         )}
-                                        <Input
-                                            id="fileInput"
-                                            type="file"
-                                            accept="image/*"
-                                            multiple
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                if (e.target.files) {
-                                                    const newFiles = Array.from(e.target.files);
-                                                    const updatedFiles = [...selectedFiles, ...newFiles];
-
-                                                    setSelectedFiles(updatedFiles);
-                                                    field.onChange(updatedFiles);
-                                                }
-                                            }}
-                                            className='w-full h-[60px]'
-                                        />
-                                        <label
+                                    </div>
+                                    <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
+                                        <div className="relative w-[384px] h-[60px] border flex items-center pl-2">
+                                            {selectedFiles.length <= 0 ?
+                                                <div className='h-10 flex gap-2 px-3 py-2 border border-[#A1A1A1] items-center'>
+                                                    <LuUpload />
+                                                    {"Selectionner une image"}
+                                                </div> :
+                                                <p>{selectedFiles[0].name}</p>}
+                                            <Input
+                                                id="fileInput"
+                                                type="file"
+                                                accept="image/*"
+                                                // multiple
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                    if (e.target.files) {
+                                                        const newFiles = Array.from(e.target.files);
+                                                        const updatedFiles = [...selectedFiles, ...newFiles];
+                                                        setSelectedFiles(updatedFiles);
+                                                        field.onChange(updatedFiles);
+                                                    }
+                                                }}
+                                                className='absolute top-0 left-0 cursor-pointer w-full h-[60px] opacity-0'
+                                            />
+                                        </div>
+                                        {/* <label
                                             htmlFor="fileInput"
                                             className="cursor-pointer flex items-center gap-2 border p-2 rounded-full bg-gray-50 text-black"
                                         >
                                             <IoMdAdd />
-                                        </label>
-                                        {selectedFiles.length > 0 && (
-                                            <button
-                                                type="button"
-                                                onClick={() => setShow(true)}
-                                            >
-                                                <LuEye className="size-7 text-gray-300" />
-                                            </button>
-                                        )}
+                                        </label> */}
                                     </div>
-                                    <div className="flex gap-2 flex-wrap">
+                                    {/* <div className="flex gap-2 flex-wrap">
                                         {show &&
                                             selectedFiles.map((file, index) => (
                                                 <div key={index} className="relative">
@@ -429,7 +438,7 @@ const AddArticle = () => {
                                                     </button>
                                                 </div>
                                             ))}
-                                    </div>
+                                    </div> */}
 
                                 </div>
                             </FormControl>

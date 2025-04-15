@@ -94,39 +94,6 @@ const Configuration = () => {
         'Content-Type': 'multipart/form-data'
     });
 
-    const createRessource1 = useMutation({
-        mutationKey: ["sections"],
-        mutationFn: () => {
-            return axiosClient.post("/footer/create",
-                {
-                    title: "Categories"
-                }
-            )
-        },
-    })
-
-    const createRessource2 = useMutation({
-        mutationKey: ["sections"],
-        mutationFn: () => {
-            return axiosClient.post("/footer/create",
-                {
-                    title: "Sous categories"
-                }
-            )
-        },
-    })
-
-    const createRessource3 = useMutation({
-        mutationKey: ["sections"],
-        mutationFn: () => {
-            return axiosClient.post("/footer/create",
-                {
-                    title: "Ressources"
-                }
-            )
-        },
-    })
-
     const { mutate: deleteRessource } = useMutation({
         mutationFn: async (id: number) => {
             return axiosClient.delete(`/footer/delete/${id}`);
@@ -162,38 +129,6 @@ const Configuration = () => {
         },
     })
 
-    const createContent1 = useMutation({
-        mutationKey: ["ressources"],
-        mutationFn: (data: { title: string, url: string }) => {
-            return axiosClient.post("/content/create",
-                {
-                    footer_id: 5,
-                    title: data.title,
-                    url: data.url,
-                }
-            )
-        },
-        onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["sections"] });
-        },
-    })
-
-    const createContent2 = useMutation({
-        mutationKey: ["ressources"],
-        mutationFn: (data: { title: string, url: string }) => {
-            return axiosClient.post("/content/create",
-                {
-                    footer_id: 8,
-                    title: data.title,
-                    url: data.url,
-                }
-            )
-        },
-        onSuccess() {
-            queryClient.invalidateQueries({ queryKey: ["sections"] });
-        },
-    })
-
     const updateContent = useMutation({
         mutationKey: ["ressources"],
         mutationFn: (data: Ressource) => {
@@ -217,10 +152,10 @@ const Configuration = () => {
         data.selectedCategories.forEach(id => {
             const title = cate.mainCategories.find(x => x.id === id)?.title;
             if (title && !ressource.includes(title)) {
-                createContent1.mutate({
-                    title: title,
-                    url: `https://www.tyjuinfosport.com/${title}`
-                });
+                // createContent1.mutate({
+                //     title: title,
+                //     url: `https://www.tyjuinfosport.com/${title}`
+                // });
             }
         });
     }
@@ -230,10 +165,10 @@ const Configuration = () => {
         data.selectedSubCategories.forEach(element => {
             const title = cate.childCategories.find(x => x.id === element)?.title
             if (title && !ressource.includes(title)) {
-                title && createContent2.mutate({
-                    title: title,
-                    url: `https://https://www.tyjuinfosport.com/${title}`
-                })
+                // title && createContent2.mutate({
+                //     title: title,
+                //     url: `https://https://www.tyjuinfosport.com/${title}`
+                // })
             }
         });
     }
@@ -312,8 +247,8 @@ const Configuration = () => {
                                 render={({ field }) => {
                                     // const cour = section.flatMap(x => x.content).filter(x => field.value.includes(x.id)).flatMap(x => x.title)
                                     // const isChecked = cour.includes(cat.title)
-                                    const sectionId = getSectionIdByCategoryId(cat.id, cate.mainCategories, section);
-                                    const isChecked = field.value.includes(sectionId!);
+                                    // const sectionId = getSectionIdByCategoryId(cat.id, cate.mainCategories, section);
+                                    const isChecked = cat.footShow === true;
 
                                     return (
                                         <FormItem className='flex flex-row items-center gap-2'>
