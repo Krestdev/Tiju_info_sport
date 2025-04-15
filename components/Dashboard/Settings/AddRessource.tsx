@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query'
 import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import LexicalEditor, { LexicalEditorRef } from '../Articles/LexicalEditor'
+import AppLexical from '../Articles/LexicalEditor'
 
 const formSchema = z.object({
     title: z.string(),
@@ -30,7 +30,6 @@ interface Props {
 const AddRessource = ({ title, content, url, children, action, message }: Props) => {
 
     const [dialogO, setDialogO] = React.useState(false);
-    const editorRef = useRef<LexicalEditorRef>(null);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -41,7 +40,7 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
     })
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        action({...data, id:0})
+        action({ ...data, id: 0 })
         setDialogO(false)
     }
 
@@ -91,11 +90,12 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
                                     <FormLabel>{"Contenu de la ressource"}</FormLabel>
                                     <FormControl>
                                         {/* <Textarea rows={10} {...field} className='max-w-[384px] text-[24px]' placeholder='Contenu de la ressource' /> */}
-                                        <LexicalEditor
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            ref={editorRef} 
-                                            placeholder={'Contenu de la ressource'}                                        />
+                                        <AppLexical
+                                            initialValue={field.value}
+                                            onChange={(value) => {
+                                                field.onChange(value);
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

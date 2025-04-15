@@ -46,14 +46,14 @@ export default async function RootLayout({
       >
         <main>
           {/* <GA /> */}
-          {/* <Providers>
+          <Providers>
             <HydrationZustand>
               <Navbar/>
               {children}
               <Footbar/>
             </HydrationZustand>
-          </Providers> */}
-          <Maintenance />
+          </Providers>
+          {/* <Maintenance /> */}
         </main>
       </body>
     </html>

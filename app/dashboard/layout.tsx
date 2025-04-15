@@ -7,22 +7,24 @@ import useStore from "@/context/store";
 import withAdminAuth from "@/lib/whithAdminAuth";
 import { NavAdmin } from "@/components/Dashboard/navAdmin";
 import SideBarMobile from "@/components/Dashboard/SIdeBarMobile";
+import Maintenance from "../Maintenance";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { isFull, setIsFull } = useStore();
   const [show, setShow] = React.useState(false);
 
   return (
-    <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
-      <AppSidebar />
-      <SideBarMobile />
-      <main className="flex-1 overflow-auto">
-        <NavAdmin />
-        <div className="relative gap-5 px-5 md:px-7 py-10">
-          {children}
-        </div>
-      </main>
-    </SidebarProvider>
+    // <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
+    //   <AppSidebar />
+    //   <SideBarMobile />
+    //   <main className="flex-1 overflow-auto">
+    //     <NavAdmin />
+    //     <div className="relative gap-5 px-5 md:px-7 py-10">
+    //       {children}
+    //     </div>
+    //   </main>
+    // </SidebarProvider>
+    <Maintenance />
   );
 }
 
