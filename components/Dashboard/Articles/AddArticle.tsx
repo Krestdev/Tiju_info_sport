@@ -142,7 +142,9 @@ const AddArticle = () => {
         },
         onSuccess(data) {
             setSelectedArticle(data.data)
-            fichier && addImage1.mutate({ data: fichier[0], id: data.data.id })
+            console.log(data.data);
+            
+            fichier && data.data.id && addImage1.mutate({ data: fichier[0], id: data.data.id })
             handleOpen();
         },
     })
@@ -186,6 +188,7 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
             setArtId(id)
+            
             return axiosClient.post("/image",
                 {
                     file: data,

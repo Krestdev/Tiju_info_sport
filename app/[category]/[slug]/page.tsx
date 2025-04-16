@@ -63,10 +63,10 @@ async function ArticlePage({ params }: { params: Promise<{ category: string; slu
         <div className='py-8'>
             <FeedTemplate isArticle>
                 {currentCategory && currentArticle &&
-                    <div className='flex flex-col gap-4'>
+                    <div className='relative flex flex-col gap-4'>
                         <h1>{currentArticle.title}</h1>
                         <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}` : "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md" />
-                        <p>{currentArticle.summery}</p>
+                        <p className='font-semibold italic'>{currentArticle.summery}</p>
                         <div className='flex flex-col gap-2'>
                             <span className='font-bold text-gray-900'>{currentArticle.author.name}</span>
                             <p className='text-gray-600'>{currentArticle.publish_on.length > 0 ? articleDate(currentArticle.publish_on) : articleDate(currentArticle.created_at)}</p>
@@ -83,16 +83,17 @@ async function ArticlePage({ params }: { params: Promise<{ category: string; slu
                             </span>
                             <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{currentArticle.comments.length > 1 ? `${currentArticle.comments.length} Commentaires` : currentArticle.comments.length === 1 ? "1 Commentaire" : "Aucun commentaire"}</span>
                         </div>
-                        <div className='hidden md:block'>
+                        <Commenter currentArticle={currentArticle} />
+                        {/* <div className='hidden md:block'>
                             <Textarea rows={3} placeholder='Laissez un commentaire' className='w-full resize-none' />
                             <Button className='px-5 py-5 h-12 absolute bottom-2 right-2 rounded-full' variant={"ghost"}><LuSend /></Button>
-                        </div>
+                        </div> */}
                         {/**Comments here */}
-                        {currentArticle.comments.length > 0 &&
+                        {/* {currentArticle.comments.length > 0 &&
                             <div className='flex flex-col'>
                                 {currentArticle.comments.map(x => <Comment key={x.id} comment={x} />)}
                             </div>
-                        }
+                        } */}
                         {/**More articles */}
                         {currentCategory.articles.filter(x => x.status === "published" && x.id !== currentArticle.id).length > 0 && (
                             <div className='mt-10 grid grid-cols-1 gap-7 sm:grid-cols-2'>
