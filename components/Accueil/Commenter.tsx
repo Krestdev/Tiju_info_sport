@@ -21,6 +21,7 @@ const Commenter = ({
     articleId,
     commentaire
 }: CommenterProps) => {
+    
     return (
         <div className='flex md:hidden justify-center items-center'>
             {openCommenter && (
