@@ -175,7 +175,7 @@
     text-decoration: underline;
   }
   .description img {
-    @apply max-w-[750px] w-full h-auto object-cover aspect-video mx-auto text-center;
+    @apply max-w-[833px] w-full h-auto object-cover aspect-video mx-auto text-center;
   }
 
   .text-strikethrough {

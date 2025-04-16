@@ -14,17 +14,17 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [show, setShow] = React.useState(false);
 
   return (
-    // <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
-    //   <AppSidebar />
-    //   <SideBarMobile />
-    //   <main className="flex-1 overflow-auto">
-    //     <NavAdmin />
-    //     <div className="relative gap-5 px-5 md:px-7 py-10">
-    //       {children}
-    //     </div>
-    //   </main>
-    // </SidebarProvider>
-    <Maintenance />
+    <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
+      <AppSidebar />
+      <SideBarMobile />
+      <main className="flex-1 overflow-auto">
+        <NavAdmin />
+        <div className="relative gap-5 px-5 md:px-7 py-10">
+          {children}
+        </div>
+      </main>
+    </SidebarProvider>
+    // <Maintenance />
   );
 }
 

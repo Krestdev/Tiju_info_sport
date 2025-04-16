@@ -35,6 +35,7 @@ import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppLexical from "./LexicalEditor";
+import LexicalEditorWrapper from "./Lexical/components/LexicalEditorWrapper";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -243,7 +244,7 @@ function EditArticle({ children, donnee }: Props) {
     return (
         <Dialog open={dialogO} onOpenChange={setDialogO}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="w-[95vh] h-[95vh] max-w-none p-6 scrollbar">
+            <DialogContent className="w-screen md:w-[95vh] h-screen md:h-[95vh] max-w-none p-6 scrollbar">
                 <DialogHeader>
                     <DialogTitle>{"Modifier un Article"}</DialogTitle>
                     <DialogDescription>
@@ -279,12 +280,14 @@ function EditArticle({ children, donnee }: Props) {
                                             value={field.value}
                                             onChange={field.onChange}
                                             placeholder={"Description de l'article"} /> */}
-                                        <AppLexical
+                                        {/* <AppLexical
                                             initialValue={field.value}
                                             onChange={(value) => {
                                                 field.onChange(value);
                                             }}
-                                        />
+                                        /> */}
+
+                                        <LexicalEditorWrapper />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
