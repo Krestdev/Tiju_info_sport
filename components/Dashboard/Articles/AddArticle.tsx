@@ -535,9 +535,9 @@ const AddArticle = () => {
                         onClick={() => {
                             form.handleSubmit(onSubmit1)()
                         }}
-                        isLoading={addArticle.isPending}
+                        isLoading={addArticle1.isPending}
                     >
-                        {addArticle.isPending ? ("Chargement...") : "Publier"}
+                        {addArticle1.isPending ? ("Chargement...") : "Publier"}
                     </Button>
                 </div>
             </form>

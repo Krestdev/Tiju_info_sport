@@ -35,7 +35,6 @@ import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppLexical from "./LexicalEditor";
-import LexicalEditorWrapper from "./Lexical/components/LexicalEditorWrapper";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -280,14 +279,13 @@ function EditArticle({ children, donnee }: Props) {
                                             value={field.value}
                                             onChange={field.onChange}
                                             placeholder={"Description de l'article"} /> */}
-                                        {/* <AppLexical
+                                        <AppLexical
                                             initialValue={field.value}
                                             onChange={(value) => {
                                                 field.onChange(value);
                                             }}
-                                        /> */}
+                                        />
 
-                                        {/* <LexicalEditorWrapper /> */}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -514,9 +512,9 @@ function EditArticle({ children, donnee }: Props) {
                                 onClick={() => {
                                     form.handleSubmit(onSubmit1)()
                                 }}
-                                isLoading={updateImage.isPending}
+                                isLoading={updateImage1.isPending || editArticle1.isPending}
                             >
-                                {updateImage.isPending ? "Chargement..." : "Publier"}
+                                {updateImage1.isPending || editArticle1.isPending ? "Chargement..." : "Publier"}
                             </Button>
                         </div>
                     </form>

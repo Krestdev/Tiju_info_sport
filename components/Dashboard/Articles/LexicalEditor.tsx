@@ -6,13 +6,13 @@
  *
  */
 
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import {LexicalComposer} from '@lexical/react/LexicalComposer';
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
-import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
-import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import {
   $createParagraphNode,
@@ -34,7 +34,7 @@ import {
 import ExampleTheme from './ExempleTheme';
 import ToolbarPlugin from './plugings/ToolbarPlugin';
 import TreeViewPlugin from './plugings/TreeViewPlugin';
-import {parseAllowedColor, parseAllowedFontSize} from './styleConfig';
+import { parseAllowedColor, parseAllowedFontSize } from './styleConfig';
 import { ImageNode } from './plugings/custom/ImageNode';
 import { ImagePlugin } from './plugings/ImagePlugin';
 import { $createImageNode } from './plugings/custom/ImageNode';
@@ -117,7 +117,7 @@ const constructImportMap = (): DOMConversionMap => {
           }
           const extraStyles = getExtraStyles(element);
           if (extraStyles) {
-            const {forChild} = output;
+            const { forChild } = output;
             return {
               ...output,
               forChild: (child, parent) => {
@@ -167,64 +167,93 @@ export default function AppLexical({ initialValue, onChange }: LexicalEditorProp
   return (
     <LexicalComposer initialConfig={{
       ...editorConfig,
-      // editorState: initialValue ? (editor: LexicalEditor) => {
-      //   if (!initialValue) return;
-        
-      //   editor.update(() => {
-      //     const root = $getRoot();
-      //     root.clear();
-          
-      //     const parser = new DOMParser();
-      //     const dom = parser.parseFromString(initialValue, 'text/html');
-          
-      //     // Handle image tags
-      //     const images = dom.querySelectorAll('img');
-      //     images.forEach(img => {
-      //       const src = img.getAttribute('src');
-      //       if (src) {
-      //         const imageNode = $createImageNode(src);
-      //         root.append(imageNode);
-      //       }
-      //     });
-          
-      //     // Handle other content
-      //     const fragment = $generateNodesFromDOM(editor, dom);
-      //     root.append(...fragment);
-      //   });
-      // } : undefined,
+
       editorState: initialValue ? (editor: LexicalEditor) => {
         if (!initialValue) return;
-      
+
         editor.update(() => {
           const root = $getRoot();
           root.clear();
-      
-          const parser = new DOMParser();
-          const dom = parser.parseFromString(initialValue, 'text/html');
-      
-          // Convert all content (including images as HTML nodes)
-          const nodes = $generateNodesFromDOM(editor, dom);
-      
-          // Process nodes to replace <img> HTML with ImageNode
-          const processedNodes = nodes.map((node) => {
-            // Check if it's an HTML node (type-safe way)
-            if ('__type' in node && node.__type === 'html' && '__value' in node) {
-              const htmlContent = (node as { __value: string }).__value;
-              if (htmlContent.startsWith('<img')) {
-                const imgDom = parser.parseFromString(htmlContent, 'text/html');
-                const img = imgDom.querySelector('img');
-                const src = img?.getAttribute('src');
-                if (src) {
-                  return $createImageNode(src); // Replace with ImageNode
+
+          try {
+            const parser = new DOMParser();
+            const dom = parser.parseFromString(initialValue, 'text/html');
+
+            const parseNode = (node: Node): LexicalNode[] => {
+              const nodes: LexicalNode[] = [];
+              console.log(node);
+
+              // Traitement du texte brut
+              if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+                const textNode = $createTextNode(node.textContent);
+
+                // Crée un paragraphe parent pour le texte seul
+                const paragraphNode = $createParagraphNode();
+                paragraphNode.append(textNode);
+                nodes.push(paragraphNode);
+                return nodes;
+              }
+
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as HTMLElement;
+
+                // Traitement spécial pour les images
+                if (element.tagName === 'IMG') {
+                  const src = element.getAttribute('src');
+                  if (src) {
+                    const imageNode = $createImageNode(src);
+                    nodes.push(imageNode);
+                  }
+                  return nodes;
+                }
+                if (element.tagName === 'BR') {
+                  const brNode = $createTextNode('');
+                  nodes.push(brNode);
+                  return nodes;
+                }
+
+                // Pour les éléments de bloc
+                const isBlockElement = ['P', 'DIV', 'H1', 'H2', 'H3', 'UL', 'OL', 'LI'].includes(element.tagName);
+                const containerNode = isBlockElement ? $createParagraphNode() : null;
+
+                // Traite les enfants récursivement
+                const children = Array.from(element.childNodes).flatMap(parseNode);
+
+                // Traiter le cas sans enfants
+                if (containerNode) {
+                  if (children.length > 0) {
+                    containerNode.append(...children);
+                    nodes.push(containerNode);
+                  }
+                } else {
+                  nodes.push(...children);
                 }
               }
+
+              return nodes;
+            };
+
+            const body = dom.querySelector('body');
+            if (body) {
+              const nodes = Array.from(body.childNodes).flatMap(parseNode);
+
+              // Filtre les nœuds invalides
+              const validNodes = nodes.filter(node =>
+                node && ['paragraph', 'text', 'image', 'heading'].includes(node.getType())
+              );
+
+              root.append(...validNodes);
             }
-            return node; // Keep other nodes unchanged
-          });
-      
-          root.append(...processedNodes);
+
+          } catch (error) {
+            console.error('Erreur lors du parsing du HTML :', error);
+            const errorNode = $createParagraphNode();
+            errorNode.append($createTextNode('(Erreur de chargement du contenu)'));
+            root.append(errorNode);
+          }
         });
       } : undefined,
+    
     }}>
       <div className="border border-gray-300 rounded-none w-full min-h-[350px] h-auto">
         <ToolbarPlugin />

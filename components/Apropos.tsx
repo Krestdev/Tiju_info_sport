@@ -9,8 +9,7 @@ interface Props {
 const Apropos = ({ ressource }: Props) => {
     return (
         <div className='flex flex-col gap-4'>
-            h
-
+            
         </div>
     )
 }
