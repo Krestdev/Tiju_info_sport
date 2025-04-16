@@ -32,7 +32,7 @@ function LexicalEditorWrapper(props) {
         <HistoryPlugin />
         <ListPlugin />
         <LinkPlugin />
-        <ImagesPlugin captionsEnabled={false} />
+        
         <FloatingTextFormatToolbarPlugin />
       </Box>
     </LexicalComposer>

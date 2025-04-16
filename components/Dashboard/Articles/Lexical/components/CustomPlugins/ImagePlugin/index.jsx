@@ -26,6 +26,7 @@ import {
   ImageNode,
 } from "../../CustomNodes/ImageNode";
 import { Button } from "@/components/ui/button";
+import { Image } from "lucide-react";
 
 export const INSERT_IMAGE_COMMAND = createCommand("INSERT_IMAGE_COMMAND");
 
@@ -88,11 +89,8 @@ export default function ImagesPlugin({ captionsEnabled }) {
 
   return (
     <>
-      {/* Bouton visible pour sélectionner une image */}
       <div className="my-2">
-        <Button type="button" onClick={() => inputRef.current?.click()}>
-          Ajouter une image
-        </Button>
+        <Image onClick={() => inputRef.current?.click()} className="cursor-pointer size-5" />
         <input
           type="file"
           accept="image/*"

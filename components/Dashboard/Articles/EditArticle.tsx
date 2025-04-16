@@ -287,7 +287,7 @@ function EditArticle({ children, donnee }: Props) {
                                             }}
                                         /> */}
 
-                                        <LexicalEditorWrapper />
+                                        {/* <LexicalEditorWrapper /> */}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
