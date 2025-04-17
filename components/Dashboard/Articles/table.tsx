@@ -215,6 +215,7 @@ function ArticleTable() {
                     <Button onClick={() => setCurrent("draft")} className={`shadow-none text-[16px] rounded-[6px] ${current === "draft" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Brouillons"}</Button>
                     <Button onClick={() => setCurrent("deleted")} className={`shadow-none text-[16px] rounded-[6px] ${current === "deleted" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Corbeille"}</Button>
                 </div>
+                {/* <DatePubli formId={`form-article-`} artId={1} isOpen={true} onOpenChange={() => {}} article={selectedArticle} /> */}
                 <span className="flex flex-wrap items-center gap-5">
                     <span className="relative max-w-sm w-full">
                         <Input
@@ -285,8 +286,6 @@ function ArticleTable() {
                                                         </TableHeader>
                                                         <TableBody>
                                                             {currentItems.map((item, id) => {
-                                                                console.log(item);
-                                                                
                                                                 return (
                                                                     <TableRow className="text-[16px]" key={id}>
                                                                         <TableCell className="border">
