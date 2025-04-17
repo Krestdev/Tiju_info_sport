@@ -179,7 +179,7 @@ function EditArticle({ children, donnee }: Props) {
                 catid: artMod?.type,
                 headline: artMod?.headline,
                 status: "draft"
-            }            
+            }
             return axiosClient.patch(`/articles/${donnee.id}`, data);
         },
         onSuccess() {
@@ -522,6 +522,7 @@ function EditArticle({ children, donnee }: Props) {
                             </Button>
                         </div>
                     </form>
+                    <ToastContainer />
                 </Form>
             </DialogContent>
         </Dialog >
