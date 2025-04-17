@@ -285,6 +285,8 @@ function ArticleTable() {
                                                         </TableHeader>
                                                         <TableBody>
                                                             {currentItems.map((item, id) => {
+                                                                console.log(item);
+                                                                
                                                                 return (
                                                                     <TableRow className="text-[16px]" key={id}>
                                                                         <TableCell className="border">

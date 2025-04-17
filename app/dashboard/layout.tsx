@@ -7,6 +7,7 @@ import useStore from "@/context/store";
 import withAdminAuth from "@/lib/whithAdminAuth";
 import { NavAdmin } from "@/components/Dashboard/navAdmin";
 import SideBarMobile from "@/components/Dashboard/SIdeBarMobile";
+import Maintenance from "../Maintenance";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { isFull, setIsFull } = useStore();
@@ -22,7 +23,9 @@ function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      
     </SidebarProvider>
+    // <Maintenance />
   );
 }
 

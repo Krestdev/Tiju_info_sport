@@ -28,12 +28,14 @@ import { Abonnement } from "@/data/temps";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GrFormClose } from "react-icons/gr";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
-import LexicalEditor, { LexicalEditorRef } from "./LexicalEditor";
-import { LuEye, LuPlus } from "react-icons/lu";
+import LexicalEditor from "./LexicalEditor";
+import { LuEye, LuPlus, LuUpload } from "react-icons/lu";
 import DatePubli from "./DatePubli";
 import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 import { Checkbox } from "@/components/ui/checkbox";
+import AppLexical from "./LexicalEditor";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -72,12 +74,11 @@ function EditArticle({ children, donnee }: Props) {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
-    const [categorie, setCategorie] = useState<Category[]>();
     const [dialogOpenE, setDialogOpenE] = useState(false)
     const queryClient = useQueryClient();
     const [fich, setFich] = useState<File[] | undefined>()
     const [artMod, setArtMod] = useState<any>()
-    const editorRef = useRef<LexicalEditorRef>(null);
+    // const editorRef = useRef<LexicalEditorRef>(null);
 
     const axiosClient = axiosConfig({
         Authorization: `Bearer ${token}`,
@@ -91,22 +92,9 @@ function EditArticle({ children, donnee }: Props) {
         'Content-Type': 'multipart/form-data'
     });
 
-    const articleCate = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
+    const { categories } = usePublishedArticles()
 
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setCategorie(articleCate.data.data)
-        }
-    }, [articleCate.data])
-
-    const filteredCategories = (categorie || []).filter((x) =>
+    const filteredCategories = (categories || []).filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
     );
 
@@ -164,9 +152,10 @@ function EditArticle({ children, donnee }: Props) {
                 title: artMod.title.trim(),
                 summary: artMod.extrait.trim(),
                 description: artMod.description.trim(),
-                type: artMod.type,
+                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
                 headline: artMod.headline,
-                status: "draft"
+                status: "draft",
+                catid: artMod.type
             });
         },
         onSuccess() {
@@ -186,7 +175,8 @@ function EditArticle({ children, donnee }: Props) {
                 title: artMod.title.trim(),
                 summary: artMod.extrait.trim(),
                 description: artMod.description.trim(),
-                type: artMod.type,
+                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
+                catid: artMod.type,
                 headline: artMod.headline,
                 status: "draft"
             });
@@ -229,17 +219,20 @@ function EditArticle({ children, donnee }: Props) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: donnee.title.trim(),
-            type: donnee.type.trim(),
+            type: categories.find((x) => x.id === donnee.catid)?.id.toString(),
             extrait: donnee.summery.trim(),
             description: donnee.description.trim(),
             headline: donnee.headline,
         },
     });
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [inputKey, setInputKey] = useState(0);
+
     return (
         <Dialog open={dialogO} onOpenChange={setDialogO}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="w-[95vh] h-[95vh] max-w-none p-6 scrollbar">
+            <DialogContent className="w-screen md:w-[95vh] h-screen md:h-[95vh] max-w-none p-6 scrollbar">
                 <DialogHeader>
                     <DialogTitle>{"Modifier un Article"}</DialogTitle>
                     <DialogDescription>
@@ -271,11 +264,17 @@ function EditArticle({ children, donnee }: Props) {
                                 <FormItem>
                                     <FormLabel>{"Description"}</FormLabel>
                                     <FormControl>
-                                        <LexicalEditor
+                                        {/* <AppLexical
                                             value={field.value}
                                             onChange={field.onChange}
-                                            ref={editorRef} 
-                                            placeholder={"Description de l'article"}                                        />
+                                            placeholder={"Description de l'article"} /> */}
+                                        <AppLexical
+                                            initialValue={field.value}
+                                            onChange={(value) => {
+                                                field.onChange(value);
+                                            }}
+                                        />
+
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -325,9 +324,6 @@ function EditArticle({ children, donnee }: Props) {
                         </div> */}
 
                         <div className="flex flex-row items-end gap-2">
-                            {
-                                photo && <img src={`https://tiju.krestdev.com/api/image/${photo.id}`} alt="" className="w-[70px] h-[70px] object-cover" />
-                            }
                             <FormField
                                 control={form.control}
                                 name="media"
@@ -336,7 +332,17 @@ function EditArticle({ children, donnee }: Props) {
                                         <FormLabel>{"Ajouter des images"}</FormLabel>
                                         <FormControl>
                                             <div className="flex flex-col gap-2">
-                                                <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
+                                                <div className='relative w-fit h-fit'>
+                                                    {
+                                                        selectedFiles.length <= 0 ? photo && <img src={`https://tiju.krestdev.com/api/image/${photo.id}`} alt="" className="size-32 object-cover" />
+                                                            :
+                                                            selectedFiles[0] instanceof File && (
+                                                                <img
+                                                                    src={URL.createObjectURL(selectedFiles[0])}
+                                                                    alt="Aperçu"
+                                                                    className="size-32 object-cover rounded"
+                                                                />
+                                                            )}
                                                     {selectedFiles.length > 0 && (
                                                         <button
                                                             type="button"
@@ -344,41 +350,45 @@ function EditArticle({ children, donnee }: Props) {
                                                                 setSelectedFiles([]);
                                                                 field.onChange([]);
                                                             }}
-                                                            className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600"
+                                                            className="mt-2 p-2 w-fit bg-red-500 text-white rounded-full hover:bg-red-600 absolute -top-6 -right-5"
                                                         >
                                                             <IoMdClose />
                                                         </button>
                                                     )}
-                                                    <Input
-                                                        id="fileInput"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        multiple
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                            if (e.target.files) {
-                                                                const newFiles = Array.from(e.target.files);
-                                                                const updatedFiles = [...selectedFiles, ...newFiles];
-                                                                setFich(updatedFiles)
-                                                                setSelectedFiles(updatedFiles);
-                                                                field.onChange(updatedFiles);
-                                                            }
-                                                        }}
-                                                        className='w-full h-[60px]'
-                                                    />
-                                                    <label
+                                                </div>
+                                                <div className='max-w-[384px] w-full h-[60px] flex gap-4 items-center justify-center'>
+                                                    <div className="relative w-[384px] h-[60px] border flex items-center pl-2">
+                                                        {selectedFiles.length <= 0 ?
+                                                            <div className='h-10 flex gap-2 px-3 py-2 border border-[#A1A1A1] items-center'>
+                                                                <LuUpload />
+                                                                {"Selectionner votre image"}
+                                                            </div> :
+                                                            <p>{selectedFiles[0].name}</p>}
+                                                        <Input
+                                                            key={inputKey}
+                                                            id="fileInput"
+                                                            type="file"
+                                                            accept="image/*"
+                                                            multiple
+                                                            ref={fileInputRef}
+                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.files) {
+                                                                    const newFiles = Array.from(e.target.files);
+                                                                    const updatedFiles = [...selectedFiles, ...newFiles];
+                                                                    setFich(updatedFiles);
+                                                                    setSelectedFiles(updatedFiles);
+                                                                    field.onChange(updatedFiles);
+                                                                }
+                                                            }}
+                                                            className='absolute top-0 left-0 cursor-pointer w-full h-[60px] opacity-0'
+                                                        />
+                                                    </div>
+                                                    {/* <label
                                                         htmlFor="fileInput"
                                                         className="cursor-pointer flex items-center gap-2 border p-2 rounded-full bg-gray-50 text-black"
                                                     >
                                                         <IoMdAdd />
-                                                    </label>
-                                                    {selectedFiles.length > 0 && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setShow(true)}
-                                                        >
-                                                            <LuEye className="size-7 text-gray-300" />
-                                                        </button>
-                                                    )}
+                                                    </label> */}
                                                 </div>
                                                 <div className="flex gap-2 flex-wrap">
                                                     {show &&
@@ -437,11 +447,17 @@ function EditArticle({ children, donnee }: Props) {
                                                             className='h-10 w-full'
                                                         />
                                                         {filteredCategories.length > 0 ? (
-                                                            filteredCategories.map((x, i) => (
-                                                                <SelectItem key={i} value={x.title}>
-                                                                    {x.title}
-                                                                </SelectItem>
-                                                            ))) : (
+                                                            filteredCategories.map((x, i) => {
+                                                                console.log(field.value);
+
+
+                                                                return (
+
+                                                                    <SelectItem key={i} value={x.id.toString()}>
+                                                                        {x.title}
+                                                                    </SelectItem>
+                                                                )
+                                                            })) : (
                                                             <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
                                                         )}
                                                     </div>
@@ -478,10 +494,12 @@ function EditArticle({ children, donnee }: Props) {
                                 className="max-w-[384px] w-full font-normal rounded-none"
                                 type="button"
                                 onClick={() => {
+                                    console.log(form.getValues());
+                                    
                                     form.handleSubmit(onSubmit)()
                                 }}
-                                disabled={updateImage.isPending}
-                                >
+                                isLoading={updateImage.isPending}
+                            >
                                 {updateImage.isPending ? "Chargement..." : "Enregistrer au brouillon"}
                             </Button>
                             <DatePubli artId={donnee.id} isOpen={dialogOpenE} onOpenChange={setDialogOpenE} article={donnee} formId={`form-article-${donnee.id}`} />
@@ -491,9 +509,9 @@ function EditArticle({ children, donnee }: Props) {
                                 onClick={() => {
                                     form.handleSubmit(onSubmit1)()
                                 }}
-                                disabled={updateImage.isPending}
-                                >
-                                {updateImage.isPending ? "Chargement..." : "Publier"}
+                                isLoading={updateImage1.isPending || editArticle1.isPending}
+                            >
+                                {updateImage1.isPending || editArticle1.isPending ? "Chargement..." : "Publier"}
                             </Button>
                         </div>
                     </form>

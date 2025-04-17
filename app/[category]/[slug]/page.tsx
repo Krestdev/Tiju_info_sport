@@ -11,35 +11,49 @@ import AddComment from './add-comment';
 import LikeArticle from './like-article';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
-    const {category, slug} = await params;
+export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string; }> }): Promise<Metadata> {
+    const { category, slug } = await params;
     const categories = await fetchCategory();
-    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
-    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
-    const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
-    if(currentArticle){
+    const publishedArticles = categories.length > 0 ? sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x => x.status === "published")) : [];
+    const currentCategory = categories.find(x => x.slug.toLocaleLowerCase() === decodeURIComponent(category).toLocaleLowerCase());
+    const currentArticle = publishedArticles.find(y => y.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
+    if (currentArticle) {
         return {
-          title: defineTitle(currentArticle.title),
-          description: currentArticle.summery,
-          openGraph: {
-            images: currentArticle.images.length > 0 
-              ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`
-              : '/images/no-image.jpg'
-          }
+            title: defineTitle(currentArticle.title),
+            description: currentArticle.summery,
+            openGraph: {
+                images: currentArticle.images.length > 0
+                    ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`
+                    : '/images/no-image.jpg'
+            }
         };
     } else {
         return {
-            title: defineTitle("Article Introuvable"), 
+            title: defineTitle("Article Introuvable"),
         }
     }
-  }
+}
 
-async function ArticlePage({ params }: { params: Promise<{  category: string; slug: string; }> }) {
-    const {category, slug} = await params;
+async function ArticlePage({ params }: { params: Promise<{ category: string; slug: string; }> }) {
+    const { category, slug } = await params;
     const categories = await fetchCategory();
-    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
-    const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
-    const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
+    const publishedArticles = sortArticles(categories.filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x => x.status === "published"));
+    const currentCategory = categories.find(x => x.slug.toLocaleLowerCase() === decodeURIComponent(category).toLocaleLowerCase());
+    const currentArticle = publishedArticles.find(y => y.slug.toLocaleLowerCase() === decodeURIComponent(slug).toLocaleLowerCase());
+
+    let openCommenter = false;
+    let commentaire = "";
+    const handleChangeCommentaire = (value: string) => {
+        commentaire = value;
+    }
+
+    const handleOpenChange = (prev: boolean) => {
+        return !prev
+    }
+
+    const handleAddComment = async (id: string) => {
+        if (commentaire.length > 0) { }
+    }
 
 
   return (

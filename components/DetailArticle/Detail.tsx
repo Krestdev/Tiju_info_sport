@@ -623,7 +623,6 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                         >
                                             COMMENTER
                                         </Button>
-
                                         {openCommenter && (
                                             <div className="fixed inset-0 flex items-end justify-center z-50">
                                                 <div className="bg-white flex md:flex-col gap-2 items-center w-full max-w-md shadow-lg rounded-[20px]">
@@ -704,7 +703,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                         details.comments.filter(comment => !(details.comments.flatMap(comment => comment.response.map(rep => rep.id)).includes(comment.id))).map(x => {
                                             return (
                                                 <div key={x.id} className='flex flex-row py-3 gap-3'>
-                                                    <img src={`${x.author.image !== null && x.author.image !== undefined ? "https://tiju.krestdev.com/api/image/"+x.author.image.id : "/images/no-user.jpg"}`} alt="" className='size-10 object-cover rounded-full' />
+                                                    <img src={`${x.author.image !== null && x.author.image !== undefined ? "https://tiju.krestdev.com/api/image/" + x.author.image.id : "/images/no-user.jpg"}`} alt="" className='size-10 object-cover rounded-full' />
                                                     <div className='flex flex-col gap-2'>
                                                         <p className='font-normal text-[16px]'>{x.author?.name}</p>
                                                         <p className='text-[14px] leading-[18.2px] text-[#545454]'>{x.message}</p>
@@ -864,7 +863,7 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
                                                             showReponses[x.id] ?
                                                                 x.response.map(a => (
                                                                     <div key={a.id} className='flex flex-row py-3 gap-3'>
-                                                                        <img src={`${x.author.image !== null && x.author.image !== undefined ? "https://tiju.krestdev.com/api/image/"+x.author.image.id : "/images/no-user.jpg"}`} alt="" className='size-10 object-cover rounded-full' />
+                                                                        <img src={`${x.author.image !== null && x.author.image !== undefined ? "https://tiju.krestdev.com/api/image/" + x.author.image.id : "/images/no-user.jpg"}`} alt="" className='size-10 object-cover rounded-full' />
                                                                         <div className='flex flex-col gap-2'>
                                                                             <p className='font-normal text-[16px]'>{a.author.name}</p>
                                                                             <p className='text-[14px] leading-[18.2px] text-[#545454]'>{a.message}</p>

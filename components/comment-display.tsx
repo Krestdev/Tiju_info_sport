@@ -9,8 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 
-interface CommentData{
-    comment:Comments
+interface CommentData {
+    comment: Comments
 }
 
 function Comment({comment}:CommentData) {

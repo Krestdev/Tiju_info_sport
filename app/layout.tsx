@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/navbar";
 import Footbar from "@/components/footbar";
+import Maintenance from "./Maintenance";
 
 const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
 /* const fontSans = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"], variable: "--font-sans" }); */
@@ -52,6 +53,7 @@ export default async function RootLayout({
               <Footbar/>
             </HydrationZustand>
           </Providers>
+          {/* <Maintenance /> */}
         </main>
       </body>
     </html>
