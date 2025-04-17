@@ -87,8 +87,9 @@ function EditCategorie({ children, donnee }: Props) {
     const editCategory = useMutation({
         mutationKey: ["category"],
         mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            const idU = String(currentUser.is)
             return axiosClient.patch(`/category/${id}`, {
-                user_id: "3",
+                user_id: idU,
                 title: data.nom.trim(),
                 image: "defaultImage",
                 slug: slugify(data.nom.trim()),

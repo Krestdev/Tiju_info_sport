@@ -54,7 +54,6 @@ const formSchema = z.object({
     description: z.string().min(2, {
         message: "La description doit contenir au moins 2 caractères.",
     }),
-    couverture: z.any(),
     media: z.any(),
     headline: z.boolean(),
 });
@@ -131,6 +130,7 @@ function EditArticle({ children, donnee }: Props) {
         onSuccess() {
             setDialogOpenE(true)
             queryClient.invalidateQueries({ queryKey: ["pictures"] });
+            editArticle1.mutate()
         },
     })
 
@@ -149,13 +149,13 @@ function EditArticle({ children, donnee }: Props) {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
-                title: artMod.title.trim(),
-                summary: artMod.extrait.trim(),
-                description: artMod.description.trim(),
-                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
-                headline: artMod.headline,
+                title: artMod?.title.trim(),
+                summary: artMod?.extrait.trim(),
+                description: artMod?.description.trim(),
+                type: categories.find(x => x.id)?.title,
+                headline: artMod?.headline,
                 status: "draft",
-                catid: artMod.type
+                catid: artMod?.type
             });
         },
         onSuccess() {
@@ -170,16 +170,17 @@ function EditArticle({ children, donnee }: Props) {
         mutationKey: ["articles"],
         mutationFn: () => {
             const idU = String(currentUser.id)
-            return axiosClient.patch(`/articles/${donnee.id}`, {
+            const data = {
                 user_id: idU,
-                title: artMod.title.trim(),
-                summary: artMod.extrait.trim(),
-                description: artMod.description.trim(),
-                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
-                catid: artMod.type,
-                headline: artMod.headline,
+                title: artMod?.title.trim(),
+                summary: artMod?.extrait.trim(),
+                description: artMod?.description.trim(),
+                type: categories.find(x => x.id === Number(artMod?.type))?.title,
+                catid: artMod?.type,
+                headline: artMod?.headline,
                 status: "draft"
-            });
+            }
+            return axiosClient.patch(`/articles/${donnee.id}`, data);
         },
         onSuccess() {
             setDialogOpenE(true)
@@ -190,6 +191,7 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
+
         setFich(data.media)
         setArtMod(data)
         fich === undefined ? editArticle.mutate() :
@@ -197,6 +199,8 @@ function EditArticle({ children, donnee }: Props) {
     }
 
     function onSubmit1(data: z.infer<typeof formSchema>) {
+        console.log(data);
+
         setArtMod(data)
         setFich(data.media)
         fich === undefined ? editArticle1.mutate() :
@@ -209,17 +213,26 @@ function EditArticle({ children, donnee }: Props) {
             setDialogO(false);
             form.reset();
         } else if (editArticle.isError) {
-            toast.error("Erreur lors de la modification de la catégorie");
+            toast.error("Erreur lors de la modification de l'article");
             console.log(editArticle.error)
         }
     }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
+
+    React.useEffect(() => {
+        if (editArticle1.isSuccess) {
+            form.reset();
+        } else if (editArticle1.isError) {
+            toast.error("Erreur lors de la modification de l'article");
+            console.log(editArticle1.error)
+        }
+    }, [editArticle1.isError, editArticle1.isSuccess, editArticle1.error])
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: donnee.title.trim(),
-            type: categories.find((x) => x.id === donnee.catid)?.id.toString(),
+            type: donnee.catid?.toString(),
             extrait: donnee.summery.trim(),
             description: donnee.description.trim(),
             headline: donnee.headline,
@@ -449,7 +462,6 @@ function EditArticle({ children, donnee }: Props) {
                                                         {filteredCategories.length > 0 ? (
                                                             filteredCategories.map((x, i) => {
                                                                 return (
-
                                                                     <SelectItem key={i} value={x.id.toString()}>
                                                                         {x.title}
                                                                     </SelectItem>
@@ -510,6 +522,7 @@ function EditArticle({ children, donnee }: Props) {
                             </Button>
                         </div>
                     </form>
+                    <ToastContainer />
                 </Form>
             </DialogContent>
         </Dialog >
