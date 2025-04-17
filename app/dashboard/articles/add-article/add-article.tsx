@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
+import { Switch } from '@/components/ui/switch'
 
 const statusArticle = [
     {
@@ -37,6 +38,9 @@ function AddArticlePage() {
     const {categories} = usePublishedArticles();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),
+        defaultValues: {
+            headline: false
+        }
     });
     
     function onSubmit(data:z.infer<typeof formSchema>){
@@ -69,6 +73,20 @@ function AddArticlePage() {
                             <FormMessage/>
                         </FormItem>
                     )} />
+                </span>
+                <span className='cols-span-1 lg:col-span-2'>
+                    <FormField control={form.control} name="headline" render={({field})=>(
+                        <FormItem className='flex gap-3 items-center'>
+                            <FormControl>
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            </FormControl>
+                            <div className='flex flex-col'>
+                                <span className='text-sm font-medium'>{"Ajouter à la Une"}</span>
+                                <span className='text-sm text-paragraph'>{"Activez pour mettre l'article à la Une"}</span>
+                            </div>
+                            <FormMessage/>
+                        </FormItem>
+                    )}/>
                 </span>
                 <span className='cols-span-1 lg:col-span-2'>
                     <FormField control={form.control} name="content" render={({field})=>(

@@ -14,7 +14,7 @@ const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
 const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" }); /**Ubuntu doesnt display well for some reason, so we better use this one :/ */
 
 export const metadata: Metadata = {
-  title: "Tyjuinfosport - L'actualité sportive",
+  title: "Tyju infosports - L'actualité sportive",
   description: "TyJu Infosports est un média en ligne dédié à l’actualité sportive, avec un focus particulier sur le sport africain, et plus précisément camerounais. Nous couvrons un large éventail de disciplines, avec pour mission de mettre en lumière les talents, les performances et les événements qui façonnent le paysage sportif du continent. Pensé et créé par deux jeunes passionnés de sport, TyJu Infosports se veut une plateforme dynamique, engagée et proche des réalités locales, pour donner la parole à celles et ceux qui font vibrer le sport au quotidien.",
 }
 
