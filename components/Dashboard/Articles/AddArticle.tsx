@@ -31,7 +31,9 @@ const imageMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 const videoMimeTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 const formSchema = z.object({
-    type: z.string(),
+    type: z.string().min(1, {
+        message: "Veuillez sélectionner une catégorie.",
+    }),
     title: z.string().min(2, {
         message: "Le titre doit contenir plus de 2 caractères.",
     }).max(254, {
@@ -106,14 +108,15 @@ const AddArticle = () => {
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
-                    category_id: categorie?.find(x => x.title === data.type)?.id,
+                    category_id: data.type,
                     title: data.title.trim(),
                     slug: slugify(data.title.trim()),
                     summary: data.extrait.trim(),
                     description: data.description.trim(),
-                    type: data.type,
+                    type: categorie?.find(x => x.id === Number(data.type))?.title,
+                    catid: data.type,
                     status: data.status,
-                    headline: Boolean(data.headline)
+                    headline: Boolean(data.headline),
                 }
             )
         },
@@ -134,7 +137,8 @@ const AddArticle = () => {
                     summary: data.extrait.trim(),
                     slug: slugify(data.title.trim()),
                     description: data.description.trim(),
-                    type: data.type,
+                    type: categorie?.find(x => x.id === Number(data.type))?.title,
+                    catid: data.type,
                     status: data.status,
                     headline: Boolean(data.headline)
                 }
@@ -143,7 +147,7 @@ const AddArticle = () => {
         onSuccess(data) {
             setSelectedArticle(data.data)
             console.log(data.data);
-            
+
             fichier && data.data.id && addImage1.mutate({ data: fichier[0], id: data.data.id })
             handleOpen();
         },
@@ -188,7 +192,7 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: ({ data, id }: { data: any, id: number }) => {
             setArtId(id)
-            
+
             return axiosClient.post("/image",
                 {
                     file: data,
@@ -234,7 +238,8 @@ const AddArticle = () => {
                 summary: data.summery.trim(),
                 slug: slugify(data.title.trim()),
                 description: data.description.trim(),
-                type: data.type,
+                type: categorie?.find(x => x.id === Number(data.type))?.title,
+                catid: data.type,
                 headline: Boolean(data.headline),
                 images: `https://tiju.krestdev.com/api/image/${imageId}`
             });
@@ -281,9 +286,6 @@ const AddArticle = () => {
     const filteredCategories = categorie ? categorie.filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
     ) : [];
-
-    console.log(filteredCategories);
-
 
     return (
         <Form {...form}>
@@ -482,7 +484,7 @@ const AddArticle = () => {
                                                 />
                                                 {filteredCategories.length > 0 ? (
                                                     filteredCategories.map((x, i) => (
-                                                        <SelectItem key={i} value={x.title}>
+                                                        <SelectItem key={i} value={x.id.toString()}>
                                                             {x.title}
                                                         </SelectItem>
                                                     ))

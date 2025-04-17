@@ -35,6 +35,7 @@ import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppLexical from "./LexicalEditor";
+import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -73,7 +74,6 @@ function EditArticle({ children, donnee }: Props) {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [entry, setEntry] = useState<string>("")
     const [show, setShow] = useState(false);
-    const [categorie, setCategorie] = useState<Category[]>();
     const [dialogOpenE, setDialogOpenE] = useState(false)
     const queryClient = useQueryClient();
     const [fich, setFich] = useState<File[] | undefined>()
@@ -92,22 +92,9 @@ function EditArticle({ children, donnee }: Props) {
         'Content-Type': 'multipart/form-data'
     });
 
-    const articleCate = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => {
-            return axiosClient.get<any, AxiosResponse<Category[]>>(
-                `/category`
-            );
-        },
-    });
+    const { categories } = usePublishedArticles()
 
-    useEffect(() => {
-        if (articleCate.isSuccess) {
-            setCategorie(articleCate.data.data)
-        }
-    }, [articleCate.data])
-
-    const filteredCategories = (categorie || []).filter((x) =>
+    const filteredCategories = (categories || []).filter((x) =>
         x.title.toLowerCase().includes(entry.toLowerCase())
     );
 
@@ -165,9 +152,10 @@ function EditArticle({ children, donnee }: Props) {
                 title: artMod.title.trim(),
                 summary: artMod.extrait.trim(),
                 description: artMod.description.trim(),
-                type: artMod.type,
+                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
                 headline: artMod.headline,
-                status: "draft"
+                status: "draft",
+                catid: artMod.type
             });
         },
         onSuccess() {
@@ -187,7 +175,8 @@ function EditArticle({ children, donnee }: Props) {
                 title: artMod.title.trim(),
                 summary: artMod.extrait.trim(),
                 description: artMod.description.trim(),
-                type: artMod.type,
+                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
+                catid: artMod.type,
                 headline: artMod.headline,
                 status: "draft"
             });
@@ -230,7 +219,7 @@ function EditArticle({ children, donnee }: Props) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: donnee.title.trim(),
-            type: donnee.type.trim(),
+            type: categories.find((x) => x.id === donnee.catid)?.id.toString(),
             extrait: donnee.summery.trim(),
             description: donnee.description.trim(),
             headline: donnee.headline,
@@ -458,11 +447,17 @@ function EditArticle({ children, donnee }: Props) {
                                                             className='h-10 w-full'
                                                         />
                                                         {filteredCategories.length > 0 ? (
-                                                            filteredCategories.map((x, i) => (
-                                                                <SelectItem key={i} value={x.title}>
-                                                                    {x.title}
-                                                                </SelectItem>
-                                                            ))) : (
+                                                            filteredCategories.map((x, i) => {
+                                                                console.log(field.value);
+
+
+                                                                return (
+
+                                                                    <SelectItem key={i} value={x.id.toString()}>
+                                                                        {x.title}
+                                                                    </SelectItem>
+                                                                )
+                                                            })) : (
                                                             <p className="p-2 text-gray-500">{"Aucune catégorie trouvée"}</p>
                                                         )}
                                                     </div>
@@ -499,6 +494,8 @@ function EditArticle({ children, donnee }: Props) {
                                 className="max-w-[384px] w-full font-normal rounded-none"
                                 type="button"
                                 onClick={() => {
+                                    console.log(form.getValues());
+                                    
                                     form.handleSubmit(onSubmit)()
                                 }}
                                 isLoading={updateImage.isPending}

@@ -6,6 +6,9 @@ import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { LuSend, LuX } from 'react-icons/lu';
 import Comment from '../comment-display';
+import { useMutation } from '@tanstack/react-query';
+import useStore from '@/context/store';
+import axiosConfig from '@/api/api';
 
 interface CommenterProps {
     currentArticle: Article;
@@ -15,19 +18,41 @@ const Commenter = ({
     currentArticle
 }: CommenterProps) => {
 
+    const { currentUser, token } = useStore()
+    const axiosClient = axiosConfig({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    });
+
+    //commenter
+    const commenter = useMutation({
+        mutationKey: ["comment"],
+        mutationFn: (id: string) => {
+            const idU = currentUser && String(currentUser.id)
+            return axiosClient.post(`/comments/${id}`,
+                {
+                    user_id: idU,
+                    message: commentaire
+                }
+            )
+        }
+    })
+
+    const handleAddComment = (id: string) => {
+        commenter.mutate(id);
+    };
+
     const [showComments, setShowComments] = useState(true);
     const [openCommenter, setOpenCommenter] = useState(false);
     const [commentaire, setCommentaire] = useState<string>("");
-    const handleAddComment = async (id: string) => {
-        if (commentaire.length > 0) { }
-    }
 
     console.log(currentArticle.id);
 
 
     return (
         <>
-            {/* <div className='sticky bottom-[2px] w-full'>
+            <div className='hidden md:flex sticky bottom-[2px] w-full'>
                 <Textarea
                     autoFocus
                     rows={3}
@@ -40,14 +65,14 @@ const Commenter = ({
                     className='px-5 py-5 h-12 absolute bottom-2 right-2 rounded-full' variant={"ghost"}>
                     <LuSend />
                 </Button>
-            </div> */}
+            </div>
             <div className='max-w-[804px] w-full flex flex-col gap-5'>
                 {/* {openCommenter && ( */}
                 <div className="w-full flex items-end justify-center z-50">
                     <div className="flex md:flex-col gap-2 items-center w-full rounded-[20px]">
-                        {/* <div className='fixed bottom-[10px] w-full bg-white z-20 flex'>
+                        <div className='fixed bottom-[10px] flex items-center w-full bg-white z-20'>
                             <Input
-                                className="flex md:hidden w-full border border-gray-300 rounded-[20px] resize-none"
+                                className="flex md:hidden w-full mr-10 border border-gray-300 rounded-[20px] resize-none"
                                 placeholder="Tapez votre commentaire"
                                 value={commentaire}
                                 onChange={(e) => setCommentaire(e.target.value)}
@@ -55,10 +80,10 @@ const Commenter = ({
                             />
                             <Button
                                 onClick={() => { handleAddComment(currentArticle.id.toString()) }}
-                                className='px-5 py-5 h-12 absolute right-0 rounded-full' variant={"ghost"}>
+                                className='px-5 py-5 h-12 absolute right-10 rounded-full' variant={"ghost"}>
                                 <LuSend />
                             </Button>
-                        </div> */}
+                        </div>
 
                         {/* <div className='flex justify-end md:justify-start md:gap-2 md:mt-1'>
                         <Button
@@ -94,7 +119,7 @@ const Commenter = ({
 
                 {currentArticle.comments.length > 0 &&
                     <div className='flex flex-col'>
-                        {currentArticle.comments.map(x => <Comment key={x.id} comment={x} />)}
+                        {currentArticle.comments.filter(comment => !(currentArticle.comments.flatMap(comment => comment.response.map(rep => rep.id)).includes(comment.id))).map(x => <Comment key={x.id} comment={x} />)}
                     </div>
                 }
             </div>

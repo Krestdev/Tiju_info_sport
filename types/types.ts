@@ -62,7 +62,7 @@ type Category = {
     updated_at: string;
     slug: string;
     color: string | null;
-    footShow?: boolean
+    footShow?: boolean;
 };
 
 // Type pour une annonce publicitaire
@@ -126,6 +126,7 @@ type Article = {
     headline: boolean;
     slug: string;
     publish_on: string;
+    catid?: number;
 };
 
 type ImageA = {
