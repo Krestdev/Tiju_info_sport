@@ -1,22 +1,32 @@
 "use client";
 
 import useStore from "@/context/store";
-import { usePublishedArticles } from "@/hooks/usePublishedData";
-import { CircleUser, User } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { ChevronDown, CircleUser } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Logo from "./logo";
 import { MenuComp } from "./menu";
 import MenuBar from "./menuBar";
 import { Button } from "./ui/button";
-import Logo from "./logo";
-import { usePathname } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
-import { LuLogOut } from "react-icons/lu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { useState } from "react";
 
 const Navbar = () => {
   const { logout, activeUser, setActiveUser } = useStore();
   const pathname = usePathname();
   const path = pathname.split("/");
-  const isDashboard = path.includes("dashboard")
+  const isDashboard = path.includes("dashboard");
+  const [open, setOpen] = useState(false);
+
+  const closeDropdown = () =>{
+    setOpen(false);
+  }
+
+  const disconnect = ()=>{
+    signOut();
+    closeDropdown();
+  }
 
   const signOut = () => {
     logout();
@@ -47,15 +57,20 @@ const Navbar = () => {
         <div className="flex flex-row items-center justify-end gap-5">
           <div className="flex items-center gap-3">
             {activeUser ? (
-              <div className="flex flex-row items-center gap-2">
-                <Link href={"/profil"}>
-                  <Button variant={"outline"}>
-                    {activeUser.image ? <img src={`${process.env.NEXT_PUBLIC_API}image/${activeUser.image.id}`} className="h-7 w-7 rounded-full object-cover" alt="" /> : <CircleUser />}
-                    {activeUser.name}
-                  </Button>
-                </Link>
-                {!!activeUser && <Button className="hidden lg:inline-flex" onClick={signOut}>{"déconnexion"}</Button>}
-                {!!activeUser && <Button className="lg:hidden inline-flex" onClick={signOut}>< LuLogOut /></Button>}
+              <div className="flex flex-row items-center gap-3">
+                <DropdownMenu open={open} onOpenChange={setOpen}>
+                  <DropdownMenuTrigger className="inline-flex gap-2 items-center">
+                  <img src={activeUser?.image?.id ? `${process.env.NEXT_PUBLIC_API}image/${activeUser.image.id}` : "/images/default-photo.webp"} className='size-10 rounded-full object-cover' />
+                  <span className="inline-flex size-6 items-center justify-center"><ChevronDown size={16}/></span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>{"Mon Compte"}</DropdownMenuLabel>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem><Link href={"/profil"} className="w-full" onClick={closeDropdown}>{"Profil"}</Link></DropdownMenuItem>
+                    <DropdownMenuItem onClick={disconnect}>{"Déconnexion"}</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button className="hidden lg:inline-flex" onClick={signOut}>{"déconnexion"}</Button>
               </div>
             ) : (
               <span className="w-full inline-flex gap-2 items-center">

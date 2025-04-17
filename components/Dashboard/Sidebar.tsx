@@ -143,7 +143,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-    const { settings, isFull, setIsFull, logoutAdmin } = useStore();
+    const { settings, isFull, setIsFull, logout, setActiveUser } = useStore();
     const currentPath = usePathname();
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -155,7 +155,8 @@ export function AppSidebar() {
     };
 
     const handleLogout = () => {
-        logoutAdmin()
+        logout();
+        setActiveUser();
         toast.success("Déconnecté avec succès");
     }
 

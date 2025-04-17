@@ -1,16 +1,20 @@
 import useStore from '@/context/store'
 import React from 'react'
 import { LuLogOut, LuMenu } from 'react-icons/lu'
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from '../ui/button';
+import { toast } from '@/hooks/use-toast';
 
 export function NavAdmin() {
-    const { currentUser, logoutAdmin, setIsFull, isFull } = useStore()
+    const { currentUser, logout, setActiveUser, setIsFull, isFull } = useStore()
 
     const handleLogout = () => {
-        logoutAdmin()
-        toast.success("Deconnecté avec succès");
+        logout();
+        setActiveUser();
+        toast({
+            title: "Vous êtes déconnecté",
+            description:"Vous naviguez actuellement en tant qu'invité"
+        })
     }
 
     return (
