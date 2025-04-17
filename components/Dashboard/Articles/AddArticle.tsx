@@ -129,10 +129,11 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
+            
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
-                    category_id: categorie?.find(x => x.title === data.type)?.id,
+                    category_id: data.type,
                     title: data.title.trim(),
                     summary: data.extrait.trim(),
                     slug: slugify(data.title.trim()),
@@ -146,8 +147,6 @@ const AddArticle = () => {
         },
         onSuccess(data) {
             setSelectedArticle(data.data)
-            console.log(data.data);
-
             fichier && data.data.id && addImage1.mutate({ data: fichier[0], id: data.data.id })
             handleOpen();
         },
