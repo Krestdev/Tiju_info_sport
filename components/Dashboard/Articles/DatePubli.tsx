@@ -18,6 +18,8 @@ import useStore from '@/context/store';
 import axiosConfig from '@/api/api';
 import { AxiosResponse } from 'axios';
 import { stat } from 'fs';
+import DatePicker from 'react-datepicker';
+
 const formSchema = z.object({
     date: z.coerce.date(),
     heure: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format invalide (HH:mm)"),
@@ -47,16 +49,52 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         "Accept": "*/*",
     });
 
-    function mergeDateAndTime(data: { date: Date; heure: string }): Date {
-        const [hours, minutes] = data.heure.split(':').map(Number);
+    function getDoualaDate(programed: Date) {
+        ;
 
-        const merged = new Date(data.date);
+        // Obtenir les composants de la date à Douala
+        const formatter = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Africa/Douala',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        });
+
+        const parts = formatter.formatToParts(programed).reduce((acc: any, part) => {
+            if (part.type !== 'literal') acc[part.type] = part.value;
+            return acc;
+        }, {});
+
+
+        // Reconstruire une date ISO depuis les composants
+        const isoString = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}+01:00`;
+
+        // console.log(isoString);
+        // return new Date(isoString); // Objet Date réel à Douala
+        return isoString
+    }
+
+    function mergeDateAndTime(data: { date: Date; heure: string }): string {
+        const [hours, minutes] = data.heure.split(':').map(Number);
+        const formatter = new Intl.DateTimeFormat('fr-FR', {
+            timeZone: 'Africa/Douala',
+            dateStyle: 'full',
+            timeStyle: 'long',
+        });
+
+        let merged = new Date(data.date);
         merged.setHours(hours);
         merged.setMinutes(minutes);
         merged.setSeconds(0);
         merged.setMilliseconds(0);
 
-        return merged;
+        // On récupère l'heure actuelle à Douala
+        const doualaTime = getDoualaDate(merged);
+        return doualaTime;
     }
 
     const publishNow = useMutation({
@@ -120,6 +158,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         form.setValue("heure", `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`);
         setOpen(false);
     }
+    const [startDate, setStartDate] = useState<Date | null>(new Date());
 
 
     const heure = Array.from({ length: 24 }, (_, i) => i)
@@ -183,6 +222,39 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                                 )}
                             />
 
+                            {/* <FormField
+                                control={form.control}
+                                name="date"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>{"Date de publication"}</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className="w-full h-[40px] text-left font-normal rounded-none"
+                                                    >
+                                                        {field.value ? format(field.value, "PPP") : "Choisir une date"}
+                                                        <LuCalendarDays className="ml-auto h-4 w-4" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <DatePicker
+                                                    selected={startDate}
+                                                    onChange={(date) => setStartDate(date)}
+                                                    timeInputLabel="Time:"
+                                                    dateFormat="MM/dd/yyyy h:mm aa"
+                                                    showTimeInput
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            /> */}
+
                             <FormField
                                 control={form.control}
                                 name="heure"
@@ -232,6 +304,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                                     </FormItem>
                                 )}
                             />
+
                             <Button
                                 variant={"outline"}
                                 type="button"

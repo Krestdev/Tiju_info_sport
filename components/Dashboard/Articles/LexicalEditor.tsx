@@ -181,8 +181,6 @@ export default function AppLexical({ initialValue, onChange }: LexicalEditorProp
 
             const parseNode = (node: Node): LexicalNode[] => {
               const nodes: LexicalNode[] = [];
-              console.log(node);
-
               // Traitement du texte brut
               if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
                 const textNode = $createTextNode(node.textContent);
