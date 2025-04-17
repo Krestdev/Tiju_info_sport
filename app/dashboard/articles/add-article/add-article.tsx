@@ -60,6 +60,17 @@ function AddArticlePage() {
                     )} />
                 </span>
                 <span className='cols-span-1 lg:col-span-2'>
+                    <FormField control={form.control} name="excerpt" render={({field})=>(
+                        <FormItem>
+                            <FormLabel>{"Extrait de l'article"}</FormLabel>
+                            <FormControl>
+                                <Textarea {...field} placeholder="Résumé de l'article"/>
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )} />
+                </span>
+                <span className='cols-span-1 lg:col-span-2'>
                     <FormField control={form.control} name="content" render={({field})=>(
                         <FormItem>
                             <FormLabel>{"Contenu de l'article"}</FormLabel>
@@ -70,15 +81,6 @@ function AddArticlePage() {
                         </FormItem>
                     )} />
                 </span>
-                <FormField control={form.control} name="excerpt" render={({field})=>(
-                    <FormItem>
-                        <FormLabel>{"Extrait de l'article"}</FormLabel>
-                        <FormControl>
-                            <Textarea {...field} placeholder="Résumé de l'article"/>
-                        </FormControl>
-                        <FormMessage/>
-                    </FormItem>
-                )} />
                 <FormField control={form.control} name="category" render={({field})=>(
                     <FormItem>
                         <FormLabel>{"Catégorie"}</FormLabel>
