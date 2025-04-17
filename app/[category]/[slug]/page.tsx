@@ -75,15 +75,15 @@ async function ArticlePage({ params }: { params: Promise<{ category: string; slu
                         </div>
                         <div className='description' dangerouslySetInnerHTML={{ __html: currentArticle.description }} />
                         {/**Share Comment Like */}
-                        <div className='flex flex-wrap justify-between gap-4 items-center'>
+                        {/* <div className='flex flex-wrap justify-between gap-4 items-center'>
                             <span className='inline-flex gap-4 items-center'>
                                 <ShareArticle articleUrl={`${process.env.NEXT_PUBLIC_HOST}${currentCategory.slug}/${currentArticle.slug}`} article={currentArticle} />
                                 <Button variant={"outline"} size={"icon"}><ThumbsUp /></Button>
                                 <Button>{"commenter"}</Button>
                             </span>
                             <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{currentArticle.comments.length > 1 ? `${currentArticle.comments.length} Commentaires` : currentArticle.comments.length === 1 ? "1 Commentaire" : "Aucun commentaire"}</span>
-                        </div>
-                        {/* <Commenter currentArticle={currentArticle} /> */}
+                        </div> */}
+                        {/* <Commenter currentCategory={currentCategory} currentArticle={currentArticle} /> */}
                         {/* <div className='hidden md:block'>
                             <Textarea rows={3} placeholder='Laissez un commentaire' className='w-full resize-none' />
                             <Button className='px-5 py-5 h-12 absolute bottom-2 right-2 rounded-full' variant={"ghost"}><LuSend /></Button>

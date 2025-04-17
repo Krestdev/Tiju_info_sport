@@ -448,9 +448,6 @@ function EditArticle({ children, donnee }: Props) {
                                                         />
                                                         {filteredCategories.length > 0 ? (
                                                             filteredCategories.map((x, i) => {
-                                                                console.log(field.value);
-
-
                                                                 return (
 
                                                                     <SelectItem key={i} value={x.id.toString()}>
@@ -494,8 +491,6 @@ function EditArticle({ children, donnee }: Props) {
                                 className="max-w-[384px] w-full font-normal rounded-none"
                                 type="button"
                                 onClick={() => {
-                                    console.log(form.getValues());
-                                    
                                     form.handleSubmit(onSubmit)()
                                 }}
                                 isLoading={updateImage.isPending}
