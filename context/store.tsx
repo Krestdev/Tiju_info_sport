@@ -32,7 +32,7 @@ interface actions {
 
 const initialData: store = {
   settings: {
-    compagnyName: "Tyjuinfosports",
+    compagnyName: "Tyju Infosport",
     logo: "/logo.png",
     email: "",
     phone: "",

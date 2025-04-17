@@ -94,6 +94,7 @@ type Comments = {
     message: string;
     likes: number[];
     response: Comments[];
+    parent?: number;
     signals: number[];
     created_at: string;
     updated_at: string;
