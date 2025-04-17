@@ -218,6 +218,17 @@ const AddArticle = () => {
         }
     }, [addImage.isError, addImage.isSuccess, addImage.error, addArticle.data, addArticle.isSuccess])
 
+    React.useEffect(() => {
+        if (addImage1.isSuccess) {
+            form.reset();
+            form.reset({
+                description: "",
+                media: []
+            });
+            setSelectedFiles([]);
+        }
+    }, [addImage1.isError, addImage1.isSuccess, addImage1.error, addArticle.data, addArticle.isSuccess])
+
     // const articleCate = useQuery({
     //     queryKey: ["categories"],
     //     queryFn: () => {

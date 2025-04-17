@@ -44,7 +44,6 @@ const Commenter = ({
         },
         onSuccess: (data) => {
             setCommentaire("");
-            setOpenCommenter(false);
         }
     })
 
@@ -53,62 +52,61 @@ const Commenter = ({
     };
 
     const [showComments, setShowComments] = useState(true);
-    const [openCommenter, setOpenCommenter] = useState(false);
     const [commentaire, setCommentaire] = useState<string>("");
 
     const likerA = useMutation({
-            mutationKey: ["comment"],
-            mutationFn: (id: string) => {
-                const idU = currentUser && String(currentUser.id)
-                return axiosClient.patch(`/articles/like/${id}`, {
-                    user_id: idU
-                });
-            },
-        });
-    
-        function handleLike(id: string) {
-            likerA.mutate(id);
+        mutationKey: ["comment"],
+        mutationFn: (id: string) => {
+            const idU = currentUser && String(currentUser.id)
+            return axiosClient.patch(`/articles/like/${id}`, {
+                user_id: idU
+            });
+        },
+    });
+
+    function handleLike(id: string) {
+        likerA.mutate(id);
+    }
+
+    React.useEffect(() => {
+        if (likerA.isSuccess) {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+        } else if (likerA.isError) {
+            console.log(likerA.error)
         }
-    
-        React.useEffect(() => {
-            if (likerA.isSuccess) {
-                queryClient.invalidateQueries({ queryKey: ["categories"] });
-            } else if (likerA.isError) {
-                console.log(likerA.error)
-            }
-        }, [likerA.isError, likerA.isSuccess, likerA.error])
-    
-        //Unliker un commentaire
-    
-        const unLikerA = useMutation({
-            mutationKey: ["comment"],
-            mutationFn: (id: string) => {
-                const idU = currentUser && String(currentUser.id)
-                return axiosClient.patch(`/articles/unlike/${id}`, {
-                    user_id: idU
-                });
-            },
-        });
-    
-        function handleUnLikeA(id: string) {
-            unLikerA.mutate(id);
+    }, [likerA.isError, likerA.isSuccess, likerA.error])
+
+    //Unliker un commentaire
+
+    const unLikerA = useMutation({
+        mutationKey: ["comment"],
+        mutationFn: (id: string) => {
+            const idU = currentUser && String(currentUser.id)
+            return axiosClient.patch(`/articles/unlike/${id}`, {
+                user_id: idU
+            });
+        },
+    });
+
+    function handleUnLikeA(id: string) {
+        unLikerA.mutate(id);
+    }
+
+    React.useEffect(() => {
+        if (unLikerA.isSuccess) {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+        } else if (unLikerA.isError) {
+            console.log(unLikerA.error)
         }
-    
-        React.useEffect(() => {
-            if (unLikerA.isSuccess) {
-                queryClient.invalidateQueries({ queryKey: ["categories"] });
-            } else if (unLikerA.isError) {
-                console.log(unLikerA.error)
-            }
-        }, [unLikerA.isError, unLikerA.isSuccess, unLikerA.error])
-    
-        function handleClickLikeArticleButton(id: string) {
-            if (currentArticle.likes.some(x => x === currentUser?.id)) {
-                handleUnLikeA(id);
-            } else {
-                handleLike(id);
-            }
+    }, [unLikerA.isError, unLikerA.isSuccess, unLikerA.error])
+
+    function handleClickLikeArticleButton(id: string) {
+        if (currentArticle.likes.some(x => x === currentUser?.id)) {
+            handleUnLikeA(id);
+        } else {
+            handleLike(id);
         }
+    }
 
 
     return (
