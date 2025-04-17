@@ -1,14 +1,15 @@
 import ArticlePreview from '@/components/articlePreview';
 import FeedTemplate from '@/components/feed-template';
 import ShareArticle from '@/components/shareArticle';
-import { Button } from '@/components/ui/button';
-import { articleDate, defineTitle, sortArticles } from '@/lib/utils';
-import { ThumbsUp } from 'lucide-react';
+import { articleDate, cn, defineTitle, sortArticles } from '@/lib/utils';
 
 // lib/metadata.ts
 import Comment from '@/components/comment-display';
 import { fetchCategory } from '@/lib/api';
 import { Metadata } from 'next';
+import AddComment from './add-comment';
+import LikeArticle from './like-article';
+import Link from 'next/link';
 
 export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
     const {category, slug} = await params;
@@ -46,6 +47,7 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
         <FeedTemplate isArticle>
             { currentCategory && currentArticle &&
                 <div className='flex flex-col gap-4'>
+                    <Link href={`/${currentCategory.slug}`} className={"h-10 px-4 inline-flex items-center gap-2 border border-gray-200 uppercase font-mono text-[14px] leading-[130%] tracking-[-2%] shrink-0 w-fit"}><span className='w-2 h-2' style={{backgroundColor: currentCategory?.color || "#0A0A0A"}}/> {currentCategory.title}</Link>
                     <h1>{currentArticle.title}</h1>
                     <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
                     <p>{currentArticle.summery}</p>
@@ -55,13 +57,13 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                         {/**Display Update date if the article has been updated */}
                         {currentArticle.updated_at !== currentArticle.created_at && <p className='text-gray-600'>{`Mis à jour le ${new Date(currentArticle.updated_at).toLocaleDateString()}`}</p>}
                     </div>
-                    <div dangerouslySetInnerHTML={{ __html: currentArticle.description }}/>
+                    <div dangerouslySetInnerHTML={{ __html: currentArticle.description }} className='select-none'/>
                     {/**Share Comment Like */}
                     <div className='flex flex-wrap justify-between gap-4 items-center'>
                         <span className='inline-flex gap-4 items-center'>
                             <ShareArticle articleUrl={`${process.env.NEXT_PUBLIC_HOST}${currentCategory.slug}/${currentArticle.slug}`} article={currentArticle}/>
-                            <Button variant={"outline"} size={"icon"}><ThumbsUp/></Button>
-                            <Button>{"commenter"}</Button>
+                            <LikeArticle article={currentArticle}/>
+                            <AddComment id={currentArticle.id}/>
                         </span>
                         <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{currentArticle.comments.length>1 ? `${currentArticle.comments.length} Commentaires` : currentArticle.comments.length===1 ? "1 Commentaire" : "Aucun commentaire"}</span>
                     </div>

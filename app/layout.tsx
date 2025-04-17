@@ -14,7 +14,7 @@ const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" }); /**
 
 export const metadata: Metadata = {
   title: "Tyjuinfosport - L'actualité sportive",
-  description: "Votre source d'infos sportives. Actualités, résultats, interviews et analyses sur le football, basket, athlétisme et bien d'autres sports.",
+  description: "TyJu Infosports est un média en ligne dédié à l’actualité sportive, avec un focus particulier sur le sport africain, et plus précisément camerounais. Nous couvrons un large éventail de disciplines, avec pour mission de mettre en lumière les talents, les performances et les événements qui façonnent le paysage sportif du continent. Pensé et créé par deux jeunes passionnés de sport, TyJu Infosports se veut une plateforme dynamique, engagée et proche des réalités locales, pour donner la parole à celles et ceux qui font vibrer le sport au quotidien.",
 }
 
 
