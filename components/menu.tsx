@@ -2,24 +2,34 @@
 "use client"
 
 import { usePublishedArticles } from "@/hooks/usePublishedData"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
 import { Skeleton } from "./ui/skeleton"
-import { cn } from "@/lib/utils"
 
 export function MenuComp() {
 
-    const { isSuccess, isLoading, categories } = usePublishedArticles();
+    const { isSuccess, isLoading, categories, mainCategories } = usePublishedArticles();
     const pathname = usePathname();
     const path = pathname.split("/");
 
-    function filterCategoriesWithChildren(data: Category[]): Category[] {
-        // Filtrer les catégories parent (qui ont parent === null)
-        const parentCategories = data.filter(category => category.parent === null);
+    function isActive(slug:string, id:number):boolean{
+        if(path[1]===slug){
+            return true;
+        }
+        else {
+            const activeCategory = categories.find(z=>z.slug === path[1]);
+            if(!activeCategory){
+                return false;
+            } else {
+                return id === activeCategory.parent;
+            }
+        }
+    }
 
+    function filterCategoriesWithChildren(data: Category[]): Category[] {
         // Filtrer les catégories parent ayant au moins un enfant avec des articles publiés
-        return parentCategories.filter(parent =>
+        return mainCategories.filter(parent =>
             data.some(child =>
                 child.parent === parent.id && Array.isArray(child.articles) && child.articles.some(x => x.status === "published")
             )
@@ -34,7 +44,7 @@ export function MenuComp() {
                 {isSuccess &&
                     filterCategoriesWithChildren(categories).map((x, i) => {
                         return (
-                            <Link className={cn("font-mono h-10 w-fit shrink-0 px-3 flex items-center", path[1]===x.slug && "bg-primary text-primary-foreground")} key={i} href={`/${x.slug}`}>
+                            <Link className={cn("font-mono h-10 w-fit shrink-0 px-3 flex items-center", isActive(x.slug, x.id) && "bg-primary text-primary-foreground")} key={i} href={`/${x.slug}`}>
                                 <span className="font-medium text-[14px] uppercase">{x.title}</span>
                             </Link>
                         )
