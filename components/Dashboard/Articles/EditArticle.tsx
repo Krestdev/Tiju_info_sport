@@ -54,7 +54,6 @@ const formSchema = z.object({
     description: z.string().min(2, {
         message: "La description doit contenir au moins 2 caractères.",
     }),
-    couverture: z.any(),
     media: z.any(),
     headline: z.boolean(),
 });
@@ -149,13 +148,13 @@ function EditArticle({ children, donnee }: Props) {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
-                title: artMod.title.trim(),
-                summary: artMod.extrait.trim(),
-                description: artMod.description.trim(),
-                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
-                headline: artMod.headline,
+                title: artMod?.title.trim(),
+                summary: artMod?.extrait.trim(),
+                description: artMod?.description.trim(),
+                type: categories.find(x => x.id)?.title,
+                headline: artMod?.headline,
                 status: "draft",
-                catid: artMod.type
+                catid: artMod?.type
             });
         },
         onSuccess() {
@@ -172,12 +171,12 @@ function EditArticle({ children, donnee }: Props) {
             const idU = String(currentUser.id)
             return axiosClient.patch(`/articles/${donnee.id}`, {
                 user_id: idU,
-                title: artMod.title.trim(),
-                summary: artMod.extrait.trim(),
-                description: artMod.description.trim(),
-                type: artMod.find((x: Category) => x.id === Number(artMod.type)).title,
-                catid: artMod.type,
-                headline: artMod.headline,
+                title: artMod?.title.trim(),
+                summary: artMod?.summery.trim(),
+                description: artMod?.description.trim(),
+                type: categories.find(x => x.id)?.title,
+                catid: artMod?.type,
+                headline: artMod?.headline,
                 status: "draft"
             });
         },
@@ -190,6 +189,8 @@ function EditArticle({ children, donnee }: Props) {
     });
 
     function onSubmit(data: z.infer<typeof formSchema>) {
+        console.log("submit");
+        
         setFich(data.media)
         setArtMod(data)
         fich === undefined ? editArticle.mutate() :
@@ -209,7 +210,7 @@ function EditArticle({ children, donnee }: Props) {
             setDialogO(false);
             form.reset();
         } else if (editArticle.isError) {
-            toast.error("Erreur lors de la modification de la catégorie");
+            toast.error("Erreur lors de la modification de l'article");
             console.log(editArticle.error)
         }
     }, [editArticle.isError, editArticle.isSuccess, editArticle.error])
