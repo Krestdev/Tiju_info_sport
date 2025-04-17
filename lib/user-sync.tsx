@@ -20,8 +20,13 @@ export default function UserSync(){
     });
     React.useEffect(()=>{
         if(isSuccess){
-            setActiveUser(data.data.user);
-            setCurrentUser(data.data.user);
+            if(data.data.user.email === activeUser?.email){
+                setActiveUser(data.data.user);
+                setCurrentUser(data.data.user);
+            } else {
+                setActiveUser();
+                logout();
+            }
         }else if(isError){
             setActiveUser();
             logout();
