@@ -12,6 +12,9 @@ import AddRessource from './AddRessource';
 import { LuSquarePen } from 'react-icons/lu';
 import DeleteValidation from '../Articles/DeleteValidation';
 import { LucidePlusCircle, Trash2 } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import axiosConfig from '@/api/api';
+import useStore from '@/context/store';
 
 const formSchema = z.object({
     items: z.array(z.number()),
@@ -24,6 +27,8 @@ const formSchema1 = z.object({
 const Config = () => {
 
     const { mainCategories, childCategories } = usePublishedArticles()
+    const { currentUser } = useStore()
+    const axiosClient = axiosConfig();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -31,6 +36,27 @@ const Config = () => {
             items: mainCategories.filter(x => x.footShow).flatMap(x => x.id)
         },
     })
+
+    const editCategory = useMutation({
+        mutationKey: ["category"],
+        mutationFn: ({ id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            const idU = String(currentUser.id)
+            const cat = mainCategories.find(x => x.id === Number(id))
+            console.log(cat);
+            
+            return axiosClient.patch(`/category/${id}`, {
+                user_id: idU,
+                ...cat,
+                footShow: !cat?.footShow
+            });
+        },
+    });
+
+    function onSubmit1(data: z.infer<typeof formSchema1>) {
+        data.items.forEach(element => {
+            
+        });
+    }
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
@@ -92,12 +118,12 @@ const Config = () => {
                     <Button type='button' className='w-fit' onClick={() => { }}>{"Sauvegarder"}</Button>
                 </form>
             </Form>
-            <Form {...form}>
+            <Form {...form1}>
                 <form className='flex flex-col gap-5 scrollbar' >
                     <div className='flex flex-col gap-5 pt-5'>
                         <h3 className='uppercase text-[28px]'>{"Sous catégories"}</h3>
                         <FormField
-                            control={form.control}
+                            control={form1.control}
                             name='items'
                             render={({ field }) => (
                                 <FormItem className='flex flex-row items-center gap-2'>
