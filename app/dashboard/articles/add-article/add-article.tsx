@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
 import { Switch } from '@/components/ui/switch'
+import AddImage from '@/components/add-image'
 
 const statusArticle = [
     {
@@ -30,7 +31,8 @@ const formSchema = z.object({
     content: z.string({message: "Le contenu ne peut être vide"}),
     category:z.string({message: "Veuillez choisir une catégorie"}),
     headline:z.boolean(),
-    status:z.string({message: "Le statut ne peut être vide"})
+    status:z.string({message: "Le statut ne peut être vide"}),
+    image:z.string({message: "Veuillez renseigner une image"}),
 })
 
 function AddArticlePage() {
@@ -93,7 +95,7 @@ function AddArticlePage() {
                         <FormItem>
                             <FormLabel>{"Contenu de l'article"}</FormLabel>
                             <FormControl>
-                                <TiptapEditor value={field.value}/>
+                                <TiptapEditor value={field.value} onValueChange={field.onChange}/>
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
@@ -135,6 +137,16 @@ function AddArticlePage() {
                         <FormMessage/>
                     </FormItem>
                 )} />
+                <span className='cols-span-1 lg:col-span-2'>
+                    <FormField control={form.control} name="image" render={({field})=>(
+                        <FormItem className='flex flex-col gap-2'>
+                            <FormLabel>{"Photo de couverture"}</FormLabel>
+                            <FormControl>
+                                <AddImage image={field.value} onChange={field.onChange}/>
+                            </FormControl>
+                        </FormItem>
+                    )} />
+                </span>
                 <span className='col-span-1 lg:col-span-2'>
                     <Button family={"sans"} type="submit" className='w-full max-w-sm'>{"Enregistrer"}</Button>
                 </span>

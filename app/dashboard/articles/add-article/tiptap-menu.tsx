@@ -48,7 +48,7 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
 
 
     return (
-          <div className="flex items-center divide-x divide-input border border-input border-b-0">
+          <div className="flex flex-wrap items-center divide-x divide-y divide-input border border-input border-b-0">
             {/* <Button variant={editor.isActive('paragraph') ? "default" : "ghost"} family={"sans"}
               onClick={(e) =>{e.preventDefault(); editor.chain().focus().setParagraph().run()}}
             >
