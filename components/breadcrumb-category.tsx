@@ -11,7 +11,7 @@ interface BreadcrumbProps{
 
 function CategoryBreadcrumb({category}:BreadcrumbProps) {
     const {categories} = usePublishedArticles();
-    const similarCategories = categories.filter(el=>el.id === category.id || el.parent === category.id || el.id === category.parent || el.parent === category.parent).filter(a=>a.articles.length > 0);
+    const similarCategories = categories.filter(el=>el.id === category.id || el.parent === category.id || el.id === category.parent || el.parent === category.parent && el.parent !== null).filter(a=>a.articles.some(b=>b.status === "published"));
     const pathname = usePathname();
     const path = pathname.split("/");
   return (
