@@ -17,4 +17,4 @@ function ArticlesLayout({
   )
 }
 
-export default withRoleAuth(ArticlesLayout, "editor")
+export default withRoleAuth(ArticlesLayout)
