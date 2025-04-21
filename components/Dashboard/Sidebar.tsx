@@ -24,21 +24,21 @@ import { ChevronDown, ChevronRight, ChevronUp, LucideCircleDollarSign } from "lu
 import { AiOutlineLogout } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { 
-    LuChartColumnDecreasing, 
-    LuCirclePlus, 
-    LuCircleUser, 
-    LuFile, 
-    LuFiles, 
-    LuFolder, 
-    LuFolderOpen, 
-    LuLayoutGrid, 
-    LuMegaphone, 
-    LuMessageSquare, 
-    LuMessageSquareText, 
-    LuSettings, 
-    LuUserRound, 
-    LuUsersRound 
+import {
+    LuChartColumnDecreasing,
+    LuCirclePlus,
+    LuCircleUser,
+    LuFile,
+    LuFiles,
+    LuFolder,
+    LuFolderOpen,
+    LuLayoutGrid,
+    LuMegaphone,
+    LuMessageSquare,
+    LuMessageSquareText,
+    LuSettings,
+    LuUserRound,
+    LuUsersRound
 } from "react-icons/lu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useEffect, useState } from "react";
@@ -48,6 +48,7 @@ import Logo from "../logo";
 const items = [
     {
         title: "Tableau de bord",
+        role: "admin",
         url: "/dashboard",
         icon: LuLayoutGrid,
         param: false,
@@ -55,6 +56,7 @@ const items = [
     {
         title: "Articles",
         icon: LuFile,
+        role: "editor",
         param: true,
         parametre: [
             {
@@ -71,6 +73,7 @@ const items = [
     },
     {
         title: "Commentaires",
+        role: "admin",
         url: "/dashboard/comment",
         icon: LuMessageSquareText,
         param: false,
@@ -89,6 +92,7 @@ const items = [
     },
     {
         title: "Catégories",
+        role: "admin",
         url: "/dashboard/categories",
         icon: LuFolder,
         param: false,
@@ -102,13 +106,15 @@ const items = [
     },
     // {
     //     title: "Abonnements",
-    //     url: "/dashboard/subscription",
+    // role: "admin",   
+    //  url: "/dashboard/subscription",
     //     icon: LucideCircleDollarSign,
     //     param: false,
     //     parametre: [],
     // },
     {
         title: "Publicités",
+        role: "admin",
         url: "/dashboard/pubs",
         icon: LuMegaphone,
         param: false,
@@ -116,12 +122,14 @@ const items = [
     },
     {
         title: "Statistiques",
+        role: "admin",
         url: "/dashboard/statistiques",
         icon: LuChartColumnDecreasing,
         param: false,
     },
     {
         title: "Utilisateurs",
+        role: "admin",
         url: "/dashboard/users",
         icon: LuCircleUser,
         param: false,
@@ -129,6 +137,7 @@ const items = [
     },
     {
         title: "Administration",
+        role: "admin",
         url: "/dashboard/admin",
         icon: LuUsersRound,
         param: false,
@@ -136,6 +145,7 @@ const items = [
     },
     {
         title: "Paramètre du site",
+        role: "admin",
         url: "/dashboard/settings",
         icon: LuSettings,
         param: false,
@@ -143,7 +153,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-    const { settings, isFull, setIsFull, logout, setActiveUser } = useStore();
+    const { settings, isFull, setIsFull, logout, setActiveUser, activeUser } = useStore();
     const currentPath = usePathname();
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -165,14 +175,14 @@ export function AppSidebar() {
             <SidebarInset className="max-w-[320px] w-full">
                 <div className="flex flex-row items-center gap-3">
                     <SidebarHeader>
-                    <Logo showName={isFull} />
+                        <Logo showName={isFull} />
                     </SidebarHeader>
                 </div>
                 <SidebarContent className="max-w-[320px] w-full">
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {items.map((item) => {
+                                {items.filter(x => x.role === activeUser?.role).map((item) => {
                                     const isActive = currentPath === item.url;
                                     const isOpen = openMenus[item.title] || false;
                                     return (

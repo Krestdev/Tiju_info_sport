@@ -87,7 +87,7 @@ function EditCategorie({ children, donnee }: Props) {
     const editCategory = useMutation({
         mutationKey: ["category"],
         mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
-            const idU = String(currentUser.is)
+            const idU = String(currentUser.id)
             return axiosClient.patch(`/category/${id}`, {
                 user_id: idU,
                 title: data.nom.trim(),

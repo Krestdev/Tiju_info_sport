@@ -38,7 +38,7 @@ interface Section {
 
 const Configuration = () => {
 
-    const { token } = useStore()
+    const { token, currentUser } = useStore()
     const queryClient = useQueryClient();
     const [selected, setSelected] = useState<number>()
     const cate = usePublishedArticles()
@@ -146,9 +146,19 @@ const Configuration = () => {
         },
     })
 
+    const editCategory = useMutation({
+        mutationKey: ["category"],
+        mutationFn: ({ data, id }: { data: z.infer<typeof formSchema>, id: string },) => {
+            const idU = String(currentUser.id)
+            return axiosClient.patch(`/category/${id}`, {
+                user_id: idU,
+            
+            });
+        },
+    });
+
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        // Traiter uniquement celles qui n'existent pas encore
         data.selectedCategories.forEach(id => {
             const title = cate.mainCategories.find(x => x.id === id)?.title;
             if (title && !ressource.includes(title)) {

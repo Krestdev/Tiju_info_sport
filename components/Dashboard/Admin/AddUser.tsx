@@ -83,14 +83,10 @@ const AddUser = () => {
     });
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
-        try {
-            createUser.mutateAsync(data);
-        } catch (error) {
-            console.error(error);
-        }
+            createUser.mutate(data);
     };
 
-    const role = ["administrateur", "moderateur","redacteur"]
+    const role = ["super-admin", "admin", "editor"]
 
     return (
         <Form {...form}>
@@ -129,7 +125,7 @@ const AddUser = () => {
                         <FormItem>
                             <FormLabel>{"Mot de passe"}</FormLabel>
                             <FormControl>
-                                <Input type='password' {...field} placeholder='********' className='h-[60px] max-w-[384px]' />
+                                <Input type='password' {...field} placeholder='********' className='h-[60px] max-w-[384px] w-full' />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

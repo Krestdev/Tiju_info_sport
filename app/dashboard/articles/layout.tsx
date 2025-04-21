@@ -1,9 +1,12 @@
-import React from 'react'
+"use client";
 
-export default function ArticlesLayout({
-    children
-}:{
-    children: React.ReactNode;
+import React from 'react'
+import withRoleAuth from '@/lib/whithAdminAuth';
+
+function ArticlesLayout({
+  children
+}: {
+  children: React.ReactNode;
 }) {
   return (
     <div>
@@ -13,3 +16,5 @@ export default function ArticlesLayout({
     </div>
   )
 }
+
+export default withRoleAuth(ArticlesLayout, "editor")

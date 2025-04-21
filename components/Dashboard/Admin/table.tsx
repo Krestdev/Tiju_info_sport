@@ -28,13 +28,14 @@ import ModalWarning from "@/components/modalWarning";
 import EditUser from "./EditUser";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import ChangeRole from "../User/ChangeRole";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function AdminTable() {
-    const { token } = useStore();
+    const { token, activeUser } = useStore();
     const queryClient = useQueryClient();
 
 
@@ -85,7 +86,7 @@ function AdminTable() {
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setUser(userData.data.data.filter(x => x.role === "admin"))
+            setUser(userData.data.data.filter(x => x.role !== "user" && x.role !== "super-admin"));
         }
     }, [userData.data])
 
@@ -186,8 +187,8 @@ function AdminTable() {
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Rôle"}</TableHead>
                                                         {/* <TableHead>{"Statut"}</TableHead> */}
-                                                        <TableHead>{"Dernière connexion"}</TableHead>
-                                                        <TableHead>{"Actions"}</TableHead>
+                                                        <TableHead>{"Date d'ajout"}</TableHead>
+                                                        {activeUser?.role === "super-admin" ? <TableHead>{"Actions"}</TableHead>: ""}
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -212,7 +213,7 @@ function AdminTable() {
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.role}</TableCell>
                                                                 <TableCell className="border">{item.created_at}</TableCell>
-                                                                <TableCell className="border">
+                                                                {activeUser?.role === "super-admin" ? <TableCell className="border">
                                                                     <Select onValueChange={field.onChange} >
                                                                         <div className="w-full flex justify-center">
                                                                             <SelectTrigger className='border border-[#A1A1A1] h-7 flex items-center justify-center w-fit p-2'>
@@ -235,9 +236,14 @@ function AdminTable() {
                                                                                     {"Modifier"}
                                                                                 </Button>
                                                                             </EditUser>
+                                                                            <ChangeRole selectedUser={item}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Changer role"}
+                                                                                </Button>
+                                                                            </ChangeRole>
                                                                         </SelectContent>
                                                                     </Select>
-                                                                </TableCell>
+                                                                </TableCell> : ""}
                                                             </TableRow>
                                                         )
                                                     }

@@ -1,17 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Dashboard/Sidebar";
 import useStore from "@/context/store";
-import withAdminAuth from "@/lib/whithAdminAuth";
 import { NavAdmin } from "@/components/Dashboard/navAdmin";
 import SideBarMobile from "@/components/Dashboard/SIdeBarMobile";
-import Maintenance from "../Maintenance";
+import { useRouter } from "next/navigation";
+import withRoleAuth from "@/lib/whithAdminAuth";
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { isFull, setIsFull } = useStore();
-  const [show, setShow] = React.useState(false);
+  const { isFull, setIsFull, activeUser } = useStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (activeUser && activeUser.role === "editor") {
+      router.push("/dashboard/articles");
+    }
+  }, [activeUser, router]);
+
+  // if (activeUser?.role === "editor") {
+  //   return <h4>Chargement...</h4>; 
+  // }
 
   return (
     <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
@@ -23,10 +33,8 @@ function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
-      
     </SidebarProvider>
-    // <Maintenance />
   );
 }
 
-export default withAdminAuth(Layout); 
+export default withRoleAuth(Layout, "editor");
