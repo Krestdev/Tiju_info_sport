@@ -44,6 +44,19 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/colla
 import { useEffect, useState } from "react";
 import Logo from "../logo";
 
+type Item = {
+    title: string;
+    role: string;
+    url?: string;
+    icon: any;
+    param: boolean;
+    parametre?: {
+      nom: string;
+      lien: string;
+      icon: any;
+    }[];
+  };
+
 // Menu items.
 const items = [
     {
@@ -152,6 +165,18 @@ const items = [
     },
 ];
 
+function getItemsByRole(items: Item[], activeUser: User) {
+    if (!activeUser || !activeUser.role) return [];
+
+    const { role } = activeUser;
+
+    if (role === 'admin' || role === 'super-admin') {
+        return items;
+    }
+
+    return items.filter(item => item.role === role);
+}
+
 export function AppSidebar() {
     const { settings, isFull, setIsFull, logout, setActiveUser, activeUser } = useStore();
     const currentPath = usePathname();
@@ -170,6 +195,9 @@ export function AppSidebar() {
         toast.success("Déconnecté avec succès");
     }
 
+    
+
+
     return (
         <Sidebar variant="sidebar" collapsible="icon"  >
             <SidebarInset className="max-w-[320px] w-full">
@@ -182,7 +210,7 @@ export function AppSidebar() {
                     <SidebarGroup>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {items.filter(x => x.role === activeUser?.role).map((item) => {
+                                {activeUser && getItemsByRole(items, activeUser).map((item) => {
                                     const isActive = currentPath === item.url;
                                     const isOpen = openMenus[item.title] || false;
                                     return (
