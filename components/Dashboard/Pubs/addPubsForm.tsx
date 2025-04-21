@@ -110,7 +110,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
             setImage(addAdvertisement.data.data.id)
             setDialogOpen(prev => !prev);
         } else if (addAdvertisement.isError) {
-            toast.error("Erreur lors de la création de l'article");
+            toast.error("Erreur lors de la création de la publicité");
             console.log(addAdvertisement.error)
         }
     }, [addAdvertisement.isError, addAdvertisement.isSuccess, addAdvertisement.error])
@@ -160,7 +160,7 @@ function AddPubsForm({ addButton }: { addButton: string }) {
             setDialogOpen(prev => !prev);
             form.reset();
         } else if (editAdvertisement.isError) {
-            toast.error("Erreur lors de la modification de la catégorie");
+            toast.error("Erreur lors de la modification de la publicité");
             console.log(editAdvertisement.error)
         }
     }, [editAdvertisement.isError, editAdvertisement.isSuccess, editAdvertisement.error])

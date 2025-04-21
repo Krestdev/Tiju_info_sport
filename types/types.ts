@@ -62,7 +62,7 @@ type Category = {
     updated_at: string;
     slug: string;
     color: string | null;
-    footShow?: boolean;
+    footershow: boolean;
 };
 
 // Type pour une annonce publicitaire

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import useStore from '@/context/store'
+import { usePublishedArticles } from '@/hooks/usePublishedData'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 import { z } from 'zod'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -67,8 +69,8 @@ const SettingsForm = () => {
 
 
     const setting: Settings[] = getSetting.isSuccess ? getSetting.data.data : [];
-
     const section: { title: string, id: number, content: Ressource[] }[] = sections.isSuccess ? sections.data.data : [];
+    const { mainCategories, childCategories } = usePublishedArticles()
 
     const { settings, editSettings } = useStore()
     const [photo, setPhoto] = useState<string>();
@@ -359,6 +361,30 @@ const SettingsForm = () => {
                     <div className='flex flex-col gap-5 pt-5'>
                         <h3 className='uppercase text-[28px]'>{"Pied de page"}</h3>
                         {section.length > 0 && <div className='flex flex-col gap-5 px-2 py-3 w-[384px] border border-[#A1A1A1]'>
+                            <h4 className='uppercase text-[#A1A1A1] font-normal'>{"Catégories"}</h4>
+                            {
+                                mainCategories.filter(x => x.footershow === true).map((x, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <div className='flex flex-col gap-3'>
+                                                <h4 className='uppercase'>{x.title}</h4>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                            <h4 className='uppercase text-[#A1A1A1] font-normal'>{"Sous catégories"}</h4>
+                            {
+                                childCategories.filter(x => x.footershow === true).map((x, i) => {
+                                    return (
+                                        <div key={i}>
+                                            <div className='flex flex-col gap-3'>
+                                                <h4 className='uppercase'>{x.title}</h4>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
                             {
                                 section.map((x, k) => {
                                     return (

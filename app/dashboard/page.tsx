@@ -158,4 +158,4 @@ const DashbordPage = () => {
   );
 };
 
-export default withAdminAuth(DashbordPage);
+export default withAdminAuth(DashbordPage, "admin");

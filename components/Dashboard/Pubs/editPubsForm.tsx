@@ -127,7 +127,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
             setDialogOpen(prev => !prev);
             form.reset();
         } else if (editAdvertisement.isError) {
-            toast.error("Erreur lors de la modification de la catégorie");
+            toast.error("Erreur lors de la modification de la publicité");
             console.log(editAdvertisement.error)
         }
     }, [editAdvertisement.isError, editAdvertisement.isSuccess, editAdvertisement.error])

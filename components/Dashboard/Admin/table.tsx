@@ -28,13 +28,14 @@ import ModalWarning from "@/components/modalWarning";
 import EditUser from "./EditUser";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
+import ChangeRole from "../User/ChangeRole";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
 });
 
 function AdminTable() {
-    const { token } = useStore();
+    const { token, activeUser } = useStore();
     const queryClient = useQueryClient();
 
 
@@ -85,7 +86,8 @@ function AdminTable() {
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setUser(userData.data.data.filter(x => x.role === "admin"))
+            activeUser?.role === "admin" ? setUser(userData.data.data.filter(x => x.role !== "user" && x.role !== "super-admin")) :
+                setUser(userData.data.data.filter(x => x.role !== "user"));
         }
     }, [userData.data])
 
@@ -152,6 +154,7 @@ function AdminTable() {
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
             <h1 className="uppercase text-[40px]">{"Administration"}</h1>
+            {/* {activeUser?.role === "super-admin" &&  */}
             <span className="flex flex-wrap items-center gap-5">
                 <Link href={"/dashboard/users/add-user"}>
                     <Button className="rounded-none font-ubuntu font-normal">
@@ -160,6 +163,7 @@ function AdminTable() {
                     </Button>
                 </Link>
             </span>
+             {/* } */}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     {userData.isLoading && "Chargement..."}
@@ -186,7 +190,7 @@ function AdminTable() {
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Rôle"}</TableHead>
                                                         {/* <TableHead>{"Statut"}</TableHead> */}
-                                                        <TableHead>{"Dernière connexion"}</TableHead>
+                                                        <TableHead>{"Date d'ajout"}</TableHead>
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -225,16 +229,21 @@ function AdminTable() {
                                                                             </SelectTrigger>
                                                                         </div>
                                                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
-                                                                            <ModalWarning id={item.id} name={item.name} action={() => deleteUser(item.id)}>
+                                                                            {activeUser?.id === item.id ? "" : <ModalWarning id={item.id} name={item.name} action={() => deleteUser(item.id)}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-                                                                                    {"Bannir"}
+                                                                                    {"Supprimer"}
                                                                                 </Button>
-                                                                            </ModalWarning>
+                                                                            </ModalWarning>}
                                                                             <EditUser selectedUser={item}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Modifier"}
                                                                                 </Button>
                                                                             </EditUser>
+                                                                            {activeUser?.id === item.id ? "" : <ChangeRole selectedUser={item}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Changer role"}
+                                                                                </Button>
+                                                                            </ChangeRole>}
                                                                         </SelectContent>
                                                                     </Select>
                                                                 </TableCell>
@@ -245,7 +254,6 @@ function AdminTable() {
                                                 </TableBody>
                                             </Table>
                                         </FormControl>
-
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -263,9 +271,7 @@ function AdminTable() {
                     )}
                 </form>
             </Form>
-
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
             <ToastContainer />
         </div>
     );

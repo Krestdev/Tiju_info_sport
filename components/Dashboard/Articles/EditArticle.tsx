@@ -40,7 +40,9 @@ import { usePublishedArticles } from "@/hooks/usePublishedData";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const formSchema = z.object({
-    type: z.string(),
+    type: z.string().min(1, {
+        message: "Veuillez sélectionner une catégorie.",
+    }),
     title: z.string().min(2, {
         message: "Le titre doit contenir plus de 2 caractères.",
     }).max(254, {
@@ -54,10 +56,31 @@ const formSchema = z.object({
     description: z.string().min(2, {
         message: "La description doit contenir au moins 2 caractères.",
     }),
-    media: z.any(),
+    couverture: z.any(),
+    media: z
+        .any()
+        .refine(
+            (files) =>
+                Array.isArray(files) &&
+                files.length > 0 &&
+                files.every((file) => file instanceof File),
+            {
+                message:
+                    "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide.",
+            }
+        )
+        .refine(
+            (files) =>
+                Array.isArray(files) &&
+                files.every((file) => file.size <= MAX_FILE_SIZE),
+            {
+                message:
+                    "l'image ne doit pas dépasser 2 Mo.",
+            }
+        ),
+    status: z.string(),
     headline: z.boolean(),
 });
-
 
 type Props = {
     children: ReactNode;
@@ -249,7 +272,7 @@ function EditArticle({ children, donnee }: Props) {
                 <DialogHeader>
                     <DialogTitle>{"Modifier un Article"}</DialogTitle>
                     <DialogDescription>
-                        {"Remplissez le formulaire pour modifier une Publicité"}
+                        {"Remplissez le formulaire pour modifier un article"}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

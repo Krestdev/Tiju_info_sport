@@ -151,7 +151,7 @@ function EditUser({ children, selectedUser }: Props) {
         editUser.mutate(values);
     }
 
-    const role = ["administrateur", "moderateur","redacteur"]
+    const role = ["admin", "editor", "user"]
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -205,7 +205,7 @@ function EditUser({ children, selectedUser }: Props) {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="role"
                             render={({ field }) => (
@@ -228,7 +228,7 @@ function EditUser({ children, selectedUser }: Props) {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
                         <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Modifier un utilisateur"}</Button>
 
                     </form>

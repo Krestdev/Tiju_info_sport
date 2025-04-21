@@ -47,7 +47,7 @@ const AddUser = () => {
             nom: "",
             email: "",
             password: "",
-            role: "redacteur"
+            role: "editor"
         }
     })
 
@@ -72,25 +72,20 @@ const AddUser = () => {
             }
         },
         onSuccess: (response) => {
-            toast.success("Inscription réussie !");
-            // localStorage.setItem("token", response.data.token);
+            toast.success(`Utilisateur ajouté !`);
             router.push("/dashboard/admin");
         },
         onError: (error) => {
-            toast.error("Erreur lors de l'inscription.");
+            toast.error("Erreur lors de la creation de l'utilisateur.");
             console.error(error);
         },
     });
 
     const onSubmit = (data: z.infer<typeof formSchema>) => {
-        try {
-            createUser.mutateAsync(data);
-        } catch (error) {
-            console.error(error);
-        }
+            createUser.mutate(data);
     };
 
-    const role = ["administrateur", "moderateur","redacteur"]
+    const role = ["super-admin", "admin", "editor"]
 
     return (
         <Form {...form}>
@@ -129,13 +124,13 @@ const AddUser = () => {
                         <FormItem>
                             <FormLabel>{"Mot de passe"}</FormLabel>
                             <FormControl>
-                                <Input type='password' {...field} placeholder='********' className='h-[60px] max-w-[384px]' />
+                                <Input type='password' {...field} placeholder='********' className='h-[60px] max-w-[384px] w-full' />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="role"
                     render={({ field }) => (
@@ -158,7 +153,7 @@ const AddUser = () => {
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
                 <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Créer un utilisateur"}</Button>
 
             </form>

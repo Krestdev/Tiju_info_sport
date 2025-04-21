@@ -8,12 +8,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import useStore from "@/context/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useMemo, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Categorie, Pubs } from "@/data/temps";
 import { DateRange } from "react-day-picker";
 import { DatePick } from "../DatePick";
 import { SlRefresh } from "react-icons/sl";
@@ -121,7 +119,6 @@ function PubsTable() {
             setRein(false);
         }
 
-
         // Filtrage par recherche
         if (searchEntry !== "") {
             filtered = filtered.filter((el) =>
@@ -153,6 +150,7 @@ function PubsTable() {
             return axiosClient.delete(`/advertisement/${categoryId}`);
         },
         onSuccess: () => {
+            toast.success("Supprimée avec succès")
             queryClient.invalidateQueries({ queryKey: ["advertisement"] });
         },
     });

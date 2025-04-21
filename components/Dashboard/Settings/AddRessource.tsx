@@ -47,7 +47,7 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
     return (
         <Dialog open={dialogO} onOpenChange={setDialogO}>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="w-[95vh] h-[95vh] max-w-none p-6 scrollbar">
+            <DialogContent className="w-fit h-fit max-w-none p-10 scrollbar">
                 <DialogHeader>
                     <DialogTitle className='capitalize'>{message}</DialogTitle>
                     <DialogDescription>
@@ -82,14 +82,13 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name='content'
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{"Contenu de la ressource"}</FormLabel>
                                     <FormControl>
-                                        {/* <Textarea rows={10} {...field} className='max-w-[384px] text-[24px]' placeholder='Contenu de la ressource' /> */}
                                         <AppLexical
                                             initialValue={field.value}
                                             onChange={(value) => {
@@ -100,7 +99,7 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
                         <div className='flex flex-row gap-2'>
                             <Button type='button' onClick={form.handleSubmit(onSubmit)} className='w-fit capitalize'>{message}</Button>
                             <Button type='button' onClick={() => { form.reset(), setDialogO(false) }} className='w-fit' variant={"outline"}>{"Annuler"}</Button>

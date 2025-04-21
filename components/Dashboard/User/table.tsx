@@ -29,7 +29,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ModalWarning from "@/components/modalWarning";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
-import Test from "./test";
+import EditUser from "../Admin/EditUser";
+import ChangeRole from "./ChangeRole";
 
 interface successRes {
     data: User[];
@@ -91,7 +92,6 @@ function UserTable() {
     const itemsPerPage = 15;
 
     useEffect(() => {
-        Test()
         if (userData.isSuccess) {
             setUser(userData.data.data.filter(x => x.role === "user"))
             // setStatut(userData.data.flatMap(x => x.statut))
@@ -227,8 +227,8 @@ function UserTable() {
                                                         <TableHead>{"Adresse email"}</TableHead>
                                                         <TableHead>{"Date d'inscription"}</TableHead>
                                                         {/* <TableHead>{"Statut"}</TableHead> */}
-                                                        <TableHead>{"Dernière connexion"}</TableHead>
-                                                        <TableHead>{"Abonnement"}</TableHead>
+                                                        {/* <TableHead>{"Date d'inscription"}</TableHead> */}
+                                                        {/* <TableHead>{"Abonnement"}</TableHead> */}
                                                         <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -254,8 +254,8 @@ function UserTable() {
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.created_at}</TableCell>
                                                                 {/* <TableCell className="border">{item.statut}</TableCell> */}
-                                                                <TableCell className="border">28/06/2025</TableCell>
-                                                                <TableCell className="border">Abonnement</TableCell>
+                                                                {/* <TableCell className="border">28/06/2025</TableCell>
+                                                                <TableCell className="border">Abonnement</TableCell> */}
                                                                 {/* <TableCell className="border">{item.abonnement?.nom}</TableCell> */}
                                                                 <TableCell className="border">
                                                                     <Select onValueChange={field.onChange} >
@@ -275,11 +275,11 @@ function UserTable() {
                                                                                     {"Bannir"}
                                                                                 </Button>
                                                                             </ModalWarning>
-                                                                            {/* <EditUser selectedUser={item}> */}
-                                                                            <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-                                                                                {"Modifier"}
-                                                                            </Button>
-                                                                            {/* </EditUser> */}
+                                                                            <ChangeRole selectedUser={item}>
+                                                                                <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                                                                    {"Changer role"}
+                                                                                </Button>
+                                                                            </ChangeRole>
                                                                         </SelectContent>
                                                                     </Select>
                                                                 </TableCell>
