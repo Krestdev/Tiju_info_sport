@@ -9,20 +9,20 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import useStore from '@/context/store'
+import { toast } from '@/hooks/use-toast'
 import { usePublishedArticles } from '@/hooks/usePublishedData'
 import { cn, slugify } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { format } from "date-fns"
 import { fr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
-import { useEffect } from 'react'
+import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
-import { useMutation } from '@tanstack/react-query'
-import useStore from '@/context/store'
-import { toast } from '@/hooks/use-toast'
-import React from 'react'
+import { useRouter } from 'next/navigation'
 
 const statusArticle = [
     {
@@ -68,6 +68,7 @@ function AddArticlePage() {
     const axiosClient = axiosConfig();
     const {categories} = usePublishedArticles();
     const { activeUser } = useStore();
+    const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),
         defaultValues: {
@@ -100,7 +101,7 @@ function AddArticlePage() {
     const postArticle = useMutation({
         mutationFn: (data:z.infer<typeof formSchema>)=>{
             const [hours, mins] = data.time.split(":");
-            const publishDate = data.date.setHours(Number(hours), Number(mins));
+            const publishDate = data.date.setUTCHours(Number(hours), Number(mins));
             if (data.delay===false){
                 return axiosClient.post("articles", {
                     imageurl:data.featuredImage,
@@ -108,8 +109,9 @@ function AddArticlePage() {
                     slug: slugify(data.title),
                     summary: data.excerpt,
                     description: data.content,
-                    type: data.category,
-                    "category_id":data.category,
+                    status:data.status,
+                    type: categories.find(x=>x.id=== Number(data.category))?.title,
+                    "category_id":Number(data.category),
                     "user_id": activeUser?.id,
                 })
             }
@@ -119,8 +121,9 @@ function AddArticlePage() {
                 slug: slugify(data.title),
                 summary: data.excerpt,
                 description: data.content,
-                type: data.category,
-                "category_id":data.category,
+                status:"draft",
+                type: categories.find(x=>x.id=== Number(data.category))?.title,
+                "category_id":Number(data.category),
                 "user_id": activeUser?.id,
                 publish_on: new Date(publishDate).toISOString()
             })
@@ -130,7 +133,10 @@ function AddArticlePage() {
                 variant: "success",
                 title: "Nouvel Article",
                 description: "Votre article a été enregistré avec succès !"
-            })
+            });
+            form.reset();
+            router.replace("/dashboard/articles");
+
         },
         onError: (error)=>{
             console.log(error);

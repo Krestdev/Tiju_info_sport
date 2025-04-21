@@ -118,6 +118,7 @@ type Article = {
     summery: string;
     description: string;
     images: ImageA[];
+    imageurl?:string;
     author: User;
     comments: Comments[];
     likes: number[];
