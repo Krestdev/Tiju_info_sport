@@ -131,7 +131,7 @@ const AddUser = () => {
                         </FormItem>
                     )}
                 />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="role"
                     render={({ field }) => (
@@ -154,7 +154,7 @@ const AddUser = () => {
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
                 <Button onClick={() => console.log(form.getValues())} type="submit" className='rounded-none max-w-[384px] font-ubuntu w-fit'>{"Créer un utilisateur"}</Button>
 
             </form>

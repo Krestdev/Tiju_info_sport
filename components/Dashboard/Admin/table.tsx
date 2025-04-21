@@ -153,14 +153,14 @@ function AdminTable() {
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
             <h1 className="uppercase text-[40px]">{"Administration"}</h1>
-            <span className="flex flex-wrap items-center gap-5">
+            {activeUser?.role === "super-admin" && <span className="flex flex-wrap items-center gap-5">
                 <Link href={"/dashboard/users/add-user"}>
                     <Button className="rounded-none font-ubuntu font-normal">
                         <LuUserRoundPlus />
                         {"Créer un utilisateur"}
                     </Button>
                 </Link>
-            </span>
+            </span>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     {userData.isLoading && "Chargement..."}
@@ -188,7 +188,7 @@ function AdminTable() {
                                                         <TableHead>{"Rôle"}</TableHead>
                                                         {/* <TableHead>{"Statut"}</TableHead> */}
                                                         <TableHead>{"Date d'ajout"}</TableHead>
-                                                        {activeUser?.role === "super-admin" ? <TableHead>{"Actions"}</TableHead>: ""}
+                                                        <TableHead>{"Actions"}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -213,7 +213,7 @@ function AdminTable() {
                                                                 <TableCell className="border">{item.email}</TableCell>
                                                                 <TableCell className="border">{item.role}</TableCell>
                                                                 <TableCell className="border">{item.created_at}</TableCell>
-                                                                {activeUser?.role === "super-admin" ? <TableCell className="border">
+                                                                <TableCell className="border">
                                                                     <Select onValueChange={field.onChange} >
                                                                         <div className="w-full flex justify-center">
                                                                             <SelectTrigger className='border border-[#A1A1A1] h-7 flex items-center justify-center w-fit p-2'>
@@ -243,7 +243,7 @@ function AdminTable() {
                                                                             </ChangeRole>
                                                                         </SelectContent>
                                                                     </Select>
-                                                                </TableCell> : ""}
+                                                                </TableCell>
                                                             </TableRow>
                                                         )
                                                     }
@@ -251,7 +251,6 @@ function AdminTable() {
                                                 </TableBody>
                                             </Table>
                                         </FormControl>
-
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -269,9 +268,7 @@ function AdminTable() {
                     )}
                 </form>
             </Form>
-
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
             <ToastContainer />
         </div>
     );

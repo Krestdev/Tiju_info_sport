@@ -34,6 +34,8 @@ const Config = () => {
     const queryClient = useQueryClient();
     const [selected, setSelected] = useState<number>()
 
+    console.log(mainCategories, childCategories);
+
     const sections = useQuery({
         queryKey: ["sections"],
         queryFn: () => {
@@ -101,14 +103,14 @@ const Config = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            items: mainCategories.filter(x => x.footShow).flatMap(x => x.id)
+            items: mainCategories.filter(x => x.footShow === true).flatMap(x => x.id)
         },
     })
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
         defaultValues: {
-            items: childCategories.filter(x => x.footShow).flatMap(x => x.id),
+            items: childCategories.filter(x => x.footShow === true).flatMap(x => x.id),
         },
     })
 
