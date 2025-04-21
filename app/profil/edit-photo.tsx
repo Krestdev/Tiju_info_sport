@@ -18,7 +18,7 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 const formSchema = z.object({
     user_id: z.string(),
-    file: z.instanceof(File)
+    file: z.instanceof(File, {message: "Veuillez importer une image"})
     .refine(file => file.size <= MAX_FILE_SIZE, {
       message: "La taille maximale est de 1MB"
     })
