@@ -29,7 +29,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ModalWarning from "@/components/modalWarning";
 import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
-import Test from "./test";
 import EditUser from "../Admin/EditUser";
 import ChangeRole from "./ChangeRole";
 
@@ -93,7 +92,6 @@ function UserTable() {
     const itemsPerPage = 15;
 
     useEffect(() => {
-        Test()
         if (userData.isSuccess) {
             setUser(userData.data.data.filter(x => x.role === "user"))
             // setStatut(userData.data.flatMap(x => x.statut))

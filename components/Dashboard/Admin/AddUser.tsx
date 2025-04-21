@@ -47,7 +47,7 @@ const AddUser = () => {
             nom: "",
             email: "",
             password: "",
-            role: "redacteur"
+            role: "editor"
         }
     })
 
@@ -72,12 +72,11 @@ const AddUser = () => {
             }
         },
         onSuccess: (response) => {
-            toast.success("Inscription réussie !");
-            // localStorage.setItem("token", response.data.token);
+            toast.success(`Utilisateur ajouté !`);
             router.push("/dashboard/admin");
         },
         onError: (error) => {
-            toast.error("Erreur lors de l'inscription.");
+            toast.error("Erreur lors de la creation de l'utilisateur.");
             console.error(error);
         },
     });

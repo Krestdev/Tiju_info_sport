@@ -100,33 +100,6 @@ function EditCategorie({ children, donnee }: Props) {
         },
     });
 
-    const addSubCategory = useMutation({
-        mutationKey: ["categories"],
-        mutationFn: (data: z.infer<typeof formSchema>) => {
-            const idU = currentUser && String(currentUser.id)
-            return axiosClient.post(`/category/sub/${data.parent}`,
-                {
-                    user_id: idU,
-                    title: data.nom.trim(),
-                    image: "image",
-                    slug: slugify(data.nom.trim()),
-                    description: data.description.trim(),
-                    color: data.color
-                })
-        },
-    })
-
-    React.useEffect(() => {
-        if (addSubCategory.isSuccess) {
-            toast.success("Ajoutée avec succès");
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
-            setDialogOpen(prev => !prev);
-        } else if (addSubCategory.isError) {
-            toast.error("Erreur lors de la création de la catégorie");
-            console.log(addSubCategory.error)
-        }
-    }, [addSubCategory.isError, addSubCategory.isSuccess, addSubCategory.error]);
-
     //Submit function
     function onSubmit(data: z.infer<typeof formSchema>) {
         editCategory.mutate({ data: data, id: donnee.id.toString() });

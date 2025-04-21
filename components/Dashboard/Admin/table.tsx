@@ -154,14 +154,16 @@ function AdminTable() {
     return (
         <div className="w-full flex flex-col gap-5 px-7 py-10">
             <h1 className="uppercase text-[40px]">{"Administration"}</h1>
-            {activeUser?.role === "super-admin" && <span className="flex flex-wrap items-center gap-5">
+            {/* {activeUser?.role === "super-admin" &&  */}
+            <span className="flex flex-wrap items-center gap-5">
                 <Link href={"/dashboard/users/add-user"}>
                     <Button className="rounded-none font-ubuntu font-normal">
                         <LuUserRoundPlus />
                         {"Créer un utilisateur"}
                     </Button>
                 </Link>
-            </span>}
+            </span>
+             {/* } */}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     {userData.isLoading && "Chargement..."}

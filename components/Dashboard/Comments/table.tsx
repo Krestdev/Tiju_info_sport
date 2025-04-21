@@ -281,7 +281,7 @@ function CommentsTable() {
                                                                 <TableCell className="border">{item.author?.name}</TableCell>
                                                                 <TableCell className="border">{item.created_at}</TableCell>
                                                                 <TableCell className="border">{item.signals.length > 0 ? "Signalé" : "Normal"}</TableCell>
-                                                                <TableCell className="border">{item.signals.length }</TableCell>
+                                                                <TableCell className="border">{item.signals.length}</TableCell>
                                                                 <TableCell className="flex gap-2 items-center justify-center">
                                                                     <ModalWarning id={item.id} action={onDeleteComment} name={item.message}>
                                                                         <LuTrash2 size={20} className="text-red-500 flex items-center justify-center" />
@@ -312,9 +312,7 @@ function CommentsTable() {
                     )}
                 </form>
             </Form>
-
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
             <ToastContainer />
         </div>
     );

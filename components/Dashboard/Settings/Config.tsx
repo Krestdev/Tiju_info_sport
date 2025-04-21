@@ -15,8 +15,10 @@ import { LucidePlusCircle, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
 import useStore from '@/context/store';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AxiosResponse } from 'axios';
+import CheckboxList from './CheckboxList';
 
 const formSchema = z.object({
     items: z.array(z.number()),
@@ -82,13 +84,17 @@ const Config = () => {
                     footer_id: 4,
                     title: data.title,
                     url: data.url,
-                    content: data.content
+                    content: data.content,
+                    catid: 0,
                 }
             )
         },
         onSuccess() {
             queryClient.invalidateQueries({ queryKey: ["sections"] });
         },
+        onError() {
+            toast.error("Échec de la modification de la ressource");
+        }
     })
 
     const { mutate: deleteContent } = useMutation({
@@ -103,51 +109,61 @@ const Config = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            items: mainCategories.filter(x => x.footShow === true).flatMap(x => x.id)
+            items: mainCategories.filter(x => x.footershow === true).flatMap(x => x.id)
         },
     })
 
     const form1 = useForm<z.infer<typeof formSchema1>>({
         resolver: zodResolver(formSchema1),
         defaultValues: {
-            items: childCategories.filter(x => x.footShow === true).flatMap(x => x.id),
+            items: childCategories.filter(x => x.footershow === true).flatMap(x => x.id),
         },
     })
 
     const editCategory = useMutation({
         mutationKey: ["category"],
-        mutationFn: (id: string) => {
-            const idU = String(currentUser.id)
-            const cat = mainCategories.find(x => x.id === Number(id))
-            console.log(cat);
+        mutationFn: async (id: string) => {
+            const idU = String(currentUser.id);
+            const cat = mainCategories.find(x => x.id === Number(id));
+            if (!cat) throw new Error("Catégorie introuvable");
 
-            return axiosClient.patch(`/category/${id}`, {
+            const response = await axiosClient.patch(`/category/${id}`, {
                 user_id: idU,
                 ...cat,
-                footShow: !cat?.footShow
+                footershow: !cat.footershow
             });
+            return response.data;
         },
-        onSuccess() {
-            toast.success("Enrégistré");
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
+        onError: (error) => {
+            toast.error("Échec de la modification");
+            console.error(error);
+        }
     });
 
     const editCategory1 = useMutation({
         mutationKey: ["category"],
-        mutationFn: (id: string) => {
-            const idU = String(currentUser.id)
+        mutationFn: async (id: string) => {
+            const idU = String(currentUser.id);
             const cat = childCategories.find(x => x.id === Number(id))
-            console.log(cat);
+            if (!cat) throw new Error("Catégorie introuvable");
 
-            return axiosClient.patch(`/category/${id}`, {
+            const response = await axiosClient.patch(`/category/${id}`, {
                 user_id: idU,
                 ...cat,
-                footShow: !cat?.footShow
+                footershow: !cat.footershow
             });
+            return response.data;
         },
-        onSuccess() {
-            toast.success("Enrégistré");
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
+        onError: (error) => {
+            toast.error("Échec de la modification");
+            console.error(error);
+        }
     });
 
     function onSubmit(data: z.infer<typeof formSchema1>) {
@@ -162,6 +178,26 @@ const Config = () => {
         });
     }
 
+    const updateVisibility = async (categoryId: number, shouldShow: boolean) => {
+        try {
+            await editCategory.mutateAsync(categoryId.toString());
+            return true;
+        } catch (error) {
+            console.error("Failed to update visibility", error);
+            return false;
+        }
+    };
+
+    const updateVisibility1 = async (categoryId: number, shouldShow: boolean) => {
+        try {
+            await editCategory1.mutateAsync(categoryId.toString());
+            return true;
+        } catch (error) {
+            console.error("Failed to update visibility", error);
+            return false;
+        }
+    };
+
     return (
         <div className='flex flex-col gap-5 px-7 py-10'>
             <h1>{"Configuration du pied de page"}</h1>
@@ -175,44 +211,22 @@ const Config = () => {
                             render={({ field }) => (
                                 <FormItem className='flex flex-row items-center gap-2'>
                                     <FormControl>
-                                        <div className='flex flex-col gap-2'>
-                                            <div className='flex gap-2 items-center'>
-                                                <Checkbox
-                                                    checked={mainCategories.length > 0 && field.value?.length === mainCategories.length}
-                                                    onCheckedChange={(checked) => {
-                                                        field.onChange(checked ? mainCategories.map((item) => item.id) : []);
-                                                    }}
-                                                />
-                                                {"Toutes les catégories"}
-                                            </div>
-                                            {
-                                                mainCategories.map((item, i) => {
-                                                    return (
-                                                        <div key={i} className='flex gap-2 items-center'>
-                                                            <Checkbox
-                                                                checked={field.value?.includes(item.id)}
-                                                                onCheckedChange={(checked) => {
-                                                                    return checked
-                                                                        ? field.onChange([...field.value, item.id])
-                                                                        : field.onChange(
-                                                                            field.value?.filter(
-                                                                                (value) => value !== item.id
-                                                                            )
-                                                                        )
-                                                                }}
-                                                            />
-                                                            {item.title}
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </div>
+                                        <CheckboxList
+                                            items={mainCategories}
+                                            onItemChange={updateVisibility} />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
                     </div>
-                    <Button type='button' className='w-fit' onClick={form.handleSubmit(onSubmit)}>{"Sauvegarder"}</Button>
+                    <Button
+                        type='button'
+                        className='w-fit'
+                        disabled={editCategory.isPending}
+                        onClick={form.handleSubmit(onSubmit)}
+                    >
+                        {editCategory.isPending ? "Enregistrement..." : "Sauvegarder"}
+                    </Button>
                 </form>
             </Form>
             <Form {...form1}>
@@ -225,44 +239,22 @@ const Config = () => {
                             render={({ field }) => (
                                 <FormItem className='flex flex-row items-center gap-2'>
                                     <FormControl>
-                                        <div className='flex flex-col gap-2'>
-                                            <div className='flex gap-2 items-center'>
-                                                <Checkbox
-                                                    checked={childCategories.length > 0 && field.value?.length === childCategories.length}
-                                                    onCheckedChange={(checked) => {
-                                                        field.onChange(checked ? childCategories.map((item) => item.id) : []);
-                                                    }}
-                                                />
-                                                {"Toutes les sous-catégories"}
-                                            </div>
-                                            {
-                                                childCategories.map((item, i) => {
-                                                    return (
-                                                        <div key={i} className='flex gap-2 items-center'>
-                                                            <Checkbox
-                                                                checked={field.value?.includes(item.id)}
-                                                                onCheckedChange={(checked) => {
-                                                                    return checked
-                                                                        ? field.onChange([...field.value, item.id])
-                                                                        : field.onChange(
-                                                                            field.value?.filter(
-                                                                                (value) => value !== item.id
-                                                                            )
-                                                                        )
-                                                                }}
-                                                            />
-                                                            {item.title}
-                                                        </div>
-                                                    )
-                                                })
-                                            }
-                                        </div>
+                                    <CheckboxList
+                                            items={childCategories}
+                                            onItemChange={updateVisibility1} />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
                     </div>
-                    <Button type='button' className='w-fit' onClick={form1.handleSubmit(onSubmit1)}>{"Sauvegarder"}</Button>
+                    <Button
+                        type='button'
+                        className='w-fit'
+                        disabled={editCategory1.isPending}
+                        onClick={form1.handleSubmit(onSubmit1)}
+                    >
+                        {editCategory1.isPending ? "Enregistrement..." : "Sauvegarder"}
+                    </Button>
                 </form>
             </Form>
 
@@ -285,7 +277,7 @@ const Config = () => {
                         )
                     })
                 }
-                <AddRessource title={''} content={''} url={''} action={createContent.mutate} message={'ajouter la ressource'}>
+                <AddRessource title={''} content={'vide'} url={''} action={createContent.mutate} message={'ajouter la ressource'}>
                     <Button className='w-fit text-white'>
                         <LucidePlusCircle />
                         {"Ajouter une ressource"}
@@ -295,7 +287,7 @@ const Config = () => {
                 {/* <Button className='w-fit' onClick={() => createSection.mutate()}>Section</Button> */}
 
             </div>
-
+            <ToastContainer />
         </div>
     )
 }

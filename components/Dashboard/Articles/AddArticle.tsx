@@ -52,9 +52,23 @@ const formSchema = z.object({
         .any()
         .refine(
             (files) =>
-                Array.isArray(files) && files.length > 0 && files.every(file => file instanceof File),
-            { message: "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide." }
-        ).optional(),
+                Array.isArray(files) &&
+                files.length > 0 &&
+                files.every((file) => file instanceof File),
+            {
+                message:
+                    "Veuillez sélectionner au moins une image et assurez-vous que chaque image est un fichier valide.",
+            }
+        )
+        .refine(
+            (files) =>
+                Array.isArray(files) &&
+                files.every((file) => file.size <= MAX_FILE_SIZE),
+            {
+                message:
+                    "l'image ne doit pas dépasser 2 Mo.",
+            }
+        ),
     status: z.string(),
     headline: z.boolean(),
 });
@@ -129,7 +143,7 @@ const AddArticle = () => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = String(currentUser.id)
-            
+
             return axiosClient.post("/articles",
                 {
                     user_id: idU,
@@ -182,7 +196,7 @@ const AddArticle = () => {
             )
         },
         onError(error: any) {
-            toast.error("La taille maximale de l'image doit être de 2Mo")
+            toast.error("Erreur lors de l'ajout de l'image.");
             deleteArticle(artId)
         },
     })
@@ -201,7 +215,7 @@ const AddArticle = () => {
         },
         onError(error: any) {
             console.log(error.status);
-            toast.error("La taille maximale de l'image doit être de 2Mo")
+            toast.error("Erreur lors de l'ajout de l'image.")
             deleteArticle(artId)
         },
     })
@@ -284,7 +298,7 @@ const AddArticle = () => {
         if (formSchema.safeParse(form.getValues()).success) {
             setDialogOpen(true);
         } else {
-            toast.error("Veuillez remplir correctement le formulaire.");
+            toast.error("Veuillez remplir correctement tous les champs du formulaire.");
         }
     };
 
