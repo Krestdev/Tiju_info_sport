@@ -86,7 +86,8 @@ function AdminTable() {
 
     useEffect(() => {
         if (userData.isSuccess) {
-            setUser(userData.data.data.filter(x => x.role !== "user" && x.role !== "super-admin"));
+            activeUser?.role === "admin" ? setUser(userData.data.data.filter(x => x.role !== "user" && x.role !== "super-admin")) :
+                setUser(userData.data.data.filter(x => x.role !== "user"));
         }
     }, [userData.data])
 
@@ -226,21 +227,21 @@ function AdminTable() {
                                                                             </SelectTrigger>
                                                                         </div>
                                                                         <SelectContent className='border border-[#A1A1A1] max-w-[384px] w-full flex items-center p-2'>
-                                                                            <ModalWarning id={item.id} name={item.name} action={() => deleteUser(item.id)}>
+                                                                            {activeUser?.id === item.id ? "" : <ModalWarning id={item.id} name={item.name} action={() => deleteUser(item.id)}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
-                                                                                    {"Bannir"}
+                                                                                    {"Supprimer"}
                                                                                 </Button>
-                                                                            </ModalWarning>
+                                                                            </ModalWarning>}
                                                                             <EditUser selectedUser={item}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Modifier"}
                                                                                 </Button>
                                                                             </EditUser>
-                                                                            <ChangeRole selectedUser={item}>
+                                                                            {activeUser?.id === item.id ? "" : <ChangeRole selectedUser={item}>
                                                                                 <Button variant={"ghost"} className="font-ubuntu h-8 relative flex w-full cursor-default select-none justify-start rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                                                                     {"Changer role"}
                                                                                 </Button>
-                                                                            </ChangeRole>
+                                                                            </ChangeRole>}
                                                                         </SelectContent>
                                                                     </Select>
                                                                 </TableCell>

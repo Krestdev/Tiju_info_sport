@@ -249,7 +249,7 @@ function EditArticle({ children, donnee }: Props) {
                 <DialogHeader>
                     <DialogTitle>{"Modifier un Article"}</DialogTitle>
                     <DialogDescription>
-                        {"Remplissez le formulaire pour modifier une Publicité"}
+                        {"Remplissez le formulaire pour modifier un article"}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
