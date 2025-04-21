@@ -1,17 +1,28 @@
 'use client'
 import axiosConfig from '@/api/api'
+import AddImage from '@/components/add-image'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { usePublishedArticles } from '@/hooks/usePublishedData'
+import { cn, slugify } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { format } from "date-fns"
+import { fr } from 'date-fns/locale'
+import { CalendarIcon } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
-import { Switch } from '@/components/ui/switch'
-import AddImage from '@/components/add-image'
+import { useMutation } from '@tanstack/react-query'
+import useStore from '@/context/store'
+import { toast } from '@/hooks/use-toast'
+import React from 'react'
 
 const statusArticle = [
     {
@@ -26,29 +37,120 @@ const statusArticle = [
 
 const formSchema = z.object({
     title:z.string({message: "Ce champ ne peut être vide"}).max(250, {message: "Le titre doit comporter moins de 250 caractères"}),
-    featuredImage:z.string({message: "Ce champs ne peut être vide"}),
+    featuredImage:z.string({message: "Veuillez renseigner une image"}),
     excerpt: z.string().max(250, {message: "Le résumé doit comporter moins de 250 caractères"}),
     content: z.string({message: "Le contenu ne peut être vide"}),
     category:z.string({message: "Veuillez choisir une catégorie"}),
     headline:z.boolean(),
     status:z.string({message: "Le statut ne peut être vide"}),
-    image:z.string({message: "Veuillez renseigner une image"}),
-})
+    date:z.date(),
+    time:z.string(),
+    delay:z.boolean(),
+}).refine(data=>{
+    const current = new Date();
+    const [hours, mins] = data.time.split(":");
+    if(data.delay === false){
+        return true;
+    }
+    if(data.date.getFullYear() === current.getFullYear() && data.date.getMonth() === current.getMonth() && data.date.getDay()=== current.getDate()){
+        if(Number(hours)<current.getHours()){
+            return false;
+        } else if(Number(hours)===current.getHours() && Number(mins)<=current.getMinutes()+15){
+            return false;
+        } else {
+            return true;
+        }
+    }
+    return true
+},{message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"]})
 
 function AddArticlePage() {
     const axiosClient = axiosConfig();
     const {categories} = usePublishedArticles();
+    const { activeUser } = useStore();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),
         defaultValues: {
-            headline: false
+            title: "",
+            excerpt: "",
+            content: "",
+            headline: false,
+            date: new Date(),
+            time: "09:00",
+            delay: false
         }
     });
+
+    const [display, setDisplay] = React.useState(false);
+    const [show, setShow] = React.useState(false);
+    React.useEffect(()=>{
+        if(form.getValues("status")==="published"){
+            setDisplay(true);
+            if(form.getValues("delay")===true){
+                setShow(true);
+            } else {
+                setShow(false);
+            }
+        } else {
+            setDisplay(false);
+            setShow(false);
+        }
+    },[form.watch()])
     
+    const postArticle = useMutation({
+        mutationFn: (data:z.infer<typeof formSchema>)=>{
+            const [hours, mins] = data.time.split(":");
+            const publishDate = data.date.setHours(Number(hours), Number(mins));
+            if (data.delay===false){
+                return axiosClient.post("articles", {
+                    imageurl:data.featuredImage,
+                    title: data.title,
+                    slug: slugify(data.title),
+                    summary: data.excerpt,
+                    description: data.content,
+                    type: data.category,
+                    "category_id":data.category,
+                    "user_id": activeUser?.id,
+                })
+            }
+            return axiosClient.post("articles", {
+                imageurl:data.featuredImage,
+                title: data.title,
+                slug: slugify(data.title),
+                summary: data.excerpt,
+                description: data.content,
+                type: data.category,
+                "category_id":data.category,
+                "user_id": activeUser?.id,
+                publish_on: new Date(publishDate).toISOString()
+            })
+        },
+        onSuccess: ()=>{
+            toast({
+                variant: "success",
+                title: "Nouvel Article",
+                description: "Votre article a été enregistré avec succès !"
+            })
+        },
+        onError: (error)=>{
+            console.log(error);
+            toast({
+                variant: "warning",
+                title: "Erreur",
+                description: (
+                    <pre>
+                        <p>{"Un erreur s'est produite lors de l'enregistrement de votre article."}</p>
+                        <code>{error.message}</code>
+                    </pre>
+                )
+            })
+        }
+    })
+
     function onSubmit(data:z.infer<typeof formSchema>){
-        console.log(data);
-        //add it here
+        postArticle.mutate(data);
     }
+
   return (
     <div className='flex flex-col gap-5'>
         <h1>{"Ajouter un article"}</h1>
@@ -111,7 +213,7 @@ function AddArticlePage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     {[...new Set(categories)].map((x)=>(
-                                        <SelectItem key={x.id} value={x.title}>{x.title}</SelectItem>
+                                        <SelectItem key={x.id} value={x.id.toString()}>{x.title}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -137,8 +239,62 @@ function AddArticlePage() {
                         <FormMessage/>
                     </FormItem>
                 )} />
+                {
+                    !!display &&
+                    <span className='cols-span-1 lg:col-span-2'>
+                        <FormField control={form.control} name="delay" render={({field})=>(
+                            <FormItem className='flex gap-3 items-center'>
+                                <FormControl>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                </FormControl>
+                                <div className='flex flex-col'>
+                                    <span className='text-sm font-medium'>{"Programmer la publication"}</span>
+                                    <span className='text-sm text-paragraph'>{"Désactiver pour publier maintenant et activer pour définir une date de publication"}</span>
+                                </div>
+                                <FormMessage/>
+                            </FormItem>
+                        )}/>
+                    </span>
+                }
+                {
+                     show &&
+                    <FormField control={form.control} name="date" render={({field})=>(
+                        <FormItem className='flex flex-col gap-2'>
+                            <FormLabel>{"Date de publication"}</FormLabel>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <FormControl>
+                                        <Button variant={"outline"} family={"sans"} className={cn("border-input justify-between")}>
+                                        {field.value ? (
+                                            format(field.value, "PPP", {locale: fr})
+                                        ) : (
+                                            <span>{"Sélectionner une date"}</span>
+                                        )}
+                                        <CalendarIcon size={20}/>
+                                        </Button>
+                                    </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date)=>date <= new Date()} initialFocus/>
+                                </PopoverContent>
+                            </Popover>
+                        </FormItem>
+                    )} />
+                }
+                {
+                    show && 
+                    <FormField control={form.control} name="time" render={({field})=>(
+                        <FormItem>
+                            <FormLabel>{"Heure de publication de l'article"}</FormLabel>
+                            <FormControl>
+                                <Input type="time" {...field} />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )} />
+                }
                 <span className='cols-span-1 lg:col-span-2'>
-                    <FormField control={form.control} name="image" render={({field})=>(
+                    <FormField control={form.control} name="featuredImage" render={({field})=>(
                         <FormItem className='flex flex-col gap-2'>
                             <FormLabel>{"Photo de couverture"}</FormLabel>
                             <FormControl>
@@ -148,7 +304,7 @@ function AddArticlePage() {
                     )} />
                 </span>
                 <span className='col-span-1 lg:col-span-2'>
-                    <Button family={"sans"} type="submit" className='w-full max-w-sm'>{"Enregistrer"}</Button>
+                    <Button family={"sans"} type="submit" className='w-full max-w-sm' disabled={postArticle.isPending} isLoading={postArticle.isPending}>{"Enregistrer"}</Button>
                 </span>
             </form>
         </Form>
