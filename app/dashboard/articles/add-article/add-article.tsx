@@ -112,7 +112,7 @@ function AddArticlePage() {
                     status:data.status,
                     type: categories.find(x=>x.id=== Number(data.category))?.title,
                     "category_id":Number(data.category),
-                    "user_id": activeUser?.id,
+                    "user_id": activeUser?.id.toString(),
                 })
             }
             return axiosClient.post("articles", {
