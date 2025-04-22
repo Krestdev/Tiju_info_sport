@@ -134,8 +134,8 @@ function AddArticlePage() {
                 title: "Nouvel Article",
                 description: "Votre article a été enregistré avec succès !"
             });
-            form.reset();
             router.replace("/dashboard/articles");
+            form.reset();
 
         },
         onError: (error)=>{
