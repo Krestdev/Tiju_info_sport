@@ -6,8 +6,8 @@ import AddArticlePage from './add-article'
 const page = () => {
   return (
     <div>
-        {/* <AddArticle /> */}
-        <AddArticlePage />
+        <AddArticle />
+        {/* <AddArticlePage /> */}
     </div>
   )
 }
