@@ -8,6 +8,9 @@ import { FaXTwitter } from "react-icons/fa6";
 import { Button } from './ui/button';
 import Logo from './logo';
 import { usePathname } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import axiosConfig from '@/api/api';
+import React from 'react';
 
 
 const Footbar = () => {
@@ -15,18 +18,19 @@ const Footbar = () => {
     const pathname = usePathname();
     const path = pathname.split("/");
     const isDashboard = path.includes("dashboard");
+    const axiosClient = axiosConfig();
+    const params = useQuery({
+        queryKey: ["settings"],
+        queryFn: ()=>{
+            return axiosClient.get("param/show");
+        }
+    });
 
-    function filterCategoriesWithChildren(categories: Category[]): Category[] {
-        // Filtrer les catégories parent (qui ont parent === null)
-        const parentCategories = categories.filter(category => category.parent === null);
-
-        // Filtrer les catégories parent ayant au moins un enfant avec des articles
-        return parentCategories.filter(parent =>
-            categories.some(child =>
-                child.parent === parent.id && Array.isArray(child.articles) && child.articles.length > 0
-            )
-        );
-    }
+    React.useEffect(()=>{
+        if(params.isSuccess){
+            console.log(params.data.data);
+        }
+    }, [params.isSuccess])
 
     if(isDashboard){
         return null;
