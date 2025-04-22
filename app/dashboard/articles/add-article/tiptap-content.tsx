@@ -1,6 +1,8 @@
 'use client'
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
+import { Image } from "@tiptap/extension-image"
+import TextAlign from '@tiptap/extension-text-align'
 
 import TiptapMenu from './tiptap-menu'
 import { useEffect, useState } from "react";
@@ -14,7 +16,11 @@ interface TiptapProps{
 function TiptapEditor({value, onValueChange}:TiptapProps) {
     const [mounted, setMounted] = useState(false)
     const editor = useEditor({
-        extensions: [StarterKit],
+        extensions: [StarterKit, Image, TextAlign.configure({
+          types: ['heading', 'paragraph'],
+          alignments: ['left', 'center', 'right', 'justify'],
+          defaultAlignment: 'left',
+        })],
         content: value,
         onUpdate: ({editor}) => {
             const currentValue = editor.getHTML();

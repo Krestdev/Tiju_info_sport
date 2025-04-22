@@ -165,3 +165,14 @@ export function getFirstWord(name: string): string {
   // Optionnel : supprime la ponctuation attachée au mot
   return firstWord.replace(/[.,;!?]+$/, '');
 }
+
+//## Last 24h articles
+export const latestUpdates = (articles: Article[]): Article[] => {
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  return articles.filter(article => {
+    const articleDate = new Date(article.created_at);
+    return articleDate >= twentyFourHoursAgo && articleDate <= now;
+  });
+};

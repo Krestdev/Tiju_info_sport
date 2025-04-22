@@ -1,8 +1,9 @@
 'use client'
+import InsertImage from '@/components/insert-image';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Editor } from '@tiptap/react'
-import { Bold, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
 import React from 'react'
 
 function TiptapMenu({editor}:{editor: Editor|null}) {
@@ -44,6 +45,10 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
             editor.chain().focus().toggleHeading({ level: 4 }).run()
             break
         }
+      }
+
+      const addImage = (image:string) => {
+        editor.chain().focus().setImage({ src: `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API.length -4)}${image}` }).run()
       }
 
 
@@ -102,6 +107,39 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
             >
               <Strikethrough/>
             </Button>
+            <Button size={"icon"} variant={editor.isActive({textAlign: 'left'}) ? "default" : "ghost"} family={"sans"}
+              onClick={(e) =>{e.preventDefault(); editor.chain().focus().setTextAlign('left').run()}}
+              disabled={
+                !editor.can().chain().focus().setTextAlign('left').run()
+              }
+            >
+              <AlignLeft/>
+            </Button>
+            <Button size={"icon"} variant={editor.isActive({textAlign: 'center'}) ? "default" : "ghost"} family={"sans"}
+              onClick={(e) =>{e.preventDefault(); editor.chain().focus().setTextAlign('center').run()}}
+              disabled={
+                !editor.can().chain().focus().setTextAlign('center').run()
+              }
+            >
+              <AlignCenter/>
+            </Button>
+            <Button size={"icon"} variant={editor.isActive({textAlign: 'right'}) ? "default" : "ghost"} family={"sans"}
+              onClick={(e) =>{e.preventDefault(); editor.chain().focus().setTextAlign('right').run()}}
+              disabled={
+                !editor.can().chain().focus().setTextAlign('right').run()
+              }
+            >
+              <AlignRight/>
+            </Button>
+            <Button size={"icon"} variant={editor.isActive({textAlign: 'justify'}) ? "default" : "ghost"} family={"sans"}
+              onClick={(e) =>{e.preventDefault(); editor.chain().focus().setTextAlign('justify').run()}}
+              disabled={
+                !editor.can().chain().focus().setTextAlign('justify').run()
+              }
+            >
+              <AlignJustify/>
+            </Button>
+            <InsertImage image={undefined} onChange={addImage}/>
 {/*             <button
               onClick={(e) =>{e.preventDefault(); editor.chain().focus().toggleCode().run()}}
               disabled={
