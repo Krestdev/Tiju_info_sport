@@ -150,7 +150,7 @@ function PubsTable() {
             return axiosClient.delete(`/advertisement/${categoryId}`);
         },
         onSuccess: () => {
-            toast.success("Supprimée avec succès")
+            toast.success("Publicité supprimée avec succès")
             queryClient.invalidateQueries({ queryKey: ["advertisement"] });
         },
     });

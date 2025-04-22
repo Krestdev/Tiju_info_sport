@@ -107,7 +107,7 @@ function EditCategorie({ children, donnee }: Props) {
 
     React.useEffect(() => {
         if (editCategory.isSuccess) {
-            toast.success("Modifiée avec succès");
+            toast.success("Catégorie modifiée avec succès");
             queryClient.invalidateQueries({ queryKey: ["category"] });
             setDialogOpen(prev => !prev);
         } else if (editCategory.isError) {

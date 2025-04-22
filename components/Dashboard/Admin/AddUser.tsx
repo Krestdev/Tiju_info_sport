@@ -72,7 +72,7 @@ const AddUser = () => {
             }
         },
         onSuccess: (response) => {
-            toast.success(`Utilisateur ajouté !`);
+            toast.success(`Utilisateur ajouté avec succès!`);
             router.push("/dashboard/admin");
         },
         onError: (error) => {

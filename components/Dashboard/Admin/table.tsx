@@ -142,7 +142,7 @@ function AdminTable() {
     //Delete function
     function onDeleteArticle(id: number) {
         queryClient.invalidateQueries({ queryKey: ["users"] })
-        toast.success("Supprimé avec succès");
+        toast.success("Utilisateur supprimé avec succès");
     }
 
     // Get current items

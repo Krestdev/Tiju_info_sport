@@ -122,7 +122,7 @@ function EditPubsForm({ children, selectedPubs }: Props) {
 
     React.useEffect(() => {
         if (editAdvertisement.isSuccess) {
-            toast.success("Modifiée avec succès");
+            toast.success("Publicité modifiée avec succès");
             queryClient.invalidateQueries({ queryKey: ["advertisement"] });
             setDialogOpen(prev => !prev);
             form.reset();

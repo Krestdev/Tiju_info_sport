@@ -86,7 +86,7 @@ function ArticleTable() {
             });
         },
         onSuccess() {
-            toast.success("AJouté à la corbeille avec succès");
+            toast.success("Article ajouté à la corbeille avec succès");
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         retry: 5,
@@ -189,14 +189,29 @@ function ArticleTable() {
     function onRestoreArticle(id: number) {
         editArticle.mutate(id);
         queryClient.invalidateQueries({ queryKey: ["article"] })
-        toast.success("Article Restauré avec succès");
+        toast.success("Article restauré avec succès");
     }
 
     // Get current items
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = current === "tous" ?
-        filterData.slice(startIndex, startIndex + itemsPerPage)
-        : filterData.slice(startIndex, startIndex + itemsPerPage).filter(x => x.status === current);
+    const getFilteredItems = () => {
+        const slicedItems = filterData.slice(startIndex, startIndex + itemsPerPage);
+        
+        switch(current) {
+          case "tous":
+            return slicedItems;
+          case "published":
+            return slicedItems.filter(x => x.status === "published");
+          case "deleted":
+            return slicedItems.filter(x => x.status === "deleted");
+          case "draft":
+            return slicedItems.filter(x => x.status === "draft" && (new Date(x.publish_on) <= new Date() || x.publish_on === ""));
+          default: 
+            return slicedItems.filter(x => x.status === "draft" && new Date(x.publish_on) > new Date());
+        }
+      };
+      
+      const currentItems = getFilteredItems();
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 

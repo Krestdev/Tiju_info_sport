@@ -5,14 +5,11 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import useStore from "@/context/store";
 import GridDash from "@/components/Dashboard/Dash/GridDash";
-import { useQuery } from "@tanstack/react-query";
-import { Users } from "@/data/temps";
 import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import LinearChat from "@/components/Dashboard/Dash/LinearChar";
 import { CircChar } from "@/components/Dashboard/Dash/CircChar";
 import { DateRange } from "react-day-picker";
-import { AxiosResponse } from "axios";
 import axiosConfig from "@/api/api";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 
@@ -110,7 +107,7 @@ const DashbordPage = () => {
           dateRanges={dateRanges.publication}
           setDateRanges={setDateRanges}
           rangeKey="publication">
-          <GridDash tableau={grid} value={values.publication} dateRanges={dateRanges} rangeKey={"publication"} />
+          <GridDash rangeKey={"publication"} tableau={grid} value={values.publication} dateRanges={dateRanges} />
         </Compo>
         <Compo
           texte={"Vues sur le site"}
@@ -151,7 +148,7 @@ const DashbordPage = () => {
           dateRanges={dateRanges.vuesCategorie}
           setDateRanges={setDateRanges}
           rangeKey="vuesCategorie">
-          <CircChar value={values.vuesCategorie} dateRanges={dateRanges} rangeKey={"vuesCategorie"} />
+          <CircChar rangeKey={"vuesCategorie"} value={values.vuesCategorie} dateRanges={dateRanges} />
         </Compo>
       </div>
     </div>

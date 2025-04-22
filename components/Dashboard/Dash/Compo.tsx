@@ -29,7 +29,7 @@ interface Props {
   rangeKey: string;
 }
 
-const Compo = ({ children, texte, page, width, setValue, isLink, link, setDateRanges, dateRanges, rangeKey }: Props) => {
+const Compo = ({ children, texte, page, width, setValue, isLink, link, setDateRanges, rangeKey }: Props) => {
 
   const handleValueChange = (value: string) => {
     setValue(value);

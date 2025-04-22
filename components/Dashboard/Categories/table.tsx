@@ -109,7 +109,7 @@ function CategoryTable() {
     function onDeleteArticle(id: number) {
         // deleteCategorie(id)
         queryClient.invalidateQueries({ queryKey: ["category"] })
-        toast.success("Supprimé avec succès");
+        toast.success("Catégorie supprimée avec succès");
     }
 
     // Supposons que tu as un tableau de toutes les catégories

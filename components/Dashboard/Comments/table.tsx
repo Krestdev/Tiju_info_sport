@@ -89,7 +89,7 @@ function CommentsTable() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["comment"] });
-            toast.success("Supprimé avec succès");
+            toast.success("Commentaire supprimé avec succès");
         },
     });
 

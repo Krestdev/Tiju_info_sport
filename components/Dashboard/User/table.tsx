@@ -155,7 +155,7 @@ function UserTable() {
     // function onDeleteArticle(id: number) {
     //     deleteArticle(id)
     //     queryClient.invalidateQueries({ queryKey: ["users"] })
-    //     toast.success("Supprimé avec succès");
+    //     toast.success("Utilisateur supprimé avec succès");
     // }
 
     // Get current items
@@ -310,7 +310,6 @@ function UserTable() {
             </Form>
 
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
-
             <ToastContainer />
         </div>
     );

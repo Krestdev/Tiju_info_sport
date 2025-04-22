@@ -74,7 +74,7 @@ const AddCategory = ({ children }: Props) => {
 
     React.useEffect(() => {
         if (addCategory.isSuccess) {
-            toast.success("Ajoutée avec succès");
+            toast.success("Catégorie ajoutée avec succès");
             queryClient.invalidateQueries({ queryKey: ["categories"] });
             setDialogOpen(prev => !prev);
         } else if (addCategory.isError) {
@@ -102,7 +102,7 @@ const AddCategory = ({ children }: Props) => {
 
     React.useEffect(() => {
         if (addSubCategory.isSuccess) {
-            toast.success("Ajoutée avec succès");
+            toast.success("Sous catégorie ajoutée avec succès");
             queryClient.invalidateQueries({ queryKey: ["categories"] });
             setDialogOpen(prev => !prev);
         } else if (addSubCategory.isError) {

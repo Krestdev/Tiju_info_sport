@@ -126,9 +126,9 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                 publish_on: mergeDateAndTime(data)
             });
         },
-        onSuccess() {
+        onSuccess(response) {
             onOpenChange(false);
-            toast.success("Article publié avec succès");
+            toast.success(`Article programmé le: ${response.data.publish_on}`);
             queryClient.invalidateQueries({ queryKey: ["articles"] });
         },
         retry: 5,
@@ -221,39 +221,6 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                                     </FormItem>
                                 )}
                             />
-
-                            {/* <FormField
-                                control={form.control}
-                                name="date"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>{"Date de publication"}</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant={"outline"}
-                                                        className="w-full h-[40px] text-left font-normal rounded-none"
-                                                    >
-                                                        {field.value ? format(field.value, "PPP") : "Choisir une date"}
-                                                        <LuCalendarDays className="ml-auto h-4 w-4" />
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <DatePicker
-                                                    selected={startDate}
-                                                    onChange={(date) => setStartDate(date)}
-                                                    timeInputLabel="Time:"
-                                                    dateFormat="MM/dd/yyyy h:mm aa"
-                                                    showTimeInput
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> */}
 
                             <FormField
                                 control={form.control}

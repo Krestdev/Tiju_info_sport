@@ -77,7 +77,7 @@ function ChangeRole({ children, selectedUser }: Props) {
 
     useEffect(() => {
         if (changeRoles.isSuccess) {
-            toast.success("Modifié avec succès");
+            toast.success("Role modifié avec succès");
             queryClient.invalidateQueries({ queryKey: ["user"] });
             setDialogOpen(false);
             form.reset();

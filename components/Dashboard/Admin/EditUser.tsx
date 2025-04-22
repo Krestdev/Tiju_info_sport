@@ -96,7 +96,7 @@ function EditUser({ children, selectedUser }: Props) {
 
     useEffect(() => {
         if (editUser.isSuccess) {
-            toast.success("Modifié avec succès");
+            toast.success("Utilisateur modifié avec succès");
             queryClient.invalidateQueries({ queryKey: ["user"] });
             setDialogOpen(false);
             form.reset();

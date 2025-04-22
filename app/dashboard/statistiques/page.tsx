@@ -61,7 +61,7 @@ const DashbordPage = () => {
 
     const grid = [
         {
-            value: art ? art.length : 0,
+            value: art ? art.filter(a => a.status === "published").length : 0,
             category: "Articles publiés",
             bgColor: "bg-[#0128AE]/10",
             color: "text-[#182067]"
@@ -110,7 +110,7 @@ const DashbordPage = () => {
                     link={""}
                     setDateRanges={setDateRanges}
                     dateRanges={dateRanges.publication}
-                    rangeKey={"publication"}                >
+                    rangeKey={"publication"} >
                     <GridDash tableau={grid} value={values.publication} dateRanges={dateRanges} rangeKey={"publication"} />
                 </Compo>
                 <Compo
