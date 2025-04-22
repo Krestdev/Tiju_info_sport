@@ -23,7 +23,7 @@ const config: Config = {
 				mono: ["var(--font-mono)", ...fontFamily.mono],
 			  },
 			colors: {
-				category: "#A1A1A1",
+				category: "#212121",
 				paragraph: "#545454",
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

@@ -47,7 +47,7 @@ export default function Register() {
   const signUp = useMutation({
     mutationKey: ["register"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axiosClient.post<User>("users", {
+      return axiosClient.post<User>("users/create", {
         email: data.email,
           name: data.name,
           password: data.confirmPassword,

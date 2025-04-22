@@ -1,16 +1,16 @@
 'use client'
-import React from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
-import { Button } from './ui/button';
-import { Upload } from 'lucide-react';
-import { z } from 'zod';
 import axiosConfig from '@/api/api';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useStore from '@/context/store';
 import { useMutation } from '@tanstack/react-query';
+import { Upload } from 'lucide-react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
+import { toast } from '@/hooks/use-toast';
 
 interface Props {
     image:string|undefined;
@@ -34,7 +34,6 @@ const formSchema = z.object({
 function AddImage({image, onChange, alt}:Props) {
     const [open, setOpen] = React.useState(false);
     const axiosClient = axiosConfig();
-    const { activeUser } = useStore();
     const [preview, setPreview] = React.useState<string | undefined>(image);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -43,13 +42,28 @@ function AddImage({image, onChange, alt}:Props) {
 
     const uploadImage = useMutation({
         mutationFn: (data:z.infer<typeof formSchema>)=>{
-            return axiosClient.post(`image/add`, {
-                "user_id": activeUser?.id,
+            return axiosClient.post<string>(`image/url`, {
                 file: data.file
             }, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                   }
+            })
+        },
+        onSuccess:(response)=>{
+            toast({
+                title: "Image enregistrée",
+                description: "Votre image a été importée avec succès !"
+            });
+            onChange(response.data);
+            setOpen(false);
+        },
+        onError: (error)=>{
+            console.log(error);
+            toast({
+                variant: "warning",
+                title: "Erreur",
+                description: "Nous avons rencontré un problème lors de l'enregistrement de votre image"
             })
         }
     });
@@ -86,9 +100,9 @@ function AddImage({image, onChange, alt}:Props) {
         <DialogTrigger asChild>
             {
                 image ? 
-                <div className='relative'>
-                    <img src={`${process.env.NEXT_PUBLIC_API}${image}`} alt={alt ?? "image"} className='w-full h-[160px] object-cover'/>
-                    <Button family={"sans"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10'>{"Remplacer"}</Button>
+                <div className='relative max-w-sm'>
+                    <img src={`${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${image.substring(1)}`} alt={alt ?? "image"} className='w-full h-[160px] object-cover'/>
+                    <Button family={"sans"} variant={"ghost"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10 bg-white'>{"Remplacer l'image"}</Button>
                 </div>
                 :
                 <button className='flex flex-col gap-2 items-center justify-center max-w-sm border border-dashed border-primary/20 bg-gray-50 py-10 px-7'>
@@ -125,7 +139,7 @@ function AddImage({image, onChange, alt}:Props) {
                             <FormMessage/>
                         </FormItem>
                     )}/>
-                    <Button type="submit" family={"sans"}>{"Insérer l'image"}</Button>
+                    <Button type="submit" family={"sans"} isLoading={uploadImage.isPending} disabled={uploadImage.isPending}>{"Insérer l'image"}</Button>
                 </form>
             </Form>
         </DialogContent>

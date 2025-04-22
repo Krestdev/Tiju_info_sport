@@ -46,7 +46,7 @@ async function Page({ params }: { params: Promise<{ category: string }> }) {
                 {/**Articles map */}
                     {currentPublishedArticles.length > 1 &&
                 <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
-                    {currentPublishedArticles.slice(0,6).map(article=>(
+                    {currentPublishedArticles.map(article=>(
                         <ArticlePreview key={article.id} {...article} />
                     ))}  
                 </div>

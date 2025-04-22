@@ -49,7 +49,7 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                 <div className='flex flex-col gap-4'>
                     <Link href={`/${currentCategory.slug}`} className={"h-10 px-4 inline-flex items-center gap-2 border border-gray-200 uppercase font-mono text-[14px] leading-[130%] tracking-[-2%] shrink-0 w-fit"}><span className='w-2 h-2' style={{backgroundColor: currentCategory?.color || "#0A0A0A"}}/> {currentCategory.title}</Link>
                     <h1>{currentArticle.title}</h1>
-                    <img src={currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
+                    <img src={currentArticle.imageurl ? `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API.length -4)}${currentArticle.imageurl.substring(1)}` : currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
                     <p className='font-semibold italic'>{currentArticle.summery}</p>
                     <div className='flex flex-col gap-2'>
                         <span className='font-bold text-gray-900'>{currentArticle.author.name}</span>
