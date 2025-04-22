@@ -147,10 +147,6 @@ const SettingsForm = () => {
 
     const firstData = setting[0] ? setting[0] : null;
 
-    // console.log("setting[0]", setting[0]);
-    // console.log("setting[0]", setting[0].data);
-    // console.log("firstData", firstData);
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
