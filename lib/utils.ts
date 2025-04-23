@@ -176,3 +176,14 @@ export const latestUpdates = (articles: Article[]): Article[] => {
     return articleDate >= twentyFourHoursAgo && articleDate <= now;
   });
 };
+
+//#Cleaning URLs
+export const cleanedUrl = (url: string): string => {
+  if (!url) return '';
+  return url.replace(/\\\//g, '/') // Supprime la barre oblique à la fin
+}
+//Let's set the image url to the api url
+//This is to avoid the problem of the image url being set to the api url with a backslash
+export const SetImageUrl = (url: string): string => {
+  return `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${url.replace(/\\\//g, '/')}`
+}

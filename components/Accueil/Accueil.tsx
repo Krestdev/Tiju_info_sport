@@ -14,10 +14,10 @@ import axiosConfig from "@/api/api";
 import { AxiosResponse } from "axios";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
-import Feed from "../feed";
 import ArticlePreview from "../articlePreview";
 import FeedTemplate from "../feed-template";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
+import ArticleBento from "../article-bento";
 
 const Accueil = () => {
   const { currentUser } = useStore();
@@ -25,6 +25,7 @@ const Accueil = () => {
   const axiosClient = axiosConfig();
 
   const { categories, publishedArticles, isLoading, isSuccess } = usePublishedArticles();
+  const filteredMainCategories = categories.filter(x=>x.articles.filter(y=>y.status==="published").length > 2);
   /* const categories = useQuery({
     queryKey: ["categories"],
     queryFn: () => {
@@ -132,7 +133,15 @@ const Accueil = () => {
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
             ))
         } */}
+        {filteredMainCategories.length > 0 && filteredMainCategories.slice(0, 1).map((category, index) => (
+          <ArticleBento data={category} key={index} />
+        ))
+        }
         {ads.isSuccess && ads.data.data.length > 0 && <PubsComp pub={ads.data.data.filter((x, i) => i !== randomAd)} taille={"h-[200px]"} clip={""} />}
+        {filteredMainCategories.length > 0 && filteredMainCategories.slice(1).map((category, index) => (
+          <ArticleBento data={category} key={index} />
+        ))
+        }
         {/*         {
             categories.length > 0 && categories.filter(x=>x.articles.length>1).slice(1,categories.length).map(category=>(
             <GridInfo key={category.id} gridAff={category} couleur={"bg-[#0A0E93]"} />
