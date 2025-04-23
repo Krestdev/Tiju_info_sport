@@ -37,6 +37,7 @@ import ShareWarning from "@/components/sharedWarning";
 import DatePubli from "./DatePubli";
 import DeleteValidation from "./DeleteValidation";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
+import EditArticlee from "./EditArticlee";
 
 const FormSchema = z.object({
     items: z.array(z.number()),
@@ -196,22 +197,22 @@ function ArticleTable() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const getFilteredItems = () => {
         const slicedItems = filterData.slice(startIndex, startIndex + itemsPerPage);
-        
-        switch(current) {
-          case "tous":
-            return slicedItems;
-          case "published":
-            return slicedItems.filter(x => x.status === "published");
-          case "deleted":
-            return slicedItems.filter(x => x.status === "deleted");
-          case "draft":
-            return slicedItems.filter(x => x.status === "draft" && (new Date(x.publish_on) <= new Date() || x.publish_on === ""));
-          default: 
-            return slicedItems.filter(x => x.status === "draft" && new Date(x.publish_on) > new Date());
+
+        switch (current) {
+            case "tous":
+                return slicedItems;
+            case "published":
+                return slicedItems.filter(x => x.status === "published");
+            case "deleted":
+                return slicedItems.filter(x => x.status === "deleted");
+            case "draft":
+                return slicedItems.filter(x => x.status === "draft" && (new Date(x.publish_on) <= new Date() || x.publish_on === ""));
+            default:
+                return slicedItems.filter(x => x.status === "draft" && new Date(x.publish_on) > new Date());
         }
-      };
-      
-      const currentItems = getFilteredItems();
+    };
+
+    const currentItems = getFilteredItems();
 
     const totalPages = Math.ceil(filterData.length / itemsPerPage);
 
@@ -329,9 +330,12 @@ function ArticleTable() {
                                                                                 item.status === "deleted" ? "Corbeille" : item.status === "draft" && item.publish_on !== "" ? "Programmé" : ""
                                                                         }</TableCell>
                                                                         <TableCell className="flex gap-4 justify-center">
-                                                                            <EditArticle donnee={item} nom={item.title}>
+                                                                            <EditArticlee donnee={item}>
                                                                                 <LuSquarePen className="size-5 cursor-pointer" />
-                                                                            </EditArticle>
+                                                                            </EditArticlee>
+                                                                            {/* <EditArticle donnee={item} nom={item.title}>
+                                                                                <LuSquarePen className="size-5 cursor-pointer" />
+                                                                            </EditArticle> */}
                                                                             <DeleteValidation id={selectedArticleId} action={item.status === "deleted" ? deleteArticle : articleToTrash.mutate} bouton={item.status === "deleted" ? "Supprimer définitivement" : "Ajouter a la corbeille"} message="Vous etes sur le point de supprimer" name={item.title}>
                                                                                 <Trash2 onClick={() => setSelectedArticleId(item.id)} className="text-red-400 size-5 cursor-pointer" />
                                                                             </DeleteValidation>

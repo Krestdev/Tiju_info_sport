@@ -20,7 +20,6 @@ type Props = {
 };
 
 function ShareWarning({ children, id, action, name = "an element", message, bouton }: Props) {
-console.log(id);
 
   return (
     <Dialog>
