@@ -6,6 +6,7 @@ import LikeArticle from '@/app/[category]/[slug]/like-article';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Props {
     data: Article;
@@ -18,7 +19,7 @@ function ViewArticle({ data, full }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-            <Button size={ full ? "default" : "icon"} variant={"outline"}>{full ? "Prévisualiation" : <Eye/>}</Button>
+            <Button size={ full ? "default" : "icon"} className={cn(full && "max-w-sm w-full")} variant={"outline"}>{full ? "Prévisualiation" : <Eye/>}</Button>
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>

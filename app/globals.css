@@ -182,7 +182,7 @@
     text-decoration: line-through;
   }
   .article-category{
-    @apply font-mono font-medium leading-[130%] text-[20px] uppercase text-category; 
+    @apply font-mono font-medium leading-[130%] text-[18px] sm:text-[20px] uppercase text-category; 
   }
   .article-title{
     @apply font-mono font-medium leading-[130%] tracking-[-2%] text-[20px] sm:text-[24px] lg:text-[28px] text-gray-900 line-clamp-2;

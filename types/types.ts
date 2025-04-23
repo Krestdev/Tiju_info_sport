@@ -164,7 +164,7 @@ type Settings = {
     company?: string,
     email?: string,
     address?: string,
-    logo?: string,
+    imageurl?: string,
     description?: string,
     phone?: string,
     whatsapp?: string,
@@ -172,3 +172,15 @@ type Settings = {
     instagram?: string,
     x?: string
 }
+
+type ConfigProps = {
+    company:string;
+    phone:string;
+    email:string;
+    imageurl:string;
+    address:string;
+    facebook:string;
+    instagram:string;
+    x:string;
+    description:string;
+  }

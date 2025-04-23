@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { toast } from '@/hooks/use-toast';
+import { SetImageUrl } from '@/lib/utils';
 
 interface Props {
     image:string|undefined;
@@ -101,11 +102,11 @@ function AddImage({image, onChange, alt}:Props) {
             {
                 image ? 
                 <div className='relative max-w-sm'>
-                    <img src={`${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${image.substring(1)}`} alt={alt ?? "image"} className='w-full h-[160px] object-cover'/>
-                    <Button family={"sans"} variant={"ghost"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10 bg-white'>{"Remplacer l'image"}</Button>
+                    <img src={`${SetImageUrl(image)}`} alt={alt ?? "image"} className='w-full h-[160px] object-cover'/>
+                    <Button family={"sans"} variant={"ghost"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10 bg-white' onClick={(e)=>{e.preventDefault(); setOpen(true)}}>{"Remplacer l'image"}</Button>
                 </div>
                 :
-                <button className='flex flex-col gap-2 items-center justify-center max-w-sm border border-dashed border-primary/20 bg-gray-50 py-10 px-7'>
+                <button className='flex flex-col gap-2 items-center justify-center max-w-sm border border-dashed border-primary/20 bg-gray-50 py-10 px-7' onClick={(e)=>{e.preventDefault(); setOpen(true)}}>
                     <Upload size={40} className='text-paragraph'/>
                     <p>{"Ajouter une image"}</p>
                     <span className='text-sm text-gray-400'>{"Taille maximale 2 Mo"}</span>

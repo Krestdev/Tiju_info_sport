@@ -22,75 +22,71 @@ const Footbar = () => {
     const params = useQuery({
         queryKey: ["settings"],
         queryFn: ()=>{
-            return axiosClient.get("param/show");
+            return axiosClient.get<ConfigProps[]>("param/show");
         }
     });
 
-    React.useEffect(()=>{
-        if(params.isSuccess){
-            console.log(params.data.data);
-        }
-    }, [params.isSuccess])
+    const sections = useQuery({
+            queryKey: ["sections"],
+            queryFn: () => {
+                return axiosClient.get<{ title: string, id: number, content: Ressource[] }[]>(
+                    `/footer/show`
+                );
+            },
+        });
 
     if(isDashboard){
         return null;
     }
 
     return (
-        isSuccess && categories.length > 0 ?
-        <div className='w-full flex flex-col items-center justify-center gap-8 mt-10'>
-            <div className='max-w-[1280px] w-full flex flex-col md:flex-row items-start md:items-center justify-between px-5 py-3 gap-3 border-b border-[#E4E4E4]'>
-                <Logo logoSize={"size-[50px]"} textClass='text-3xl'/>
-                <div className='flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-black'>
-                    <div className='flex flex-row gap-6 '>
-                        <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
-                            <Button variant={"outline"} size={"icon"}>
-                                <FaFacebook size={20} />
-                            </Button>
-                        </Link>
-                        <Link href={'https://www.facebook.com/profile.php?id=100064177984379'} target='_blank'>
-                            <Button variant={"outline"} size={"icon"}>
-                                <FaXTwitter size={20} />
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
+        isSuccess && categories.length > 0 &&
+        <section className="border-t border-gray-200 divide-y divide-gray-200">
+            <div className='containerBloc py-3 flex flex-wrap justify-between items-center gap-4'>
+                <Logo logoSize="size-[50px]" textClass="text-3xl" />
+                <span className='inline-flex gap-3 items-center'>
+                    <a href='https://www.facebook.com'><Button size={"icon"} variant={"outline"}><FaFacebook size={20}/></Button></a>
+                    <a href='https://www.twitter.com'><Button size={"icon"} variant={"outline"}><FaXTwitter size={20} /></Button></a>
+                </span>
             </div>
-            <div className='w-full flex items-center justify-center'>
-                <div className='max-w-[1280px] w-full flex flex-col md:flex-row gap-7 px-5 py-8'>
-                    <div className='max-w-[320px] flex flex-col w-full gap-4'>
-                        <h4 className='uppercase text-[#A1A1A1]'>{"Catégories"}</h4>
-                        <div className='flex flex-col gap-3'>
-                            {
-                                categories.filter(x=>!x.parent).slice(0, 6).map((x, i) => (
-                                    <Link href={`/user/category/${x.title}`} key={i} className='uppercase font-mono font-medium text-[14px] leading-[18.2px]'>{x.title}</Link>
-                                ))
-                            }
+                <div className='w-full'>
+                    <div className='containerBloc flex flex-wrap gap-7 pt-6 sm:pt-8 pb-8 sm:pb-10 lg:pb-14'>
+                        <div className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
+                            <span className='text-category'>{"catégories"}</span>
+                            <ul role="list" className='flex flex-col gap-3'>
+                                {categories.filter(x=>x.footershow === true).map((item, i)=>(
+                                    <li className='font-medium' key={i}><Link href={`/${item.slug}`}>{item.title}</Link></li>
+                                ))}
+                            </ul>
                         </div>
-                    </div>
-                    <div className='max-w-[320px] flex flex-col w-full gap-4'>
-                        <h4 className='uppercase text-[#A1A1A1]'>{categories[0].title}</h4>
-                        <div className='flex flex-col gap-2'>
-                            {
-                                [...new Set(categories.filter(x => x.parent === categories[0].id).flatMap(x => x.articles).map(x => x.type))].map((x, i) => (
-                                    <Link href={`/user/${categories[0].title}/${x}`} key={i} className='uppercase font-mono font-medium text-[14px] leading-[18.2px]'>{x}</Link>
-                                ))
-                            }
+                        <div className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
+                            <span className='text-category'>{"sports"}</span>
+                            <ul role="list" className='flex flex-col gap-3'>
+                                {categories.filter(x=>x.parent === null).map((item, i)=>(
+                                    <li className='font-medium' key={i}><Link href={`/${item.slug}`}>{item.title}</Link></li>
+                                ))}
+                            </ul>
                         </div>
-                    </div>
-                    <div className='max-w-[320px] flex flex-col w-full gap-4'>
-                        <h4 className='uppercase text-[#A1A1A1]'>{"Ressources"}</h4>
-                        <div className='flex flex-col gap-3 uppercase font-mono font-medium'>
-                            <p className='font-medium text-[14px]'>{"Politique de confidentialité"}</p>
-                            <p className='font-medium text-[14px]'>{"Aide"}</p>
-                            <p className='font-medium text-[14px]'>{"Réclamation"}</p>
-                            <p className='font-medium text-[14px]'>{"Nous Contacter"}</p>
+                        <div className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
+                            <span className='text-category'>{"ressources"}</span>
+                            <ul role="list" className='flex flex-col gap-3'>
+                                <li className='font-medium'><Link href={"#"}>{"politique de confidentialité"}</Link></li>
+                                <li className='font-medium'><Link href={"#"}>{"aide"}</Link></li>
+                                <li className='font-medium'><Link href={"#"}>{"termes & conditions"}</Link></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>:
-        ""
+            {
+                params.isSuccess && params.data.data.length > 0 &&
+                <div className='w-full'>
+                    <div className='containerBloc flex flex-wrap justify-between gap-4 items-center pt-3 pb-5'>
+                        <span className='text-sm text-paragraph'>{`© 2025 ${params.data.data[0].company}. Tous droits réservés.`}</span>
+                        <span className='text-sm text-paragraph'>{"Propulsé par"} <a href="https://www.krestdev.com" target="_blank" className='text-primary'>{"krestdev"}</a></span>
+                    </div>
+                </div>
+            }
+        </section>
     )
 }
 

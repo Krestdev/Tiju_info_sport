@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react'
 import CategoryBadge from './categoryBadge';
-import { cn, slugify } from '@/lib/utils';
+import { cn, SetImageUrl, slugify } from '@/lib/utils';
 
 interface PreviewProps extends Article {
     version?: "default" | "text-only" | "main";
@@ -20,7 +20,7 @@ function ArticlePreview({version = "default", id, type, title, images, className
     if(version === "default"){
     return (
         <Link key={id} className="flex flex-col gap-5" href={`/${slugify(type)}/${slug}`}>
-            <img src={imageurl ? `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${imageurl.substring(1)}` : images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${images[0].id}`: "/images/no-image.jpg"} alt={title} className="w-full h-auto aspect-video rounded-md object-cover"/>
+            <img src={imageurl ? `${SetImageUrl(imageurl)}` : images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${images[0].id}`: "/images/no-image.jpg"} alt={title} className="w-full h-auto aspect-video rounded-md object-cover"/>
             <div className="flex flex-col">
                 <span className="article-category">{type}</span>
                     <h3 className='line-clamp-3'>{title}</h3>
@@ -36,7 +36,7 @@ function ArticlePreview({version = "default", id, type, title, images, className
                     <h1 className="text-white line-clamp-3">{title}</h1>
                 </div>
                 <div className='bg-gradient-to-t from-black/70 to-transparent absolute top-0 left-0 w-full h-full z-[2]'/>
-                <img src={imageurl ? `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${imageurl.substring(1)}` : images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${images[0].id}`: "/images/no-image.jpg"} alt={title} className="absolute top-0 left-0 w-full h-full object-cover" />
+                <img src={imageurl ? `${SetImageUrl(imageurl)}` : images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${images[0].id}`: "/images/no-image.jpg"} alt={title} className="absolute top-0 left-0 w-full h-full object-cover" />
             </Link>
         )
     }
