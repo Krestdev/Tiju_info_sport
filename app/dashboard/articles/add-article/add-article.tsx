@@ -23,6 +23,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
 import { useRouter } from 'next/navigation'
+import ViewArticle from '@/components/dashboard-preview-article'
 
 const statusArticle = [
     {
@@ -309,6 +310,30 @@ function AddArticlePage() {
                         </FormItem>
                     )} />
                 </span>
+                {
+                    !!activeUser && 
+                <span className='col-span-1 lg:col-span-2'>
+                    <ViewArticle data={{
+                        title: form.getValues("title") ?? "Titre de l'article", 
+                        summery: form.getValues("excerpt") ?? "Résumé de l'article", 
+                        description: form.getValues("content") ?? "Contenu", 
+                        type: form.getValues("category") ?? "Catégorie", 
+                        images:[],
+                        imageurl:form.getValues("featuredImage"),
+                        author: activeUser,
+                        comments: [],
+                        likes: [],
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                        status: "draft",
+                        headline: false,
+                        slug: "default-slug",
+                        publish_on: "",
+                        catid: 0,
+                        id: 1}}
+                        full />
+                </span>
+                }
                 <span className='col-span-1 lg:col-span-2'>
                     <Button family={"sans"} type="submit" className='w-full max-w-sm' disabled={postArticle.isPending} isLoading={postArticle.isPending}>{"Enregistrer"}</Button>
                 </span>
