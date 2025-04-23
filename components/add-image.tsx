@@ -102,10 +102,10 @@ function AddImage({image, onChange, alt}:Props) {
                 image ? 
                 <div className='relative max-w-sm'>
                     <img src={`${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${image.substring(1)}`} alt={alt ?? "image"} className='w-full h-[160px] object-cover'/>
-                    <Button family={"sans"} variant={"ghost"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10 bg-white'>{"Remplacer l'image"}</Button>
+                    <Button type='button' family={"sans"} variant={"ghost"} className='absolute left-1/2 bottom-2 -translate-x-1/2 z-10 bg-white'>{"Remplacer l'image"}</Button>
                 </div>
                 :
-                <button className='flex flex-col gap-2 items-center justify-center max-w-sm border border-dashed border-primary/20 bg-gray-50 py-10 px-7'>
+                <button type='button' className='flex flex-col gap-2 items-center justify-center max-w-sm border border-dashed border-primary/20 bg-gray-50 py-10 px-7'>
                     <Upload size={40} className='text-paragraph'/>
                     <p>{"Ajouter une image"}</p>
                     <span className='text-sm text-gray-400'>{"Taille maximale 2 Mo"}</span>

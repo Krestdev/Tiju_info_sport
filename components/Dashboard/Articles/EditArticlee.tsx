@@ -83,11 +83,12 @@ function EditArticlee({children, donnee}: Props) {
             excerpt: donnee.summery,
             content: donnee.description,
             headline: donnee.headline,
-            date: new Date(donnee.publish_on),
-            time: new Date(donnee.publish_on).toTimeString().slice(0, 5),
+            date: donnee.publish_on ? new Date(donnee.publish_on) : new Date(),
+            time: donnee.publish_on ? new Date(donnee.publish_on).toTimeString().slice(0, 5) : "09:00",
             delay: false,
             category: String(donnee.catid),
-            featuredImage: donnee.imageurl
+            featuredImage: donnee.imageurl,
+            status: "draft",
         }
     });
 
@@ -118,7 +119,7 @@ function EditArticlee({children, donnee}: Props) {
             const [hours, mins] = data.time.split(":");
             const publishDate = data.date.setUTCHours(Number(hours), Number(mins));
             if (data.delay === false) {
-                return axiosClient.post("articles", {
+                return axiosClient.patch(`/articles/${donnee.id}`, {
                     imageurl: data.featuredImage,
                     title: data.title,
                     slug: slugify(data.title),
@@ -130,7 +131,7 @@ function EditArticlee({children, donnee}: Props) {
                     "user_id": activeUser?.id.toString(),
                 })
             }
-            return axiosClient.post("articles", {
+            return axiosClient.patch(`/articles/${donnee.id}`, {
                 imageurl: data.featuredImage,
                 title: data.title,
                 slug: slugify(data.title),
@@ -146,11 +147,12 @@ function EditArticlee({children, donnee}: Props) {
         onSuccess: () => {
             toast({
                 variant: "success",
-                title: "Nouvel Article",
-                description: "Votre article a été enregistré avec succès !"
+                title: "Mise à jour Article",
+                description: "Votre article a été modifié avec succès !"
             });
             router.replace("/dashboard/articles");
             form.reset();
+            setDialogO(false);
 
         },
         onError: (error) => {
@@ -169,6 +171,8 @@ function EditArticlee({children, donnee}: Props) {
     })
 
     function onSubmit(data: z.infer<typeof formSchema>) {
+        console.log("Helo submit");
+        
         postArticle.mutate(data);
     }
 
@@ -331,11 +335,12 @@ function EditArticlee({children, donnee}: Props) {
                                         <FormControl>
                                            {donnee.imageurl ? <AddImage image={field.value} onChange={field.onChange} /> : <AddImageEdit image={field.value} onChange={field.onChange} idImage={donnee.images[0].id} />}
                                         </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )} />
                             </span>
                             <span className='col-span-1 lg:col-span-2'>
-                                <Button family={"sans"} type="submit" className='w-full max-w-sm' disabled={postArticle.isPending} isLoading={postArticle.isPending}>{"Enregistrer"}</Button>
+                                <Button onClick={() => console.log(form.getValues())} family={"sans"} type="submit" className='w-full max-w-sm' disabled={postArticle.isPending} isLoading={postArticle.isPending}>{"Enregistrer"}</Button>
                             </span>
                         </form>
                     </Form>

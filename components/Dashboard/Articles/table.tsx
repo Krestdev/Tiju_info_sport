@@ -175,6 +175,8 @@ function ArticleTable() {
             return axiosClient.patch(`/articles/${id}`, {
                 user_id: idU,
                 ...art,
+                publish_on: "",
+                category_id: art?.catid,
                 summary: art?.summery,
                 status: "draft"
             });

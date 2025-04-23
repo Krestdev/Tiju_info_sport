@@ -142,9 +142,6 @@ const SettingsForm = () => {
     }, [getSetting.isSuccess, getSetting.data, setting]);
 
 
-
-
-
     const firstData = setting[0] ? setting[0] : null;
 
     const form = useForm<z.infer<typeof formSchema>>({

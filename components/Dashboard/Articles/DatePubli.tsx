@@ -5,24 +5,28 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { format, isBefore, isSameDay, parse } from 'date-fns';
 import { LuCalendarDays, LuChevronDown } from 'react-icons/lu';
 import useStore from '@/context/store';
 import axiosConfig from '@/api/api';
 import { AxiosResponse } from 'axios';
 import { stat } from 'fs';
 import DatePicker from 'react-datepicker';
+import { Input } from '@/components/ui/input';
+import { CalendarIcon } from 'lucide-react';
+import { fr } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
     date: z.coerce.date(),
-    heure: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format invalide (HH:mm)"),
+    time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format invalide (HH:mm)"),
 });
 
 interface Props {
@@ -37,10 +41,6 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
 
     const { token, currentUser } = useStore();
     const queryClient = useQueryClient();
-    const [open, setOpen] = useState(false);
-    const [selectedHour, setSelectedHour] = useState<number | null>(null);
-    const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
-    const [submitFunction, setSubmitFunction] = useState(() => onSubmit2);
     const [programmer, setProgrammer] = useState(false);
 
     const axiosClient = axiosConfig({
@@ -78,8 +78,8 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         return isoString
     }
 
-    function mergeDateAndTime(data: { date: Date; heure: string }): string {
-        const [hours, minutes] = data.heure.split(':').map(Number);
+    function mergeDateAndTime(data: { date: Date; time: string }): string {
+        const [hours, minutes] = data.time.split(':').map(Number);
         const formatter = new Intl.DateTimeFormat('fr-FR', {
             timeZone: 'Africa/Douala',
             dateStyle: 'full',
@@ -92,7 +92,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         merged.setSeconds(0);
         merged.setMilliseconds(0);
 
-        // On récupère l'heure actuelle à Douala
+        // On récupère l'time actuelle à Douala
         const doualaTime = getDoualaDate(merged);
         return doualaTime;
     }
@@ -118,12 +118,15 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         mutationKey: ["articles"],
         mutationFn: (data: z.infer<typeof formSchema>) => {
             const idU = currentUser && String(currentUser.id)
+            const [hours, mins] = data.time.split(":");
+            const publishDate = data.date.setUTCHours(Number(hours), Number(mins));
             return axiosClient.patch(`/articles/${artId}`, {
                 ...article,
+                category_id: article?.catid,
                 summary: article?.summery,
                 user_id: idU,
                 status: "draft",
-                publish_on: mergeDateAndTime(data)
+                publish_on: new Date(publishDate).toISOString()
             });
         },
         onSuccess(response) {
@@ -148,21 +151,14 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             date: new Date(),
-            heure: "00:00",
+            time: format(new Date(), "HH:mm"),
         },
     });
+    const parseTime = (timeStr: string) => {
+        return parse(timeStr, "HH:mm", new Date());
+    };
 
-    function handleTimeChange(hour: number, minute: number) {
-        setSelectedHour(hour);
-        setSelectedMinute(minute);
-        form.setValue("heure", `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`);
-        setOpen(false);
-    }
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
-
-
-    const heure = Array.from({ length: 24 }, (_, i) => i)
-    const minute = Array.from({ length: 60 }, (_, i) => i)
+    const [times, setTimes] = useState<string>(format(new Date(), "HH:mm"));
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -189,95 +185,72 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article, formId }: Props) => {
                             {"Programmer la publication"}
                         </Button>}
                         {programmer && <div>
-                            <FormField
-                                control={form.control}
-                                name="date"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
+                            {
+                                <FormField control={form.control} name="date" render={({ field }) => (
+                                    <FormItem className='flex flex-col gap-2'>
                                         <FormLabel>{"Date de publication"}</FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
-                                                    <Button
-                                                        variant={"outline"}
-                                                        className="w-full h-[40px] text-left font-normal rounded-none"
-                                                    >
-                                                        {field.value ? format(field.value, "PPP") : "Choisir une date"}
-                                                        <LuCalendarDays className="ml-auto h-4 w-4" />
+                                                    <Button variant={"outline"} family={"sans"} className={cn("border-input justify-between")}>
+                                                        {field.value ? (
+                                                            format(field.value, "PPP", { locale: fr })
+                                                        ) : (
+                                                            <span>{"Sélectionner une date"}</span>
+                                                        )}
+                                                        <CalendarIcon size={20} />
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    initialFocus
-                                                    disabled={{ before: new Date() }}
-                                                />
+                                            <PopoverContent>
+                                                <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date <= new Date()} initialFocus />
                                             </PopoverContent>
                                         </Popover>
-                                        <FormMessage />
                                     </FormItem>
-                                )}
-                            />
-
+                                )} />
+                            }
                             <FormField
                                 control={form.control}
-                                name="heure"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>{"Heure"}</FormLabel>
-                                        <Popover open={open} onOpenChange={setOpen}>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className="w-full h-[40px] text-left font-normal rounded-none"
-                                                >
-                                                    {field.value || "Choisir une heure"}
-                                                    <LuChevronDown className="ml-auto h-4 w-4" />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-[200px] p-2 bg-white">
-                                                <div className="flex">
-                                                    <div className="h-[200px] w-1/2 flex flex-col gap-1 overflow-auto">
-                                                        {heure.map((hour) => (
-                                                            <Button
-                                                                key={hour}
-                                                                variant={selectedHour === hour ? "default" : "ghost"}
-                                                                className="w-full rounded-none"
-                                                                onClick={() => handleTimeChange(hour, selectedMinute ?? 0)}
-                                                            >
-                                                                {hour.toString().padStart(2, "0")}
-                                                            </Button>
-                                                        ))}
-                                                    </div>
-                                                    <div className="h-[200px] w-1/2 flex flex-col gap-1 overflow-auto">
-                                                        {minute.map((minute) => (
-                                                            <Button
-                                                                key={minute}
-                                                                variant={selectedMinute === minute ? "default" : "ghost"}
-                                                                className="w-full rounded-none"
-                                                                onClick={() => handleTimeChange(selectedHour ?? 0, minute)}
-                                                            >
-                                                                {minute.toString().padStart(2, "0")}
-                                                            </Button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                name="time"
+                                render={({ field }) => {
+                                    const selectedDate = useWatch({ control: form.control, name: "date" });
+                                    const now = new Date();
+                                    const isToday = selectedDate && isSameDay(selectedDate, now);
 
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Heure de publication</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="time"
+                                                    min={isToday ? format(now, "HH:mm") : undefined}
+                                                    {...field}
+                                                    onChange={(val) => {
+                                                        field.onChange(val.target.value);
+                                                        setTimes(val.target.value);
+                                                        
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            {isToday && field.value && (
+                                                <p className="text-sm text-red-500">
+                                                    {isBefore(parseTime(field.value), now)
+                                                        ? `L'heure doit être après ${format(now, "HH:mm")}`
+                                                        : null}
+                                                </p>
+                                            )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
+                            />
                             <Button
                                 variant={"outline"}
                                 type="button"
-                                className='rounded-none w-full mt-4'
+                                className="rounded-none w-full mt-4"
                                 onClick={form.handleSubmit(onSubmit2)}
                                 isLoading={programArticle.isPending}
+                                disabled={isBefore(parseTime(times), new Date())}
                             >
                                 {programArticle.isPending ? "Chargement..." : "Valider"}
                             </Button>
