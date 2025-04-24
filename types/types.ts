@@ -131,6 +131,14 @@ type Article = {
     catid?: number;
 };
 
+type StatusType = Article['status'];
+
+type CustomPage = { 
+    title: string;
+    id: number;
+    content: Ressource[] 
+}
+
 type ImageA = {
     id: number,
     size: number,

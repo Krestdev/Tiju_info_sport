@@ -27,7 +27,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ModalWarning from "@/components/modalWarning";
-import { Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
+import EditArticle from "./EditArticle";
 import { LuSend, LuSquarePen, LuUndo2 } from "react-icons/lu";
 import Link from "next/link";
 import axiosConfig from "@/api/api";
@@ -224,7 +225,12 @@ function ArticleTable() {
     if (isSuccess) {
         return (
             <div className="w-full flex flex-col gap-5 px-7 py-10">
-                <h1 className="uppercase text-[40px]">{"Tous Les Articles"}</h1>
+                <div className="flex flex-wrap gap-4 items-center">
+                    <h1>{"Tous Les Articles"}</h1>
+                    <Link href={"/dashboard/articles/add-article"} passHref>
+                        <Button family={"sans"}>{"Ajouter un article"}<PlusCircle/></Button>
+                    </Link>
+                </div>
                 <div className="flex flex-row items-center gap-3">
                     <Button onClick={() => setCurrent("tous")} className={`shadow-none text-[16px] rounded-[6px] ${current === "tous" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Tous"}</Button>
                     <Button onClick={() => setCurrent("published")} className={`shadow-none text-[16px] rounded-[6px] ${current === "published" ? "bg-[#182067] hover:bg-[#182067] text-white font-bold" : "bg-transparent hover:bg-gray-50 text-[#545454] font-normal"}`}>{"Publiés"}</Button>
@@ -266,9 +272,6 @@ function ArticleTable() {
                             })}
                         </SelectContent>
                     </Select>
-                    <Link href={"/dashboard/articles/add-article"} passHref>
-                        <Button className="rounded-none">{"Ajouter un Article"}</Button>
-                    </Link>
                 </span>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -302,9 +305,9 @@ function ArticleTable() {
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
-                                                            {currentItems.map((item, id) => {
+                                                            {currentItems.map((item) => {
                                                                 return (
-                                                                    <TableRow className="text-[16px]" key={id}>
+                                                                    <TableRow className="text-[16px]" key={item.id}>
                                                                         <TableCell className="border">
                                                                             <Checkbox
                                                                                 checked={field.value?.includes(item.id)}

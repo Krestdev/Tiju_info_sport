@@ -47,6 +47,7 @@ interface Props {
     onOpenChange: (open: boolean) => void;
     artId: number;
     article: Article | undefined;
+    formId: string;
 }
 
 const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
