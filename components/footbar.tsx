@@ -29,7 +29,7 @@ const Footbar = () => {
     const sections = useQuery({
             queryKey: ["sections"],
             queryFn: () => {
-                return axiosClient.get<{ title: string, id: number, content: Ressource[] }[]>(
+                return axiosClient.get<CustomPage[]>(
                     `/footer/show`
                 );
             },
