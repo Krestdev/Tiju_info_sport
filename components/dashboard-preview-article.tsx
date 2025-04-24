@@ -1,12 +1,9 @@
 'use client'
-import React from 'react'
-import ShareArticle from './shareArticle';
-import AddComment from '@/app/[category]/[slug]/add-comment';
-import LikeArticle from '@/app/[category]/[slug]/like-article';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Button } from './ui/button';
-import { Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Eye } from 'lucide-react';
+import React from 'react';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 interface Props {
     data: Article;
@@ -19,7 +16,7 @@ function ViewArticle({ data, full }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-            <Button size={ full ? "default" : "icon"} className={cn(full && "max-w-sm w-full")} variant={"outline"}>{full ? "Prévisualiation" : <Eye/>}</Button>
+            <Button size={ full ? "default" : "icon"} className={cn(full && "max-w-sm w-full")} variant={"outline"} family={"sans"}>{full ? "Prévisualiation" : <Eye/>}</Button>
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>
@@ -37,15 +34,6 @@ function ViewArticle({ data, full }: Props) {
                         {/**Display Update date if the article has been updated */}
                     </div>
                     <div dangerouslySetInnerHTML={{ __html: data.description }} />
-                    {/**Share Comment Like */}
-                    <div className='flex flex-wrap justify-between gap-4 items-center'>
-                        <span className='inline-flex gap-4 items-center'>
-                            <ShareArticle articleUrl={`#`} article={data}/>
-                            <LikeArticle article={data}/>
-                            <AddComment id={data.id}/>
-                        </span>
-                        <span className='leading-[130%] font-semibold text-black text-[16px] md:text-[18px]'>{"Aucun commentaire"}</span>
-                    </div>
                 </div>
                 <Button className='mt-3 sticky bottom-0' onClick={(e)=>{e.preventDefault(); setOpen(false)}}>{"Fermer"}</Button>
         </DialogContent>

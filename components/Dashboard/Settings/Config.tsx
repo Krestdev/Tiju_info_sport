@@ -11,7 +11,7 @@ import { z } from 'zod';
 import AddRessource from './AddRessource';
 import { LuSquarePen } from 'react-icons/lu';
 import DeleteValidation from '../Articles/DeleteValidation';
-import { LucidePlusCircle, Trash2 } from 'lucide-react';
+import { LucidePlusCircle, Save, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
 import useStore from '@/context/store';
@@ -19,6 +19,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AxiosResponse } from 'axios';
 import CheckboxList from './CheckboxList';
+import { slugify } from '@/lib/utils';
 
 const formSchema = z.object({
     items: z.array(z.number()),
@@ -66,7 +67,7 @@ const Config = () => {
                 {
                     footer_id: 4,
                     title: data.title,
-                    url: data.url,
+                    url: slugify(data.title),
                     content: data.content
                 }
             )
@@ -199,7 +200,7 @@ const Config = () => {
     };
 
     return (
-        <div className='flex flex-col gap-5 px-7 py-10'>
+        <div className='flex flex-col gap-5 px-7 pb-10'>
             <h1>{"Configuration du pied de page"}</h1>
             <Form {...form}>
                 <form className='flex flex-col gap-5 scrollbar' >
@@ -221,11 +222,14 @@ const Config = () => {
                     </div>
                     <Button
                         type='button'
-                        className='w-fit'
+                        className='max-w-sm'
                         disabled={editCategory.isPending}
+                        isLoading={editCategory.isPending}
                         onClick={form.handleSubmit(onSubmit)}
+                        family={"sans"}
+                        variant={"outline"}
                     >
-                        {editCategory.isPending ? "Enregistrement..." : "Sauvegarder"}
+                        {"Sauvegarder"}<Save/>
                     </Button>
                 </form>
             </Form>
@@ -249,11 +253,14 @@ const Config = () => {
                     </div>
                     <Button
                         type='button'
-                        className='w-fit'
+                        className='max-w-sm'
                         disabled={editCategory1.isPending}
+                        isLoading={editCategory1.isPending}
                         onClick={form1.handleSubmit(onSubmit1)}
+                        family={"sans"}
+                        variant={"outline"}
                     >
-                        {editCategory1.isPending ? "Enregistrement..." : "Sauvegarder"}
+                        {"Sauvegarder"}<Save/>
                     </Button>
                 </form>
             </Form>
@@ -266,7 +273,7 @@ const Config = () => {
                             <div key={i} className='flex gap-5'>
                                 <h4 className='uppercase'>{x.title}</h4>
                                 <div className='flex gap-2'>
-                                    <AddRessource title={x.title} content={x.content} url={x.url} action={updateContent.mutate} message={'modifier la ressource'}>
+                                    <AddRessource title={x.title} content={x.content} url={x.url} action={updateContent.mutate} message={'Modifier la ressource'}>
                                         <LuSquarePen onClick={() => setSelected(x.id)} className="size-5 cursor-pointer" />
                                     </AddRessource>
                                     {x.id && <DeleteValidation id={x.id} action={deleteContent} message={'Vous êtes sur le point de supprimer la ressource'} bouton={'Supprimer'} >
@@ -277,10 +284,10 @@ const Config = () => {
                         )
                     })
                 }
-                <AddRessource title={''} content={'vide'} url={''} action={createContent.mutate} message={'ajouter la ressource'}>
-                    <Button className='w-fit text-white'>
-                        <LucidePlusCircle />
+                <AddRessource title={''} content={'vide'} url={''} action={createContent.mutate} message={'Ajouter la ressource'}>
+                    <Button className='max-w-sm' family={"sans"}>
                         {"Ajouter une ressource"}
+                        <LucidePlusCircle />
                     </Button>
                 </AddRessource>
 

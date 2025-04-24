@@ -27,9 +27,9 @@ function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider defaultOpen={true} open={isFull} onOpenChange={setIsFull}>
       <AppSidebar />
       <SideBarMobile />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-lightgray">
         <NavAdmin />
-        <div className="relative gap-5 px-5 md:px-7 py-10">
+        <div className="relative px-7 py-10">
           {children}
         </div>
       </main>

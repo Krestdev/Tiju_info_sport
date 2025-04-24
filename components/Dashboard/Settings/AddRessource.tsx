@@ -11,6 +11,7 @@ import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import AppLexical from '../Articles/LexicalEditor'
+import TiptapEditor from '@/app/dashboard/articles/add-article/tiptap-content'
 
 const formSchema = z.object({
     title: z.string(),
@@ -49,7 +50,7 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="w-fit h-fit max-w-none p-10 scrollbar">
                 <DialogHeader>
-                    <DialogTitle className='capitalize'>{message}</DialogTitle>
+                    <DialogTitle className='text-2xl uppercase'>{message}</DialogTitle>
                     <DialogDescription>
                         {`Remplissez le formulaire pour ${message}`}
                     </DialogDescription>
@@ -63,20 +64,7 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
                                 <FormItem>
                                     <FormLabel>{"Titre de la ressource"}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} className='max-w-[384px] text-[24px]' placeholder='ex. Politique de confidentialité' />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name='url'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{"lien vers la ressource"}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} className='max-w-[384px] text-[24px]' placeholder='ex. https://exemple-de-chemin' />
+                                        <Input {...field} className='max-w-sm' placeholder='ex. Politique de confidentialité' />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -84,25 +72,33 @@ const AddRessource = ({ title, content, url, children, action, message }: Props)
                         />
                         {/* <FormField
                             control={form.control}
-                            name='content'
+                            name='url'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{"Contenu de la ressource"}</FormLabel>
+                                    <FormLabel>{"lien vers la ressource"}</FormLabel>
                                     <FormControl>
-                                        <AppLexical
-                                            initialValue={field.value}
-                                            onChange={(value) => {
-                                                field.onChange(value);
-                                            }}
-                                        />
+                                        <Input {...field} className='max-w-sm' placeholder='ex. https://www.exemple-de-chemin' />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         /> */}
+                        <FormField
+                            control={form.control}
+                            name='content'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{"Contenu de la ressource"}</FormLabel>
+                                    <FormControl>
+                                        <TiptapEditor value={field.value} onValueChange={field.onChange}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <div className='flex flex-row gap-2'>
-                            <Button type='button' onClick={form.handleSubmit(onSubmit)} className='w-fit capitalize'>{message}</Button>
-                            <Button type='button' onClick={() => { form.reset(), setDialogO(false) }} className='w-fit' variant={"outline"}>{"Annuler"}</Button>
+                            <Button type='button' onClick={form.handleSubmit(onSubmit)} className='max-w-sm' family={"sans"}>{message}</Button>
+                            <Button type='button' onClick={() => { form.reset(), setDialogO(false) }} className='max-w-sm' family={"sans"} variant={"outline"}>{"Annuler"}</Button>
                         </div>
                     </form>
                 </Form>

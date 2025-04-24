@@ -18,7 +18,7 @@ export function NavAdmin() {
     }
 
     return (
-        <div className='w-full flex flex-row justify-end md:justify-between px-7 py-2 '>
+        <div className='w-full flex flex-row justify-end md:justify-between px-7 py-2 bg-white'>
             <Button variant={"ghost"} onClick={() => setIsFull(!isFull)} className='hidden md:flex flex-row items-center gap-2 px-3 py-2 max-h-10 h-full'>
                 <LuMenu />
                 <p className='uppercase font-oswald font-medium text-[14px] leading-[18.2px]'>{"Menu"}</p>

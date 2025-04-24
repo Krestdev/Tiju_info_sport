@@ -67,14 +67,26 @@ const Footbar = () => {
                                 ))}
                             </ul>
                         </div>
-                        <div className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
+                        {sections.isSuccess && 
+                        sections.data.data.filter(x=>x.content.length > 0).map((el)=>(
+                            <div key={el.id} className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
+                                <span className='text-category'>{el.title}</span>
+                                <ul role="list" className='flex flex-col gap-3'>
+                                    {el.content.map((item, i)=>(
+                                        <li key={i} className='font-medium'><Link href={item.url}>{item.title}</Link></li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))
+                        }
+                        {/* <div className='max-w-80 w-full flex flex-col gap-4 text-sm font-mono uppercase'>
                             <span className='text-category'>{"ressources"}</span>
                             <ul role="list" className='flex flex-col gap-3'>
                                 <li className='font-medium'><Link href={"#"}>{"politique de confidentialité"}</Link></li>
                                 <li className='font-medium'><Link href={"#"}>{"aide"}</Link></li>
                                 <li className='font-medium'><Link href={"#"}>{"termes & conditions"}</Link></li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             {

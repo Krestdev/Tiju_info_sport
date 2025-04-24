@@ -131,6 +131,8 @@ type Article = {
     catid?: number;
 };
 
+type StatusType = Article['status'];
+
 type ImageA = {
     id: number,
     size: number,

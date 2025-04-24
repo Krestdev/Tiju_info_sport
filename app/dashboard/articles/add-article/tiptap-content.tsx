@@ -16,7 +16,14 @@ interface TiptapProps{
 function TiptapEditor({value, onValueChange}:TiptapProps) {
     const [mounted, setMounted] = useState(false)
     const editor = useEditor({
-        extensions: [StarterKit, Image, TextAlign.configure({
+        extensions: [StarterKit, 
+          Image.configure({
+            HTMLAttributes: {
+              inline: true,
+              class: "max-w-2/3 min-[750px]:max-w-[700px] w-full h-auto"
+            }
+          }), 
+          TextAlign.configure({
           types: ['heading', 'paragraph'],
           alignments: ['left', 'center', 'right', 'justify'],
           defaultAlignment: 'left',
