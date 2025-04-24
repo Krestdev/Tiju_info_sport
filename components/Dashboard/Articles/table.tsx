@@ -28,7 +28,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ModalWarning from "@/components/modalWarning";
 import { Trash2 } from "lucide-react";
-import EditArticle from "./EditArticle";
 import { LuSend, LuSquarePen, LuUndo2 } from "react-icons/lu";
 import Link from "next/link";
 import axiosConfig from "@/api/api";
