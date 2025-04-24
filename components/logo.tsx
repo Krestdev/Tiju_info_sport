@@ -25,7 +25,7 @@ function Logo({ showName = true, className, logoSize="size-[40px]", textClass }:
   if(isLoading){
     return <Skeleton className="w-96 h-10" />
   }
-  if(isSuccess){
+  if(isSuccess && data.data.length > 0){
     return (
       <Link
         href={"/"}
