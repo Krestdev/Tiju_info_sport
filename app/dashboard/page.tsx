@@ -39,7 +39,6 @@ const DashbordPage = () => {
     setValues((prev) => ({ ...prev, [key]: newValue }));
   };
 
-
   const { allArticles } = usePublishedArticles();
   const art = allArticles
 
@@ -83,7 +82,7 @@ const DashbordPage = () => {
       category: "Tous Les Commentaires",
       bgColor: "bg-[#01AE35]/10",
       color: "text-[#01AE35]"
-  },
+    },
     // {
     //   value: comment,
     //   category: "Commentaires Signalés",

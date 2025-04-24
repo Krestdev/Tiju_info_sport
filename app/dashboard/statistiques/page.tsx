@@ -185,16 +185,16 @@ const DashbordPage = () => {
                 </Compo> */}
                 <Compo
                     texte={"Vues par catégorie"}
-                    page={"Tous les articles"}
+                    page={"Catégories"}
                     width={"w-full"}
                     value={values.vuesCategorie}
-                    setValue={(val) => handleChange("vuesCategorie}", val)}
+                    setValue={(val) => handleChange("vuesCategorie", val)}
+                    link={"/dashboard/statistiques"}
                     isLink={false}
-                    link={""}
-                    setDateRanges={setDateRanges}
                     dateRanges={dateRanges.vuesCategorie}
-                    rangeKey={"vuesCategorie"}                >
-                    <CircChar value={values.vuesCategorie} dateRanges={dateRanges} rangeKey={"vuesCategorie"} />
+                    setDateRanges={setDateRanges}
+                    rangeKey="vuesCategorie">
+                    <CircChar rangeKey={"vuesCategorie"} value={values.vuesCategorie} dateRanges={dateRanges} />
                 </Compo>
             </div>
         </div>

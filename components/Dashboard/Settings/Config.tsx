@@ -64,7 +64,7 @@ const Config = () => {
         mutationFn: (data: Ressource) => {
             return axiosClient.post("/content/create",
                 {
-                    footer_id: 4,
+                    footer_id: 9,
                     title: data.title,
                     url: data.url,
                     content: data.content
@@ -81,7 +81,7 @@ const Config = () => {
         mutationFn: (data: Ressource) => {
             return axiosClient.patch(`/content/update/${selected}`,
                 {
-                    footer_id: 4,
+                    footer_id: 9,
                     title: data.title,
                     url: data.url,
                     content: data.content,
