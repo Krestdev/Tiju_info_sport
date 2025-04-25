@@ -2,6 +2,7 @@
 import InsertImage from '@/components/insert-image';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SetImageUrl } from '@/lib/utils';
 import { Editor } from '@tiptap/react'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
 import React from 'react'
@@ -48,7 +49,7 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
       }
 
       const addImage = (image:string) => {
-        editor.chain().focus().setImage({ src: `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API.length -4)}${image}` }).run()
+        editor.chain().focus().setImage({ src: SetImageUrl(image) }).run()
       }
 
 
