@@ -23,7 +23,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import TiptapEditor from './tiptap-content'
 import { useRouter } from 'next/navigation'
-import ViewArticle from '@/components/dashboard-preview-article'
 
 const statusArticle = [
     {
@@ -53,16 +52,19 @@ const formSchema = z.object({
     if(data.delay === false){
         return true;
     }
-    if(data.date.getFullYear() === current.getFullYear() && data.date.getMonth() === current.getMonth() && data.date.getDay()=== current.getDate()){
-        if(Number(hours)<current.getHours()){
+    if (data.date.getFullYear() === current.getFullYear() &&
+        data.date.getMonth() === current.getMonth() &&
+        data.date.getDay() + 1 === current.getDay()) {
+        if (Number(hours) < current.getHours()) {
             return false;
-        } else if(Number(hours)===current.getHours() && Number(mins)<=current.getMinutes()+15){
-            return false;
+        } else if (Number(hours) === current.getHours()) {
+            return Number(mins) >= current.getMinutes() + 15;
         } else {
             return true;
         }
+    } else {
+        return true;
     }
-    return true
 },{message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"]})
 
 function AddArticlePage() {
@@ -310,30 +312,6 @@ function AddArticlePage() {
                         </FormItem>
                     )} />
                 </span>
-                {
-                    !!activeUser && 
-                <span className='col-span-1 lg:col-span-2'>
-                    <ViewArticle data={{
-                        title: form.getValues("title") ?? "Titre de l'article", 
-                        summery: form.getValues("excerpt") ?? "Résumé de l'article", 
-                        description: form.getValues("content") ?? "Contenu", 
-                        type: form.getValues("category") ?? "Catégorie", 
-                        images:[],
-                        imageurl:form.getValues("featuredImage"),
-                        author: activeUser,
-                        comments: [],
-                        likes: [],
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString(),
-                        status: "draft",
-                        headline: false,
-                        slug: "default-slug",
-                        publish_on: "",
-                        catid: 0,
-                        id: 1}}
-                        full />
-                </span>
-                }
                 <span className='col-span-1 lg:col-span-2'>
                     <Button family={"sans"} type="submit" className='w-full max-w-sm' disabled={postArticle.isPending} isLoading={postArticle.isPending}>{"Enregistrer"}</Button>
                 </span>

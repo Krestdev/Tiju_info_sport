@@ -15,11 +15,11 @@ import { usePublishedArticles } from '@/hooks/usePublishedData'
 import { cn, slugify } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { format } from "date-fns"
+import { format, isBefore, isSameDay, parse } from "date-fns"
 import { fr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
-import React, { ReactNode } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { ReactNode, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import TiptapEditor from '@/app/dashboard/articles/add-article/tiptap-content'
@@ -49,21 +49,25 @@ const formSchema = z.object({
     time: z.string(),
     delay: z.boolean(),
 }).refine(data => {
+    
     const current = new Date();
     const [hours, mins] = data.time.split(":");
     if (data.delay === false) {
         return true;
     }
-    if (data.date.getFullYear() === current.getFullYear() && data.date.getMonth() === current.getMonth() && data.date.getDay() === current.getDate()) {
+    if (data.date.getFullYear() === current.getFullYear() &&
+        data.date.getMonth() === current.getMonth() &&
+        data.date.getDay() + 1 === current.getDay()) {
         if (Number(hours) < current.getHours()) {
             return false;
-        } else if (Number(hours) === current.getHours() && Number(mins) <= current.getMinutes() + 15) {
-            return false;
+        } else if (Number(hours) === current.getHours()) {
+            return Number(mins) >= current.getMinutes() + 15;
         } else {
             return true;
         }
+    } else {
+        return true;
     }
-    return true
 }, { message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"] })
 
 interface Props {
@@ -71,7 +75,7 @@ interface Props {
     donnee: Article;
 };
 
-function EditArticlee({children, donnee}: Props) {
+function EditArticlee({ children, donnee }: Props) {
     const axiosClient = axiosConfig();
     const { categories } = usePublishedArticles();
     const { activeUser } = useStore();
@@ -94,12 +98,13 @@ function EditArticlee({children, donnee}: Props) {
 
     // console.log(`${process.env.NEXT_PUBLIC_API}image/${donnee.images[0].id}`);
     console.log(donnee.imageurl);
-    
-    
+
+
 
     const [display, setDisplay] = React.useState(false);
     const [show, setShow] = React.useState(false);
     const [dialogO, setDialogO] = React.useState(false);
+
     React.useEffect(() => {
         if (form.getValues("status") === "published") {
             setDisplay(true);
@@ -172,7 +177,7 @@ function EditArticlee({children, donnee}: Props) {
 
     function onSubmit(data: z.infer<typeof formSchema>) {
         console.log("Helo submit");
-        
+
         postArticle.mutate(data);
     }
 
@@ -248,8 +253,9 @@ function EditArticlee({children, donnee}: Props) {
                                             <SelectContent>
                                                 {[...new Set(categories)].map((x) => {
                                                     return (
-                                                    <SelectItem key={x.id} value={x.id.toString()}>{x.title}</SelectItem>
-                                                )})}
+                                                        <SelectItem key={x.id} value={x.id.toString()}>{x.title}</SelectItem>
+                                                    )
+                                                })}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -333,7 +339,7 @@ function EditArticlee({children, donnee}: Props) {
                                     <FormItem className='flex flex-col gap-2'>
                                         <FormLabel>{"Photo de couverture"}</FormLabel>
                                         <FormControl>
-                                           {donnee.imageurl ? <AddImage image={field.value} onChange={field.onChange} /> : <AddImageEdit image={field.value} onChange={field.onChange} idImage={donnee.images[0].id} />}
+                                            {donnee.imageurl ? <AddImage image={field.value} onChange={field.onChange} /> : <AddImageEdit image={field.value} onChange={field.onChange} idImage={donnee.images[0].id} />}
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
