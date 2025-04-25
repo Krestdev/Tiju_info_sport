@@ -68,7 +68,7 @@ function Comment({comment, articleId}:CommentData) {
         className='size-10 rounded-full object-cover' 
         />
         <div className='flex flex-col gap-2'>
-            <span className='text-base leading-[130%]'>{comment.author.name}</span>
+            <span className='text-base leading-[130%]'>{comment.author.nick_name}</span>
             <p className='text-sm leading-[130%]'>{comment.message}</p>
             { activeUser && (
                 <div className='mt-2 flex items-center gap-4'>
