@@ -20,7 +20,7 @@ function TiptapEditor({value, onValueChange}:TiptapProps) {
           Image.configure({
             HTMLAttributes: {
               inline: true,
-              class: "max-w-2/3 min-[750px]:max-w-[700px] w-full h-auto"
+              class: "mx-auto max-w-[66vw] min-[750px]:max-w-[700px] w-full h-auto mt-2"
             }
           }), 
           TextAlign.configure({

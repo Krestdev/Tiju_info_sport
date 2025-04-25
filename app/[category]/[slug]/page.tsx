@@ -57,7 +57,7 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                         {/**Display Update date if the article has been updated */}
                         {currentArticle.updated_at !== currentArticle.created_at && <p className='text-gray-600'>{`Mis à jour le ${new Date(currentArticle.updated_at).toLocaleDateString()}`}</p>}
                     </div>
-                    <div dangerouslySetInnerHTML={{ __html: currentArticle.description }} className='select-none'/>
+                    <div dangerouslySetInnerHTML={{ __html: currentArticle.description }} className='select-none flex flex-col gap-2'/>
                     {/**Share Comment Like */}
                     <div className='flex flex-wrap justify-between gap-4 items-center'>
                         <span className='inline-flex gap-4 items-center'>
