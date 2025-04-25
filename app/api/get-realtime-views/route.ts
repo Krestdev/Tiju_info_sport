@@ -174,7 +174,8 @@ export async function GET(req: Request) {
         const pagePath = row.dimensionValues?.[2]?.value || "";
         const vues = Number(row.metricValues?.[0]?.value || 0);
 
-        if (!pagePath.startsWith("/detail-article")) {
+        const segments = pagePath.split("/").filter(Boolean);
+        if (segments.length !== 2) {
           return;
         }
 

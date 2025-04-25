@@ -91,7 +91,7 @@ const DashbordPage = () => {
         vuesSite: "semaine",
         vuesPeriode: "semaine",
         vuesPlateforme: "semaine",
-        plusVues: "semaine",
+        plusVues: "annee",
         vues: "semaine",
         vuesCategorie: "semaine",
     });
