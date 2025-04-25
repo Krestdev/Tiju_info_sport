@@ -119,7 +119,7 @@ const Accueil = () => {
           {/**Articles map */}
           {publishedArticles.length > 0 ?
             <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
-              {publishedArticles.slice(0, 6).map(article => (
+              {publishedArticles.slice(1, 7).map(article => (
                 <ArticlePreview key={article.id} {...article} />
               ))}
             </div>
