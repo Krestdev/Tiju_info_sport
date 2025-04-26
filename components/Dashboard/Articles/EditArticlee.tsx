@@ -49,25 +49,20 @@ const formSchema = z.object({
     time: z.string(),
     delay: z.boolean(),
 }).refine(data => {
-    
-    const current = new Date();
-    const [hours, mins] = data.time.split(":");
     if (data.delay === false) {
         return true;
     }
-    if (data.date.getFullYear() === current.getFullYear() &&
-        data.date.getMonth() === current.getMonth() &&
-        data.date.getDay() + 1 === current.getDay()) {
+    const current = new Date();
+    const [hours, mins] = data.time.split(":");
+    
+    if (isSameDay(data.date, current)) {
         if (Number(hours) < current.getHours()) {
             return false;
         } else if (Number(hours) === current.getHours()) {
             return Number(mins) >= current.getMinutes() + 15;
-        } else {
-            return true;
         }
-    } else {
-        return true;
     }
+    return true;
 }, { message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"] })
 
 interface Props {

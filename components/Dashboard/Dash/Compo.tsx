@@ -58,7 +58,6 @@ const Compo = ({ children, texte, page, width, setValue, isLink, link, setDateRa
               </SelectGroup>
             </SelectContent>
           </Select>
-
           <div className="relative">
             <DatePick
               onChange={(range) => handleChange(rangeKey, range)} 

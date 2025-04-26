@@ -15,7 +15,7 @@ import { usePublishedArticles } from '@/hooks/usePublishedData'
 import { cn, slugify } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { format } from "date-fns"
+import { format, isSameDay } from "date-fns"
 import { fr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 import React from 'react'
@@ -47,24 +47,20 @@ const formSchema = z.object({
     time:z.string(),
     delay:z.boolean(),
 }).refine(data=>{
-    const current = new Date();
-    const [hours, mins] = data.time.split(":");
     if(data.delay === false){
         return true;
     }
-    if (data.date.getFullYear() === current.getFullYear() &&
-        data.date.getMonth() === current.getMonth() &&
-        data.date.getDay() + 1 === current.getDay()) {
-        if (Number(hours) < current.getHours()) {
-            return false;
-        } else if (Number(hours) === current.getHours()) {
-            return Number(mins) >= current.getMinutes() + 15;
-        } else {
-            return true;
+    const current = new Date();
+        const [hours, mins] = data.time.split(":");
+        
+        if (isSameDay(data.date, current)) {
+            if (Number(hours) < current.getHours()) {
+                return false;
+            } else if (Number(hours) === current.getHours()) {
+                return Number(mins) >= current.getMinutes() + 15;
+            }
         }
-    } else {
         return true;
-    }
 },{message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"]})
 
 function AddArticlePage() {

@@ -2,82 +2,142 @@ import { NextResponse } from "next/server";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import { credentialsPath } from "../keysConfig";
 
-// const credentialsPath = {
-//   "type": process.env.TYPE,
-//   "project_id": process.env.PROJECT_ID,
-//   "private_key_id": process.env.PRIVATE_KEY_ID,
-//   "private_key": process.env.PRIVATE_KEY,
-//   "client_email": process.env.CLIENT_EMAIL,
-//   "client_id": process.env.CLIENT_ID,
-//   "auth_uri": process.env.AUTH_URI,
-//   "token_uri": process.env.TOKEN_URI,
-//   "auth_provider_x509_cert_url": process.env.AUTH_PROVIDER_X509_CERT_URL,
-//   "client_x509_cert_url": process.env.CLIENT_X509_CERT_URL,
-//   "universe_domain": process.env.UNIVERSE_DOMAIN,
-// };
-
-if (!credentialsPath) {
-  throw new Error("GOOGLE_APPLICATION_CREDENTIALS est invalide ou manquant dans .env");
+// Interface pour la réponse de l'API Analytics
+interface ReponseAnalytics {
+  rows?: {
+    dimensionValues?: { value?: string }[];
+    metricValues?: { value?: string }[];
+  }[];
 }
-const credentials = credentialsPath;
 
+// Interface pour les données de catégorie
+interface DonneesCategorie {
+  title: string;
+  vues: number;
+}
 
-const analyticsDataClient = new BetaAnalyticsDataClient({ credentials });
+// Catégories à exclure des résultats
+const CATEGORIES_A_EXCLURE = [
+  'Connexion',
+  'Profil',
+  'Unknown',
+  'Politique de confidentialité',
+  'Article Introuvable',
+  'Catégorie Introuvable',
+  'Termes et conditions',
+  'Test modification'
+];
 
-function getFormattedDate(date: Date): string {
+// Vérification des credentials
+if (!credentialsPath) {
+  throw new Error("Les identifiants Google Analytics sont invalides ou manquants");
+}
+
+const clientAnalytics = new BetaAnalyticsDataClient({ credentials: credentialsPath });
+
+/**
+ * Formate une date au format YYYY-MM-DD
+ * @param date Date à formater
+ * @returns Date formatée en string
+ */
+function formaterDate(date: Date): string {
   return date.toISOString().split("T")[0];
+}
+
+/**
+ * Filtre les titles pour ne garder que les catégories valides
+ * @param title title à vérifier
+ * @returns boolean indiquant si le title est une catégorie valide
+ */
+function estCategorieValide(title: string): boolean {
+  const titleNettoye = title.replace(' - Tyju infosports', '').trim();
+  const mots = titleNettoye.split(/\s+/);
+  
+  return (
+    mots.length <= 3 &&
+    !titleNettoye.includes(':') &&
+    /^[A-ZÀÂÇÉÈÊËÎÏÔÙÛÜŸ]/.test(titleNettoye) &&
+    !CATEGORIES_A_EXCLURE.includes(titleNettoye)
+  );
 }
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const propertyId = process.env.GA_PROPERTY_ID;
-  if (!propertyId) {
-    return NextResponse.json({ error: "GA_PROPERTY_ID est manquant dans .env" }, { status: 500 });
+  const idPropriete = process.env.GA_PROPERTY_ID;
+  
+  // Vérification de la propriété GA
+  if (!idPropriete) {
+    return NextResponse.json(
+      { erreur: "L'identifiant de propriété GA est manquant" },
+      { status: 500 }
+    );
   }
 
-  const startDate = url.searchParams.get("startDate");
-  const endDate = url.searchParams.get("endDate");
+  const dateDebut = url.searchParams.get("startDate");
+  const dateFin = url.searchParams.get("endDate");
 
-  if (!startDate || !endDate) {
-    return NextResponse.json({ error: "Les paramètres startDate et endDate sont requis" }, { status: 400 });
+  // Vérification des paramètres de date
+  if (!dateDebut || !dateFin) {
+    return NextResponse.json(
+      { erreur: "Les paramètres startDate et endDate sont requis" },
+      { status: 400 }
+    );
   }
 
   try {
-    console.log("📡 Récupération des données Google Analytics pour /category...");
+    console.log("📡 Récupération des données Google Analytics...");
 
-    // Si les dates ne sont pas au bon format, retourner une erreur
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const debut = new Date(dateDebut);
+    const fin = new Date(dateFin);
 
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return NextResponse.json({ error: "Les dates spécifiées sont invalides" }, { status: 400 });
+    // Validation des dates
+    if (isNaN(debut.getTime()) || isNaN(fin.getTime())) {
+      return NextResponse.json(
+        { erreur: "Les dates spécifiées sont invalides" },
+        { status: 400 }
+      );
     }
 
-    const [response] = await analyticsDataClient.runReport({
-      property: `properties/${propertyId}`,
-      dimensions: [{ name: "pagePath" }, { name: "pageTitle" }],
+    // Requête à l'API Analytics
+    const [reponse] = await clientAnalytics.runReport({
+      property: `properties/${idPropriete}`,
+      dimensions: [
+        { name: "pagePath" },
+        { name: "pageTitle" }
+      ],
       metrics: [{ name: "eventCount" }],
-      dateRanges: [{ startDate: getFormattedDate(start), endDate: getFormattedDate(end) }],
-    });
+      dateRanges: [{
+        startDate: formaterDate(debut),
+        endDate: formaterDate(fin)
+      }],
+    }) as ReponseAnalytics[];
 
-    const categoriesiews: Record<string, number> = {};
+    const vuesParCategorie: Record<string, number> = {};
 
-    if (response?.rows) {
-      response.rows.forEach((row) => {
-        const title = row.dimensionValues?.[1]?.value || "Unknown";
-        const vues = Number(row.metricValues?.[0]?.value || 0);
-
-        if (title.includes("category ")) {
-          categoriesiews[title] = (categoriesiews[title] || 0) + vues;
-        }
+    // Traitement des résultats
+    if (reponse?.rows) {
+      reponse.rows.forEach((ligne) => {
+        const title = ligne.dimensionValues?.[1]?.value || "Unknown";
+        const vues = Number(ligne.metricValues?.[0]?.value || 0);
+        vuesParCategorie[title] = (vuesParCategorie[title] || 0) + vues;
       });
     }
 
-    const categories = Object.entries(categoriesiews).map(([title, vues]) => ({ title, vues }));
+    // Formatage et filtrage des résultats
+    const categories = Object.entries(vuesParCategorie)
+      .filter(([title]) => title.endsWith(' - Tyju infosports'))
+      .map(([title, vues]) => ({
+        title: title.replace(' - Tyju infosports', '').trim(),
+        vues
+      }))
+      .filter(({ title }) => estCategorieValide(title));
 
     return NextResponse.json({ categories });
-  } catch (error) {
-    console.log("❌ Erreur API Google Analytics :", error);
-    return NextResponse.json({ error: "Erreur API Google Analytics", details: error }, { status: 500 });
+  } catch (erreur) {
+    console.error("❌ Erreur API Google Analytics :", erreur);
+    return NextResponse.json(
+      { erreur: "Erreur lors de la récupération des données Analytics", details: erreur },
+      { status: 500 }
+    );
   }
 }

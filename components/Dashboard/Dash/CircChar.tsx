@@ -69,7 +69,7 @@ export function CircChar({ value, dateRanges, rangeKey }: Props) {
             topCategories.push({
               categorie: "Autres",
               vues: totalOtherViews,
-              fill: chartColors[4], // Utilisation de la 5ème couleur
+              fill: chartColors[4], 
             });
           }
 
