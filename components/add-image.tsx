@@ -84,7 +84,6 @@ function AddImage({image, onChange, alt}:Props) {
             }
             reader.readAsDataURL(file)
         
-            // Définir la valeur du formulaire
             form.setValue("file", file)
           };
 
