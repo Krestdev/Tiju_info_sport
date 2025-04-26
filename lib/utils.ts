@@ -99,7 +99,7 @@ export function sortArticles(articles:Article[]){
 export function articleDate(value: string): string {
   const date = new Date(value);
   const today = new Date();
-  
+
   // Vérifier si la date est invalide
   if (isNaN(date.getTime())) {
     return "Date inconnue";
@@ -109,7 +109,11 @@ export function articleDate(value: string): string {
   const diffInMilliseconds = today.getTime() - date.getTime();
   const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
   const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
+
+  // Reset hours to 0 for pure date comparison
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const dateMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffInDays = Math.floor((todayMidnight.getTime() - dateMidnight.getTime()) / (1000 * 60 * 60 * 24));
 
   // Formater les options de date
   const options: Intl.DateTimeFormatOptions = { 
@@ -117,14 +121,11 @@ export function articleDate(value: string): string {
     month: 'long' 
   };
 
-  // Ajouter l'année si différente de l'année en cours
   if (date.getFullYear() !== today.getFullYear()) {
     options.year = 'numeric';
   }
 
-  // Déterminer le format approprié
   if (diffInDays === 0) {
-    // Aujourd'hui
     if (diffInHours < 1) {
       if (diffInMinutes < 1) {
         return "Publié à l'instant";
@@ -134,13 +135,13 @@ export function articleDate(value: string): string {
     return `Publié il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ''}`;
   } else if (diffInDays === 1) {
     return "Publié hier";
-  } else if (diffInDays < 7) {
-    return `Publié il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+  } else if (diffInDays > 1 && diffInDays < 7) {
+    return `Publié il y a ${diffInDays} jours`;
   } else {
-    // Format de date classique
     return `Publié le ${date.toLocaleDateString('fr-FR', options)}`;
   }
 }
+
 
 
 //Slug generator
