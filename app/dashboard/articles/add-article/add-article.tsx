@@ -69,7 +69,7 @@ const formSchema = z.object({
 
 function AddArticlePage() {
     const axiosClient = axiosConfig();
-    const {categories} = usePublishedArticles();
+    const {categories, allchildCategories } = usePublishedArticles();
     const { activeUser } = useStore();
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -221,7 +221,7 @@ function AddArticlePage() {
                                     <SelectValue placeholder="Sélectionner une catégorie"/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {[...new Set(categories)].map((x)=>(
+                                    {[...new Set(allchildCategories)].map((x)=>(
                                         <SelectItem key={x.id} value={x.id.toString()}>{x.title}</SelectItem>
                                     ))}
                                 </SelectContent>
