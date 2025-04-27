@@ -49,14 +49,14 @@ async function ArticlePage({ params }: { params: Promise<{  category: string; sl
                 <div className='flex flex-col gap-4'>
                     <Link href={`/${currentCategory.slug}`} className={"h-10 px-4 inline-flex items-center gap-2 border border-gray-200 uppercase font-mono text-[14px] leading-[130%] tracking-[-2%] shrink-0 w-fit"}><span className='w-2 h-2' style={{backgroundColor: currentCategory?.color || "#0A0A0A"}}/> {currentCategory.title}</Link>
                     <h1>{currentArticle.title}</h1>
-                    <img src={currentArticle.imageurl ? SetImageUrl(currentArticle.imageurl) : currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
-                    <p className='font-semibold italic'>{currentArticle.summery}</p>
                     <div className='flex flex-col gap-2'>
                         <span className='font-bold text-gray-900'>{currentArticle.author.name}</span>
                         <p className='text-gray-600'>{currentArticle.publish_on.length > 0 ? articleDate(currentArticle.publish_on) : articleDate(currentArticle.created_at)}</p>
                         {/**Display Update date if the article has been updated */}
                         {currentArticle.updated_at !== currentArticle.created_at && <p className='text-gray-600'>{`Mis à jour le ${new Date(currentArticle.updated_at).toLocaleDateString()}`}</p>}
                     </div>
+                    <img src={currentArticle.imageurl ? SetImageUrl(currentArticle.imageurl) : currentArticle.images.length > 0 ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`: "/images/no-image.jpg"} alt={currentArticle.title} className="w-full h-auto aspect-video object-cover rounded-md"/>
+                    <p className='font-semibold italic'>{currentArticle.summery}</p>
                     <div dangerouslySetInnerHTML={{ __html: currentArticle.description }} className='select-none flex flex-col gap-2'/>
                     {/**Share Comment Like */}
                     <div className='flex flex-wrap justify-between gap-4 items-center'>
