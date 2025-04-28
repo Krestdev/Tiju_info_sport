@@ -193,3 +193,10 @@ export const cleanedUrl = (url: string): string => {
 export const SetImageUrl = (url: string): string => {
   return `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${url.replace(/\\\//g, '/')}`
 }
+export const SetImageObjectUrl = (image: ImageA[]) => {
+  if(image.length === 0){
+    return "/images/no-image.jpg";
+  } else {
+    return `${process.env.NEXT_PUBLIC_API}image/${image[0].id}`
+  }
+}
