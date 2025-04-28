@@ -5,18 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
-interface Props {
-    dateRanges: {
-        [key: string]: DateRange | undefined;
-    };
-    rangeKey: string;
-}
 
 interface ApiResponse {
     articleStats: Record<string, Record<string, number>>;
 }
 
-const Page = ({ dateRanges, rangeKey }: Props) => {
+const Page = () => {
     const [chartData, setChartData] = useState<{
         title: string;
         value: number;
@@ -77,11 +71,6 @@ const Page = ({ dateRanges, rangeKey }: Props) => {
             setError(null);
             let queryParam = `interval=${value}`;
 
-            if (rangeKey && dateRanges[rangeKey]) {
-                const { from, to } = dateRanges[rangeKey]!;
-                queryParam = `from=${from?.toISOString() ?? ''}&to=${to?.toISOString() ?? ''}&interval=${value}`;
-            }
-
             const response = await fetch(`/api/get-realtime-views?${queryParam}`);
 
             if (!response.ok) {
@@ -103,7 +92,7 @@ const Page = ({ dateRanges, rangeKey }: Props) => {
         fetchViews();
         const interval = setInterval(fetchViews, 10000);
         return () => clearInterval(interval);
-    }, [value, dateRanges, rangeKey]);
+    }, [value]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
