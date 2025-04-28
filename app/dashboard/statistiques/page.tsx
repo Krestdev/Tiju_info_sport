@@ -25,8 +25,6 @@ const DashbordPage = () => {
         vuesCategorie: undefined,
     });
 
-    const axiosClient = axiosConfig();
-
     const handleChange = (key: string, newValue: string) => {
         setValues((prev) => ({ ...prev, [key]: newValue }));
     };
