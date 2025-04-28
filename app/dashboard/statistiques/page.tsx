@@ -14,7 +14,6 @@ import BarChar from "@/components/Dashboard/Stats/BarChart";
 import MostPopular from "@/components/Dashboard/Stats/MostPopular";
 import { DateRange } from "react-day-picker";
 import axiosConfig from "@/api/api";
-import { AxiosResponse } from "axios";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const DashbordPage = () => {
