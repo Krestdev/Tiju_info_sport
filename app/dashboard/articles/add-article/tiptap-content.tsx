@@ -3,6 +3,7 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { Image } from "@tiptap/extension-image"
 import TextAlign from '@tiptap/extension-text-align'
+import Youtube from '@tiptap/extension-youtube'
 
 import TiptapMenu from './tiptap-menu'
 import { useEffect, useState } from "react";
@@ -27,7 +28,11 @@ function TiptapEditor({value, onValueChange}:TiptapProps) {
           types: ['heading', 'paragraph'],
           alignments: ['left', 'center', 'right', 'justify'],
           defaultAlignment: 'left',
-        })],
+        }),
+      Youtube.configure({
+        controls: false,
+        nocookie: true
+      })],
         content: value,
         onUpdate: ({editor}) => {
             const currentValue = editor.getHTML();
