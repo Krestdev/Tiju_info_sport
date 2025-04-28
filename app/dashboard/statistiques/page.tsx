@@ -91,7 +91,7 @@ const DashbordPage = () => {
         vuesSite: "semaine",
         vuesPeriode: "semaine",
         vuesPlateforme: "semaine",
-        plusVues: "annee",
+        plusVues: "semaine",
         vues: "semaine",
         vuesCategorie: "semaine",
     });
@@ -159,7 +159,7 @@ const DashbordPage = () => {
                     page={"Tous les articles"}
                     width={"max-w-[400px] w-full"}
                     value={values.plusVues}
-                    setValue={(val) => handleChange("plusVues}", val)}
+                    setValue={(val) => handleChange("plusVues", val)}
                     isLink={false}
                     link={""}
                     setDateRanges={setDateRanges}

@@ -33,12 +33,11 @@ const Compo = ({ children, texte, page, width, setValue, isLink, link, setDateRa
 
   const handleValueChange = (value: string) => {
     setValue(value);
+    
   };  
 
   const handleChange = (key: string, newValue: DateRange | undefined) => {
     setDateRanges((prev) => ({...prev, [key]: newValue}));
-    console.log(key, newValue);
-    
   };
 
   return (

@@ -11,11 +11,6 @@ interface Props {
     rangeKey: string;
 }
 
-interface ArticleData {
-    title: string;
-    vues: number;
-}
-
 interface ApiResponse {
     articleStats: Record<string, Record<string, number>>;
 }
@@ -109,9 +104,6 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
         const interval = setInterval(fetchViews, 10000);
         return () => clearInterval(interval);
     }, [value, dateRanges, rangeKey]);
-
-    console.log(value, dateRanges, rangeKey);
-    
 
     return (
         <div className='flex flex-col px-5 py-3 gap-3 h-[208px]'>
