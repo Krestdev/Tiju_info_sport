@@ -100,27 +100,27 @@ export function articleDate(value: string): string {
   const date = new Date(value);
   const today = new Date();
 
-  // Vérifier si la date est invalide
   if (isNaN(date.getTime())) {
     return "Date inconnue";
   }
 
-  // Calculer les différences de temps
   const diffInMilliseconds = today.getTime() - date.getTime();
   const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
   const diffInHours = Math.floor(diffInMinutes / 60);
 
-  // Reset hours to 0 for pure date comparison
+  // Midnights pour comparaison sur les jours
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const dateMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const diffInDays = Math.floor((todayMidnight.getTime() - dateMidnight.getTime()) / (1000 * 60 * 60 * 24));
 
-  // Formater les options de date
+  const diffInWeeks = Math.floor(diffInDays / 7);
+  const diffInMonths = (today.getFullYear() - date.getFullYear()) * 12 + (today.getMonth() - date.getMonth());
+  const diffInYears = today.getFullYear() - date.getFullYear();
+
   const options: Intl.DateTimeFormatOptions = { 
     day: 'numeric', 
     month: 'long' 
   };
-
   if (date.getFullYear() !== today.getFullYear()) {
     options.year = 'numeric';
   }
@@ -135,12 +135,17 @@ export function articleDate(value: string): string {
     return `Publié il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ''}`;
   } else if (diffInDays === 1) {
     return "Publié hier";
-  } else if (diffInDays > 1 && diffInDays < 7) {
-    return `Publié il y a ${diffInDays} jours`;
+  } else if (diffInDays < 7) {
+    return `Publié il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+  } else if (diffInWeeks < 5) {
+    return `Publié il y a ${diffInWeeks} semaine${diffInWeeks > 1 ? 's' : ''}`;
+  } else if (diffInMonths < 12) {
+    return `Publié il y a ${diffInMonths} mois`;
   } else {
-    return `Publié le ${date.toLocaleDateString('fr-FR', options)}`;
+    return `Publié il y a ${diffInYears} an${diffInYears > 1 ? 's' : ''}`;
   }
 }
+
 
 
 
@@ -187,4 +192,11 @@ export const cleanedUrl = (url: string): string => {
 //This is to avoid the problem of the image url being set to the api url with a backslash
 export const SetImageUrl = (url: string): string => {
   return `${process.env.NEXT_PUBLIC_API?.substring(0, process.env.NEXT_PUBLIC_API?.length-4)}${url.replace(/\\\//g, '/')}`
+}
+export const SetImageObjectUrl = (image: ImageA[]) => {
+  if(image.length === 0){
+    return "/images/no-image.jpg";
+  } else {
+    return `${process.env.NEXT_PUBLIC_API}image/${image[0].id}`
+  }
 }
