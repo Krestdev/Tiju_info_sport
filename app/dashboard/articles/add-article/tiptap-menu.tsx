@@ -6,6 +6,7 @@ import { SetImageUrl } from '@/lib/utils';
 import { Editor } from '@tiptap/react'
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
 import React from 'react'
+import AddYoutubeVideo from './youtube';
 
 function TiptapMenu({editor}:{editor: Editor|null}) {
     if(!editor){
@@ -51,6 +52,12 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
       const addImage = (image:string) => {
         editor.chain().focus().setImage({ src: SetImageUrl(image) }).run()
       }
+
+    const addYoutubeVideo = (url:string) => {
+      editor.commands.setYoutubeVideo({
+        src: url
+      })
+    }
 
 
     return (
@@ -141,6 +148,7 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
               <AlignJustify/>
             </Button>
             <InsertImage image={undefined} onChange={addImage}/>
+            <AddYoutubeVideo addVideo={addYoutubeVideo}/>
 {/*             <button
               onClick={(e) =>{e.preventDefault(); editor.chain().focus().toggleCode().run()}}
               disabled={
