@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import useStore from "@/context/store";
 import GridDash from "@/components/Dashboard/Dash/GridDash";
-import { useQuery } from "@tanstack/react-query";
 import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import { CircChar } from "@/components/Dashboard/Dash/CircChar";
