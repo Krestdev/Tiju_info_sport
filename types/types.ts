@@ -18,6 +18,7 @@ type User = {
         location:string;
     }
     nick_name:string;
+    verified?: null | true;
 };
 
 // Type pour un utilisateur avec API Key

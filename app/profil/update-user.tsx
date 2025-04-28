@@ -1,6 +1,6 @@
 'use client'
 import axiosConfig from '@/api/api'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -13,6 +13,8 @@ import { z } from 'zod'
 import EditPassword from './edit-password'
 import { Label } from '@/components/ui/label'
 import EditPhoto from './edit-photo'
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 interface Props {
   user: User;
@@ -155,8 +157,12 @@ function UpdateUser({user}:Props) {
                 <FormMessage/>
               </FormItem>
             )}/>
-            <span className='col-span-1 sm:col-span-2'>
+            <span className='col-span-1 sm:col-span-2 flex gap-2 items-center flex-wrap'>
               <Button type="submit" isLoading={patchUser.isPending} disabled={patchUser.isPending}>{"Enregistrer"}</Button>
+              {
+                user.verified !== true &&
+              <Link className={cn(buttonVariants({variant: "secondary"}))} href="/authentification">{"Vérifier son compte"}</Link>
+              }
             </span>
         </form>
       </Form>

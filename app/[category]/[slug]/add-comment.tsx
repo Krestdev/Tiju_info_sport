@@ -8,6 +8,7 @@ import useStore from '@/context/store'
 import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useForm } from 'react-hook-form';
@@ -67,7 +68,16 @@ function AddComment({id}:Props) {
     })
 
     const onSubmit=(data:z.infer<typeof formSchema>)=>{
-        postComment.mutate(data);
+        if(activeUser?.verified !== true){
+            toast({
+                variant: "warning",
+                title: "Authentification requise !",
+                description: "Vous devez vérifier votre adresse mail pour commenter.",
+                action: <Link href="/authentification"><Button variant={"outline"}>{"Vérifier"}</Button></Link>
+            })
+        } else {
+            postComment.mutate(data);
+        }
     }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
