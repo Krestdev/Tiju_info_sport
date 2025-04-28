@@ -62,12 +62,12 @@ export default function Register() {
     },
     onSuccess: (response) => {
       //Let's make sure we set the user properly here
-      defineUser(response.data);
+      //defineUser(response.data);
       //console.log(response);
       toast({
         variant: "success",
-        title:"Inscription réuissie",
-        description: "Bienvenue sur Tyjuinfosport, vous pouvez maintenant accéder à votre profil et bien d'autres fonctionnalités"
+        title:"Inscription réuissie !",
+        description: "Un email avec un lien de vérification a été envoyé à votre adresse mail. Verfiez votre compte pour accéder à votre profil."
       });
       router.push("/");
     },

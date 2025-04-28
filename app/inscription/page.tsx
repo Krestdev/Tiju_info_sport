@@ -1,8 +1,9 @@
-import React from "react";
-import Register from "./register";
+
 import AuthRedirect from "@/components/auth-redirect";
+import Register from "./register";
 
 function Page() {
+  
   return (
     <AuthRedirect>
       <Register />
