@@ -14,7 +14,7 @@ import { toast } from '@/hooks/use-toast'
 import { usePublishedArticles } from '@/hooks/usePublishedData'
 import { cn, slugify } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, isBefore, isSameDay, parse } from "date-fns"
 import { fr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
@@ -54,7 +54,7 @@ const formSchema = z.object({
     }
     const current = new Date();
     const [hours, mins] = data.time.split(":");
-    
+
     if (isSameDay(data.date, current)) {
         if (Number(hours) < current.getHours()) {
             return false;
@@ -92,13 +92,14 @@ function EditArticlee({ children, donnee }: Props) {
     });
 
     // console.log(`${process.env.NEXT_PUBLIC_API}image/${donnee.images[0].id}`);
-    console.log(donnee.imageurl);
+    console.log(donnee);
 
 
 
     const [display, setDisplay] = React.useState(false);
     const [show, setShow] = React.useState(false);
     const [dialogO, setDialogO] = React.useState(false);
+    const queryClient = useQueryClient();
 
     React.useEffect(() => {
         if (form.getValues("status") === "published") {
@@ -127,6 +128,7 @@ function EditArticlee({ children, donnee }: Props) {
                     description: data.content,
                     status: data.status,
                     type: categories.find(x => x.id === Number(data.category))?.title,
+                    catid: Number(data.category),
                     "category_id": Number(data.category),
                     "user_id": activeUser?.id.toString(),
                 })
@@ -139,6 +141,7 @@ function EditArticlee({ children, donnee }: Props) {
                 description: data.content,
                 status: "draft",
                 type: categories.find(x => x.id === Number(data.category))?.title,
+                catid: Number(data.category),
                 "category_id": Number(data.category),
                 "user_id": activeUser?.id,
                 publish_on: new Date(publishDate).toISOString()
@@ -153,7 +156,7 @@ function EditArticlee({ children, donnee }: Props) {
             router.replace("/dashboard/articles");
             form.reset();
             setDialogO(false);
-
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         onError: (error) => {
             console.log(error);
