@@ -87,7 +87,7 @@ function EditArticlee({ children, donnee }: Props) {
             delay: false,
             category: String(donnee.catid),
             featuredImage: donnee.imageurl,
-            status: "draft",
+            status: donnee.status,
         }
     });
 
