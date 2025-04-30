@@ -119,6 +119,9 @@
   ::-webkit-scrollbar-thumb{
     @apply bg-primary hover:bg-primary-hover;
   }
+  figcaption {
+    @apply italic text-sm text-paragraph;
+  }
 }
 
 

@@ -7,15 +7,15 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { toast } from '@/hooks/use-toast';
 import React from 'react'
+import { set } from 'date-fns';
 
 interface Props {
     image:string|undefined;
-    onChange:(image:string)=>void;
-    alt?:string;
+    onChange:(image:string, caption?:string)=>void;
 }
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 1MB
@@ -28,14 +28,16 @@ const formSchema = z.object({
     })
     .refine(file => ACCEPTED_IMAGE_TYPES.includes(file.type), {
       message: "Seuls .jpg, .png et .webp sont acceptés"
-    })
+    }),
+    caption: z.string().optional()
 })
 
-function InsertImage({image, onChange, alt}:Props) {
+function InsertImage({image, onChange}:Props) {
 
     const [open, setOpen] = React.useState(false);
         const axiosClient = axiosConfig();
         const [preview, setPreview] = React.useState<string | undefined>(image);
+        const [imageDescription, setImageDescription] = React.useState<string | undefined>(undefined);
     
         const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
@@ -56,7 +58,7 @@ function InsertImage({image, onChange, alt}:Props) {
                     title: "Image enregistrée",
                     description: "Votre image a été importée avec succès !"
                 });
-                onChange(response.data);
+                onChange(response.data, imageDescription);
                 setOpen(false);
             },
             onError: (error)=>{
@@ -71,6 +73,7 @@ function InsertImage({image, onChange, alt}:Props) {
     
         const onSubmit = (data:z.infer<typeof formSchema>) => {
             uploadImage.mutate(data);
+            setImageDescription(data.caption);
         }
     
         const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,6 +130,15 @@ function InsertImage({image, onChange, alt}:Props) {
                             <FormItem>
                                 <FormControl>
                                     <Input type="file" accept="image/*" onChange={handleFileChange} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}/>
+                        <FormField control={form.control} name="caption" render={({field})=>(
+                            <FormItem>
+                                <FormLabel>{"Description de l'image (optionnelle)"}</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Légende de l'image" />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>

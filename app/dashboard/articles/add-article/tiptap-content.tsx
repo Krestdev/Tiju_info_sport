@@ -8,6 +8,7 @@ import Youtube from '@tiptap/extension-youtube'
 import TiptapMenu from './tiptap-menu'
 import { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
+import { Figure } from "@/extensions/imageWithCaption"
 
 interface TiptapProps{
     value:string;
@@ -32,7 +33,13 @@ function TiptapEditor({value, onValueChange}:TiptapProps) {
       Youtube.configure({
         controls: false,
         nocookie: true
-      })],
+      }),
+    Figure.configure({
+      HTMLAttributes: {
+        class: "mx-auto max-w-[66vw] min-[750px]:max-w-[700px] w-full h-auto mt-2"
+
+      }
+    })],
         content: value,
         onUpdate: ({editor}) => {
             const currentValue = editor.getHTML();
