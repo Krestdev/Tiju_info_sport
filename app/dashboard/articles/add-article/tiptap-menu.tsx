@@ -49,8 +49,12 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
         }
       }
 
-      const addImage = (image:string) => {
-        editor.chain().focus().setImage({ src: SetImageUrl(image) }).run()
+      const addImage = (image:string, caption?:string) => {
+        if(caption){
+          editor.chain().focus().setFigure({ src: SetImageUrl(image), caption }).run()
+        } else {
+          editor.chain().focus().setImage({ src: SetImageUrl(image) }).run()
+        }
       }
 
     const addYoutubeVideo = (url:string) => {
