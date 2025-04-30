@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import useStore from "@/context/store";
 import GridDash from "@/components/Dashboard/Dash/GridDash";
-import { useQuery } from "@tanstack/react-query";
 import Compo from "@/components/Dashboard/Dash/Compo";
 import SemiCirc from "@/components/Dashboard/Dash/SemiCirc";
 import { CircChar } from "@/components/Dashboard/Dash/CircChar";
@@ -14,7 +13,6 @@ import BarChar from "@/components/Dashboard/Stats/BarChart";
 import MostPopular from "@/components/Dashboard/Stats/MostPopular";
 import { DateRange } from "react-day-picker";
 import axiosConfig from "@/api/api";
-import { AxiosResponse } from "axios";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 
 const DashbordPage = () => {
@@ -26,8 +24,6 @@ const DashbordPage = () => {
         vuesPeriode: undefined,
         vuesCategorie: undefined,
     });
-
-    const axiosClient = axiosConfig();
 
     const handleChange = (key: string, newValue: string) => {
         setValues((prev) => ({ ...prev, [key]: newValue }));
@@ -91,7 +87,7 @@ const DashbordPage = () => {
         vuesSite: "semaine",
         vuesPeriode: "semaine",
         vuesPlateforme: "semaine",
-        plusVues: "annee",
+        plusVues: "semaine",
         vues: "semaine",
         vuesCategorie: "semaine",
     });
@@ -159,7 +155,7 @@ const DashbordPage = () => {
                     page={"Tous les articles"}
                     width={"max-w-[400px] w-full"}
                     value={values.plusVues}
-                    setValue={(val) => handleChange("plusVues}", val)}
+                    setValue={(val) => handleChange("plusVues", val)}
                     isLink={false}
                     link={""}
                     setDateRanges={setDateRanges}

@@ -1,12 +1,11 @@
 "use client"
 
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import Pagination from '@/components/Dashboard/Pagination';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 interface Props {
-    value: string;
     dateRanges: {
         [key: string]: DateRange | undefined;
     };
@@ -17,11 +16,12 @@ interface ApiResponse {
     articleStats: Record<string, Record<string, number>>;
 }
 
-const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
+const Page = ({ dateRanges, rangeKey }: Props) => {
     const [chartData, setChartData] = useState<{
         title: string;
         value: number;
     }[]>([]);
+    const value = "annee"
     const [error, setError] = useState<string | null>(null);
 
     function transformArticleStats(
@@ -36,6 +36,7 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
                     title !== '/detail-article' &&
                     title !== '/category' &&
                     !title.startsWith('Tyju Info Sport') &&
+                    !title.startsWith('/category') &&
                     !title.startsWith('Tyjuinfosport') &&
                     !title.startsWith('Tyju infosports') &&
                     !title.startsWith('Article Introuvable') &&
@@ -43,6 +44,7 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
                     !title.startsWith('Article test') &&
                     !title.startsWith('Connexion') &&
                     !title.startsWith('À propos') &&
+                    !title.startsWith('Aucun article') &&
                     !title.startsWith('Profil')
                 ) {
                     viewsMap[title] = (viewsMap[title] || 0) + vues;
@@ -103,28 +105,45 @@ const MostPopular = ({ value, dateRanges, rangeKey }: Props) => {
         return () => clearInterval(interval);
     }, [value, dateRanges, rangeKey]);
 
-    const router = useRouter()
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
+    const totalPages = Math.ceil(chartData.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const slicedItems = chartData.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className='flex flex-col px-5 gap-3 h-[208px]'>
-            {chartData.length === 0 ? (
-                <p className='text-gray-500'>Aucun article trouvé dans cette période.</p>
-            ) : (
-                chartData.slice(0, 4).map((article, index) => (
-                    <div
-                        key={index}
-                        className='flex flex-row justify-between items-center gap-2 h-[30.67px] p-3 bg-[#FAFAFA] rounded-[6px]'
-                    >
-                        <p className='w-[215px] truncate'>{article.title}</p>
-                        <p>{article.value}</p>
-                    </div>
-                ))
-            )}
-            <div className='w-full flex justify-end'>
-                <Button onClick={() => router.push("/dashboard/statistiques/popular")} variant={"ghost"} className='w-fit'>{"Voir plus"}</Button>
-            </div>
-        </div>
+        <div className='flex flex-col px-5 py-3 gap-3'>
+            <h1>{"Les plus visités"}</h1>
+            <Table className="border divide-x">
+                <TableHeader>
+                    <TableRow className="text-[18px] capitalize font-normal">
+                        <TableHead>{"Titre"}</TableHead>
+                        <TableHead>{"Vues"}</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                        slicedItems.map((article, index) => (
+                            // <div
+                            //     key={index}
+                            //     className='flex flex-row justify-between items-center gap-2 h-[30.67px] p-3 bg-[#FAFAFA] rounded-[6px]'
+                            // >
+                                <TableRow key={index} className="text-[16px]">
+                                    <TableCell className="border">
+                                        <p className=''>{article.title}</p>
+                                    </TableCell>
+                                    <TableCell className="border">
+                                        <p>{article.value}</p>
+                                    </TableCell>
+                                </TableRow>
+                            // </div>
+                        ))
+                    }
+                </TableBody>
+            </Table>
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
+        </div >
     );
 };
 
-export default MostPopular;
+export default Page;

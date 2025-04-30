@@ -18,7 +18,6 @@ interface Props {
     onChange:(image:string)=>void;
     alt?:string;
 }
-
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 1MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
@@ -84,7 +83,6 @@ function AddImage({image, onChange, alt}:Props) {
             }
             reader.readAsDataURL(file)
         
-            // Définir la valeur du formulaire
             form.setValue("file", file)
           };
 
