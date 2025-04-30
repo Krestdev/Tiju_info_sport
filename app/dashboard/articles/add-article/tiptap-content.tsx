@@ -36,7 +36,7 @@ function TiptapEditor({value, onValueChange}:TiptapProps) {
       }),
     Figure.configure({
       HTMLAttributes: {
-        class: "mx-auto max-w-[66vw] min-[750px]:max-w-[700px] w-full h-auto mt-2"
+        class: "mx-auto max-w-[66vw] min-[750px]:max-w-[700px] w-full h-auto mt-2 flex flex-col justify-center items-center",
 
       }
     })],
