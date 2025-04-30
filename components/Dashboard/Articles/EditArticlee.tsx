@@ -91,7 +91,6 @@ function EditArticlee({ children, donnee }: Props) {
         }
     });
 
-    // console.log(`${process.env.NEXT_PUBLIC_API}image/${donnee.images[0].id}`);
     console.log(donnee);
 
 
