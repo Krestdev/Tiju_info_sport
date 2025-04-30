@@ -83,10 +83,6 @@ export function getDateRange(value: string) {
   return { startDate, endDate };
 }
 
-export function defineTitle(title:string) {
-  return `${title} - Tyju infosports`
-}
-
 export function sortArticles(articles:Article[]){
   return [...articles].sort((a, b) => {
     const dateA = new Date(a.created_at).getTime(); // Convert to timestamp

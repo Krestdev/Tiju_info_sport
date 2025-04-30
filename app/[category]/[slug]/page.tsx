@@ -1,15 +1,15 @@
 import ArticlePreview from '@/components/articlePreview';
 import FeedTemplate from '@/components/feed-template';
 import ShareArticle from '@/components/shareArticle';
-import { articleDate, cn, defineTitle, SetImageObjectUrl, SetImageUrl, sortArticles } from '@/lib/utils';
+import { articleDate, SetImageObjectUrl, SetImageUrl, sortArticles } from '@/lib/utils';
 
 // lib/metadata.ts
 import Comment from '@/components/comment-display';
 import { fetchCategory } from '@/lib/api';
 import { Metadata } from 'next';
+import Link from 'next/link';
 import AddComment from './add-comment';
 import LikeArticle from './like-article';
-import Link from 'next/link';
 
 export async function generateMetadata({ params }: { params: Promise<{  category: string; slug: string; }> }): Promise<Metadata> {
     const {category, slug} = await params;
@@ -19,17 +19,17 @@ export async function generateMetadata({ params }: { params: Promise<{  category
     const currentArticle = publishedArticles.find(y=>y.slug.toLocaleLowerCase()===decodeURIComponent(slug).toLocaleLowerCase());
     if(currentArticle){
         return {
-          title: defineTitle(currentArticle.title),
+          title: currentArticle.title,
           description: currentArticle.summery,
           openGraph: {
             images: currentArticle.imageurl ? SetImageUrl(currentArticle.imageurl) :  currentArticle.images.length > 0 
               ? `${process.env.NEXT_PUBLIC_API}image/${currentArticle.images[0].id}`
-              : '/images/no-image.jpg'
+              : '/og-image.png'
           }
         };
     } else {
         return {
-            title: defineTitle("Article Introuvable"), 
+            title: "Page Introuvable", 
         }
     }
   }

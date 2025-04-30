@@ -1,5 +1,10 @@
+import { Metadata } from "next";
 import "../globals.css";
 
+export const metadata:Metadata = {
+  title: "Accès refusé",
+  description: "Oups ! vous n'avez pas les accès pour cette page. Contactez votre administrateur",
+}
 
 export default async function RootLayout({
   children,
