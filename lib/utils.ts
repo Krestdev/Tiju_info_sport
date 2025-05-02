@@ -1,4 +1,5 @@
 
+import { articles } from "@/data/temps";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -178,6 +179,17 @@ export const latestUpdates = (articles: Article[]): Article[] => {
     return articleDate >= twentyFourHoursAgo && articleDate <= now;
   });
 };
+
+export const weeklyUpdates = (articles: Article[]): Article[] => {
+  const now = new Date();
+  now.setHours(0);
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  return articles.filter(article => {
+    const articleDate = new Date(article.created_at);
+    return articleDate >= sevenDaysAgo;
+  });
+}
 
 //#Cleaning URLs
 export const cleanedUrl = (url: string): string => {

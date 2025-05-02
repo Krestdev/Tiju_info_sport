@@ -10,9 +10,10 @@ interface feedProps {
 }
 
 function Feed({ className }: feedProps) {
-  const { isLoading, isSuccess, todayArticles, headline } =
+  const { isLoading, isSuccess, weeklyArticles, headline } =
     usePublishedArticles();
   const ads = useAds();
+  console.log(weeklyArticles)
 
   if (isSuccess) {
     return (
@@ -35,15 +36,15 @@ function Feed({ className }: feedProps) {
             </div>
           </div>
         )}
-        {todayArticles.length > 0 && (
+        {weeklyArticles.length > 0 && (
           <div className="flex flex-col order-3 lg:order-2">
             <div className="border-b">
               <h3 className="w-fit uppercase font-oswald text-xl text-white py-2 px-4 bg-green-500">
-                {"aujourd'hui"}
+                {"cette semaine"}
               </h3>
             </div>
             <div className="grid divide-y">
-                {todayArticles.slice(0, 4).map((article) => (
+                {weeklyArticles.slice(0, 4).map((article) => (
                 <ArticlePreview
                     key={article.id}
                     version="text-only"
