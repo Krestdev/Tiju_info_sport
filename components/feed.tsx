@@ -13,7 +13,7 @@ function Feed({ className }: feedProps) {
   const { isLoading, isSuccess, weeklyArticles, headline } =
     usePublishedArticles();
   const ads = useAds();
-  console.log(weeklyArticles)
+  //console.log(weeklyArticles)
 
   if (isSuccess) {
     return (
