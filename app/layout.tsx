@@ -11,7 +11,6 @@ import Maintenance from "./Maintenance";
 import GA from "@/components/GoogleAnalytics";
 
 const fontMono = Oswald({ subsets: ["latin"], variable: "--font-mono" });
-/* const fontSans = Ubuntu({ subsets: ["latin"], weight: ["400", "500", "700", "300"], variable: "--font-sans" }); */
 const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" }); /**Ubuntu doesnt display well for some reason, so we better use this one :/ */
 
 export const metadata: Metadata = {
