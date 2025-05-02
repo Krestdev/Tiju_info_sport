@@ -73,7 +73,7 @@ const Footbar = () => {
                                 <span className='text-category'>{el.title}</span>
                                 <ul role="list" className='flex flex-col gap-3'>
                                     {el.content.map((item, i)=>(
-                                        <li key={i} className='font-medium'><Link href={item.url}>{item.title}</Link></li>
+                                        <li key={i} className='font-medium'><Link href={`/${item.url}`}>{item.title}</Link></li>
                                     ))}
                                 </ul>
                             </div>
