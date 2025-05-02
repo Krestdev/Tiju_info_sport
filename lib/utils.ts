@@ -1,7 +1,8 @@
 
-import { articles } from "@/data/temps";
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+const userTimeZone = 'Africa/Douala'; //  fuseau horaire souhaité
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -60,7 +61,7 @@ export const isImage = (media: string | undefined): boolean => {
 };
 
 export function getDateRange(value: string) {
-  const today = new Date();
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: userTimeZone })); // Utilisation du fuseau horaire souhaité
   let startDate: string;
   let endDate: string = today.toISOString().split("T")[0];
 
@@ -95,7 +96,8 @@ export function sortArticles(articles:Article[]){
 //Display article date
 export function articleDate(value: string): string {
   const date = new Date(value);
-  const today = new Date();
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: userTimeZone })); // Utilisation du fuseau horaire souhaité
+  // Vérification de la validité de la date
 
   if (isNaN(date.getTime())) {
     return "Date inconnue";
@@ -171,7 +173,7 @@ export function getFirstWord(name: string): string {
 
 //## Last 24h articles
 export const latestUpdates = (articles: Article[]): Article[] => {
-  const now = new Date();
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: userTimeZone })); // Utilisation du fuseau horaire souhaité
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
   return articles.filter(article => {
@@ -181,7 +183,7 @@ export const latestUpdates = (articles: Article[]): Article[] => {
 };
 
 export const weeklyUpdates = (articles: Article[]): Article[] => {
-  const now = new Date();
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: userTimeZone })); // Utilisation du fuseau horaire souhaité
   now.setHours(0);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
