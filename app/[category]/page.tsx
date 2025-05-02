@@ -3,7 +3,7 @@ import ArticlePreview from '@/components/articlePreview';
 import CategoryBreadcrumb from '@/components/breadcrumb-category';
 import FeedTemplate from '@/components/feed-template';
 import { fetchCategory, fetchPages } from '@/lib/api';
-import { defineTitle, sortArticles } from '@/lib/utils';
+import { sortArticles } from '@/lib/utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -15,17 +15,17 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     const currentCategory = categories.find(x=>x.slug.toLocaleLowerCase()===decodeURIComponent(category).toLocaleLowerCase());
     if(!!currentPage){
         return {
-            title: defineTitle(currentPage.title),
+            title: currentPage.title,
         };
     }
     if(currentCategory){
         return {
-          title: defineTitle(currentCategory.title),
+          title: currentCategory.title,
           description: currentCategory.description,
         };
     } else {
         return {
-            title: defineTitle("Catégorie Introuvable"), 
+            title: "Page Introuvable", 
         }
     }
   }
@@ -78,6 +78,10 @@ async function Page({ params }: { params: Promise<{ category: string }> }) {
                     <p className='text-lg sm:text-xl lg:text-2xl text-center'>{"Aucun article trouvé"}</p>
                 </div>
             </FeedTemplate>
+         }
+         {
+            currentPage === undefined && currentCategory === undefined &&
+            notFound()
          }
     </div>
   )

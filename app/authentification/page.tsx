@@ -82,7 +82,8 @@ function Page() {
         {
             token && isValidToken === null ? (
                 <div className="mx-auto max-w-md px-7 base-height py-8 flex flex-col items-center justify-center gap-4">
-                    <span>{"Chargement ..."}<Loader2 className="h-8 w-8 animate-spin" /></span>
+                    {"Chargement ..."}
+                    <Loader2 className="animate-spin" />
                 </div>
             ) : token && isValidToken === true ? 
                 <div className='mx-auto max-w-md px-7 base-height py-8 flex flex-col items-center justify-center gap-4'>

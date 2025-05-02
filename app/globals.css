@@ -120,7 +120,7 @@
     @apply bg-primary hover:bg-primary-hover;
   }
   figcaption {
-    @apply italic text-sm text-paragraph text-center;
+    @apply text-sm text-gray-500 text-center;
   }
   figure > img{
     @apply w-full h-auto m-0;

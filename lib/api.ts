@@ -12,6 +12,10 @@ interface categoryData extends response {
 interface PagesData {
   data: CustomPage[];
 }
+interface SettingsData {
+  data: ConfigProps[];
+
+}
 const axiosClient = axiosConfig();
 
 export async function fetchArticle(slug: string): Promise<Article> {
@@ -27,5 +31,10 @@ export async function fetchArticle(slug: string): Promise<Article> {
 
   export async function fetchPages() {
     const res:PagesData = await axiosClient.get(`/footer/show`);
+    return res.data;
+  }
+
+  export async function fetchSettings() {
+    const res:SettingsData = await axiosClient.get(`/param/show`);
     return res.data;
   }

@@ -57,11 +57,11 @@ const formSchema = z.object({
             if (Number(hours) < current.getHours()) {
                 return false;
             } else if (Number(hours) === current.getHours()) {
-                return Number(mins) >= current.getMinutes() + 15;
+                return Number(mins) >= current.getMinutes() + 5;
             }
         }
         return true;
-},{message: "La publication doit être programmé au moins 15 dans le futur", path: ["time"]})
+},{message: "La publication doit être programmé au moins 5 mins dans le futur", path: ["time"]})
 
 function AddArticlePage() {
     const axiosClient = axiosConfig();
