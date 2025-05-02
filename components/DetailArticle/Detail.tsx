@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { LuHouse, LuSend, LuX } from "react-icons/lu";
+import {  LuSend, LuX } from "react-icons/lu";
 import useStore from '@/context/store';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
