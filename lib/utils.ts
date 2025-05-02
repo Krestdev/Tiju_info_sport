@@ -123,22 +123,22 @@ export function articleDate(value: string): string {
 
   if (diffInDays === 0) {
     if (diffInHours < 1) {
-      if (diffInMinutes < 1) {
+      if (diffInMinutes < 2) {
         return "Publié à l'instant";
       }
-      return `Publié il y a ${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''}`;
+      return `Publié il y a ${diffInMinutes} minutes`;
     }
-    return `Publié il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ''}`;
+    return `Publié il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ""}`;
   } else if (diffInDays === 1) {
     return "Publié hier";
   } else if (diffInDays < 7) {
-    return `Publié il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+    return `Publié il y a ${diffInDays} jours`;
   } else if (diffInWeeks < 5) {
-    return `Publié il y a ${diffInWeeks} semaine${diffInWeeks > 1 ? 's' : ''}`;
+    return `Publié il y a ${diffInWeeks} semaine${diffInWeeks > 1 ? 's' : ""}`;
   } else if (diffInMonths < 12) {
     return `Publié il y a ${diffInMonths} mois`;
   } else {
-    return `Publié il y a ${diffInYears} an${diffInYears > 1 ? 's' : ''}`;
+    return `Publié il y a ${diffInYears} an${diffInYears > 1 ? 's' : ""}`;
   }
 }
 
