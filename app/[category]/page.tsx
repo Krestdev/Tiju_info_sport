@@ -37,7 +37,6 @@ async function Page({ params }: { params: Promise<{ category: string }> }) {
     const currentPublishedArticles = sortArticles(categories.filter(y=>y.id === currentCategory?.id || y.parent===currentCategory?.id).filter(cat => cat.articles.length > 0).flatMap(cat => cat.articles).filter(x=>x.status==="published"));
 
     const moreCategories = categories.filter(x=>x.id !== currentCategory?.id && x.parent !== currentCategory?.parent && x.parent!==currentCategory?.id && x.articles.filter(y=>y.status==="published").length > 2);
-    //console.log(currentCategory);
 
     const pages = await fetchPages();
     const currentPage = pages.find(x=>x.title.toLocaleLowerCase() === "ressources")?.content.find(y=>y.url === decodeURIComponent(category));
