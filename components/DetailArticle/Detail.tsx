@@ -7,7 +7,7 @@ import useStore from '@/context/store';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Share2, ThumbsUp } from 'lucide-react';
-import { string, z } from 'zod';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
