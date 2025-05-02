@@ -4,6 +4,8 @@ import { usePublishedArticles } from "@/hooks/usePublishedData";
 import Advertisement from "./advertisement";
 import ArticlePreview from "./articlePreview";
 import { Skeleton } from "./ui/skeleton";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface feedProps {
   className?: string;
@@ -52,6 +54,7 @@ function Feed({ className }: feedProps) {
                 />
                 ))}
             </div>
+                <Link href={"/cette-semaine"}><Button variant={"outline"}>{"Tout voir"}</Button></Link>
           </div>
         )}
         { ads.randomSquare && <Advertisement variant="square" className="order-2 lg:order-3" {...ads.randomSquare}/>}
