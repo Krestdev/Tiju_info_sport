@@ -207,7 +207,7 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
             </Button> */}
             <Select onValueChange={(value) => handleTableAction(value)}>
               <SelectTrigger className='w-48 focus:ring-0'>
-                <SelectValue placeholder="Action sur le tableau" />
+                <SelectValue placeholder="Tableau" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='addTable'>{"Ajouter une table"}</SelectItem>
