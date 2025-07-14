@@ -3,9 +3,9 @@ import InsertImage from '@/components/insert-image';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SetImageUrl } from '@/lib/utils';
-import { Editor } from '@tiptap/react'
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
-import React from 'react'
+import { Editor } from '@tiptap/react';
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Italic, List, ListOrdered, Quote, Redo, SeparatorHorizontal, Strikethrough, Undo, WrapText } from 'lucide-react';
+import React from 'react';
 import AddYoutubeVideo from './youtube';
 
 function TiptapMenu({editor}:{editor: Editor|null}) {
@@ -61,6 +61,54 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
       editor.commands.setYoutubeVideo({
         src: url
       })
+    }
+
+    const handleTableAction = (action: string) => {
+      if (!editor) return;
+
+      switch (action) {
+        case 'addTable':
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+          break;
+        case 'addColumnBefore':
+          editor.chain().focus().addColumnBefore().run();
+          break;
+        case 'addColumnAfter':
+          editor.chain().focus().addColumnAfter().run();
+          break;
+        case 'deleteColumn':
+          editor.chain().focus().deleteColumn().run();
+          break;
+        case 'addRowBefore':
+          editor.chain().focus().addRowBefore().run();
+          break;
+        case 'addRowAfter':
+          editor.chain().focus().addRowAfter().run();
+          break;
+        case 'deleteRow':
+          editor.chain().focus().deleteRow().run();
+          break;
+        case 'mergeCells':
+          editor.chain().focus().mergeCells().run();
+          break;
+        case 'splitCell':
+          editor.chain().focus().splitCell().run();
+          break;
+        case 'toggleHeaderRow':
+          editor.chain().focus().toggleHeaderRow().run();
+          break;
+        case 'toggleHeaderColumn':
+          editor.chain().focus().toggleHeaderColumn().run();
+          break;
+        case 'toggleHeaderCell':
+          editor.chain().focus().toggleHeaderCell().run();
+          break;
+        case 'dropTable':
+          editor.chain().focus().deleteTable().run();
+          break;
+        default:
+          break;
+      }
     }
 
 
@@ -153,6 +201,30 @@ function TiptapMenu({editor}:{editor: Editor|null}) {
             </Button>
             <InsertImage image={undefined} onChange={addImage}/>
             <AddYoutubeVideo addVideo={addYoutubeVideo}/>
+            {/* <Button variant={editor.isActive('table') ? "default" : "ghost"} family={"sans"} disabled={!editor.can().chain().focus().insertTable().run()}
+            onClick={(e) =>{ e.preventDefault(); editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}}>
+              {"Table"}
+            </Button> */}
+            <Select onValueChange={(value) => handleTableAction(value)}>
+              <SelectTrigger className='w-48 focus:ring-0'>
+                <SelectValue placeholder="Action sur le tableau" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='addTable'>{"Ajouter une table"}</SelectItem>
+                <SelectItem value='addColumnBefore'>{"Ajouter une colonne avant"}</SelectItem>
+                <SelectItem value='addColumnAfter'>{"Ajouter une colonne après"}</SelectItem>
+                <SelectItem value='deleteColumn'>{"Supprimer une colonne"}</SelectItem>
+                <SelectItem value='addRowBefore'>{"Ajouter une ligne avant"}</SelectItem>
+                <SelectItem value='addRowAfter'>{"Ajouter une ligne après"}</SelectItem>
+                <SelectItem value='deleteRow'>{"Supprimer une ligne"}</SelectItem>
+                <SelectItem value='mergeCells'>{"Fusionner les cellules"}</SelectItem>
+                <SelectItem value='splitCell'>{"Diviser la cellule"}</SelectItem>
+                <SelectItem value='toggleHeaderRow'>{"Basculer ligne d’en-tête"}</SelectItem>
+                <SelectItem value='toggleHeaderColumn'>{"Basculer colonne d’en-tête"}</SelectItem>
+                <SelectItem value='toggleHeaderCell'>{"Basculer cellule d’en-tête"}</SelectItem>
+                <SelectItem value='dropTable'>{"Supprimer la table"}</SelectItem>
+              </SelectContent>
+            </Select>
 {/*             <button
               onClick={(e) =>{e.preventDefault(); editor.chain().focus().toggleCode().run()}}
               disabled={
