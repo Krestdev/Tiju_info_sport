@@ -1,4 +1,5 @@
 'use client'
+
 import axiosConfig from '@/api/api'
 import AddImage from '@/components/add-image'
 import { Button } from '@/components/ui/button'
