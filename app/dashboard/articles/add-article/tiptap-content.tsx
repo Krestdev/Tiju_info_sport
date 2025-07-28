@@ -4,7 +4,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Youtube from "@tiptap/extension-youtube";
-import { Table, TableCell, TableHeader, TableKit, TableRow } from "@tiptap/extension-table";
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 
 import TiptapMenu from "./tiptap-menu";
 import { useEffect, useState } from "react";
