@@ -16,12 +16,10 @@ import PubsComp from '../PubsComp';
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import FullScreen from '../Dashboard/FullScreen';
-import { useRouter } from 'next/navigation';
 import UnePubs from '../Accueil/UnePubs';
 import GridAcc from '../Accueil/GridAcc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosConfig from '@/api/api';
-import Head from 'next/head';
 import { Input } from '../ui/input';
 
 
