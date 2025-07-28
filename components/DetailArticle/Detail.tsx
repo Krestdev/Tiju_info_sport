@@ -56,10 +56,8 @@ const Detail = ({ details, similaire, pub, dataArticle, favorite }: Details) => 
     const [response, setResponse] = useState('');
     const [modifie, setModifie] = useState('');
     const [openCommenter, setOpenCommenter] = useState(false)
-    const [openCommenterMob, setOpenCommenterMob] = useState(false)
     const [commentaire, setCommentaire] = useState("")
     const [showReponses, setShowReponses] = useState<{ [id: number]: boolean }>({});
-    const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
     const [openModifier, setOpenModifier] = useState<number | null>(null);
     const [openRepondre, setOpenRepondre] = useState<number | null>(null);
     const [masquerCom, setMasquerCom] = useState(true)
