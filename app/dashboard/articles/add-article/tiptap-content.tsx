@@ -19,6 +19,7 @@ interface TiptapProps {
 function TiptapEditor({ value, onValueChange }: TiptapProps) {
   const [mounted, setMounted] = useState(false);
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Image.configure({
