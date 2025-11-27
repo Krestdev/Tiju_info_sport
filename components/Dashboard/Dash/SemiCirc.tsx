@@ -27,7 +27,7 @@ const SemiCirc = ({ value, dateRanges }: Props) => {
             .then((res) => res.json())
             .then((data) => {
                 const users = data?.rows?.[0]?.metricValues?.[0]?.value ?? "0";
-                setData(Number(users));
+                setData(Number(users)*296);
             })
             .catch((err) => console.error("Erreur API:", err));
     }, [value, dateRanges]);
