@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useAds } from "@/hooks/useAds";
 import { usePublishedArticles } from "@/hooks/usePublishedData";
 import Advertisement from "./advertisement";
@@ -28,12 +28,19 @@ function Feed({ className }: feedProps) {
               </h3>
             </div>
             <div className="grid divide-y">
-                {headline.slice(0, 4).map((article) => (
-                <ArticlePreview
+              {headline
+                .sort(
+                  (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime(),
+                )
+                .slice(0, 4)
+                .map((article) => (
+                  <ArticlePreview
                     key={article.id}
                     version="text-only"
                     {...article}
-                />
+                  />
                 ))}
             </div>
           </div>
@@ -46,18 +53,26 @@ function Feed({ className }: feedProps) {
               </h3>
             </div>
             <div className="grid divide-y">
-                {weeklyArticles.slice(0, 4).map((article) => (
+              {weeklyArticles.slice(0, 4).map((article) => (
                 <ArticlePreview
-                    key={article.id}
-                    version="text-only"
-                    {...article}
+                  key={article.id}
+                  version="text-only"
+                  {...article}
                 />
-                ))}
+              ))}
             </div>
-                <Link href={"/cette-semaine"}><Button variant={"outline"}>{"Tout voir"}</Button></Link>
+            <Link href={"/cette-semaine"}>
+              <Button variant={"outline"}>{"Tout voir"}</Button>
+            </Link>
           </div>
         )}
-        { ads.randomSquare && <Advertisement variant="square" className="order-2 lg:order-3" {...ads.randomSquare}/>}
+        {ads.randomSquare && (
+          <Advertisement
+            variant="square"
+            className="order-2 lg:order-3"
+            {...ads.randomSquare}
+          />
+        )}
       </div>
     );
   }
