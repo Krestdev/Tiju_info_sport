@@ -24,17 +24,31 @@ export async function fetchArticle(slug: string): Promise<Article> {
   }
   
   export async function fetchCategory() {
-    const res:categoryData = await axiosClient.get(`/category`);
-    // console.log(res.data);
-    return res.data;
+    try {
+      const res:categoryData = await axiosClient.get(`/category`);
+      return res.data || [];
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
+    }
   }
-
+ 
   export async function fetchPages() {
-    const res:PagesData = await axiosClient.get(`/footer/show`);
-    return res.data;
+    try {
+      const res:PagesData = await axiosClient.get(`/footer/show`);
+      return res.data || [];
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      return [];
+    }
   }
-
+ 
   export async function fetchSettings() {
-    const res:SettingsData = await axiosClient.get(`/param/show`);
-    return res.data;
+    try {
+      const res:SettingsData = await axiosClient.get(`/param/show`);
+      return res.data || [];
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      return [];
+    }
   }
