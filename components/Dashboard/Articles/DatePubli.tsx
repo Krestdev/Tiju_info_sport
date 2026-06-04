@@ -163,7 +163,7 @@ const DatePubli = ({ isOpen, onOpenChange, artId, article }: Props) => {
                                                         disabled={(date) => 
                                                             date < new Date(new Date().setHours(0, 0, 0, 0))
                                                         }
-                                                        initialFocus
+                                                        // initialFocus
                                                         locale={fr}
                                                     />
                                                 </PopoverContent>
