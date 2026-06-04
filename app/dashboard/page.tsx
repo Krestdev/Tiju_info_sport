@@ -95,6 +95,7 @@ const DashbordPage = () => {
     <div className="flex flex-col gap-5 px-0 md:px-7 py-10">
       <h1 className="uppercase text-[40px]">{"Tableau de bord"}</h1>
       <div className="flex flex-col md:flex-row gap-5">
+        {/**Articles publiés - Likes - Commentaires */}
         <Compo
           texte={"Publication"}
           page={"Tous les articles"}
@@ -108,6 +109,7 @@ const DashbordPage = () => {
           rangeKey="publication">
           <GridDash rangeKey={"publication"} tableau={grid} value={values.publication} dateRanges={dateRanges} />
         </Compo>
+        {/**Vues */}
         <Compo
           texte={"Vues sur le site"}
           page={"Statistiques"}
@@ -122,6 +124,7 @@ const DashbordPage = () => {
           <SemiCirc rangeKey={"vuesSite"} value={values.vuesSite} dateRanges={dateRanges} />
         </Compo>
       </div>
+      {/**Vues par période - Vues par catégorie */}
       <div className="flex flex-col md:flex-row gap-5">
         <Compo
           texte={"Vues par période"}
@@ -136,6 +139,7 @@ const DashbordPage = () => {
           rangeKey="vuesPeriode">
           <LinearChat rangeKey={"vuesPeriode"} value={values.vuesPeriode} dateRanges={dateRanges} />
         </Compo>
+        {/**Catégories */}
         <Compo
           texte={"Vues par catégorie"}
           page={"Catégories"}
